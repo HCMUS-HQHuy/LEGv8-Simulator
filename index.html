@@ -4,6 +4,63 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Form Example</title>
+	<style>
+		#line {
+			position: absolute;
+			height: 2px;
+			background-color: red;
+			transform-origin: 0 0; /* từ đầu */
+		}
+		.container {
+			position: relative;
+			width: 10rem;
+			height: 10rem;
+		}
+        .line {
+			position: absolute;
+			background-color: black;
+		}
+
+		.vertical {
+			width: 2px;
+			height: 100%;
+		}
+
+		.horizontal {
+			width: 100%;
+			height: 2px;
+		}
+        .point {
+			position: absolute;
+			width: 10px;
+			height: 10px;
+			background-color: red;
+			border-radius: 50%;
+			top: 0px;
+			left: 0px;
+			transform: translate(-50%, -50%);  /* Đặt điểm tại trung tâm */
+		}
+
+		@keyframes moveAlongPath {
+            0% {
+                top: 50%; /* Vị trí bắt đầu */
+                left: 0%;
+            }
+            33% {
+                top: 50%; /* Vị trí sau đoạn đầu */
+                left: 50%;
+            }
+            66% {
+                top: 50%; /* Mô phỏng đoạn đường gấp */
+                left: 75%;
+            }
+            100% {
+                top: 50%;
+                left: 100%;
+            }
+        }
+    </style>
+
 </head>
 <body>
 	<form id="myForm">
@@ -13,6 +70,16 @@
 	</form>
 
 	<p id="result"></p>
+
+	<div class="container">
+        <div class="line vertical"></div>
+        <div class="line horizontal"></div>
+		<div class="point"></div>
+    </div>
+
+	<div id="lines-container">
+		
+	</div>
 
 	<script src="./Scripts/handleForm.js"></script>
 
