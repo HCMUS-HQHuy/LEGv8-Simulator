@@ -1,10 +1,12 @@
+import controlSignalTable from "./defineSignal.js"
+
 /**
  * Tạo các tín hiệu điều khiển dựa trên lệnh đã được parse.
  * @param {ParsedInstruction} parsedInstruction - Đối tượng lệnh đã được parse.
  * @returns {object | null} Một đối tượng với các tên tín hiệu điều khiển làm key
  *                           và giá trị 0 hoặc 1, hoặc null nếu lệnh không được hỗ trợ.
  */
-function generateControlSignals(parsedInstruction) {
+export function generateControlSignals(parsedInstruction) {
     if (!parsedInstruction || parsedInstruction.error || !parsedInstruction.mnemonic) {
         console.error("Invalid or errored parsed instruction provided.");
         return null; // Không thể tạo tín hiệu nếu parse lỗi hoặc không có lệnh
@@ -122,7 +124,7 @@ function createSignalNodeElement(signalName, value, pathId, duration = 2) {
  * Hiển thị các node tín hiệu điều khiển trên datapath.
  * @param {object} signals - Đối tượng tín hiệu trả về từ generateControlSignals.
  */
-function displayControlSignalNodes(signals) {
+export function displayControlSignalNodes(signals) {
     if (!signals) {
         console.log("No control signals generated to display.");
         return;
@@ -154,7 +156,7 @@ function displayControlSignalNodes(signals) {
 /**
  * Bắt đầu animation cho tất cả các node tín hiệu điều khiển hiện có.
  */
-function startControlSignalAnimation() {
+export function startControlSignalAnimation() {
      if (!signalNodesGroup) return;
 
     const animations = signalNodesGroup.querySelectorAll('animateMotion');
@@ -168,64 +170,64 @@ function startControlSignalAnimation() {
     });
 }
 
-// --- Gắn Event Listener vào Button ---
-document.addEventListener('DOMContentLoaded', function() {
-    const startButton = document.getElementById('startButton'); // Giả sử nút có id="startButton"
+// // --- Gắn Event Listener vào Button ---
+// document.addEventListener('DOMContentLoaded', function() {
+//     const startButton = document.getElementById('startButton'); // Giả sử nút có id="startButton"
 
-    if (startButton) {
-        startButton.addEventListener('click', () => {
-            console.log("Start Button Clicked - Simulating control signal generation...");
+//     if (startButton) {
+//         startButton.addEventListener('click', () => {
+//             console.log("Start Button Clicked - Simulating control signal generation...");
 
-            // --- BƯỚC MÔ PHỎNG: Thay thế bằng logic thực tế của bạn ---
-            // 1. Lấy instruction từ form (như code trước)
-            // const instructionText = document.getElementById('instructionCode').value;
-            // const lines = instructionText.split(/\r?\n/);
-            // const firstInstructionLine = lines.find(line => line.trim() && !line.trim().startsWith('//') && !line.trim().startsWith(';'));
-            // const parsed = firstInstructionLine ? parseLegv8Instruction(firstInstructionLine) : null;
+//             // --- BƯỚC MÔ PHỎNG: Thay thế bằng logic thực tế của bạn ---
+//             // 1. Lấy instruction từ form (như code trước)
+//             // const instructionText = document.getElementById('instructionCode').value;
+//             // const lines = instructionText.split(/\r?\n/);
+//             // const firstInstructionLine = lines.find(line => line.trim() && !line.trim().startsWith('//') && !line.trim().startsWith(';'));
+//             // const parsed = firstInstructionLine ? parseLegv8Instruction(firstInstructionLine) : null;
 
-            // *** TẠM THỜI DÙNG LỆNH ADD LÀM VÍ DỤ ***
-             const parsed = {
-                 mnemonic: "LDUR", // <<< THAY ĐỔI LỆNH Ở ĐÂY ĐỂ TEST (ADD, LDUR, STUR, CBZ)
-                 operands: ["X5", "[X28,#-8]"], type: "D",
-                 structuredOperands: { Rt: "X5", Rn: "X28", address_imm: "#-8" }, error: null
-             };
-            // --------------------------------------------------------------
+//             // *** TẠM THỜI DÙNG LỆNH ADD LÀM VÍ DỤ ***
+//              const parsed = {
+//                  mnemonic: "LDUR", // <<< THAY ĐỔI LỆNH Ở ĐÂY ĐỂ TEST (ADD, LDUR, STUR, CBZ)
+//                  operands: ["X5", "[X28,#-8]"], type: "D",
+//                  structuredOperands: { Rt: "X5", Rn: "X28", address_imm: "#-8" }, error: null
+//              };
+//             // --------------------------------------------------------------
 
-            if (parsed) {
-                // 2. Tạo tín hiệu điều khiển
-                const controlSignals = generateControlSignals(parsed);
+//             if (parsed) {
+//                 // 2. Tạo tín hiệu điều khiển
+//                 const controlSignals = generateControlSignals(parsed);
 
-                // 3. Tạo và hiển thị các node tín hiệu trên SVG
-                displayControlSignalNodes(controlSignals);
+//                 // 3. Tạo và hiển thị các node tín hiệu trên SVG
+//                 displayControlSignalNodes(controlSignals);
 
-                // 4. Bắt đầu animation
-                // Có thể thêm độ trễ nhỏ để đảm bảo SVG được cập nhật
-                setTimeout(startControlSignalAnimation, 100); // Trễ 100ms
+//                 // 4. Bắt đầu animation
+//                 // Có thể thêm độ trễ nhỏ để đảm bảo SVG được cập nhật
+//                 setTimeout(startControlSignalAnimation, 100); // Trễ 100ms
 
-            } else {
-                 console.log("No valid instruction found to generate signals.");
-                 // Xóa các node cũ nếu không có lệnh hợp lệ
-                 if (signalNodesGroup) {
-                     while (signalNodesGroup.firstChild) {
-                         signalNodesGroup.removeChild(signalNodesGroup.firstChild);
-                     }
-                 }
-            }
-        });
-    } else {
-        console.error("Button with id 'startButton' not found.");
-    }
+//             } else {
+//                  console.log("No valid instruction found to generate signals.");
+//                  // Xóa các node cũ nếu không có lệnh hợp lệ
+//                  if (signalNodesGroup) {
+//                      while (signalNodesGroup.firstChild) {
+//                          signalNodesGroup.removeChild(signalNodesGroup.firstChild);
+//                      }
+//                  }
+//             }
+//         });
+//     } else {
+//         console.error("Button with id 'startButton' not found.");
+//     }
 
-     // --- Thêm các event listener và logic khác của bạn (zoom, etc.) ---
-     const content = document.getElementById('zoomContent');
-     const frame = document.getElementById('zoomFrame');
-     let scale = 1;
+//      // --- Thêm các event listener và logic khác của bạn (zoom, etc.) ---
+//      const content = document.getElementById('zoomContent');
+//      const frame = document.getElementById('zoomFrame');
+//      let scale = 1;
 
-     if (frame && content) {
-         frame.addEventListener('wheel', function(e) {
-           // ... (code zoom của bạn) ...
-         }, { passive: false });
-     }
-     // -----------------------------------------------------------------
+//      if (frame && content) {
+//          frame.addEventListener('wheel', function(e) {
+//            // ... (code zoom của bạn) ...
+//          }, { passive: false });
+//      }
+//      // -----------------------------------------------------------------
 
-}); // End DOMContentLoaded
+// }); // End DOMContentLoaded

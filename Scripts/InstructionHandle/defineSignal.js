@@ -49,3 +49,5 @@ const controlSignalTable = {
     }
     // Add other instruction types/classes if needed (e.g., B, I-type)
 };
+
+export default controlSignalTable;
