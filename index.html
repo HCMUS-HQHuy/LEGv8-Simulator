@@ -224,16 +224,19 @@
       </g>
   </g> <!-- End Components Layer -->
 
-	<!-- Signal Lines Layer (Drawn FIRST = Underneath) -->
+	<!-- Signal Lines Layer -->
 	<g id="signal-lines">
-		<!-- Đường dẫn polyline -->
-		<polyline id="path-pc-add" class="signal-line" 
-							points="90,385 90,92.5 100,92.5" />
 
-		<!-- Dot di chuyển theo đường -->
-		<circle r="5" fill="red">
-			<animateMotion dur="4s" repeatCount="indefinite">
-				<mpath href="#path-pc-add" />
+		<!-- Đường đi thật để dùng cho animation -->
+		<path id="motion-path" 
+					d="M90,385 L90,92.5 L100,92.5" 
+					fill="none" 
+					stroke="black" />
+
+		<!-- Chấm tròn di chuyển theo đường path -->
+		<circle id = "point" r="5" fill="red" visibility="hidden">
+			<animateMotion id = "animationDot" dur="2s" rotate="auto" fill="freeze" begin="indefinite">
+				<mpath href="#motion-path" />
 			</animateMotion>
 		</circle>
 	</g>
@@ -242,15 +245,15 @@
 
 <!-- Removed the complex JS, relying on begin="startButton.click" -->
 <!-- You can add JS back if more complex control is needed -->
-<!-- <script>
-  // Basic JS example if needed later
-  // const startButton = document.getElementById('startButton');
-  // const dotAnimation = document.getElementById('dotAnimationPcAdd');
-  // startButton.addEventListener('click', () => {
-  //   console.log("Button clicked, attempting to start animation...");
-  //   dotAnimation.beginElement();
-  // });
-</script> -->
+<script>
+  const startButton = document.getElementById('startButton');
+  const dotAnimation = document.getElementById('dotAnimationPcAdd');
+  startButton.addEventListener('click', () => {
+		document.getElementById("point").setAttribute("visibility", "visible");
+		const aim = document.getElementById("animationDot");
+		aim.beginElement();
+  });
+</script>
 
 </body>
 </html>
