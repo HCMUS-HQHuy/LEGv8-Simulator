@@ -1,17 +1,51 @@
-body { font-family: sans-serif; }
+body { 
+  font-family: sans-serif; 
+}
+
 .component {
   fill: white;
-  stroke: red;
-  stroke-width: 3;
+  stroke: black;
+  stroke-width: 2;
   vector-effect: non-scaling-stroke;
 }
+
+.control-component {
+  fill: white;
+  stroke: rgb(8, 192, 248);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
 .label {
   font-family: sans-serif;
-  font-size: 12px;
+  font-size: 22px;
   text-anchor: middle;
   dominant-baseline: middle;
   fill: black;
+  font-weight: bold;
 }
+
+.mem-label {
+  font-family: sans-serif;
+  font-size: 20px;
+  fill: black;
+}
+
+.control-label {
+  font-family: sans-serif;
+  font-size: 22px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  fill: rgb(8, 192, 248);
+  font-weight: bold;
+}
+
+.mem-control-label {
+  font-family: sans-serif;
+  font-size: 20px;
+  fill: rgb(8, 192, 248);
+}
+
 .label-start {
   font-family: sans-serif;
   font-size: 10px;
@@ -19,30 +53,23 @@ body { font-family: sans-serif; }
   dominant-baseline: middle;
   fill: black;
 }
- .mux-label {
-  font-family: sans-serif;
-  font-size: 10px;
-  text-anchor: middle;
-  dominant-baseline: middle;
-  fill: black;
-}
-.mem-label {
-   font-family: sans-serif;
-   font-size: 10px;
-   text-anchor: middle;
-   dominant-baseline: middle;
-   fill: black;
-}
+
 .signal-line {
   fill: none;
-  stroke: blueviolet;
+  stroke: black;
   stroke-width: 3;
 }
 
 .control-signal-line{
   fill: none;
-  stroke: black;
+  stroke: rgb(8, 192, 248);
   stroke-width: 3;
+}
+
+.ALU-control-signal-line{
+  fill: none;
+  stroke: rgb(8, 192, 248);
+  stroke-width: 6;
 }
 
 /* Style cho node tín hiệu */
@@ -80,15 +107,16 @@ body { font-family: sans-serif; }
 	overflow: hidden;
 	position: relative;
 	background: #fafafa;
-/* 	
-	background-image: url('../download.png');
+	
+	/* background-image: url('../imageReal.png');
 	background-size: 90%;
 	background-position: center;
 	background-repeat: no-repeat; */
-  }
-  .content {
+}
+
+.content {
 	transform-origin: top left;
 	transition: transform 0.1s ease;
 	width: auto;
 	height: auto;
-  }
+}
