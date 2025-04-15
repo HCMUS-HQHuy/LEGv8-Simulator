@@ -1,12 +1,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>SVG có viewBox</title>
+<title>Get Instructions from Form</title>
+<style>
+  body { font-family: sans-serif; }
+  textarea { display: block; margin-bottom: 10px; }
+</style>
 </head>
 <body>
-  <h2>SVG có viewBox</h2>
-  <svg  style="width: 30%; height: auto; border: 1px solid black;">
-    <circle cx="50" cy="50" r="40" fill="orange" />
-  </svg>
+
+<h1>Enter LEGv8 Instructions</h1>
+
+<!-- Add id="codeForm" to the form -->
+<form id="codeForm">
+  <!-- Add id="instructionCode" to the textarea -->
+  <textarea id="instructionCode" name="message" rows="10" cols="50" placeholder="Enter LEGv8 code here, one instruction per line..."></textarea>
+  <input type="submit" value="Parse Instructions">
+</form>
+
+<h2>Parsed Output:</h2>
+<pre id="outputArea"></pre> <!-- Area to display results -->
+
+<!-- Include your parser function (or placeholder) -->
+<script>
+    // Placeholder for your parseLegv8Instruction function from the previous example
+    // PASTE YOUR ACTUAL parseLegv8Instruction function HERE
+    function parseLegv8Instruction(line) {
+        console.log("Parsing (placeholder):", line);
+        // --- Replace this with your actual parser logic ---
+        if (!line || !line.trim()) return null;
+        const parts = line.trim().split(/\s+/);
+        const mnemonic = parts[0] ? parts[0].toUpperCase() : '???';
+        const operands = parts.slice(1);
+        return {
+            mnemonic: mnemonic,
+            operands: operands,
+            type: 'UNKNOWN', // Your parser would determine this
+            structuredOperands: null,
+            error: null
+        };
+        // --- End of placeholder ---
+    }
+</script>
+
+<!-- JavaScript to handle the form -->
+<script>
+    // Wait for the HTML document to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Get references to the form and the output area
+        const codeForm = document.getElementById('codeForm');
+        const instructionTextarea = document.getElementById('instructionCode');
+        const outputArea = document.getElementById('outputArea');
+
+        // Add an event listener for the 'submit' event on the form
+        codeForm.addEventListener('submit', function(event) {
+            // *** Prevent the default form submission behavior (which would reload the page) ***
+            event.preventDefault();
+
+            // 1. Get the entire text content from the textarea
+            const allCode = instructionTextarea.value;
+
+            // 2. Split the text into an array of lines (potential instructions)
+            //    Handles different newline characters (\n, \r\n)
+            const codeLines = allCode.split(/\r?\n/);
+
+            // Clear previous output
+            outputArea.textContent = '';
+            let results = []; // Array to hold parsed results
+
+            // 3. Process each line
+            console.log("--- Processing Input ---");
+            codeLines.forEach((line, index) => {
+                const trimmedLine = line.trim(); // Remove leading/trailing whitespace
+
+                // Optional: Skip empty lines or comment lines
+                if (!trimmedLine || trimmedLine.startsWith('//') || trimmedLine.startsWith(';')) {
+                    console.log(`Line ${index + 1}: Skipped (empty or comment)`);
+                    return; // Move to the next line
+                }
+
+                console.log(`Line ${index + 1}: "${trimmedLine}"`);
+
+                // 4. Use your parser function on the individual line
+                const parsedInstruction = parseLegv8Instruction(trimmedLine);
+
+                // Store or display the result
+                if (parsedInstruction) {
+                    results.push({ lineNumber: index + 1, parsed: parsedInstruction });
+                    console.log(`Parsed Line ${index + 1}:`, parsedInstruction);
+                } else {
+                     // Handle cases where the parser might return null for valid but ignored lines
+                     console.log(`Line ${index + 1}: Parser returned null/undefined`);
+                }
+            });
+            console.log("--- Processing Complete ---");
+
+            // Display the results in the output area
+            outputArea.textContent = JSON.stringify(results, null, 2); // Pretty-print JSON output
+
+            // You can now do more with the 'results' array,
+            // like feeding it to a simulator function.
+        });
+
+    }); // End DOMContentLoaded listener
+</script>
+
 </body>
 </html>

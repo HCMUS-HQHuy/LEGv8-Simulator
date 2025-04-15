@@ -38,12 +38,12 @@
           <text x="60" y="85" class="mem-label">[31-0]</text>   <!-- y gần giữa -->
       
         </g>
-        <!-- data memory  -->
+        <!-- Register  -->
         <g transform="translate(580, 520)">
           <rect width="170" height="220" class="component" />
-          <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" class="label">Data Memory</text>
+          <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" class="label">Register</text>
         </g>
-        <!-- Register  -->
+        <!-- data memory  -->
         <g transform="translate(1150, 610)">
           <rect width="140" height="200" class="component" />
           <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" class="label">Data Memory</text>
@@ -194,6 +194,7 @@
             d="M153,550 L182,550" 
             class = "signal-line" 
             marker-end="url(#arrow)" />
+
       <path id="pc-to-ALU-add-top-left-path" 
             d="M153,550 L165,550 L165,75 L292, 75" 
             class = "signal-line" 
@@ -213,6 +214,38 @@
             d="M1322,160 L1390, 160 L1390, 30 L60, 30 L60, 550 L92, 550" 
             class = "signal-line" 
             marker-end="url(#arrow)" />
+      
+      <path id="pc-to-alu-add-right-path" 
+            d="M153,550 L165,550 L165,200 L500,200 L500,150 L970, 150" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
+      <path id="alu-add-right-to-mux-path" 
+            d="M1065, 200 L1275, 200" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
+      
+      <path id="instruction-memory-to-control-path" 
+            d="M320, 630 L340, 630 L340,380 L505, 380" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
+
+      <path id="instruction-memory-to-data-memory-path" 
+            d="M320, 630 L340, 630 L340,540 L575, 540" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
+      <path id="instruction-memory-to-mux0-path" 
+            d="M320, 630 L340, 630 L340,580 L515, 580" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
+      <path id="instruction-memory-to-mux1-path" 
+            d="M320, 630 L340, 630 L340,680 L480, 680 L480,630 L515,630" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
+            
+      <path id="instruction-memory-to-register-path" 
+            d="M320, 630 L340, 630 L340,680 L575, 680" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
 
       <!-- Chấm tròn di chuyển theo đường path -->
       <circle id = "point" r="5" fill="red" visibility="hidden">
@@ -226,7 +259,17 @@
   </div>
 </div>
 
+<form id="codeForm" >
+  <!-- Add id="instructionCode" to the textarea -->
+  <textarea id="instructionCode" name="message" rows="10" cols="50" placeholder="Enter LEGv8 code here, one instruction per line..."></textarea>
+  <input type="submit" value="Parse Instructions">
+</form>
+
+<h2>Parsed Output:</h2>
+<pre id="outputArea"></pre> 
+
 <script src="./Scripts/handleLinePath.js"></script>
+<script src="./Scripts/parsecode.js"></script>
 
 </body>
 </html>
