@@ -180,16 +180,44 @@
     <!-- Signal Lines Layer -->
     <g id="signal-lines">
 
+      <defs>
+        <marker id="circle" markerWidth="8" markerHeight="8" refX="5" refY="5">
+          <circle cx="5" cy="5" r="3" fill="context-stroke" />
+        </marker>
+        <marker id="arrow" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto">
+          <path d="M0,0 L4,2 L0,4 z" fill="context-stroke" />
+        </marker>
+      </defs>
+
       <!-- Đường đi thật để dùng cho animation -->
-      <path id="motion-path" 
-            d="M90,385 L90,92.5 L100,92.5" 
-            fill="none" 
-            stroke="black" />
+      <path id="pc-to-instruction-memory-path" 
+            d="M153,550 L182,550" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
+      <path id="pc-to-ALU-add-top-left-path" 
+            d="M153,550 L165,550 L165,75 L292, 75" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
+
+      <path id="const-to-ALU-add-top-left-path" 
+            d="M250,150 L292, 150" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
+        
+      <path id="ALU-add-top-left-to-mux-path" 
+            d="M370,120 L1272, 120" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
+      
+      <path id="mux-to-pc-path" 
+            d="M1322,160 L1390, 160 L1390, 30 L60, 30 L60, 550 L92, 550" 
+            class = "signal-line" 
+            marker-end="url(#arrow)" />
 
       <!-- Chấm tròn di chuyển theo đường path -->
       <circle id = "point" r="5" fill="red" visibility="hidden">
         <animateMotion id = "animationDot" dur="2s" rotate="auto" fill="freeze" begin="indefinite">
-          <mpath href="#motion-path" />
+          <mpath href="#pc-to-ALU-add-top-left-path" />
         </animateMotion>
       </circle>
     </g>

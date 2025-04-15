@@ -35,8 +35,8 @@ body { font-family: sans-serif; }
 }
 .signal-line {
   fill: none;
-  stroke: #00aaff;
-  stroke-width: 2;
+  stroke: green;
+  stroke-width: 3;
 }
 /* Style for the moving dot */
 #movingDot {
