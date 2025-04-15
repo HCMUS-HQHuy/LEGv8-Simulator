@@ -2,69 +2,7 @@
 <html>
 <head>
 <title>Datapath Components (Animated Line - Fixed)</title>
-<style>
-  body { font-family: sans-serif; }
-  .component {
-    fill: white;
-    stroke: black;
-    stroke-width: 1.5;
-    vector-effect: non-scaling-stroke;
-  }
-  .label {
-    font-family: sans-serif;
-    font-size: 12px;
-    text-anchor: middle;
-    dominant-baseline: middle;
-    fill: black;
-  }
-  .label-start {
-    font-family: sans-serif;
-    font-size: 10px;
-    text-anchor: start;
-    dominant-baseline: middle;
-    fill: black;
-  }
-   .mux-label {
-    font-family: sans-serif;
-    font-size: 10px;
-    text-anchor: middle;
-    dominant-baseline: middle;
-    fill: black;
-  }
-  .mem-label {
-     font-family: sans-serif;
-     font-size: 10px;
-     text-anchor: middle;
-     dominant-baseline: middle;
-     fill: black;
-  }
-  .signal-line {
-    fill: none;
-    stroke: #00aaff;
-    stroke-width: 2;
-  }
-  /* Style for the moving dot */
-  #movingDot {
-      fill: red;
-      /* visibility: hidden; /* Let's keep it visible initially for debugging */
-  }
-  
-  .frame {
-      width: 1500px;
-      height: 1000px;
-      border: 2px solid #333;
-      margin: 50px auto;
-      overflow: hidden;
-      position: relative;
-      background: #fafafa;
-    }
-    .content {
-      transform-origin: top left;
-      transition: transform 0.1s ease;
-      width: 1500px;
-      height: 1000px;
-    }
-</style>
+<link rel="stylesheet" href="Styles/linepath.css">
 </head>
 <body>
 
@@ -73,8 +11,7 @@
 
 <div class="frame" id="zoomFrame">
   <div class="content" id="zoomContent">
-  <svg width="1500" height="1000" viewBox="0 0 1500 1000">
-
+  <svg viewBox="0 0 1500 1000">
     <defs>
       <!-- Symbols -->
       <symbol id="MuxShape" viewBox="0 0 50 90">
@@ -262,35 +199,8 @@
   </svg>
   </div>
 </div>
-<script>
-  const startButton = document.getElementById('startButton');
-  const dotAnimation = document.getElementById('dotAnimationPcAdd');
-  startButton.addEventListener('click', () => {
-		document.getElementById("point").setAttribute("visibility", "visible");
-		const aim = document.getElementById("animationDot");
-		aim.beginElement();
-  });
 
-  const content = document.getElementById('zoomContent');
-    const frame = document.getElementById('zoomFrame');
-    let scale = 1;
-
-    frame.addEventListener('wheel', function(e) {
-      if (e.ctrlKey) {
-        e.preventDefault(); // Ngăn không cho browser zoom
-        const delta = e.deltaY;
-        const zoomFactor = 0.1;
-
-        if (delta > 0) {
-          scale = Math.max(0.1, scale - zoomFactor);
-        } else {
-          scale = Math.min(5, scale + zoomFactor);
-        }
-
-        content.style.transform = `scale(${scale})`;
-      }
-    }, { passive: false });
-</script>
+<script src="./Scripts/handleLinePath.js"></script>
 
 </body>
 </html>
