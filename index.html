@@ -1,18 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Datapath Components (Corrected ALU & Rectangles - Final)</title>
+<title>Datapath Components (Grouped for Easy Positioning)</title>
 <style>
   .component {
     fill: white;
     stroke: black;
-    stroke-width: 1.5; /* Consistent stroke width */
-    vector-effect: non-scaling-stroke; /* Apply generally */
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
   }
   .label {
     font-family: sans-serif;
     font-size: 12px;
     text-anchor: middle;
+    dominant-baseline: middle;
+    fill: black;
+  }
+  .label-start { /* For labels aligned to the start/left */
+    font-family: sans-serif;
+    font-size: 10px;
+    text-anchor: start;
     dominant-baseline: middle;
     fill: black;
   }
@@ -23,6 +30,13 @@
     dominant-baseline: middle;
     fill: black;
   }
+  .mem-label { /* Smaller labels inside memory blocks */
+     font-family: sans-serif;
+     font-size: 10px;
+     text-anchor: middle;
+     dominant-baseline: middle;
+     fill: black;
+  }
 </style>
 </head>
 <body>
@@ -30,149 +44,174 @@
 <svg width="1000" height="800" viewBox="0 0 1000 800">
 
   <defs>
-    <!-- Symbols for shapes that ARE reused without distortion -->
-
-    <!-- Hình Mux (Tỷ lệ 50:90) -->
+    <!-- Symbols for shapes that ARE reused without significant distortion -->
     <symbol id="MuxShape" viewBox="0 0 50 90">
        <path d="M 0 0 L 50 15 L 50 75 L 0 90 Z" class="component"/>
     </symbol>
-
-    <!-- Hình Elip nhỏ (rx=50, ry=30 => width=100, height=60) -->
     <symbol id="SmallEllipseShape" viewBox="0 0 100 60">
        <ellipse cx="50" cy="30" rx="50" ry="30" class="component"/>
     </symbol>
-
-     <!-- Hình Cổng AND (Width=30, Height=40) -->
     <symbol id="AndGateShape" viewBox="0 0 30 40">
-        <!-- Adjusted shape slightly for better look -->
         <path d="M 0 0 L 15 0 A 15 20 0 0 1 15 40 L 0 40 Z" class="component"/>
     </symbol>
-
-		<symbol id="ALUEShape" viewBox="0 0 50 70">
-      <polygon points="0,25 0,0 50,19 50,51 0,70 0,45 13,35" class="component" vector-effect="non-scaling-stroke"/>
-    </symbol>
-     <!-- No symbol for Rectangles or ALU/Add due to scaling/size issues -->
-
   </defs>
 
-  <!-- PC - Direct Rect, width=120, height=80 (Adjusted for consistency) -->
-  <rect x="30" y="385" width="120" height="80" class="component" />
-  <text x="90" y="425" class="label">PC</text>
+  <!-- PC Group -->
+  <g transform="translate(30, 385)">
+    <rect width="120" height="80" class="component" />
+    <text x="60" y="40" class="label">PC</text> <!-- Relative center -->
+  </g>
 
-  <!-- Instruction Memory - Direct Rect, width=120, height=100 -->
-  <rect x="50" y="500" width="120" height="100" class="component" />
-  <text x="110" y="520" class="label">Instruction</text>
-  <text x="110" y="535" class="label">memory</text>
-  <text x="110" y="565" class="label" font-size="10">Read</text>
-  <text x="110" y="575" class="label" font-size="10">address</text>
-  <text x="110" y="615" class="label" font-size="10">Instruction</text>
-  <text x="110" y="625" class="label" font-size="10">[31-0]</text>
+  <!-- Instruction Memory Group -->
+  <g transform="translate(50, 500)">
+    <rect width="120" height="100" class="component" />
+    <text x="60" y="20" class="label">Instruction</text> <!-- Relative positions -->
+    <text x="60" y="35" class="label">memory</text>
+    <text x="60" y="65" class="mem-label">Read</text>
+    <text x="60" y="75" class="mem-label">address</text>
+    <!-- Output label is outside the group for wiring -->
+    <text x="60" y="115" class="mem-label">Instruction</text> <!-- Placed below for clarity -->
+    <text x="60" y="125" class="mem-label">[31-0]</text>
+  </g>
 
+  <!-- Add (Top Left) Group -->
+  <g transform="translate(100, 80)">
+    <!-- Polygon points relative to (0,0) of the group -->
+    <polygon points="0,25 0,0 50,19 50,51 0,70 0,45 13,35" class="component"/>
+    <text x="25" y="35" class="label">Add</text> <!-- Relative center -->
+  </g>
 
-  <!-- Add (Top Left) - Using Symbol -->
-  <use href="#ALUEShape" x="100" y="80" width="80" height="70"/>
-  <text x="140" y="115" class="label">Add</text>
+  <!-- Control Group -->
+  <g transform="translate(280, 250)"> <!-- Position based on center (350, 300) minus radius (70, 50) -->
+    <ellipse cx="70" cy="50" rx="70" ry="50" class="component" />
+    <text x="70" y="50" class="label">Control</text> <!-- Relative center -->
+  </g>
 
-  <!-- Control - Direct Ellipse -->
-  <ellipse cx="350" cy="300" rx="70" ry="50" class="component" />
-  <text x="350" y="300" class="label">Control</text>
-  <!-- Control Output Labels -->
-  <text x="440" y="255" class="label" text-anchor="start" font-size="10">Reg2Loc</text>
-  <text x="440" y="270" class="label" text-anchor="start" font-size="10">UncondBranch</text>
-  <text x="440" y="285" class="label" text-anchor="start" font-size="10">FlagBranch</text>
-  <text x="440" y="300" class="label" text-anchor="start" font-size="10">ZeroBranch</text>
-  <text x="440" y="315" class="label" text-anchor="start" font-size="10">MemRead</text>
-  <text x="440" y="330" class="label" text-anchor="start" font-size="10">MemToReg</text>
-  <text x="440" y="345" class="label" text-anchor="start" font-size="10">MemWrite</text>
-  <text x="440" y="360" class="label" text-anchor="start" font-size="10">FlagWrite</text>
-  <text x="440" y="375" class="label" text-anchor="start" font-size="10">ALUSrc</text>
-  <text x="440" y="390" class="label" text-anchor="start" font-size="10">ALUOp</text>
-  <text x="440" y="405" class="label" text-anchor="start" font-size="10">RegWrite</text>
+  <!-- Control Output Labels (Keep absolute for now, as they are outside the shape) -->
+  <text x="440" y="255" class="label-start">Reg2Loc</text>
+  <text x="440" y="270" class="label-start">UncondBranch</text>
+  <text x="440" y="285" class="label-start">FlagBranch</text>
+  <text x="440" y="300" class="label-start">ZeroBranch</text>
+  <text x="440" y="315" class="label-start">MemRead</text>
+  <text x="440" y="330" class="label-start">MemToReg</text>
+  <text x="440" y="345" class="label-start">MemWrite</text>
+  <text x="440" y="360" class="label-start">FlagWrite</text>
+  <text x="440" y="375" class="label-start">ALUSrc</text>
+  <text x="440" y="390" class="label-start">ALUOp</text>
+  <text x="440" y="405" class="label-start">RegWrite</text>
 
-  <!-- Mux (Left) - Using Symbol -->
-  <use href="#MuxShape" x="250" y="480" width="50" height="90"/>
-  <text x="275" y="525" class="label">Mux</text>
-  <text x="245" y="495" class="mux-label">0</text>
-  <text x="245" y="555" class="mux-label">1</text>
+  <!-- Mux (Left) Group -->
+  <g transform="translate(250, 480)">
+    <use href="#MuxShape" width="50" height="90"/>
+    <text x="25" y="45" class="label">Mux</text> <!-- Relative center -->
+    <text x="-5" y="15" class="mux-label">0</text> <!-- Relative to Mux top -->
+    <text x="-5" y="75" class="mux-label">1</text> <!-- Relative to Mux bottom -->
+  </g>
 
-  <!-- Registers - Direct Rect, width=120, height=150 -->
-  <rect x="330" y="480" width="120" height="150" class="component" />
-  <text x="390" y="555" class="label">Registers</text>
-  <text x="390" y="500" class="label" font-size="10">Read</text>
-  <text x="390" y="510" class="label" font-size="10">register 1</text>
-  <text x="390" y="530" class="label" font-size="10">Read</text>
-  <text x="390" y="540" class="label" font-size="10">register 2</text>
-  <text x="390" y="575" class="label" font-size="10">Write</text>
-  <text x="390" y="585" class="label" font-size="10">register</text>
-  <text x="390" y="610" class="label" font-size="10">Write</text>
-  <text x="390" y="620" class="label" font-size="10">data</text>
-   <text x="470" y="510" class="label" font-size="10" text-anchor="start">Read</text>
-   <text x="470" y="520" class="label" font-size="10" text-anchor="start">data 1</text>
-   <text x="470" y="560" class="label" font-size="10" text-anchor="start">Read</text>
-   <text x="470" y="570" class="label" font-size="10" text-anchor="start">data 2</text>
+  <!-- Registers Group -->
+  <g transform="translate(330, 480)">
+    <rect width="120" height="150" class="component" />
+    <text x="60" y="75" class="label">Registers</text> <!-- Relative center -->
+    <!-- Input labels relative to left edge -->
+    <text x="60" y="20" class="mem-label">Read</text>
+    <text x="60" y="30" class="mem-label">register 1</text>
+    <text x="60" y="50" class="mem-label">Read</text>
+    <text x="60" y="60" class="mem-label">register 2</text>
+    <text x="60" y="95" class="mem-label">Write</text>
+    <text x="60" y="105" class="mem-label">register</text>
+    <text x="60" y="130" class="mem-label">Write</text>
+    <text x="60" y="140" class="mem-label">data</text>
+    <!-- Output labels relative to right edge -->
+    <text x="140" y="30" class="label-start">Read</text>
+    <text x="140" y="40" class="label-start">data 1</text>
+    <text x="140" y="80" class="label-start">Read</text>
+    <text x="140" y="90" class="label-start">data 2</text>
+  </g>
 
+  <!-- Sign Extend Group -->
+  <g transform="translate(350, 670)">
+    <use href="#SmallEllipseShape" width="100" height="60"/>
+    <text x="50" y="30" class="label">Sign-</text> <!-- Relative center -->
+    <text x="50" y="45" class="label">extend</text>
+  </g>
 
-  <!-- Sign Extend - Using Symbol -->
-  <use href="#SmallEllipseShape" x="350" y="670" width="100" height="60"/>
-  <text x="400" y="700" class="label">Sign-</text>
-  <text x="400" y="715" class="label">extend</text>
+  <!-- ALU Control Group -->
+  <g transform="translate(500, 670)">
+    <use href="#SmallEllipseShape" width="100" height="60"/>
+    <text x="50" y="30" class="label">ALU</text> <!-- Relative center -->
+    <text x="50" y="45" class="label">control</text>
+  </g>
 
-  <!-- ALU Control - Using Symbol -->
-  <use href="#SmallEllipseShape" x="500" y="670" width="100" height="60"/>
-  <text x="550" y="700" class="label">ALU</text>
-  <text x="550" y="715" class="label">control</text>
+  <!-- Mux (Bottom) Group -->
+  <g transform="translate(580, 550)">
+     <use href="#MuxShape" width="50" height="90"/>
+     <text x="25" y="45" class="label">Mux</text> <!-- Relative center -->
+     <text x="-5" y="15" class="mux-label">0</text> <!-- Relative to Mux top -->
+     <text x="-5" y="75" class="mux-label">1</text> <!-- Relative to Mux bottom -->
+  </g>
 
-  <!-- Mux (Bottom) - Using Symbol -->
-  <use href="#MuxShape" x="580" y="550" width="50" height="90"/>
-  <text x="605" y="595" class="label">Mux</text>
-  <text x="575" y="565" class="mux-label">0</text>
-  <text x="575" y="625" class="mux-label">1</text>
+  <!-- ALU Group -->
+  <g transform="translate(650, 520)">
+    <!-- Polygon points relative to (0,0) of the group -->
+    <polygon points="0,47 0,0 80,35 80,95 0,130 0,83 13,65" class="component"/>
+    <text x="40" y="65" class="label">ALU</text> <!-- Relative center -->
+    <text x="90" y="65" class="mem-label">Zero</text> <!-- Relative to right side -->
+  </g>
 
-  <!-- ALU - Using direct Polygon for consistent stroke -->
-  <!-- <polygon points="650,567 650,520 730,555 730,615 650,650 650,603 663,585" class="component"/> -->
-	<use href="#ALUESHAPE" />
-  <text x="690" y="585" class="label">ALU</text>
-  <text x="740" y="585" class="label" font-size="10">Zero</text>
+  <!-- NZCV Flags Group -->
+  <g transform="translate(600, 500)">
+     <rect width="80" height="25" class="component" />
+     <text x="40" y="12.5" class="label">N Z C V</text> <!-- Relative center -->
+  </g>
 
-  <!-- NZCV Flags - Direct Rect (Original Size) -->
-  <rect x="600" y="500" width="80" height="25" class="component" />
-  <text x="640" y="512.5" class="label">N Z C V</text>
+  <!-- Shift Left 2 Group -->
+  <g transform="translate(500, 160)">
+     <use href="#SmallEllipseShape" width="100" height="60"/>
+     <text x="50" y="30" class="label">Shift</text> <!-- Relative center -->
+     <text x="50" y="45" class="label">left 2</text>
+  </g>
 
-  <!-- Shift Left 2 - Using Symbol -->
-  <use href="#SmallEllipseShape" x="500" y="160" width="100" height="60"/>
-  <text x="550" y="190" class="label">Shift</text>
-  <text x="550" y="205" class="label">left 2</text>
+  <!-- Add (Top Right) Group -->
+  <g transform="translate(650, 130)">
+     <!-- Polygon points relative to (0,0) of the group -->
+		 <polygon points="0,25 0,0 50,19 50,51 0,70 0,45 13,35" class="component"/>
+		 <text x="25" y="35" class="label">Add</text> <!-- Relative center -->
+  </g>
 
-  <!-- Add (Top Right) - Using Symbol -->
-  <use href="#ALUEShape" x="650" y="130" width="80" height="70"/>
-  <text x="690" y="165" class="label">Add</text>
+  <!-- OR Gate Group -->
+  <g transform="translate(770, 250)"> <!-- Position based on original path -->
+    <path d="M 30 0 Q 50 25, 30 50 L 0 50 Q 30 25, 0 0 Z" class="component"/> <!-- Path relative to (0,0) -->
+  </g>
 
-  <!-- OR Gate - Direct Path -->
-  <path d="M 800 250 Q 820 275, 800 300 L 770 300 Q 800 275, 770 250 Z" class="component"/>
+  <!-- AND Gate (Top) Group -->
+  <g transform="translate(700, 480)">
+      <use href="#AndGateShape" width="30" height="40"/>
+  </g>
 
-  <!-- AND Gate (Top) - Using Symbol -->
-  <use href="#AndGateShape" x="700" y="480" width="30" height="40"/>
+  <!-- AND Gate (Bottom) Group -->
+  <g transform="translate(700, 380)">
+      <use href="#AndGateShape" width="30" height="40"/>
+  </g>
 
-  <!-- AND Gate (Bottom) - Using Symbol -->
-  <use href="#AndGateShape" x="700" y="380" width="30" height="40"/>
+  <!-- Data Memory Group -->
+  <g transform="translate(780, 550)">
+    <rect width="120" height="100" class="component" />
+    <text x="60" y="50" class="label">Data</text> <!-- Relative center -->
+    <text x="60" y="65" class="label">memory</text>
+    <text x="60" y="20" class="mem-label">Address</text> <!-- Relative top -->
+    <text x="60" y="85" class="mem-label">Write</text> <!-- Relative bottom -->
+    <text x="60" y="95" class="mem-label">Data</text>
+    <text x="140" y="40" class="label-start">Read</text> <!-- Relative to right edge -->
+    <text x="140" y="50" class="label-start">Data</text>
+  </g>
 
-
-  <!-- Data Memory - Direct Rect, width=120, height=100 -->
-  <rect x="780" y="550" width="120" height="100" class="component" />
-  <text x="840" y="600" class="label">Data</text>
-  <text x="840" y="615" class="label">memory</text>
-  <text x="840" y="570" class="label" font-size="10">Address</text>
-  <text x="840" y="635" class="label" font-size="10">Write</text>
-  <text x="840" y="645" class="label" font-size="10">Data</text>
-  <text x="920" y="590" class="label" font-size="10" text-anchor="start">Read</text>
-  <text x="920" y="600" class="label" font-size="10" text-anchor="start">Data</text>
-
-
-  <!-- Mux (Right) - Using Symbol -->
-  <use href="#MuxShape" x="900" y="100" width="50" height="90"/>
-  <text x="925" y="145" class="label">Mux</text>
-  <text x="955" y="115" class="mux-label">0</text>
-  <text x="955" y="175" class="mux-label">1</text>
+  <!-- Mux (Right) Group -->
+  <g transform="translate(900, 100)">
+     <use href="#MuxShape" width="50" height="90"/>
+     <text x="25" y="45" class="label">Mux</text> <!-- Relative center -->
+     <text x="55" y="15" class="mux-label">0</text> <!-- Relative to Mux top -->
+     <text x="55" y="75" class="mux-label">1</text> <!-- Relative to Mux bottom -->
+  </g>
 
 </svg>
 
