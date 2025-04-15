@@ -28,20 +28,28 @@
     <!-- Components Layer (Drawn AFTER lines = On Top) -->
     <g id="components">
         <!-- PC Group -->
-        <g transform="translate(30, 385)">
-          <rect width="120" height="80" class="component" />
-          <text x="60" y="40" class="label">PC</text>
+        <g transform="translate(100, 500)">
+          <rect width="50" height="100" class="component" />
+          <text x="25" y="50" text-anchor="middle" dominant-baseline="middle" class="label">PC</text>
         </g>
 
         <!-- Instruction Memory Group -->
-        <g transform="translate(50, 500)">
-          <rect width="120" height="100" class="component" />
-          <text x="60" y="20" class="label">Instruction</text>
-          <text x="60" y="35" class="label">memory</text>
-          <text x="60" y="65" class="mem-label">Read</text>
-          <text x="60" y="75" class="mem-label">address</text>
-          <text x="60" y="115" class="mem-label">Instruction</text>
-          <text x="60" y="125" class="mem-label">[31-0]</text>
+        <g transform="translate(100, 550)">
+          <rect width="120" height="150" class="component" />
+          <!-- Chia thành 2 dòng dùng 2 text element -->
+          <text x="60" y="125" class="label">Instruction</text> <!-- x=width/2 -->
+          <text x="60" y="140" class="label">memory</text>    <!-- y gần đáy -->
+      
+          <!-- Nhãn phụ "Read address" (ở trên, căn giữa) -->
+          <!-- Chia thành 2 dòng -->
+          <text x="60" y="20" class="mem-label">Read</text>     <!-- x=width/2 -->
+          <text x="60" y="35" class="mem-label">address</text>  <!-- y gần đỉnh -->
+      
+          <!-- Nhãn phụ "Instruction [31-0]" (ở giữa, căn giữa) -->
+          <!-- Chia thành 2 dòng -->
+          <text x="60" y="70" class="mem-label">Instruction</text> <!-- x=width/2 -->
+          <text x="60" y="85" class="mem-label">[31-0]</text>   <!-- y gần giữa -->
+      
         </g>
 
         <!-- Add (Top Left) Group -->
@@ -52,22 +60,38 @@
 
         <!-- Control Group -->
         <g transform="translate(280, 250)">
-          <ellipse cx="70" cy="50" rx="70" ry="50" class="component" />
-          <text x="70" y="50" class="label">Control</text>
-        </g>
+              <!-- Hình Ellipse -->
+            <!-- cx, cy là tâm tương đối so với điểm (0,0) của group transform -->
+            <!-- rx, ry là bán kính ngang và dọc -->
+            <ellipse cx="70" cy="50" rx="50" ry="120" class="component" />
+            <!-- Chữ "Control" ở giữa ellipse -->
+            <text x="70" y="50" class="label">Control</text>
+          </g>
 
-        <!-- Control Output Labels -->
-        <text x="440" y="255" class="label-start">Reg2Loc</text>
-        <text x="440" y="270" class="label-start">UncondBranch</text>
-        <text x="440" y="285" class="label-start">FlagBranch</text>
-        <text x="440" y="300" class="label-start">ZeroBranch</text>
-        <text x="440" y="315" class="label-start">MemRead</text>
-        <text x="440" y="330" class="label-start">MemToReg</text>
-        <text x="440" y="345" class="label-start">MemWrite</text>
-        <text x="440" y="360" class="label-start">FlagWrite</text>
-        <text x="440" y="375" class="label-start">ALUSrc</text>
-        <text x="440" y="390" class="label-start">ALUOp</text>
-        <text x="440" y="405" class="label-start">RegWrite</text>
+          <!-- Các nhãn tín hiệu Control Output -->
+          <!-- Đặt ở tọa độ tuyệt đối trên SVG canvas -->
+          <!-- Sử dụng lại tọa độ x, y từ code gốc của bạn hoặc điều chỉnh -->
+          <!-- x="440" là vị trí bắt đầu ngang của tất cả các nhãn -->
+          <!-- y="..." thay đổi để xếp các nhãn theo chiều dọc, cách đều 15 đơn vị -->
+          <text x="440" y="255" class="label-start">Reg2Loc</text>
+          <text x="440" y="270" class="label-start">UncondBranch</text>
+          <text x="440" y="285" class="label-start">FlagBranch</text>
+          <text x="440" y="300" class="label-start">ZeroBranch</text>
+          <text x="440" y="315" class="label-start">MemRead</text>
+          <text x="440" y="330" class="label-start">MemToReg</text>
+          <text x="440" y="345" class="label-start">MemWrite</text>
+          <text x="440" y="360" class="label-start">FlagWrite</text>
+          <text x="440" y="375" class="label-start">ALUSrc</text>
+          <text x="440" y="390" class="label-start">ALUOp</text>
+          <text x="440" y="405" class="label-start">RegWrite</text>
+
+          <!-- Chỗ để vẽ các đường tín hiệu vào/ra sau này -->
+          <!-- Ví dụ đường ra từ ellipse đến nhãn Reg2Loc -->
+          <!-- <line x1="350" y1="255" x2="440" y2="255" class="signal-line" /> -->
+          <!-- (350 = translate_x + cx + rx = 280 + 70 + 0) -->
+          <!-- Hoặc bạn có thể vẽ path phức tạp hơn -->
+          <!-- <path d="M 350 255 H 440" class="signal-line" /> -->
+
 
         <!-- Mux (Left) Group -->
         <g transform="translate(250, 480)">

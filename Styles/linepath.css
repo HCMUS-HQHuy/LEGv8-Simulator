@@ -52,6 +52,11 @@ body { font-family: sans-serif; }
 	overflow: hidden;
 	position: relative;
 	background: #fafafa;
+	
+	background-image: url('../download.png');
+	background-size: 90%;
+	background-position: center;
+	background-repeat: no-repeat;
   }
   .content {
 	transform-origin: top left;

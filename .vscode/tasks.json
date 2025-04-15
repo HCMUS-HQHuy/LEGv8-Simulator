@@ -1,0 +1,18 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"label": "runcode",
+		"type": "shell",
+		"command": "google-chrome",
+		"args": [
+		  "${file}"
+		],
+		"problemMatcher": [],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		}
+	  }
+	]
+  }
