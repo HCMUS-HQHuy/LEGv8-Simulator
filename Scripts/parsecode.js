@@ -42,6 +42,16 @@ document.addEventListener('DOMContentLoaded', function() {
 				console.log(`Line ${index + 1}: Parser returned null/undefined`);
 			}
 
+			// 2. Tạo tín hiệu điều khiển
+			const controlSignals = generateControlSignals(parsedInstruction);
+
+			// 3. Tạo và hiển thị các node tín hiệu trên SVG
+			displayControlSignalNodes(controlSignals);
+
+			// 4. Bắt đầu animation
+			// Có thể thêm độ trễ nhỏ để đảm bảo SVG được cập nhật
+			setTimeout(startControlSignalAnimation, 100); // Trễ 100ms
+
 			// 2. Gọi hàm mã hóa
 			const encodedAdd = encodeLegv8Instruction(parsedInstruction);
 			// 3. In kết quả

@@ -233,6 +233,37 @@
             class = "signal-line" 
             marker-end="url(#arrow)" />
 
+      <path id="control-to-reg2loc-path"
+            d="M 610,275 L700,275"
+            class="control-signal-line" marker-end="url(#arrow)" />
+      <path id="control-to-alusrc-path"
+            d="M 610,435 L700,435"
+            class="control-signal-line" marker-end="url(#arrow)" />
+      <path id="control-to-memtoreg-path"
+            d="M 610,375 L700,375"
+            class="control-signal-line" marker-end="url(#arrow)" />
+      <path id="control-to-regwrite-path"
+            d="M 610,485 L700,485"
+            class="control-signal-line" marker-end="url(#arrow)" />
+      <path id="control-to-memread-path"
+            d="M 610,355 L700,355"
+            class="control-signal-line" marker-end="url(#arrow)" />
+      <path id="control-to-memwrite-path"
+            d="M 610,395 L700,395"
+            class="control-signal-line" marker-end="url(#arrow)" />
+      <path id="control-to-branch-path"
+            d="M 610,415 L700,415"
+            class="control-signal-line" marker-end="url(#arrow)" />
+      <!-- ALUOp có 2 bit, có thể cần 2 đường hoặc 1 đường bus cách điệu -->
+      <path id="control-to-aluop1-path"
+            d="M 610,455 L700,455"
+            class="control-signal-line" marker-end="url(#arrow)" />
+      <path id="control-to-aluop0-path"
+            d="M 610,465 L700,465"
+            class="control-signal-line" marker-end="url(#arrow)" />
+      <g id="control-signal-nodes">
+        <!-- Các node 0/1 sẽ được thêm vào đây bằng JavaScript -->
+      </g>
       <!-- Chấm tròn di chuyển theo đường path -->
       <circle id = "point" r="5" fill="red" visibility="hidden">
         <animateMotion id = "animationDot" dur="2s" rotate="auto" fill="freeze" begin="indefinite">
@@ -256,6 +287,8 @@
 
 <script src="./Scripts/handleLinePath.js"></script>
 <script src="./Scripts/parsecode.js"></script>
+<script src="./Scripts/defineSignal.js"></script>
+<script src="./Scripts/handleSignal.js"></script>
 
 </body>
 </html>

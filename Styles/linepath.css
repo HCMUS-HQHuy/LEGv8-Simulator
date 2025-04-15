@@ -38,6 +38,34 @@ body { font-family: sans-serif; }
   stroke: blueviolet;
   stroke-width: 3;
 }
+
+.control-signal-line{
+  fill: none;
+  stroke: black;
+  stroke-width: 3;
+}
+
+/* Style cho node tín hiệu */
+#control-signal-nodes g circle {
+  /* fill: #FF4136; */ /* Đã set bằng JS */
+  /* stroke: black; */
+  /* stroke-width: 1; */
+}
+
+#control-signal-nodes g text {
+  /* fill: white; */ /* Đã set bằng JS */
+  /* font-family: sans-serif; */
+  /* font-size: 10px; */
+  /* font-weight: bold; */
+  /* text-anchor: middle; */
+  /* dominant-baseline: central; */
+   pointer-events: none; /* Để không bắt sự kiện chuột */
+   user-select: none; /* Để không chọn được text */
+   -webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+}
+
 /* Style for the moving dot */
 #movingDot {
 	fill: red;
