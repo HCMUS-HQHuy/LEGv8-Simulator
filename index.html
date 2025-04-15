@@ -48,6 +48,22 @@
       fill: red;
       /* visibility: hidden; /* Let's keep it visible initially for debugging */
   }
+  
+  .frame {
+      width: 1500px;
+      height: 1000px;
+      border: 2px solid #333;
+      margin: 50px auto;
+      overflow: hidden;
+      position: relative;
+      background: #fafafa;
+    }
+    .content {
+      transform-origin: top left;
+      transition: transform 0.1s ease;
+      width: 1500px;
+      height: 1000px;
+    }
 </style>
 </head>
 <body>
@@ -55,193 +71,197 @@
 <button id="startButton">Chạy Animation PC -> Add</button>
 <hr>
 
-<svg width="1000" height="800" viewBox="0 0 1000 800">
+<div class="frame" id="zoomFrame">
+  <div class="content" id="zoomContent">
+  <svg width="1500" height="1000" viewBox="0 0 1500 1000">
 
-  <defs>
-    <!-- Symbols -->
-    <symbol id="MuxShape" viewBox="0 0 50 90">
-       <path d="M 0 0 L 50 15 L 50 75 L 0 90 Z" class="component"/>
-    </symbol>
-    <symbol id="SmallEllipseShape" viewBox="0 0 100 60">
-       <ellipse cx="50" cy="30" rx="50" ry="30" class="component"/>
-    </symbol>
-    <symbol id="AndGateShape" viewBox="0 0 30 40">
-        <path d="M 0 0 L 15 0 A 15 20 0 0 1 15 40 L 0 40 Z" class="component"/>
-    </symbol>
-  </defs>
+    <defs>
+      <!-- Symbols -->
+      <symbol id="MuxShape" viewBox="0 0 50 90">
+        <path d="M 0 0 L 50 15 L 50 75 L 0 90 Z" class="component"/>
+      </symbol>
+      <symbol id="SmallEllipseShape" viewBox="0 0 100 60">
+        <ellipse cx="50" cy="30" rx="50" ry="30" class="component"/>
+      </symbol>
+      <symbol id="AndGateShape" viewBox="0 0 30 40">
+          <path d="M 0 0 L 15 0 A 15 20 0 0 1 15 40 L 0 40 Z" class="component"/>
+      </symbol>
+    </defs>
 
-  <!-- Components Layer (Drawn AFTER lines = On Top) -->
-  <g id="components">
-      <!-- PC Group -->
-      <g transform="translate(30, 385)">
-        <rect width="120" height="80" class="component" />
-        <text x="60" y="40" class="label">PC</text>
-      </g>
+    <!-- Components Layer (Drawn AFTER lines = On Top) -->
+    <g id="components">
+        <!-- PC Group -->
+        <g transform="translate(30, 385)">
+          <rect width="120" height="80" class="component" />
+          <text x="60" y="40" class="label">PC</text>
+        </g>
 
-      <!-- Instruction Memory Group -->
-      <g transform="translate(50, 500)">
-        <rect width="120" height="100" class="component" />
-        <text x="60" y="20" class="label">Instruction</text>
-        <text x="60" y="35" class="label">memory</text>
-        <text x="60" y="65" class="mem-label">Read</text>
-        <text x="60" y="75" class="mem-label">address</text>
-        <text x="60" y="115" class="mem-label">Instruction</text>
-        <text x="60" y="125" class="mem-label">[31-0]</text>
-      </g>
+        <!-- Instruction Memory Group -->
+        <g transform="translate(50, 500)">
+          <rect width="120" height="100" class="component" />
+          <text x="60" y="20" class="label">Instruction</text>
+          <text x="60" y="35" class="label">memory</text>
+          <text x="60" y="65" class="mem-label">Read</text>
+          <text x="60" y="75" class="mem-label">address</text>
+          <text x="60" y="115" class="mem-label">Instruction</text>
+          <text x="60" y="125" class="mem-label">[31-0]</text>
+        </g>
 
-      <!-- Add (Top Left) Group -->
-      <g transform="translate(100, 80)">
-        <polygon points="0,25 0,0 40,19 40,51 0,70 0,45 13,35" class="component"/>
-        <text x="25" y="35" class="label">Add</text>
-      </g>
+        <!-- Add (Top Left) Group -->
+        <g transform="translate(100, 80)">
+          <polygon points="0,25 0,0 40,19 40,51 0,70 0,45 13,35" class="component"/>
+          <text x="25" y="35" class="label">Add</text>
+        </g>
 
-      <!-- Control Group -->
-      <g transform="translate(280, 250)">
-        <ellipse cx="70" cy="50" rx="70" ry="50" class="component" />
-        <text x="70" y="50" class="label">Control</text>
-      </g>
+        <!-- Control Group -->
+        <g transform="translate(280, 250)">
+          <ellipse cx="70" cy="50" rx="70" ry="50" class="component" />
+          <text x="70" y="50" class="label">Control</text>
+        </g>
 
-      <!-- Control Output Labels -->
-      <text x="440" y="255" class="label-start">Reg2Loc</text>
-      <text x="440" y="270" class="label-start">UncondBranch</text>
-      <text x="440" y="285" class="label-start">FlagBranch</text>
-      <text x="440" y="300" class="label-start">ZeroBranch</text>
-      <text x="440" y="315" class="label-start">MemRead</text>
-      <text x="440" y="330" class="label-start">MemToReg</text>
-      <text x="440" y="345" class="label-start">MemWrite</text>
-      <text x="440" y="360" class="label-start">FlagWrite</text>
-      <text x="440" y="375" class="label-start">ALUSrc</text>
-      <text x="440" y="390" class="label-start">ALUOp</text>
-      <text x="440" y="405" class="label-start">RegWrite</text>
+        <!-- Control Output Labels -->
+        <text x="440" y="255" class="label-start">Reg2Loc</text>
+        <text x="440" y="270" class="label-start">UncondBranch</text>
+        <text x="440" y="285" class="label-start">FlagBranch</text>
+        <text x="440" y="300" class="label-start">ZeroBranch</text>
+        <text x="440" y="315" class="label-start">MemRead</text>
+        <text x="440" y="330" class="label-start">MemToReg</text>
+        <text x="440" y="345" class="label-start">MemWrite</text>
+        <text x="440" y="360" class="label-start">FlagWrite</text>
+        <text x="440" y="375" class="label-start">ALUSrc</text>
+        <text x="440" y="390" class="label-start">ALUOp</text>
+        <text x="440" y="405" class="label-start">RegWrite</text>
 
-      <!-- Mux (Left) Group -->
-      <g transform="translate(250, 480)">
-        <use href="#MuxShape" width="50" height="90"/>
-        <text x="25" y="45" class="label">Mux</text>
-        <text x="-5" y="15" class="mux-label">0</text>
-        <text x="-5" y="75" class="mux-label">1</text>
-      </g>
+        <!-- Mux (Left) Group -->
+        <g transform="translate(250, 480)">
+          <use href="#MuxShape" width="50" height="90"/>
+          <text x="25" y="45" class="label">Mux</text>
+          <text x="-5" y="15" class="mux-label">0</text>
+          <text x="-5" y="75" class="mux-label">1</text>
+        </g>
 
-      <!-- Registers Group -->
-      <g transform="translate(330, 480)">
-        <rect width="120" height="150" class="component" />
-        <text x="60" y="75" class="label">Registers</text>
-        <text x="60" y="20" class="mem-label">Read</text>
-        <text x="60" y="30" class="mem-label">register 1</text>
-        <text x="60" y="50" class="mem-label">Read</text>
-        <text x="60" y="60" class="mem-label">register 2</text>
-        <text x="60" y="95" class="mem-label">Write</text>
-        <text x="60" y="105" class="mem-label">register</text>
-        <text x="60" y="130" class="mem-label">Write</text>
-        <text x="60" y="140" class="mem-label">data</text>
-        <text x="140" y="30" class="label-start">Read</text>
-        <text x="140" y="40" class="label-start">data 1</text>
-        <text x="140" y="80" class="label-start">Read</text>
-        <text x="140" y="90" class="label-start">data 2</text>
-      </g>
+        <!-- Registers Group -->
+        <g transform="translate(330, 480)">
+          <rect width="120" height="150" class="component" />
+          <text x="60" y="75" class="label">Registers</text>
+          <text x="60" y="20" class="mem-label">Read</text>
+          <text x="60" y="30" class="mem-label">register 1</text>
+          <text x="60" y="50" class="mem-label">Read</text>
+          <text x="60" y="60" class="mem-label">register 2</text>
+          <text x="60" y="95" class="mem-label">Write</text>
+          <text x="60" y="105" class="mem-label">register</text>
+          <text x="60" y="130" class="mem-label">Write</text>
+          <text x="60" y="140" class="mem-label">data</text>
+          <text x="140" y="30" class="label-start">Read</text>
+          <text x="140" y="40" class="label-start">data 1</text>
+          <text x="140" y="80" class="label-start">Read</text>
+          <text x="140" y="90" class="label-start">data 2</text>
+        </g>
 
-      <!-- Sign Extend Group -->
-      <g transform="translate(350, 670)">
-        <use href="#SmallEllipseShape" width="100" height="60"/>
-        <text x="50" y="30" class="label">Sign-</text>
-        <text x="50" y="45" class="label">extend</text>
-      </g>
+        <!-- Sign Extend Group -->
+        <g transform="translate(350, 670)">
+          <use href="#SmallEllipseShape" width="100" height="60"/>
+          <text x="50" y="30" class="label">Sign-</text>
+          <text x="50" y="45" class="label">extend</text>
+        </g>
 
-      <!-- ALU Control Group -->
-      <g transform="translate(500, 670)">
-        <use href="#SmallEllipseShape" width="100" height="60"/>
-        <text x="50" y="30" class="label">ALU</text>
-        <text x="50" y="45" class="label">control</text>
-      </g>
+        <!-- ALU Control Group -->
+        <g transform="translate(500, 670)">
+          <use href="#SmallEllipseShape" width="100" height="60"/>
+          <text x="50" y="30" class="label">ALU</text>
+          <text x="50" y="45" class="label">control</text>
+        </g>
 
-      <!-- Mux (Bottom) Group -->
-      <g transform="translate(580, 550)">
-         <use href="#MuxShape" width="50" height="90"/>
-         <text x="25" y="45" class="label">Mux</text>
-         <text x="-5" y="15" class="mux-label">0</text>
-         <text x="-5" y="75" class="mux-label">1</text>
-      </g>
+        <!-- Mux (Bottom) Group -->
+        <g transform="translate(580, 550)">
+          <use href="#MuxShape" width="50" height="90"/>
+          <text x="25" y="45" class="label">Mux</text>
+          <text x="-5" y="15" class="mux-label">0</text>
+          <text x="-5" y="75" class="mux-label">1</text>
+        </g>
 
-      <!-- ALU Group -->
-      <g transform="translate(650, 520)">
-        <polygon points="0,47 0,0 80,35 80,95 0,130 0,83 13,65" class="component"/>
-        <text x="40" y="65" class="label">ALU</text>
-        <text x="90" y="65" class="mem-label">Zero</text>
-      </g>
+        <!-- ALU Group -->
+        <g transform="translate(650, 520)">
+          <polygon points="0,47 0,0 80,35 80,95 0,130 0,83 13,65" class="component"/>
+          <text x="40" y="65" class="label">ALU</text>
+          <text x="90" y="65" class="mem-label">Zero</text>
+        </g>
 
-      <!-- NZCV Flags Group -->
-      <g transform="translate(600, 500)">
-         <rect width="80" height="25" class="component" />
-         <text x="40" y="12.5" class="label">N Z C V</text>
-      </g>
+        <!-- NZCV Flags Group -->
+        <g transform="translate(600, 500)">
+          <rect width="80" height="25" class="component" />
+          <text x="40" y="12.5" class="label">N Z C V</text>
+        </g>
 
-      <!-- Shift Left 2 Group -->
-      <g transform="translate(500, 160)">
-         <use href="#SmallEllipseShape" width="100" height="60"/>
-         <text x="50" y="30" class="label">Shift</text>
-         <text x="50" y="45" class="label">left 2</text>
-      </g>
+        <!-- Shift Left 2 Group -->
+        <g transform="translate(500, 160)">
+          <use href="#SmallEllipseShape" width="100" height="60"/>
+          <text x="50" y="30" class="label">Shift</text>
+          <text x="50" y="45" class="label">left 2</text>
+        </g>
 
-      <!-- Add (Top Right) Group -->
-      <g transform="translate(650, 130)">
-         <polygon points="0,25 0,0 40,19 40,51 0,70 0,45 13,35" class="component"/>
-         <text x="25" y="35" class="label">Add</text>
-      </g>
+        <!-- Add (Top Right) Group -->
+        <g transform="translate(650, 130)">
+          <polygon points="0,25 0,0 40,19 40,51 0,70 0,45 13,35" class="component"/>
+          <text x="25" y="35" class="label">Add</text>
+        </g>
 
-      <!-- OR Gate Group -->
-      <g transform="translate(770, 250)">
-        <path d="M 30 0 Q 50 25, 30 50 L 0 50 Q 30 25, 0 0 Z" class="component"/>
-      </g>
+        <!-- OR Gate Group -->
+        <g transform="translate(770, 250)">
+          <path d="M 30 0 Q 50 25, 30 50 L 0 50 Q 30 25, 0 0 Z" class="component"/>
+        </g>
 
-      <!-- AND Gate (Top) Group -->
-      <g transform="translate(700, 480)">
-          <use href="#AndGateShape" width="30" height="40"/>
-      </g>
+        <!-- AND Gate (Top) Group -->
+        <g transform="translate(700, 480)">
+            <use href="#AndGateShape" width="30" height="40"/>
+        </g>
 
-      <!-- AND Gate (Bottom) Group -->
-      <g transform="translate(700, 380)">
-          <use href="#AndGateShape" width="30" height="40"/>
-      </g>
+        <!-- AND Gate (Bottom) Group -->
+        <g transform="translate(700, 380)">
+            <use href="#AndGateShape" width="30" height="40"/>
+        </g>
 
-      <!-- Data Memory Group -->
-      <g transform="translate(780, 550)">
-        <rect width="120" height="100" class="component" />
-        <text x="60" y="50" class="label">Data</text>
-        <text x="60" y="65" class="label">memory</text>
-        <text x="60" y="20" class="mem-label">Address</text>
-        <text x="60" y="85" class="mem-label">Write</text>
-        <text x="60" y="95" class="mem-label">Data</text>
-        <text x="140" y="40" class="label-start">Read</text>
-        <text x="140" y="50" class="label-start">Data</text>
-      </g>
+        <!-- Data Memory Group -->
+        <g transform="translate(780, 550)">
+          <rect width="120" height="100" class="component" />
+          <text x="60" y="50" class="label">Data</text>
+          <text x="60" y="65" class="label">memory</text>
+          <text x="60" y="20" class="mem-label">Address</text>
+          <text x="60" y="85" class="mem-label">Write</text>
+          <text x="60" y="95" class="mem-label">Data</text>
+          <text x="140" y="40" class="label-start">Read</text>
+          <text x="140" y="50" class="label-start">Data</text>
+        </g>
 
-      <!-- Mux (Right) Group -->
-      <g transform="translate(900, 100)">
-         <use href="#MuxShape" width="50" height="90"/>
-         <text x="25" y="45" class="label">Mux</text>
-         <text x="55" y="15" class="mux-label">0</text>
-         <text x="55" y="75" class="mux-label">1</text>
-      </g>
-  </g> <!-- End Components Layer -->
+        <!-- Mux (Right) Group -->
+        <g transform="translate(900, 100)">
+          <use href="#MuxShape" width="50" height="90"/>
+          <text x="25" y="45" class="label">Mux</text>
+          <text x="55" y="15" class="mux-label">0</text>
+          <text x="55" y="75" class="mux-label">1</text>
+        </g>
+    </g> <!-- End Components Layer -->
 
-	<!-- Signal Lines Layer -->
-	<g id="signal-lines">
+    <!-- Signal Lines Layer -->
+    <g id="signal-lines">
 
-		<!-- Đường đi thật để dùng cho animation -->
-		<path id="motion-path" 
-					d="M90,385 L90,92.5 L100,92.5" 
-					fill="none" 
-					stroke="black" />
+      <!-- Đường đi thật để dùng cho animation -->
+      <path id="motion-path" 
+            d="M90,385 L90,92.5 L100,92.5" 
+            fill="none" 
+            stroke="black" />
 
-		<!-- Chấm tròn di chuyển theo đường path -->
-		<circle id = "point" r="5" fill="red" visibility="hidden">
-			<animateMotion id = "animationDot" dur="2s" rotate="auto" fill="freeze" begin="indefinite">
-				<mpath href="#motion-path" />
-			</animateMotion>
-		</circle>
-	</g>
+      <!-- Chấm tròn di chuyển theo đường path -->
+      <circle id = "point" r="5" fill="red" visibility="hidden">
+        <animateMotion id = "animationDot" dur="2s" rotate="auto" fill="freeze" begin="indefinite">
+          <mpath href="#motion-path" />
+        </animateMotion>
+      </circle>
+    </g>
 
-</svg>
+  </svg>
+  </div>
+</div>
 <script>
   const startButton = document.getElementById('startButton');
   const dotAnimation = document.getElementById('dotAnimationPcAdd');
@@ -250,6 +270,26 @@
 		const aim = document.getElementById("animationDot");
 		aim.beginElement();
   });
+
+  const content = document.getElementById('zoomContent');
+    const frame = document.getElementById('zoomFrame');
+    let scale = 1;
+
+    frame.addEventListener('wheel', function(e) {
+      if (e.ctrlKey) {
+        e.preventDefault(); // Ngăn không cho browser zoom
+        const delta = e.deltaY;
+        const zoomFactor = 0.1;
+
+        if (delta > 0) {
+          scale = Math.max(0.1, scale - zoomFactor);
+        } else {
+          scale = Math.min(5, scale + zoomFactor);
+        }
+
+        content.style.transform = `scale(${scale})`;
+      }
+    }, { passive: false });
 </script>
 
 </body>
