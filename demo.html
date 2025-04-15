@@ -2,23 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SVG Symbol with Rectangle</title>
-  <style>
-    .component {
-      fill: #00aaff;
-      stroke: #003366;
-      stroke-width: 2;
-    }
-  </style>
+  <title>Chấm tròn di chuyển trên đường gấp khúc</title>
 </head>
 <body>
-  <h2>Demo tái sử dụng hình chữ nhật với các tỉ lệ khác nhau</h2>
 
-  <svg width="600" height="300" style="border: 1px solid #ccc;">
-    <symbol id="RectShape" viewBox="0 0 50 70">
-      <rect x="0" y="0" width="35" height="50" class="component" vector-effect="non-scaling-stroke" />
-    </symbol>
-    <use href="#RectShape" transform="translate(10,10) scale(1)" />
-  </svg>
+<svg width="600" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Đường gấp khúc được vẽ bằng path -->
+  <path 
+    id="zigzag" 
+    d="M50,150 L150,100 L250,150 L350,100 L450,150 L550,100" 
+    fill="none" 
+    stroke="black" 
+    stroke-width="2" 
+  />
+
+  <!-- Chấm tròn di chuyển -->
+  <circle r="8" fill="red">
+    <animateMotion dur="5s" repeatCount="indefinite" rotate="auto">
+      <mpath xlink:href="#zigzag" />
+    </animateMotion>
+  </circle>
+</svg>
+
 </body>
 </html>
