@@ -1,8 +1,8 @@
 body { font-family: sans-serif; }
 .component {
   fill: white;
-  stroke: black;
-  stroke-width: 1.5;
+  stroke: red;
+  stroke-width: 3;
   vector-effect: non-scaling-stroke;
 }
 .label {
