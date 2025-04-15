@@ -48,7 +48,19 @@
           <rect width="140" height="200" class="component" />
           <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" class="label">Data Memory</text>
         </g>
+        <!-- Flag -->
+        <g transform="translate(880, 500)">
+          <rect x="0" y="0" width="140" height="30" class="component"/>
+          <line x1="35" y1="0" x2="35" y2="30" class="component"/>
+          <line x1="70" y1="0" x2="70" y2="30" class="component"/>
+          <line x1="105" y1="0" x2="105" y2="30" class="component"/>
 
+          <text x="12" y="15" class="flag-label">N</text>
+          <text x="47" y="15" class="flag-label">Z</text>
+          <text x="82" y="15" class="flag-label">C</text>
+          <text x="117" y="15" class="flag-label">V</text>
+      
+        </g>
 
         <!-- Alu Group -->
         <!-- Add topleft -->
@@ -95,6 +107,46 @@
           <circle cx="0" cy="0" r="50" class="component"/>
           <text x="0" y="0" class="label">ALU</text>
           <text x="0" y="10" class="label">Control</text>
+        </g>
+
+        <g transform="translate(1280, 100)">
+          <!-- Hình dạng viên thuốc (Rectangle với góc bo tròn tối đa) -->
+          <!-- width và height có thể cần điều chỉnh tỷ lệ -->
+          <!-- rx = width/2 để bo tròn hoàn toàn theo chiều ngang -->
+          <!-- ry = rx để đảm bảo bo tròn đẹp ở góc -->
+          <rect x="0" y="0" width="40" height="120" rx="20" ry="20" class="component"/>
+          <text x="20" y="18" class="mux-select-label">0</text>
+          <text x="20" y="38" class="label">M</text>
+          <text x="20" y="53" class="label">u</text>
+          <text x="20" y="68" class="label">x</text>
+          <text x="20" y="88" class="mux-select-label">1</text>
+        </g>
+
+        <g transform="translate(1335, 665)">
+          <rect x="0" y="0" width="40" height="100" rx="20" ry="20" class="component"/>
+          <text x="20" y="18" class="mux-select-label">0</text>
+          <text x="20" y="38" class="label">M</text>
+          <text x="20" y="53" class="label">u</text>
+          <text x="20" y="68" class="label">x</text>
+          <text x="20" y="88" class="mux-select-label">1</text>
+        </g>
+
+        <g transform="translate(520, 555)">
+          <rect x="0" y="0" width="40" height="100" rx="20" ry="20" class="component"/>
+          <text x="20" y="18" class="mux-select-label">0</text>
+          <text x="20" y="38" class="label">M</text>
+          <text x="20" y="53" class="label">u</text>
+          <text x="20" y="68" class="label">x</text>
+          <text x="20" y="88" class="mux-select-label">1</text>
+        </g>
+
+        <g transform="translate(820, 630)">
+          <rect x="0" y="0" width="40" height="100" rx="20" ry="20" class="component"/>
+          <text x="20" y="18" class="mux-select-label">0</text>
+          <text x="20" y="38" class="label">M</text>
+          <text x="20" y="53" class="label">u</text>
+          <text x="20" y="68" class="label">x</text>
+          <text x="20" y="88" class="mux-select-label">1</text>
         </g>
 
           <!-- Các nhãn tín hiệu Control Output -->
