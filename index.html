@@ -1,87 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Form Example</title>
-	<style>
-		#line {
-			position: absolute;
-			height: 2px;
-			background-color: red;
-			transform-origin: 0 0; /* từ đầu */
-		}
-		.container {
-			position: relative;
-			width: 10rem;
-			height: 10rem;
-		}
-        .line {
-			position: absolute;
-			background-color: black;
-		}
-
-		.vertical {
-			width: 2px;
-			height: 100%;
-		}
-
-		.horizontal {
-			width: 100%;
-			height: 2px;
-		}
-        .point {
-			position: absolute;
-			width: 10px;
-			height: 10px;
-			background-color: red;
-			border-radius: 50%;
-			top: 0px;
-			left: 0px;
-			transform: translate(-50%, -50%);  /* Đặt điểm tại trung tâm */
-		}
-
-		@keyframes moveAlongPath {
-            0% {
-                top: 50%; /* Vị trí bắt đầu */
-                left: 0%;
-            }
-            33% {
-                top: 50%; /* Vị trí sau đoạn đầu */
-                left: 50%;
-            }
-            66% {
-                top: 50%; /* Mô phỏng đoạn đường gấp */
-                left: 75%;
-            }
-            100% {
-                top: 50%;
-                left: 100%;
-            }
-        }
-    </style>
-
+<title>Datapath Components (Corrected ALU & Rectangles - Final)</title>
+<style>
+  .component {
+    fill: white;
+    stroke: black;
+    stroke-width: 1.5; /* Consistent stroke width */
+    vector-effect: non-scaling-stroke; /* Apply generally */
+  }
+  .label {
+    font-family: sans-serif;
+    font-size: 12px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    fill: black;
+  }
+   .mux-label {
+    font-family: sans-serif;
+    font-size: 10px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    fill: black;
+  }
+</style>
 </head>
 <body>
-	<form id="myForm">
-		<textarea id="message" name="message" rows="4" cols="50"></textarea>
-		<br><br>
-		<button type="submit">Submit</button>
-	</form>
 
-	<p id="result"></p>
+<svg width="1000" height="800" viewBox="0 0 1000 800">
 
-	<div class="container">
-        <div class="line vertical"></div>
-        <div class="line horizontal"></div>
-		<div class="point"></div>
-    </div>
+  <defs>
+    <!-- Symbols for shapes that ARE reused without distortion -->
 
-	<div id="lines-container">
-		
-	</div>
+    <!-- Hình Mux (Tỷ lệ 50:90) -->
+    <symbol id="MuxShape" viewBox="0 0 50 90">
+       <path d="M 0 0 L 50 15 L 50 75 L 0 90 Z" class="component"/>
+    </symbol>
 
-	<script src="./Scripts/handleForm.js"></script>
+    <!-- Hình Elip nhỏ (rx=50, ry=30 => width=100, height=60) -->
+    <symbol id="SmallEllipseShape" viewBox="0 0 100 60">
+       <ellipse cx="50" cy="30" rx="50" ry="30" class="component"/>
+    </symbol>
+
+     <!-- Hình Cổng AND (Width=30, Height=40) -->
+    <symbol id="AndGateShape" viewBox="0 0 30 40">
+        <!-- Adjusted shape slightly for better look -->
+        <path d="M 0 0 L 15 0 A 15 20 0 0 1 15 40 L 0 40 Z" class="component"/>
+    </symbol>
+
+		<symbol id="ALUEShape" viewBox="0 0 50 70">
+      <polygon points="0,25 0,0 50,19 50,51 0,70 0,45 13,35" class="component" vector-effect="non-scaling-stroke"/>
+    </symbol>
+     <!-- No symbol for Rectangles or ALU/Add due to scaling/size issues -->
+
+  </defs>
+
+  <!-- PC - Direct Rect, width=120, height=80 (Adjusted for consistency) -->
+  <rect x="30" y="385" width="120" height="80" class="component" />
+  <text x="90" y="425" class="label">PC</text>
+
+  <!-- Instruction Memory - Direct Rect, width=120, height=100 -->
+  <rect x="50" y="500" width="120" height="100" class="component" />
+  <text x="110" y="520" class="label">Instruction</text>
+  <text x="110" y="535" class="label">memory</text>
+  <text x="110" y="565" class="label" font-size="10">Read</text>
+  <text x="110" y="575" class="label" font-size="10">address</text>
+  <text x="110" y="615" class="label" font-size="10">Instruction</text>
+  <text x="110" y="625" class="label" font-size="10">[31-0]</text>
+
+
+  <!-- Add (Top Left) - Using Symbol -->
+  <use href="#ALUEShape" x="100" y="80" width="80" height="70"/>
+  <text x="140" y="115" class="label">Add</text>
+
+  <!-- Control - Direct Ellipse -->
+  <ellipse cx="350" cy="300" rx="70" ry="50" class="component" />
+  <text x="350" y="300" class="label">Control</text>
+  <!-- Control Output Labels -->
+  <text x="440" y="255" class="label" text-anchor="start" font-size="10">Reg2Loc</text>
+  <text x="440" y="270" class="label" text-anchor="start" font-size="10">UncondBranch</text>
+  <text x="440" y="285" class="label" text-anchor="start" font-size="10">FlagBranch</text>
+  <text x="440" y="300" class="label" text-anchor="start" font-size="10">ZeroBranch</text>
+  <text x="440" y="315" class="label" text-anchor="start" font-size="10">MemRead</text>
+  <text x="440" y="330" class="label" text-anchor="start" font-size="10">MemToReg</text>
+  <text x="440" y="345" class="label" text-anchor="start" font-size="10">MemWrite</text>
+  <text x="440" y="360" class="label" text-anchor="start" font-size="10">FlagWrite</text>
+  <text x="440" y="375" class="label" text-anchor="start" font-size="10">ALUSrc</text>
+  <text x="440" y="390" class="label" text-anchor="start" font-size="10">ALUOp</text>
+  <text x="440" y="405" class="label" text-anchor="start" font-size="10">RegWrite</text>
+
+  <!-- Mux (Left) - Using Symbol -->
+  <use href="#MuxShape" x="250" y="480" width="50" height="90"/>
+  <text x="275" y="525" class="label">Mux</text>
+  <text x="245" y="495" class="mux-label">0</text>
+  <text x="245" y="555" class="mux-label">1</text>
+
+  <!-- Registers - Direct Rect, width=120, height=150 -->
+  <rect x="330" y="480" width="120" height="150" class="component" />
+  <text x="390" y="555" class="label">Registers</text>
+  <text x="390" y="500" class="label" font-size="10">Read</text>
+  <text x="390" y="510" class="label" font-size="10">register 1</text>
+  <text x="390" y="530" class="label" font-size="10">Read</text>
+  <text x="390" y="540" class="label" font-size="10">register 2</text>
+  <text x="390" y="575" class="label" font-size="10">Write</text>
+  <text x="390" y="585" class="label" font-size="10">register</text>
+  <text x="390" y="610" class="label" font-size="10">Write</text>
+  <text x="390" y="620" class="label" font-size="10">data</text>
+   <text x="470" y="510" class="label" font-size="10" text-anchor="start">Read</text>
+   <text x="470" y="520" class="label" font-size="10" text-anchor="start">data 1</text>
+   <text x="470" y="560" class="label" font-size="10" text-anchor="start">Read</text>
+   <text x="470" y="570" class="label" font-size="10" text-anchor="start">data 2</text>
+
+
+  <!-- Sign Extend - Using Symbol -->
+  <use href="#SmallEllipseShape" x="350" y="670" width="100" height="60"/>
+  <text x="400" y="700" class="label">Sign-</text>
+  <text x="400" y="715" class="label">extend</text>
+
+  <!-- ALU Control - Using Symbol -->
+  <use href="#SmallEllipseShape" x="500" y="670" width="100" height="60"/>
+  <text x="550" y="700" class="label">ALU</text>
+  <text x="550" y="715" class="label">control</text>
+
+  <!-- Mux (Bottom) - Using Symbol -->
+  <use href="#MuxShape" x="580" y="550" width="50" height="90"/>
+  <text x="605" y="595" class="label">Mux</text>
+  <text x="575" y="565" class="mux-label">0</text>
+  <text x="575" y="625" class="mux-label">1</text>
+
+  <!-- ALU - Using direct Polygon for consistent stroke -->
+  <!-- <polygon points="650,567 650,520 730,555 730,615 650,650 650,603 663,585" class="component"/> -->
+	<use href="#ALUESHAPE" />
+  <text x="690" y="585" class="label">ALU</text>
+  <text x="740" y="585" class="label" font-size="10">Zero</text>
+
+  <!-- NZCV Flags - Direct Rect (Original Size) -->
+  <rect x="600" y="500" width="80" height="25" class="component" />
+  <text x="640" y="512.5" class="label">N Z C V</text>
+
+  <!-- Shift Left 2 - Using Symbol -->
+  <use href="#SmallEllipseShape" x="500" y="160" width="100" height="60"/>
+  <text x="550" y="190" class="label">Shift</text>
+  <text x="550" y="205" class="label">left 2</text>
+
+  <!-- Add (Top Right) - Using Symbol -->
+  <use href="#ALUEShape" x="650" y="130" width="80" height="70"/>
+  <text x="690" y="165" class="label">Add</text>
+
+  <!-- OR Gate - Direct Path -->
+  <path d="M 800 250 Q 820 275, 800 300 L 770 300 Q 800 275, 770 250 Z" class="component"/>
+
+  <!-- AND Gate (Top) - Using Symbol -->
+  <use href="#AndGateShape" x="700" y="480" width="30" height="40"/>
+
+  <!-- AND Gate (Bottom) - Using Symbol -->
+  <use href="#AndGateShape" x="700" y="380" width="30" height="40"/>
+
+
+  <!-- Data Memory - Direct Rect, width=120, height=100 -->
+  <rect x="780" y="550" width="120" height="100" class="component" />
+  <text x="840" y="600" class="label">Data</text>
+  <text x="840" y="615" class="label">memory</text>
+  <text x="840" y="570" class="label" font-size="10">Address</text>
+  <text x="840" y="635" class="label" font-size="10">Write</text>
+  <text x="840" y="645" class="label" font-size="10">Data</text>
+  <text x="920" y="590" class="label" font-size="10" text-anchor="start">Read</text>
+  <text x="920" y="600" class="label" font-size="10" text-anchor="start">Data</text>
+
+
+  <!-- Mux (Right) - Using Symbol -->
+  <use href="#MuxShape" x="900" y="100" width="50" height="90"/>
+  <text x="925" y="145" class="label">Mux</text>
+  <text x="955" y="115" class="mux-label">0</text>
+  <text x="955" y="175" class="mux-label">1</text>
+
+</svg>
 
 </body>
 </html>

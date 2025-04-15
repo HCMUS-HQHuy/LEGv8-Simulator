@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Form Example</title>
-	
-	<style>
-		#line {
-			position: absolute;
-			height: 2px;
-			background-color: red;
-			transform-origin: 0 0; /* từ đầu */
-		}
-    </style>
-
+  <meta charset="UTF-8">
+  <title>SVG Symbol with Rectangle</title>
+  <style>
+    .component {
+      fill: #00aaff;
+      stroke: #003366;
+      stroke-width: 2;
+    }
+  </style>
 </head>
 <body>
+  <h2>Demo tái sử dụng hình chữ nhật với các tỉ lệ khác nhau</h2>
 
-	<div id="lines-container">
-		
-	</div>
-
-	<div id="line"></div>
-	<script src="./Scripts/parsecode.js"></script>
+  <svg width="600" height="300" style="border: 1px solid #ccc;">
+    <symbol id="RectShape" viewBox="0 0 50 70">
+      <rect x="0" y="0" width="35" height="50" class="component" vector-effect="non-scaling-stroke" />
+    </symbol>
+    <use href="#RectShape" transform="translate(10,10) scale(1)" />
+  </svg>
 </body>
 </html>
