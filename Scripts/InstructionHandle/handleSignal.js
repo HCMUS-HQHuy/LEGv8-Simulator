@@ -13,6 +13,7 @@ const signalNodesGroup = document.getElementById('control-signal-nodes');
  *                           và giá trị 0 hoặc 1, hoặc null nếu lệnh không được hỗ trợ.
  */
 export function generateControlSignals(parsedInstruction) {
+    clearAluControlDisplay(); 
     if (!parsedInstruction || parsedInstruction.error || !parsedInstruction.mnemonic) {
         console.error("Invalid or errored parsed instruction provided.");
         return null;
@@ -153,7 +154,12 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5) {
 
         // Khi tín hiệu "ALUOp" kết hợp đến ALU Control
         if (signalName === 'ALUOp' && destinationId === 'ALU-control') {
-            handleAluControlArrival(value); // Gọi hàm xử lý (truyền giá trị "10", "00", "01")
+            if (typeof value !== 'undefined' && value !== null) {
+                handleAluControlArrival(value);
+            } else { 
+                console.log("undefined value in ALUOp-> ALU Control"); 
+                return null; 
+            }
         }
         // Khi tín hiệu 4-bit cuối cùng đến ALU chính
         else if (signalName.startsWith(ALU_CONTROL_TO_ALU_NODE_ID_PREFIX)) {
