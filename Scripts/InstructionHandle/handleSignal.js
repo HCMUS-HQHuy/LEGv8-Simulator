@@ -35,17 +35,58 @@ export function generateControlSignals(parsedInstruction) {
     const baseSignals = controlSignalTable[instructionClass];
     // Tạo bản sao để sửa đổi
     const finalSignals = { ...baseSignals };
+    let finalAluControlSignalValue = null; // Giá trị 4-bit cuối cùng
 
     // *** GỘP ALUOp1 VÀ ALUOp0 (NẾU CÓ) ***
     if (finalSignals.hasOwnProperty('ALUOp1') && finalSignals.hasOwnProperty('ALUOp0')) {
-        // Tạo key mới "ALUOp" với giá trị kết hợp là chuỗi
-        finalSignals.ALUOp = `${finalSignals.ALUOp1}${finalSignals.ALUOp0}`;
-        // Xóa các key cũ
+        const aluOpCombined = `${finalSignals.ALUOp1}${finalSignals.ALUOp0}`;
+        finalSignals.ALUOp = aluOpCombined;
         delete finalSignals.ALUOp1;
         delete finalSignals.ALUOp0;
-        console.log("Combined ALUOp1 and ALUOp0 into ALUOp:", finalSignals.ALUOp);
+
+        
+        // Tính giá trị 4-bit dựa trên ALUOp và loại lệnh/mnemonic
+        switch (aluOpCombined) {
+            case "00": // LDUR, STUR
+                finalAluControlSignalValue = "0010"; // add
+                break;
+            case "01": // CBZ
+                finalAluControlSignalValue = "0111"; // pass input b (hoặc subtract nếu ALU làm vậy)
+                break;
+            case "10": // R-type
+                switch (mnemonic) { // Cần mnemonic để phân biệt R-type
+                    case 'ADD':
+                        finalAluControlSignalValue = "0010"; // add
+                        break;
+                    case 'SUB':
+                        finalAluControlSignalValue = "0110"; // subtract
+                        break;
+                    case 'AND':
+                        finalAluControlSignalValue = "0000"; // AND
+                        break;
+                    case 'ORR':
+                        finalAluControlSignalValue = "0001"; // OR
+                        break;
+                    // Thêm các lệnh R-type khác nếu cần
+                    default:
+                        console.warn(`Unknown R-type mnemonic '${mnemonic}' for ALUOp=10. Defaulting ALU control.`);
+                        finalAluControlSignalValue = "XXXX"; // Hoặc một giá trị mặc định/lỗi
+                }
+                break;
+            default:
+                console.warn(`Unknown ALUOp combination: ${aluOpCombined}`);
+                finalAluControlSignalValue = "XXXX"; // Giá trị lỗi
+        }
     }
-    // *** KẾT THÚC GỘP ***
+    else {
+        // Trường hợp không có ALUOp1/0 (có thể xảy ra nếu bảng thay đổi)
+         console.warn("ALUOp1 or ALUOp0 missing in base signals for", instructionClass);
+         finalAluControlSignalValue = "XXXX";
+    }
+
+    // Thêm tín hiệu 4-bit cuối cùng vào kết quả
+    finalSignals.finalAluControlSignal = finalAluControlSignalValue;
+    console.log("Generated signals:", finalSignals);
 
     return finalSignals; // Trả về đối tượng signals đã được sửa đổi
 }
@@ -76,14 +117,15 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5) {
     nodeGroup.setAttribute('id', nodeGroupId);
     nodeGroup.setAttribute('visibility', 'hidden');
 
-    // --- Tạo circle và text (điều chỉnh kích thước nếu giá trị là chuỗi dài) ---
+    // --- Tạo circle và text (điều chỉnh kích thước/màu sắc) ---
     const circle = document.createElementNS(svgNS, 'circle');
-    const radius = (typeof value === 'string' && value.length > 1) ? 10 : 8;
+    const isMultiBit = typeof value === 'string' && value.length > 1;
+    const radius = isMultiBit ? 10 : 8; // Lớn hơn cho multi-bit
     circle.setAttribute('r', String(radius));
-    let fillColor = (value === 1 || value === '1') ? '#FF4136' : '#0074D9'; // Mặc định đỏ/xanh
-    if (typeof value === 'string' && value !== '0' && value !== '1') {
-       fillColor = '#FF851B'; // Màu cam cho giá trị kết hợp
-    }
+    let fillColor = '#0074D9'; // Default blue (0)
+    if (value === 1 || value === '1') { fillColor = '#FF4136'; }
+    else if (isMultiBit && signalName === 'ALUOp') { fillColor = '#FF851B'; }
+    else if (isMultiBit && signalName.startsWith(ALU_CONTROL_TO_ALU_NODE_ID_PREFIX)) { fillColor = '#2ECC40'; }
     circle.setAttribute('fill', fillColor);
     circle.setAttribute('stroke', 'black');
     circle.setAttribute('stroke-width', '1');
@@ -91,12 +133,13 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5) {
     const text = document.createElementNS(svgNS, 'text');
     text.setAttribute('text-anchor', 'middle');
     text.setAttribute('dominant-baseline', 'central');
-    const fontSize = (typeof value === 'string' && value.length > 1) ? 9 : 10;
+    const fontSize = isMultiBit ? 9 : 10;
     text.setAttribute('font-size', String(fontSize));
     text.setAttribute('font-weight', 'bold');
     text.setAttribute('fill', 'white');
-    text.textContent = value.toString();
+    text.textContent = (typeof value !== 'undefined' && value !== null) ? value.toString() : '?';
     // --- Hết tạo circle/text ---
+
 
     const animateMotion = document.createElementNS(svgNS, 'animateMotion');
     animateMotion.setAttribute('id', animationId);
@@ -104,31 +147,51 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5) {
     animateMotion.setAttribute('begin', 'indefinite');
     animateMotion.setAttribute('fill', 'freeze');
 
-    // *** XỬ LÝ SỰ KIỆN KẾT THÚC ***
+    // XỬ LÝ SỰ KIỆN KẾT THÚC
     animateMotion.addEventListener('endEvent', () => {
-        const destinationId = signalDestinations[signalName]; // Tra cứu đích
+        const destinationId = signalDestinations[signalName]; // Tra cứu đích gốc
 
-        // --- Xử lý đặc biệt cho tín hiệu "ALUOp" kết hợp khi đến ALU Control ---
+        // Khi tín hiệu "ALUOp" kết hợp đến ALU Control
         if (signalName === 'ALUOp' && destinationId === 'ALU-control') {
-            // Gọi hàm xử lý với giá trị kết hợp (đã là chuỗi)
-            handleAluControlArrival(value);
+            handleAluControlArrival(value); // Gọi hàm xử lý (truyền giá trị "10", "00", "01")
         }
-        // --- Xử lý các tín hiệu khác đến đích ---
+        // Khi tín hiệu 4-bit cuối cùng đến ALU chính
+        else if (signalName.startsWith(ALU_CONTROL_TO_ALU_NODE_ID_PREFIX)) {
+             console.log(`Final ALU Control Signal '${value}' reached main ALU (add-2).`);
+             // TODO: Logic cập nhật trạng thái/hình ảnh ALU chính ở đây
+             // Ví dụ: tìm phần tử 'add-2' và thay đổi text bên trong nó?
+             const mainAluElement = document.getElementById('add-2'); // Hoặc 'main-alu' nếu bạn đổi ID
+             if (mainAluElement) {
+                 let aluActionText = mainAluElement.querySelector('.alu-action-text'); // Thêm class này nếu muốn
+                 if (!aluActionText) {
+                     aluActionText = document.createElementNS(svgNS, 'text');
+                     aluActionText.setAttribute('class', 'alu-action-text');
+                     aluActionText.setAttribute('x', '60'); // Vị trí ví dụ
+                     aluActionText.setAttribute('y', '110'); // Vị trí ví dụ
+                     aluActionText.setAttribute('font-size', '10');
+                     aluActionText.setAttribute('text-anchor', 'middle');
+                     mainAluElement.appendChild(aluActionText);
+                 }
+                 // Tìm tên phép toán từ giá trị 4-bit
+                 let operationName = 'Unknown';
+                 if(value === "0010") operationName = 'ADD';
+                 else if(value === "0110") operationName = 'SUB';
+                 else if(value === "0000") operationName = 'AND';
+                 else if(value === "0001") operationName = 'ORR';
+                 else if(value === "0111") operationName = 'PASS B'; // Hoặc SUB?
+                 aluActionText.textContent = `Op: ${operationName}`;
+             }
+        }
+        // Xử lý các tín hiệu khác đến đích
         else if (destinationId) {
             console.log(`Signal '${signalName}' (value: ${value}) reached destination element with ID: '${destinationId}'`);
             // TODO: Logic tương tác với các phần tử đích khác
         }
-        // --- Xử lý node đi từ ALU Control đến ALU ---
-        else if (signalName.startsWith(ALU_CONTROL_TO_ALU_NODE_ID_PREFIX)) {
-             console.log(`Signal '${signalName}' (value: ${value}) reached main ALU.`);
-             // TODO: Logic khi tín hiệu điều khiển ALU đến được ALU chính
-        }
-        // --- Cảnh báo không có đích ---
+        // Cảnh báo không có đích
         else {
             console.warn(`Signal '${signalName}' (value: ${value}) finished, but no destination ID defined.`);
         }
     });
-    // *** HẾT XỬ LÝ SỰ KIỆN ***
 
     const mpath = document.createElementNS(svgNS, 'mpath');
     mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${pathId}`);
@@ -156,27 +219,39 @@ export function displayControlSignalNodes(signals) {
         return;
     }
 
-    clearAluControlDisplay(); // Reset trước khi tạo mới
+    // Lưu tín hiệu ALU cuối cùng vào biến tạm
+    pendingFinalAluSignal = signals.finalAluControlSignal || null;
+    if(pendingFinalAluSignal === null){
+        console.warn("Could not determine final ALU control signal in displayControlSignalNodes.");
+    }
+
+    // clearAluControlDisplay(); // Reset trước khi tạo mới
     while (signalNodesGroup.firstChild) {
         signalNodesGroup.removeChild(signalNodesGroup.firstChild);
     }
 
     for (const [signalName, value] of Object.entries(signals)) {
+        // Bỏ qua việc tạo node cho tín hiệu 4-bit ở đây, nó sẽ được tạo sau
+        if (signalName === 'finalAluControlSignal') {
+            continue;
+        }
+
+        let pathIdToUse;
         const lowerCaseSignalName = signalName.toLowerCase();
-        const pathIdToUse = `control-${lowerCaseSignalName}-path`;
+        pathIdToUse = `control-${lowerCaseSignalName}-path`; // Tìm path theo tên tín hiệu
 
         const nodeElement = createSignalNodeElement(
             signalName,
             value,
             pathIdToUse,
             2,
-            null // Luôn là null vì không còn offset cố định
+            null // Không offset
         );
         if (nodeElement) {
             signalNodesGroup.appendChild(nodeElement);
         }
     }
-     console.log("Control signal nodes created (using fixed transform offset for ALUOp).");
+    console.log("Control signal nodes created (using fixed transform offset for ALUOp).");
 }
 
 
@@ -203,33 +278,50 @@ export function startControlSignalAnimation() {
     });
 }
 
-// *** === BẮT ĐẦU THAY ĐỔI BƯỚC 3 === ***
-
+// --- BIẾN TRẠNG THÁI ---
+let pendingFinalAluSignal = null; // Lưu trữ tín hiệu ALU 4-bit cuối cùng
 const ALU_CONTROL_DISPLAY_TEXT_ID = "alu-control-output-value";
 const ALU_CONTROL_TO_ALU_NODE_ID_PREFIX = "node-ALUControlOutput-";
 const ALU_CONTROL_TO_ALU_PATH_ID = "ALU-control-to-ALU-2-path";
 const ALU_CONTROL_OUTPUT_DELAY = 500; // ms
 
 /**
- * Hàm xóa text hiển thị giá trị trong ALU Control
+ * Hàm xóa text hiển thị giá trị trong ALU Control, animation cũ,
+ * text phép toán trong ALU chính và reset biến tạm
+ * *** SỬA ĐỔI: Thêm logic xóa text trong ALU chính ***
  */
 function clearAluControlDisplay() {
-    const existingText = document.getElementById(ALU_CONTROL_DISPLAY_TEXT_ID);
-    if (existingText) {
-        existingText.remove();
+    // Xóa text trong ALU Control
+    const existingAluControlText = document.getElementById(ALU_CONTROL_DISPLAY_TEXT_ID);
+    if (existingAluControlText) {
+        existingAluControlText.remove();
     }
-    // --- BỎ RESET currentAluOpValues ---
+    // Xóa animation cũ từ ALU Control -> ALU
     const oldAnimNodes = signalNodesGroup.querySelectorAll(`g[id^="${ALU_CONTROL_TO_ALU_NODE_ID_PREFIX}"]`);
     oldAnimNodes.forEach(node => node.remove());
+
+    // *** BẮT ĐẦU THAY ĐỔI MỚI ***
+    // Xóa text hiển thị phép toán cũ trong ALU chính
+    const mainAluElement = document.getElementById('add-2'); // Hoặc ID của ALU chính nếu khác
+    if (mainAluElement) {
+        const aluActionText = mainAluElement.querySelector('.alu-action-text'); // Tìm bằng class đã đặt
+        if (aluActionText) {
+            aluActionText.remove(); // Xóa đi
+            console.log("Cleared previous ALU action text.");
+        }
+    }
+    // *** KẾT THÚC THAY ĐỔI MỚI ***
+
+    pendingFinalAluSignal = null; // Reset biến tạm
 }
 
 /**
  * Hàm xử lý khi tín hiệu ALUOp kết hợp đến ALU Control:
  * Hiển thị giá trị và kích hoạt animation mới đến ALU chính
- * @param {string} combinedValue - Giá trị kết hợp (ví dụ: "10")
+ * @param {string} arrivedAluOpValue - Giá trị kết hợp (ví dụ: "10")
  */
-function handleAluControlArrival(combinedValue) {
-    console.log(`Combined ALUOp signal arrived at ALU Control. Value: ${combinedValue}`);
+function handleAluControlArrival(arrivedAluOpValue) {
+    console.log(`Combined ALUOp signal arrived at ALU Control. Value: ${arrivedAluOpValue}`);
 
     const aluControlElement = document.getElementById("ALU-control");
     if (!aluControlElement) {
@@ -237,7 +329,7 @@ function handleAluControlArrival(combinedValue) {
         return;
     }
 
-    // Tạo/Cập nhật text hiển thị bên trong ALU Control
+    // --- Hiển thị giá trị ALUOp (đã đến) bên trong ALU Control ---
     let displayText = document.getElementById(ALU_CONTROL_DISPLAY_TEXT_ID);
     if (!displayText) {
         displayText = document.createElementNS(svgNS, 'text');
@@ -251,19 +343,29 @@ function handleAluControlArrival(combinedValue) {
         displayText.setAttribute('fill', 'black');
         aluControlElement.appendChild(displayText);
     }
-    displayText.textContent = combinedValue;
+    displayText.textContent = arrivedAluOpValue; // Hiển thị "10", "00", "01"
+    // --- Hết phần hiển thị ---
 
-    // Lên lịch tạo animation mới sau độ trễ
+    // --- Lên lịch tạo animation mới ---
     setTimeout(() => {
-        console.log(`Sending combined ALU control signal "${combinedValue}" to ALU...`);
-        const newNodeSignalName = `${ALU_CONTROL_TO_ALU_NODE_ID_PREFIX}${combinedValue}`;
-        // Gọi createSignalNodeElement cho animation mới
+        // Lấy giá trị 4-bit cuối cùng từ biến tạm
+        const finalSignalToSend = pendingFinalAluSignal;
+
+        if (finalSignalToSend === null) {
+            console.error("Cannot send signal from ALU Control to ALU: pendingFinalAluSignal is null!");
+            return;
+        }
+
+        console.log(`Sending final ALU control signal "${finalSignalToSend}" to ALU...`);
+        const newNodeSignalName = `${ALU_CONTROL_TO_ALU_NODE_ID_PREFIX}${finalSignalToSend}`;
+
+        // Tạo node mới với giá trị 4-bit cuối cùng
         const newNodeElement = createSignalNodeElement(
             newNodeSignalName,
-            combinedValue,
+            finalSignalToSend, // <<<--- SỬ DỤNG GIÁ TRỊ 4-BIT
             ALU_CONTROL_TO_ALU_PATH_ID,
             2, // duration
-            null // Không cần offset
+            null // offset
         );
 
         if (newNodeElement) {
@@ -271,80 +373,10 @@ function handleAluControlArrival(combinedValue) {
             const newAnimation = newNodeElement.querySelector('animateMotion');
             if (newAnimation) {
                 const parentGroup = newAnimation.closest('g');
-                 if(parentGroup) parentGroup.setAttribute('visibility', 'visible');
+                if (parentGroup) parentGroup.setAttribute('visibility', 'visible');
                 newAnimation.beginElement();
             }
         }
     }, ALU_CONTROL_OUTPUT_DELAY);
 }
-
-/**
- * Hàm hiển thị giá trị ALU Control và kích hoạt animation mới
- */
-function processAluControlOutput() {
-    // Chỉ xử lý nếu có cả hai giá trị và chưa xử lý trước đó
-    if (currentAluOpValues.ALUOp0 !== null && currentAluOpValues.ALUOp1 !== null && !currentAluOpValues.processed) {
-        currentAluOpValues.processed = true; // Đánh dấu đã xử lý
-
-        // 1. Kết hợp giá trị
-        const combinedValue = `${currentAluOpValues.ALUOp1}${currentAluOpValues.ALUOp0}`;
-        console.log(`ALUOp signals arrived. Combined value: ${combinedValue}`);
-
-        // 2. Tìm phần tử ALU Control đích
-        const aluControlElement = document.getElementById("ALU-control");
-        if (!aluControlElement) {
-            console.error("ALU Control element with ID 'ALU-control' not found!");
-            return; // Không thể hiển thị nếu không tìm thấy đích
-        }
-
-        // 3. Tạo/Cập nhật text hiển thị bên trong ALU Control
-        let displayText = document.getElementById(ALU_CONTROL_DISPLAY_TEXT_ID);
-        if (!displayText) {
-            displayText = document.createElementNS(svgNS, 'text');
-            displayText.setAttribute('id', ALU_CONTROL_DISPLAY_TEXT_ID);
-            // Đặt thuộc tính cơ bản (CẦN TINH CHỈNH VỊ TRÍ X, Y)
-            displayText.setAttribute('x', '0'); // Giả sử tâm ellipse là 0,0 trong group
-            displayText.setAttribute('y', '30'); // Đặt dưới chữ "ALU Control" một chút
-            displayText.setAttribute('text-anchor', 'middle');
-            displayText.setAttribute('dominant-baseline', 'central');
-            displayText.setAttribute('font-size', '12'); // Có thể cần lớn hơn
-            displayText.setAttribute('font-weight', 'bold');
-            displayText.setAttribute('fill', 'black'); // Màu khác để nổi bật
-            aluControlElement.appendChild(displayText); // Thêm vào group ALU Control
-        }
-        displayText.textContent = combinedValue; // Cập nhật giá trị
-
-        // 4. Lên lịch tạo animation mới sau độ trễ
-        setTimeout(() => {
-            console.log(`Sending combined ALU control signal "${combinedValue}" to ALU...`);
-
-            // Tạo node mới cho tín hiệu đi từ ALU Control -> ALU
-            // Sử dụng signalName duy nhất để tránh trùng ID node
-            const newNodeSignalName = `${ALU_CONTROL_TO_ALU_NODE_ID_PREFIX}${combinedValue}`;
-            const newNodeElement = createSignalNodeElement(
-                newNodeSignalName,
-                combinedValue, // Giá trị là chuỗi kết hợp
-                ALU_CONTROL_TO_ALU_PATH_ID, // Path mới
-                2, // Thời gian di chuyển (có thể khác)
-                null // Không cần offset cố định cho node này
-            );
-
-            if (newNodeElement) {
-                signalNodesGroup.appendChild(newNodeElement);
-                // Bắt đầu animation ngay lập tức
-                const newAnimation = newNodeElement.querySelector('animateMotion');
-                if (newAnimation) {
-                    const parentGroup = newAnimation.closest('g');
-                    if(parentGroup) parentGroup.setAttribute('visibility', 'visible');
-                    newAnimation.beginElement();
-                }
-            }
-            // Có thể xóa text hiển thị trong ALU control tại đây nếu muốn
-            // hoặc để nó hiển thị cho đến khi có lệnh mới
-            // clearAluControlDisplay(); // Nếu muốn xóa ngay sau khi gửi đi
-
-        }, ALU_CONTROL_OUTPUT_DELAY); // Độ trễ
-    }
-}
-
 
