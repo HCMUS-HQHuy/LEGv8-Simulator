@@ -1,11 +1,11 @@
-import controlSignalTable from "./defineSignal.js"; // Đảm bảo đường dẫn đúng
+import controlSignalTable from "./defineSignal.js";
+import signalDestinations from "./signalDestinations.js";
 
 
 const svgNS = "http://www.w3.org/2000/svg";
-const signalNodesGroup = document.getElementById('control-signal-nodes'); // Giả sử thẻ <g> này tồn tại trong HTML/SVG của bạn
-// --- Hằng số ---
-const ALUOP_VISUAL_OFFSET_X = 8; // Khoảng cách ngang giữa tâm 2 node
-const ALUOP_VISUAL_OFFSET_Y = 0; // Khoảng cách dọc (0 nếu muốn ngang hàng)
+const signalNodesGroup = document.getElementById('control-signal-nodes');
+const ALUOP_VISUAL_OFFSET_X = 8;
+const ALUOP_VISUAL_OFFSET_Y = 0;
 
 /**
  * Tạo các tín hiệu điều khiển dựa trên lệnh đã được parse.
@@ -59,7 +59,7 @@ export function generateControlSignals(parsedInstruction) {
  * @param {{x: number, y: number} | null} [offset=null] - Khoảng dịch chuyển CỐ ĐỊNH {x, y}.
  * @returns {SVGGElement | null} Phần tử <g> chứa node và animation.
  */
-function createSignalNodeElement(signalName, value, pathId, duration = 2, offset = null) {
+function createSignalNodeElement(signalName, value, pathId, duration = 5, offset = null) {
     // *** KIỂM TRA PATH GỐC ***
     const pathElement = document.getElementById(pathId); // Chỉ cần kiểm tra path gốc
     if (!pathElement) {
@@ -79,12 +79,9 @@ function createSignalNodeElement(signalName, value, pathId, duration = 2, offset
     nodeGroup.setAttribute('id', nodeGroupId);
     nodeGroup.setAttribute('visibility', 'hidden');
 
-    // *** ÁP DỤNG TRANSFORM OFFSET CỐ ĐỊNH ***
     if (offset && (offset.x !== 0 || offset.y !== 0)) {
         nodeGroup.setAttribute('transform', `translate(${offset.x}, ${offset.y})`);
-        // console.log(`Applying fixed offset (${offset.x}, ${offset.y}) to node ${nodeGroupId}`);
     }
-    // -----------------------------
 
     // Tạo vòng tròn nền (giữ nguyên)
     const circle = document.createElementNS(svgNS, 'circle');
@@ -108,6 +105,22 @@ function createSignalNodeElement(signalName, value, pathId, duration = 2, offset
     animateMotion.setAttribute('dur', `${duration}s`);
     animateMotion.setAttribute('begin', 'indefinite');
     animateMotion.setAttribute('fill', 'freeze');
+
+    // *** === BẮT ĐẦU THAY ĐỔI BƯỚC 2 (Phần 2) === ***
+    animateMotion.addEventListener('endEvent', () => {
+        // Tra cứu ID đích từ bảng ánh xạ
+        const destinationId = signalDestinations[signalName];
+
+        if (destinationId) {
+            // Nếu tìm thấy ID đích, log thông tin chi tiết hơn
+            console.log(`Signal '${signalName}' (value: ${value}) reached destination element with ID: '${destinationId}'`);
+            // Bước tiếp theo: Thay vì log, chúng ta sẽ tìm phần tử SVG đích và cập nhật nó.
+        } else {
+            // Nếu không có ID đích được định nghĩa cho tín hiệu này
+            console.warn(`Signal '${signalName}' (value: ${value}) finished, but no destination ID is defined in signalDestinations.`);
+        }
+    });
+    // *** === KẾT THÚC THAY ĐỔI BƯỚC 2 (Phần 2) === ***
 
     // *** LUÔN THAM CHIẾU ĐẾN PATH GỐC ***
     const mpath = document.createElementNS(svgNS, 'mpath');

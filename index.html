@@ -279,14 +279,14 @@
     <!-- Components Layer (Drawn AFTER lines = On Top) -->
     <g id="components">
       <!-- pc -->
-      <g transform = "translate(100, 500)">
+      <g id="pc" transform = "translate(100, 500)">
         <rect width = "50" height = "100" class = "component" />
 
         <text x = "25" y = "50" class = "label"> PC </text>
       </g>
 
       <!-- instruction-memory -->
-      <g transform = "translate(190, 530)">
+      <g id="instruction-memory" transform = "translate(190, 530)">
         <rect width = "130" height = "200" class = "component" />
 
         <text x = "65" y = "165" class = "label"> Instruction </text> 
@@ -312,7 +312,7 @@
       </g>
 
       <!-- register  -->
-      <g transform = "translate(580, 520)">
+      <g id="register" transform = "translate(580, 520)">
         <rect width = "170" height = "220" class = "component" />
 
         <text x = "115" y = "205" class = "label"> Registers </text>
@@ -337,7 +337,7 @@
       </g>
 
       <!-- data-memory  -->
-      <g transform = "translate(1150, 610)">
+      <g id="data-memory" transform = "translate(1150, 610)">
         <rect width = "140" height = "200" class = "component" />
 
         <text x = "110" y = "165" class = "label"> Data </text>
@@ -354,7 +354,7 @@
       
       <!-- ALU -->
       <!-- add-0 -->
-      <g transform = "translate(300, 57)">
+      <g id="add-0" transform = "translate(300, 57)">
         <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(1.75)" class = "component"/>
 
         <text x = "46"  y = "62" class = "label"> Add </text>
@@ -362,14 +362,14 @@
       </g>
 
       <!-- add-1 -->
-      <g transform = "translate(980, 130)">
+      <g id="add-1" transform = "translate(980, 130)">
         <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.10)" class = "component"/>
 
         <text x = "55" y = "75" class = "label"> Add </text>
       </g>
 
       <!-- add-2 -->
-      <g transform = "translate(890, 540)">
+      <g id="add-2" transform = "translate(890, 540)">
         <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.5)" class = "component"/>
 
         <text x = "60" y = "90" class = "label"> ALU </text>
@@ -380,7 +380,7 @@
       <!-- End Alu -->
 
       <!-- control -->
-      <g transform = "translate(490, 335)">
+      <g id="control" transform = "translate(490, 335)">
           <ellipse cx = "70" cy = "50" rx = "50" ry = "120" class = "control-component" />
           
           <text x = "70" y = "50" class = "control-label"> Control </text>
@@ -397,7 +397,7 @@
       </g>
 
       <!-- shift-left-2 -->
-      <g transform = "translate(900, 250)">
+      <g id="shift-left-2" transform = "translate(900, 250)">
         <circle cx = "0" cy = "0" r = "40" class = "component"/>
         
         <text x = "0" y = "-10" class = "label"> Shift </text>
@@ -405,7 +405,7 @@
       </g>
 
       <!-- sign-extend -->
-      <g transform = "translate(680, 840)">
+      <g id="sign-extend" transform = "translate(680, 840)">
         <circle cx = "0" cy = "0" r = "50" class = "component"/>
         
         <text x = "0" y = "-10" class = "label"> Sign- </text>
@@ -418,7 +418,7 @@
       </g>
 
       <!-- ALU-control -->
-      <g transform = "translate(890, 860)">
+      <g id="ALU-control" transform = "translate(890, 860)">
         <ellipse cx = "0" cy = "0" rx = "50" ry = "70" class = "control-component" />
 
         <text x = "0" y = "-10" class = "control-label"> ALU </text>
@@ -426,7 +426,7 @@
       </g>
 
       <!-- mux-0 -->
-      <g transform = "translate(1280, 100)">
+      <g id="mux-0" transform = "translate(1280, 100)">
         <rect x = "0"  y = "0" width = "40" height = "120" rx = "20" ry = "20" class = "component"/>
         
         <text x = "14" y = "20"  class = "mem-label"> 0 </text>
@@ -437,7 +437,7 @@
       </g>
       
       <!-- mux-1 -->
-      <g transform = "translate(520, 555)">
+      <g id="mux-1" transform = "translate(520, 555)">
         <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
         
         <text x = "14" y = "20" class = "mem-label"> 0 </text>
@@ -448,7 +448,7 @@
       </g>
       
       <!-- mux-2 -->
-      <g transform = "translate(820, 630)">
+      <g id="mux-2" transform = "translate(820, 630)">
         <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
         
         <text x = "14" y = "20" class = "mem-label"> 0 </text>
@@ -459,7 +459,7 @@
       </g>
       
       <!-- mux-3 -->
-      <g transform="translate(1335, 665)">
+      <g id="mux-3" transform="translate(1335, 665)">
         <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
         
         <text x = "14" y = "20" class = "mem-label"> 1 </text>
@@ -470,13 +470,13 @@
       </g>
 
       <!-- AND gate -->
-      <g transform="translate(1050, 450)">
+      <g id="and-gate" transform="translate(1050, 450)">
         <path d="M0,0 L40,0 A40,50 0 0,1 40,100 L0,100 Z"
               stroke="deepskyblue" class="control-component" />
       </g>
 
       <!-- OR gate -->
-      <g transform="translate(1170, 230)">
+      <g id="or-gate" transform="translate(1170, 230)">
         <path d="M0,0 Q40,40 0,100 Q50,100 80,50 Q50,0 0,0"
               stroke="deepskyblue" class="control-component" />
       </g>  
