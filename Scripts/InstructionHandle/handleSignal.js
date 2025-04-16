@@ -92,16 +92,15 @@ export function generateControlSignals(parsedInstruction) {
 }
 
 /**
- * Tạo SVG cho một node tín hiệu (0/1) và animation của nó.
- * *** SỬA ĐỔI: Thêm lại tham số 'offset' và áp dụng transform ***
+ * Tạo SVG cho một node tín hiệu (0/1 hoặc chuỗi) và animation của nó.
+ * *** SỬA ĐỔI: Thêm tham số finalAluValue và cập nhật listener ***
  * @param {string} signalName - Tên tín hiệu.
- * @param {0 | 1} value - Giá trị tín hiệu.
+ * @param {string|number} value - Giá trị tín hiệu hiển thị (0, 1, "10", "0010", ...).
  * @param {string} pathId - ID của thẻ <path> gốc (chữ thường).
- * @param {number} [duration=2] - Thời gian animation.
- * @param {{x: number, y: number} | null} [offset=null] - Khoảng dịch chuyển CỐ ĐỊNH {x, y}.
- * @returns {SVGGElement | null} Phần tử <g> chứa node và animation.
+ * @param {number} [duration=5] - Thời gian animation.
+ * @param {string | null} [finalAluValue=null] - Giá trị 4-bit cuối cùng (chỉ dùng cho ALUOp).
  */
-function createSignalNodeElement(signalName, value, pathId, duration = 5) {
+function createSignalNodeElement(signalName, value, pathId, duration = 5, finalAluValue = null) {
     // *** KIỂM TRA PATH GỐC ***
     const pathElement = document.getElementById(pathId);
     if (!pathElement) {
@@ -154,7 +153,7 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5) {
         // Khi tín hiệu "ALUOp" kết hợp đến ALU Control
         if (signalName === 'ALUOp' && destinationId === 'ALU-control') {
             if (typeof value !== 'undefined' && value !== null) {
-                handleAluControlArrival(value);
+                handleAluControlArrival(value, finalAluValue);
             } else { 
                 console.log("undefined value in ALUOp-> ALU Control"); 
                 return null; 
@@ -210,8 +209,7 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5) {
 
 /**
  * Hiển thị các node tín hiệu điều khiển trên datapath.
- * *** SỬA ĐỔI: Loại bỏ tạo path ảo, tính toán offset cố định ***
- * @param {object} signals - Đối tượng tín hiệu trả về từ generateControlSignals.
+ * *** SỬA ĐỔI: Truyền finalAluControlSignal khi tạo node ALUOp ***
  */
 export function displayControlSignalNodes(signals) {
     if (!signals) {
@@ -222,14 +220,7 @@ export function displayControlSignalNodes(signals) {
         console.error("SVG group 'control-signal-nodes' not found! Cannot display signals.");
         return;
     }
-
-    // Lưu tín hiệu ALU cuối cùng vào biến tạm
-    pendingFinalAluSignal = signals.finalAluControlSignal || null;
-    if(pendingFinalAluSignal === null){
-        console.warn("Could not determine final ALU control signal in displayControlSignalNodes.");
-    }
-
-    // clearAluControlDisplay(); // Reset trước khi tạo mới
+    clearAluControlDisplay(); // Reset trước khi tạo mới
     while (signalNodesGroup.firstChild) {
         signalNodesGroup.removeChild(signalNodesGroup.firstChild);
     }
@@ -244,12 +235,15 @@ export function displayControlSignalNodes(signals) {
         const lowerCaseSignalName = signalName.toLowerCase();
         pathIdToUse = `control-${lowerCaseSignalName}-path`; // Tìm path theo tên tín hiệu
 
+        // *** TRUYỀN THAM SỐ THỨ 5 (finalAluValue) CHO ALUOp ***
+        const finalAluValueForNode = (signalName === 'ALUOp') ? signals.finalAluControlSignal : null;
+
         const nodeElement = createSignalNodeElement(
             signalName,
             value,
             pathIdToUse,
             2,
-            null // Không offset
+            finalAluValueForNode
         );
         if (nodeElement) {
             signalNodesGroup.appendChild(nodeElement);
@@ -282,8 +276,6 @@ export function startControlSignalAnimation() {
     });
 }
 
-// --- BIẾN TRẠNG THÁI ---
-let pendingFinalAluSignal = null;
 // *** THÊM BIẾN LƯU ID CỦA setTimeout ĐANG CHỜ ***
 let activeAluControlTimeoutId = null;
 const ALU_CONTROL_DISPLAY_TEXT_ID = "alu-control-output-value";
@@ -298,9 +290,8 @@ const ALU_CONTROL_OUTPUT_DELAY = 500; // ms
 function clearAluControlDisplay() {
     // Xóa text trong ALU Control
     const existingAluControlText = document.getElementById(ALU_CONTROL_DISPLAY_TEXT_ID);
-    if (existingAluControlText) {
-        existingAluControlText.remove();
-    }
+    if (existingAluControlText) existingAluControlText.remove();
+
     // Xóa animation cũ từ ALU Control -> ALU
     const oldAnimNodes = signalNodesGroup.querySelectorAll(`g[id^="${ALU_CONTROL_TO_ALU_NODE_ID_PREFIX}"]`);
     oldAnimNodes.forEach(node => node.remove());
@@ -308,30 +299,36 @@ function clearAluControlDisplay() {
     const mainAluElement = document.getElementById('add-2');
     if (mainAluElement) {
         const aluActionText = mainAluElement.querySelector('.alu-action-text');
-        if (aluActionText) {
-            aluActionText.remove();
-        }
+        if (aluActionText) aluActionText.remove();
     }
 
-    // *** BẮT ĐẦU THAY ĐỔI MỚI ***
-    // Hủy bỏ bất kỳ setTimeout nào đang chờ từ lần gọi handleAluControlArrival trước đó
+    // Hủy bỏ setTimeout đang chờ (vẫn cần thiết)
     if (activeAluControlTimeoutId) {
         clearTimeout(activeAluControlTimeoutId);
-        activeAluControlTimeoutId = null; // Reset ID
+        activeAluControlTimeoutId = null;
         console.log("Cleared pending ALU Control output timeout.");
     }
-    // *** KẾT THÚC THAY ĐỔI MỚI ***
-
-    pendingFinalAluSignal = null; // Reset biến tạm
 }
 
 /**
- * Hàm xử lý khi tín hiệu ALUOp kết hợp đến ALU Control:
- * Hiển thị giá trị và kích hoạt animation mới đến ALU chính
- * @param {string} arrivedAluOpValue - Giá trị kết hợp (ví dụ: "10")
+ * Hàm xử lý khi tín hiệu ALUOp kết hợp đến ALU Control.
+ * *** SỬA ĐỔI: Nhận cả finalSignalToSend làm tham số ***
+ * @param {string} arrivedAluOpValue - Giá trị ALUOp kết hợp (ví dụ: "10")
+ * @param {string | null} finalSignalToSend - Tín hiệu 4-bit cuối cùng cần gửi đi (ví dụ: "0010")
  */
-function handleAluControlArrival(arrivedAluOpValue) {
-    console.log(`Combined ALUOp signal arrived at ALU Control. Value: ${arrivedAluOpValue}`);
+function handleAluControlArrival(arrivedAluOpValue, finalSignalToSend) {
+
+    // Kiểm tra tham số đầu vào (phòng ngừa)
+    if (typeof arrivedAluOpValue === 'undefined' || arrivedAluOpValue === null) {
+        console.error("handleAluControlArrival called with invalid arrivedAluOpValue");
+        return;
+    }
+    if (typeof finalSignalToSend === 'undefined' || finalSignalToSend === null) {
+        console.error("handleAluControlArrival called with invalid finalSignalToSend");
+        return;
+    }
+
+    console.log(`Combined ALUOp signal arrived at ALU Control. Value: ${arrivedAluOpValue}. Final signal to send: ${finalSignalToSend}`);
 
     const aluControlElement = document.getElementById("ALU-control");
     if (!aluControlElement) {
@@ -361,13 +358,12 @@ function handleAluControlArrival(arrivedAluOpValue) {
 
     // --- Lên lịch tạo animation mới ---
     activeAluControlTimeoutId = setTimeout(() => {
-        // Lấy giá trị 4-bit cuối cùng từ biến tạm
-        const finalSignalToSend = pendingFinalAluSignal;
-
-        if (finalSignalToSend === null) {
-            console.error("Cannot send signal from ALU Control to ALU: pendingFinalAluSignal is null!");
+        
+        if (finalSignalToSend === "XXXX") { // Kiểm tra giá trị lỗi nếu có
+            console.error("Final ALU control signal is invalid ('XXXX'). Cannot send signal to ALU.");
+            activeAluControlTimeoutId = null;
             return;
-        }
+       }
 
         console.log(`Sending final ALU control signal "${finalSignalToSend}" to ALU...`);
         const newNodeSignalName = `${ALU_CONTROL_TO_ALU_NODE_ID_PREFIX}${finalSignalToSend}`;
@@ -375,10 +371,9 @@ function handleAluControlArrival(arrivedAluOpValue) {
         // Tạo node mới với giá trị 4-bit cuối cùng
         const newNodeElement = createSignalNodeElement(
             newNodeSignalName,
-            finalSignalToSend, // <<<--- SỬ DỤNG GIÁ TRỊ 4-BIT
+            finalSignalToSend,
             ALU_CONTROL_TO_ALU_PATH_ID,
             2, // duration
-            null // offset
         );
 
         if (newNodeElement) {
