@@ -72,13 +72,6 @@ body {
   stroke-width: 6;
 }
 
-/* Style cho node tín hiệu */
-#control-signal-nodes g circle {
-  /* fill: #FF4136; */ /* Đã set bằng JS */
-  /* stroke: black; */
-  /* stroke-width: 1; */
-}
-
 #control-signal-nodes g text {
   /* fill: white; */ /* Đã set bằng JS */
   /* font-family: sans-serif; */
