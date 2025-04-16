@@ -85,8 +85,14 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5, offset
 
     // Tạo vòng tròn nền (giữ nguyên)
     const circle = document.createElementNS(svgNS, 'circle');
-    circle.setAttribute('r', '8');
-    circle.setAttribute('fill', value === 1 ? '#FF4136' : '#0074D9');
+    // Điều chỉnh bán kính nếu giá trị dài hơn? (Ví dụ)
+    const radius = (typeof value === 'string' && value.length > 1) ? 10 : 8;
+    circle.setAttribute('r', String(radius));
+    circle.setAttribute('fill', (value === 1 || value === '1') ? '#FF4136' : '#0074D9'); // Xử lý cả số và chuỗi '1'
+    // Có thể cần màu khác cho giá trị chuỗi?
+    if (typeof value === 'string' && value !== '0' && value !== '1') {
+       circle.setAttribute('fill', '#FF851B'); // Màu cam cho giá trị kết hợp
+    }
     circle.setAttribute('stroke', 'black');
     circle.setAttribute('stroke-width', '1');
 
@@ -111,13 +117,28 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5, offset
         // Tra cứu ID đích từ bảng ánh xạ
         const destinationId = signalDestinations[signalName];
 
-        if (destinationId) {
-            // Nếu tìm thấy ID đích, log thông tin chi tiết hơn
+        // Xử lý đặc biệt cho ALUOp0 và ALUOp1 khi chúng đến ALU Control
+        if ((signalName === 'ALUOp0' || signalName === 'ALUOp1') && destinationId === 'ALU-control') {
+            console.log(`Signal '${signalName}' (value: ${value}) arrived at ALU Control.`);
+            // Lưu giá trị lại
+            currentAluOpValues[signalName] = value;
+            // Kiểm tra và xử lý nếu cả hai đã đến
+            processAluControlOutput();
+        }
+        // Xử lý thông báo đến đích cho các tín hiệu khác (hoặc ALUOp nếu đích khác)
+        else if (destinationId) {
             console.log(`Signal '${signalName}' (value: ${value}) reached destination element with ID: '${destinationId}'`);
-            // Bước tiếp theo: Thay vì log, chúng ta sẽ tìm phần tử SVG đích và cập nhật nó.
-        } else {
-            // Nếu không có ID đích được định nghĩa cho tín hiệu này
-            console.warn(`Signal '${signalName}' (value: ${value}) finished, but no destination ID is defined in signalDestinations.`);
+            // TODO: Logic tương tác với các phần tử đích khác sẽ ở đây
+        }
+        // Xử lý các node animation mới (ví dụ: từ ALU Control đi ra)
+        else if (signalName.startsWith(ALU_CONTROL_TO_ALU_NODE_ID_PREFIX)) {
+             console.log(`Signal '${signalName}' (value: ${value}) reached main ALU.`);
+             // TODO: Logic khi tín hiệu điều khiển ALU đến được ALU chính
+             // Ví dụ: cập nhật trạng thái ALU, thay đổi biểu tượng phép toán...
+        }
+        // Cảnh báo nếu không có đích
+        else {
+            console.warn(`Signal '${signalName}' (value: ${value}) finished, but no destination ID defined.`);
         }
     });
     // *** === KẾT THÚC THAY ĐỔI BƯỚC 2 (Phần 2) === ***
@@ -149,6 +170,10 @@ export function displayControlSignalNodes(signals) {
         return;
     }
 
+    // --- Reset trạng thái ALUOp và hiển thị trước khi tạo node mới ---
+    clearAluControlDisplay();
+    // -------------------------------------------------------------
+
     // --- Chỉ cần dọn dẹp node cũ ---
     while (signalNodesGroup.firstChild) {
         signalNodesGroup.removeChild(signalNodesGroup.firstChild);
@@ -163,23 +188,18 @@ export function displayControlSignalNodes(signals) {
         const lowerCaseSignalName = signalName.toLowerCase();
         const originalAluOpPathId = 'control-aluop-path'; // ID gốc trong SVG
 
-        // --- Xử lý ALUOp1/ALUOp0 để gán offset cố định ---
+        // **QUAN TRỌNG**: Logic tạo node ALUOp0/1 vẫn giữ nguyên như cũ (dùng path gốc và offset)
+        // vì chúng cần đi từ Control chính -> ALU Control Unit
         if (lowerCaseSignalName === 'aluop1') {
             pathIdToUse = originalAluOpPathId;
-            // Offset node 1 (ví dụ: sang trái/lên trên)
             nodeOffset = { x: -ALUOP_VISUAL_OFFSET_X, y: -ALUOP_VISUAL_OFFSET_Y };
         } else if (lowerCaseSignalName === 'aluop0') {
             pathIdToUse = originalAluOpPathId;
-            // Offset node 0 (ví dụ: sang phải/xuống dưới)
             nodeOffset = { x: ALUOP_VISUAL_OFFSET_X, y: ALUOP_VISUAL_OFFSET_Y };
-        }
-        // --- Xử lý tín hiệu khác ---
-        else {
+        } else {
             pathIdToUse = `control-${lowerCaseSignalName}-path`;
-            // Không cần offset cho các tín hiệu khác
         }
 
-        // --- Tạo node với offset cố định (nếu có) và path gốc ---
         const nodeElement = createSignalNodeElement(signalName, value, pathIdToUse, 2, nodeOffset);
         if (nodeElement) {
             signalNodesGroup.appendChild(nodeElement);
@@ -212,45 +232,107 @@ export function startControlSignalAnimation() {
     });
 }
 
-// --- Ví dụ cách sử dụng (Giả sử bạn có hàm parseLegv8Instruction) ---
-/*
-async function runSimulation(instructionLine) {
-    try {
-        // Giả sử hàm này trả về object như { mnemonic: 'LDUR', type: 'D', ... } hoặc { error: ... }
-        const parsed = parseLegv8Instruction(instructionLine);
+// *** === BẮT ĐẦU THAY ĐỔI BƯỚC 3 === ***
 
-        if (parsed && !parsed.error) {
-            const signals = generateControlSignals(parsed);
-            if (signals) {
-                displayControlSignalNodes(signals);
-                // Có thể đợi một chút trước khi bắt đầu animation nếu muốn
-                // await new Promise(resolve => setTimeout(resolve, 100));
-                startControlSignalAnimation();
-            } else {
-                // Xóa các node cũ nếu lệnh không hợp lệ hoặc không được hỗ trợ
-                 while (signalNodesGroup.firstChild) {
-                    signalNodesGroup.removeChild(signalNodesGroup.firstChild);
+// Biến lưu trữ tạm thời giá trị ALUOp khi chúng đến nơi
+let currentAluOpValues = {
+    ALUOp1: null,
+    ALUOp0: null,
+    processed: false // Cờ để tránh xử lý nhiều lần
+};
+
+// ID cố định cho text hiển thị trong ALU Control
+const ALU_CONTROL_DISPLAY_TEXT_ID = "alu-control-output-value";
+// ID cố định cho node animation mới từ ALU Control đến ALU
+const ALU_CONTROL_TO_ALU_NODE_ID_PREFIX = "node-ALUControlOutput-"; // Thêm tiền tố để có thể phân biệt
+const ALU_CONTROL_TO_ALU_PATH_ID = "ALU-control-to-ALU-2-path"; // Path mới
+const ALU_CONTROL_OUTPUT_DELAY = 500; // ms - Độ trễ trước khi gửi tín hiệu đến ALU
+
+/**
+ * Hàm xóa text hiển thị giá trị trong ALU Control
+ */
+function clearAluControlDisplay() {
+    const existingText = document.getElementById(ALU_CONTROL_DISPLAY_TEXT_ID);
+    if (existingText) {
+        existingText.remove();
+    }
+    // Reset trạng thái lưu trữ
+    currentAluOpValues.ALUOp0 = null;
+    currentAluOpValues.ALUOp1 = null;
+    currentAluOpValues.processed = false;
+
+     // Xóa cả node animation cũ đi từ ALU control (nếu có)
+     const oldAnimNodes = signalNodesGroup.querySelectorAll(`g[id^="${ALU_CONTROL_TO_ALU_NODE_ID_PREFIX}"]`);
+     oldAnimNodes.forEach(node => node.remove());
+}
+
+/**
+ * Hàm hiển thị giá trị ALU Control và kích hoạt animation mới
+ */
+function processAluControlOutput() {
+    // Chỉ xử lý nếu có cả hai giá trị và chưa xử lý trước đó
+    if (currentAluOpValues.ALUOp0 !== null && currentAluOpValues.ALUOp1 !== null && !currentAluOpValues.processed) {
+        currentAluOpValues.processed = true; // Đánh dấu đã xử lý
+
+        // 1. Kết hợp giá trị
+        const combinedValue = `${currentAluOpValues.ALUOp1}${currentAluOpValues.ALUOp0}`;
+        console.log(`ALUOp signals arrived. Combined value: ${combinedValue}`);
+
+        // 2. Tìm phần tử ALU Control đích
+        const aluControlElement = document.getElementById("ALU-control");
+        if (!aluControlElement) {
+            console.error("ALU Control element with ID 'ALU-control' not found!");
+            return; // Không thể hiển thị nếu không tìm thấy đích
+        }
+
+        // 3. Tạo/Cập nhật text hiển thị bên trong ALU Control
+        let displayText = document.getElementById(ALU_CONTROL_DISPLAY_TEXT_ID);
+        if (!displayText) {
+            displayText = document.createElementNS(svgNS, 'text');
+            displayText.setAttribute('id', ALU_CONTROL_DISPLAY_TEXT_ID);
+            // Đặt thuộc tính cơ bản (CẦN TINH CHỈNH VỊ TRÍ X, Y)
+            displayText.setAttribute('x', '0'); // Giả sử tâm ellipse là 0,0 trong group
+            displayText.setAttribute('y', '30'); // Đặt dưới chữ "ALU Control" một chút
+            displayText.setAttribute('text-anchor', 'middle');
+            displayText.setAttribute('dominant-baseline', 'central');
+            displayText.setAttribute('font-size', '12'); // Có thể cần lớn hơn
+            displayText.setAttribute('font-weight', 'bold');
+            displayText.setAttribute('fill', 'black'); // Màu khác để nổi bật
+            aluControlElement.appendChild(displayText); // Thêm vào group ALU Control
+        }
+        displayText.textContent = combinedValue; // Cập nhật giá trị
+
+        // 4. Lên lịch tạo animation mới sau độ trễ
+        setTimeout(() => {
+            console.log(`Sending combined ALU control signal "${combinedValue}" to ALU...`);
+
+            // Tạo node mới cho tín hiệu đi từ ALU Control -> ALU
+            // Sử dụng signalName duy nhất để tránh trùng ID node
+            const newNodeSignalName = `${ALU_CONTROL_TO_ALU_NODE_ID_PREFIX}${combinedValue}`;
+            const newNodeElement = createSignalNodeElement(
+                newNodeSignalName,
+                combinedValue, // Giá trị là chuỗi kết hợp
+                ALU_CONTROL_TO_ALU_PATH_ID, // Path mới
+                2, // Thời gian di chuyển (có thể khác)
+                null // Không cần offset cố định cho node này
+            );
+
+            if (newNodeElement) {
+                signalNodesGroup.appendChild(newNodeElement);
+                // Bắt đầu animation ngay lập tức
+                const newAnimation = newNodeElement.querySelector('animateMotion');
+                if (newAnimation) {
+                    const parentGroup = newAnimation.closest('g');
+                    if(parentGroup) parentGroup.setAttribute('visibility', 'visible');
+                    newAnimation.beginElement();
                 }
             }
-        } else {
-            console.error("Failed to parse instruction:", instructionLine, parsed?.error);
-             // Xóa các node cũ nếu parse lỗi
-             while (signalNodesGroup.firstChild) {
-                signalNodesGroup.removeChild(signalNodesGroup.firstChild);
-            }
-        }
-    } catch (error) {
-        console.error("Error during simulation step:", error);
-         // Xóa các node cũ nếu có lỗi xảy ra
-         while (signalNodesGroup.firstChild) {
-            signalNodesGroup.removeChild(signalNodesGroup.firstChild);
-        }
+            // Có thể xóa text hiển thị trong ALU control tại đây nếu muốn
+            // hoặc để nó hiển thị cho đến khi có lệnh mới
+            // clearAluControlDisplay(); // Nếu muốn xóa ngay sau khi gửi đi
+
+        }, ALU_CONTROL_OUTPUT_DELAY); // Độ trễ
     }
 }
 
-// Gọi hàm ví dụ:
-// runSimulation("LDUR X1, [X2, #12]");
-// runSimulation("ADD X3, X4, X5");
-// runSimulation("CBZ X1, label");
 
-*/

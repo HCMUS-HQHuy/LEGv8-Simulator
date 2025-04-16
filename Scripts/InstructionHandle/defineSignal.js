@@ -9,7 +9,7 @@ const controlSignalTable = {
         MemRead:  0,
         MemWrite: 0,
         Branch:   0, // X -> 0
-        Uncondbranch:   0, // X -> 0
+        UncondBranch:   0, // X -> 0
         ALUOp1:   1,
         ALUOp0:   0
     },
@@ -21,7 +21,7 @@ const controlSignalTable = {
         MemRead:  1,
         MemWrite: 0,
         Branch:   0, // X -> 0
-        Uncondbranch:   0, // X -> 0
+        UncondBranch:   0, // X -> 0
         ALUOp1:   0,
         ALUOp0:   0
     },
@@ -33,7 +33,7 @@ const controlSignalTable = {
         MemRead:  0,
         MemWrite: 1,
         Branch:   0, // X -> 0
-        Uncondbranch:   0, // X -> 0
+        UncondBranch:   0, // X -> 0
         ALUOp1:   0,
         ALUOp0:   0
     },
@@ -45,7 +45,7 @@ const controlSignalTable = {
         MemRead:  0,
         MemWrite: 0,
         Branch:   1,
-        Uncondbranch:   0, // X -> 0
+        UncondBranch:   0, // X -> 0
         ALUOp1:   0, // X -> 0 (ALU likely used for compare/subtract internally)
         ALUOp0:   1  // X -> 1 (ALU likely used for compare/subtract internally)
         // Note: ALUOp for CBZ might need specific ALU control logic not fully shown here.
