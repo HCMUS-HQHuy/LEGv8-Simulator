@@ -13,7 +13,6 @@ const signalNodesGroup = document.getElementById('control-signal-nodes');
  *                           và giá trị 0 hoặc 1, hoặc null nếu lệnh không được hỗ trợ.
  */
 export function generateControlSignals(parsedInstruction) {
-    clearAluControlDisplay(); 
     if (!parsedInstruction || parsedInstruction.error || !parsedInstruction.mnemonic) {
         console.error("Invalid or errored parsed instruction provided.");
         return null;
@@ -184,7 +183,6 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5) {
                  else if(value === "0110") operationName = 'SUB';
                  else if(value === "0000") operationName = 'AND';
                  else if(value === "0001") operationName = 'ORR';
-                 else if(value === "0111") operationName = 'PASS B'; // Hoặc SUB?
                  aluActionText.textContent = `Op: ${operationName}`;
              }
         }
@@ -285,16 +283,17 @@ export function startControlSignalAnimation() {
 }
 
 // --- BIẾN TRẠNG THÁI ---
-let pendingFinalAluSignal = null; // Lưu trữ tín hiệu ALU 4-bit cuối cùng
+let pendingFinalAluSignal = null;
+// *** THÊM BIẾN LƯU ID CỦA setTimeout ĐANG CHỜ ***
+let activeAluControlTimeoutId = null;
 const ALU_CONTROL_DISPLAY_TEXT_ID = "alu-control-output-value";
 const ALU_CONTROL_TO_ALU_NODE_ID_PREFIX = "node-ALUControlOutput-";
 const ALU_CONTROL_TO_ALU_PATH_ID = "ALU-control-to-ALU-2-path";
 const ALU_CONTROL_OUTPUT_DELAY = 500; // ms
 
 /**
- * Hàm xóa text hiển thị giá trị trong ALU Control, animation cũ,
- * text phép toán trong ALU chính và reset biến tạm
- * *** SỬA ĐỔI: Thêm logic xóa text trong ALU chính ***
+ * Hàm xóa text hiển thị, animation cũ, text ALU và reset biến tạm,
+ * *** SỬA ĐỔI: Hủy bỏ setTimeout đang chờ ***
  */
 function clearAluControlDisplay() {
     // Xóa text trong ALU Control
@@ -305,16 +304,21 @@ function clearAluControlDisplay() {
     // Xóa animation cũ từ ALU Control -> ALU
     const oldAnimNodes = signalNodesGroup.querySelectorAll(`g[id^="${ALU_CONTROL_TO_ALU_NODE_ID_PREFIX}"]`);
     oldAnimNodes.forEach(node => node.remove());
+    // Xóa text trong ALU chính
+    const mainAluElement = document.getElementById('add-2');
+    if (mainAluElement) {
+        const aluActionText = mainAluElement.querySelector('.alu-action-text');
+        if (aluActionText) {
+            aluActionText.remove();
+        }
+    }
 
     // *** BẮT ĐẦU THAY ĐỔI MỚI ***
-    // Xóa text hiển thị phép toán cũ trong ALU chính
-    const mainAluElement = document.getElementById('add-2'); // Hoặc ID của ALU chính nếu khác
-    if (mainAluElement) {
-        const aluActionText = mainAluElement.querySelector('.alu-action-text'); // Tìm bằng class đã đặt
-        if (aluActionText) {
-            aluActionText.remove(); // Xóa đi
-            console.log("Cleared previous ALU action text.");
-        }
+    // Hủy bỏ bất kỳ setTimeout nào đang chờ từ lần gọi handleAluControlArrival trước đó
+    if (activeAluControlTimeoutId) {
+        clearTimeout(activeAluControlTimeoutId);
+        activeAluControlTimeoutId = null; // Reset ID
+        console.log("Cleared pending ALU Control output timeout.");
     }
     // *** KẾT THÚC THAY ĐỔI MỚI ***
 
@@ -335,25 +339,28 @@ function handleAluControlArrival(arrivedAluOpValue) {
         return;
     }
 
-    // --- Hiển thị giá trị ALUOp (đã đến) bên trong ALU Control ---
+
+    // --- Hiển thị giá trị ALUOp ---
     let displayText = document.getElementById(ALU_CONTROL_DISPLAY_TEXT_ID);
     if (!displayText) {
         displayText = document.createElementNS(svgNS, 'text');
+        // ... (set attributes) ...
         displayText.setAttribute('id', ALU_CONTROL_DISPLAY_TEXT_ID);
-        displayText.setAttribute('x', '0'); // Chỉnh lại nếu cần
-        displayText.setAttribute('y', '30'); // Chỉnh lại nếu cần
-        displayText.setAttribute('text-anchor', 'middle');
-        displayText.setAttribute('dominant-baseline', 'central');
-        displayText.setAttribute('font-size', '12');
-        displayText.setAttribute('font-weight', 'bold');
+        displayText.setAttribute('x', '0'); displayText.setAttribute('y', '30');
+        displayText.setAttribute('text-anchor', 'middle'); displayText.setAttribute('dominant-baseline', 'central');
+        displayText.setAttribute('font-size', '12'); displayText.setAttribute('font-weight', 'bold');
         displayText.setAttribute('fill', 'black');
         aluControlElement.appendChild(displayText);
     }
     displayText.textContent = arrivedAluOpValue; // Hiển thị "10", "00", "01"
     // --- Hết phần hiển thị ---
 
+    if (activeAluControlTimeoutId) {
+        clearTimeout(activeAluControlTimeoutId); // Hủy timeout cũ nếu có
+    }
+
     // --- Lên lịch tạo animation mới ---
-    setTimeout(() => {
+    activeAluControlTimeoutId = setTimeout(() => {
         // Lấy giá trị 4-bit cuối cùng từ biến tạm
         const finalSignalToSend = pendingFinalAluSignal;
 
@@ -383,6 +390,7 @@ function handleAluControlArrival(arrivedAluOpValue) {
                 newAnimation.beginElement();
             }
         }
+        activeAluControlTimeoutId = null;
     }, ALU_CONTROL_OUTPUT_DELAY);
 }
 
