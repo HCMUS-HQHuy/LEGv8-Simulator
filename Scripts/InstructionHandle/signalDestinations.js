@@ -6,8 +6,7 @@ const signalDestinations = {
     "RegWrite": "register",
     "MemRead":  "data-memory",
     "MemWrite": "data-memory",
-    "ALUOp1":   "ALU-control",   // Đích ban đầu là ALU Control Unit
-    "ALUOp0":   "ALU-control",   // Đích ban đầu là ALU Control Unit
+    "ALUOp":    "ALU-control",
     "Branch":   "and-gate",
     "UncondBranch": "or-gate", // Thêm nếu bạn đã thêm tín hiệu này
 };
