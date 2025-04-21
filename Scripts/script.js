@@ -4,13 +4,6 @@ import {encodeLegv8Instruction, parseLegv8Instruction} from "./InstructionHandle
 // Wait for the HTML document to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
 
-	const startButton = document.getElementById('startButton');
-	const dotAnimation = document.getElementById('dotAnimationPcAdd');
-	startButton.addEventListener('click', () => {
-		document.getElementById("point").setAttribute("visibility", "visible");
-		const aim = document.getElementById("animationDot");
-		aim.beginElement();
-	});
 
 	const content = document.getElementById('zoomContent');
 	const frame = document.getElementById('zoomFrame');
@@ -36,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Get references to the form and the output area
 	const codeForm = document.getElementById('codeForm');
 	const instructionTextarea = document.getElementById('instructionCode');
-	const outputArea = document.getElementById('outputArea');
+	// const parsedOutput = document.getElementById('parsedOutput');
 
 	// Add an event listener for the 'submit' event on the form
 	codeForm.addEventListener('submit', function(event) {
@@ -45,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		const codeLines = allCode.split(/\r?\n/);
 
 		// Clear previous output
-		outputArea.textContent = '';
+		// parsedOutput.textContent = '';
 		let results = []; // Array to hold parsed results
 
 		// 3. Process each line
@@ -101,10 +94,66 @@ document.addEventListener('DOMContentLoaded', function() {
 		console.log("--- Processing Complete ---");
 
 		// Display the results in the output area
-		outputArea.textContent = JSON.stringify(results, null, 2); // Pretty-print JSON output
-
-		// You can now do more with the 'results' array,
-		// like feeding it to a simulator function.
+		// parsedOutput.textContent = JSON.stringify(results, null, 2); // Pretty-print JSON output
+		updateParsedOutputTable(results);
 	});
 
 }); // End DOMContentLoaded listener
+
+function updateParsedOutputTable(data) {
+	const tbody = document.querySelector("#parsedOutputTable tbody");
+	tbody.innerHTML = ""; // Clear previous
+
+	data.forEach(entry => {
+		const { lineNumber, parsed } = entry;
+		const { mnemonic, type, structuredOperands = {}, error } = parsed || {};
+		const { Rd = "", Rn = "", Rm = "" } = structuredOperands;
+
+		const row = document.createElement("tr");
+		row.innerHTML = `
+		<td>${lineNumber}</td>
+		<td>${mnemonic || ""}</td>
+		<td>${type || ""}</td>
+		<td>${Rd}</td>
+		<td>${Rn}</td>
+		<td>${Rm}</td>
+		<td>${error || ""}</td>
+		`;
+		tbody.appendChild(row);
+	});
+}
+
+const textarea = document.getElementById("instructionCode");
+const lineNumbers = document.getElementById("lineNumbers");
+
+function updateLineNumbers() {
+  const lines = textarea.value.split("\n").length;
+  lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => `${i + 1}`).join("<br>");
+}
+
+// Đồng bộ scroll giữa số dòng và textarea
+textarea.addEventListener("scroll", () => {
+  lineNumbers.scrollTop = textarea.scrollTop;
+});
+
+textarea.addEventListener("input", updateLineNumbers);
+
+// Gọi lúc load trang
+updateLineNumbers();
+
+const themeToggle = document.getElementById("themeToggle");
+
+// Khởi tạo mặc định dark mode
+document.body.classList.add("dark");
+
+themeToggle.addEventListener("click", () => {
+  if (document.body.classList.contains("dark")) {
+    document.body.classList.remove("dark");
+    document.body.classList.add("light");
+    themeToggle.textContent = "🌙 Dark Mode";
+  } else {
+    document.body.classList.remove("light");
+    document.body.classList.add("dark");
+    themeToggle.textContent = "🔆 Light Mode";
+  }
+});

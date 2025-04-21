@@ -1,77 +1,210 @@
-body { 
-  font-family: sans-serif; 
+/* --- Root Variables (Defaults to Dark Mode) --- */
+:root {
+  --bg-color: #111;
+  --text-color: #1DCD9F;
+  --border-color: #1DCD9F; /* Primary border, used for frame, code editor, toggle */
+  --header-bg-color: #222;
+  --header-border-color: #4CAF50; /* Green accent */
+  --component-fill: #000;
+  --component-stroke: #fff;
+  --control-color: #08c0f8; /* Blue for control components/lines/labels */
+  --label-fill: #fff; /* General labels */
+  --mem-label-fill: #bdb8b8; /* Memory specific labels */
+  --label-start-fill: #fff; /* Assuming this label is on the main background */
+  --signal-line-stroke: #6aff4d; /* Bright green signal */
+  --emphasis-color: red; /* For moving dot, last table cell */
+  --line-number-bg: #000;
+  --line-number-color: #169976;
+  --table-header-bg: #222; /* Slightly different from main bg for visual separation */
+  --table-border-color: #444; /* Darker gray for internal table borders */
+  --table-row-odd-bg: #111; /* Same as main background */
+  --table-row-even-bg: #1a1a1a; /* Slightly lighter than odd for striping */
+  --table-row-hover-bg: #444; /* Hover effect */
+  --button-text-color: var(--text-color); /* Text color for the toggle button */
+  --button-bg-color: transparent; /* Background for the toggle button */
+  --button-border-color: var(--border-color); /* Border for the toggle button */
+  --button-hover-text-color: var(--bg-color); /* Text color on button hover */
+  --button-hover-bg-color: var(--border-color); /* Background on button hover */
 }
 
+/* --- Light Mode Overrides --- */
+body.light {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --border-color: #000000;
+  --header-bg-color: #eeeeee;
+  --header-border-color: #4CAF50; /* Keep green accent, or change to #555 */
+  --component-fill: #ffffff;
+  --component-stroke: #000000;
+  --control-color: #007acc; /* Darker blue for contrast */
+  --label-fill: #000000;
+  --mem-label-fill: #555555; /* Dark gray */
+  --label-start-fill: #000000; /* Assuming this label is on the main background */
+  --signal-line-stroke: #228B22; /* Forest green */
+  --emphasis-color: red; /* Red usually works on light too */
+  --line-number-bg: #f0f0f0;
+  --line-number-color: #555555;
+  --table-header-bg: #f5f5f5;
+  --table-border-color: #cccccc; /* Lighter gray for internal table borders */
+  --table-row-odd-bg: #ffffff;
+  --table-row-even-bg: #f9f9f9; /* Very light gray for striping */
+  --table-row-hover-bg: #e0e0e0; /* Light gray hover */
+  --button-text-color: var(--text-color);
+  --button-bg-color: transparent;
+  --button-border-color: var(--border-color);
+  --button-hover-text-color: var(--bg-color);
+  --button-hover-bg-color: var(--border-color);
+}
+
+/* --- Dark Mode Explicit Definitions (Good Practice) --- */
+body.dark {
+  --bg-color: #111;
+  --text-color: #1DCD9F;
+  --border-color: #1DCD9F;
+  --header-bg-color: #222;
+  --header-border-color: #4CAF50;
+  --component-fill: #000;
+  --component-stroke: #fff;
+  --control-color: #08c0f8;
+  --label-fill: #fff;
+  --mem-label-fill: #bdb8b8;
+  --label-start-fill: #fff;
+  --signal-line-stroke: #6aff4d;
+  --emphasis-color: red;
+  --line-number-bg: #000;
+  --line-number-color: #169976;
+  --table-header-bg: #222;
+  --table-border-color: #444;
+  --table-row-odd-bg: #111;
+  --table-row-even-bg: #1a1a1a;
+  --table-row-hover-bg: #444;
+  --button-text-color: var(--text-color);
+  --button-bg-color: transparent;
+  --button-border-color: var(--border-color);
+  --button-hover-text-color: var(--bg-color);
+  --button-hover-bg-color: var(--border-color);
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease; /* Transition specific properties */
+}
+
+/* header */
+.header {
+  background-color: var(--header-bg-color); 
+  color: var(--text-color);                 
+  font-size: 28px;
+  font-weight: bold;
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* hoặc dùng margin-left: auto cho button */
+  padding: 10px;
+  letter-spacing: 1.5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow might need theme adjustment too */
+  border-bottom: 4px solid var(--header-border-color); 
+}
+
+#themeToggle {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  margin-left: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#themeToggle:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
+
+/* footer */
+.footer {
+  background-color: var(--header-bg-color); 
+  color: var(--text-color);                 
+  text-align: center;
+  padding: 15px 20px;
+  font-size: 14px;
+  position: relative;
+  margin-top: 40px;
+  border-top: 4px solid var(--header-border-color); 
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* component */
 .component {
-  fill: white;
-  stroke: black;
+  fill: var(--component-fill); 
+  stroke: var(--component-stroke); 
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
 }
-
 .control-component {
-  fill: white;
-  stroke: rgb(8, 192, 248);
+  fill: var(--component-fill); 
+  stroke: var(--control-color); 
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
 }
 
+/* label */
 .label {
   font-family: sans-serif;
   font-size: 22px;
   text-anchor: middle;
   dominant-baseline: middle;
-  fill: black;
+  fill: var(--label-fill); 
   font-weight: bold;
 }
-
 .mem-label {
   font-family: sans-serif;
   font-size: 20px;
-  fill: black;
+  fill: var(--mem-label-fill); 
 }
-
 .control-label {
   font-family: sans-serif;
   font-size: 22px;
   text-anchor: middle;
   dominant-baseline: middle;
-  fill: rgb(8, 192, 248);
+  fill: var(--control-color); 
   font-weight: bold;
 }
-
 .mem-control-label {
   font-family: sans-serif;
   font-size: 20px;
-  fill: rgb(8, 192, 248);
+  fill: var(--control-color); 
 }
-
 .label-start {
   font-family: sans-serif;
   font-size: 10px;
   text-anchor: start;
   dominant-baseline: middle;
-  fill: black;
+  fill: var(--label-start-fill); 
 }
 
+/* line */
 .signal-line {
   fill: none;
-  stroke: black;
+  stroke: var(--signal-line-stroke); 
   stroke-width: 3;
 }
-
 .control-signal-line{
   fill: none;
-  stroke: rgb(8, 192, 248);
+  stroke: var(--control-color); 
   stroke-width: 3;
 }
-
 .ALU-control-signal-line{
   fill: none;
-  stroke: rgb(8, 192, 248);
+  stroke: var(--control-color); 
   stroke-width: 6;
 }
 
+/* node animation */
 #control-signal-nodes g text {
   /* fill: white; */ /* Đã set bằng JS */
   /* font-family: sans-serif; */
@@ -85,26 +218,56 @@ body {
    -moz-user-select: none;
    -ms-user-select: none;
 }
-
 /* Style for the moving dot */
 #movingDot {
-	fill: red;
+	fill: var(--emphasis-color);
 	/* visibility: hidden; /* Let's keep it visible initially for debugging */
 }
 
+/* Code and Frame container */
+.codeAndFrameContainer {
+  display: flex;
+  width: 100%; /* Toàn bộ chiều rộng của container */
+  align-items: flex-start; /* Đảm bảo các phần tử con bắt đầu từ đầu */
+}
+/* codeBox */
+.codeBox {
+  flex: 0 0 20%; /* Không co giãn, chiếm 30% */
+  padding: 0 20px; /* Padding ngang (trái và phải) */
+  margin-left: auto;
+}
+.code-editor {
+  display: flex;
+  border: 5px solid var(--border-color); 
+  background-color: var(--bg-color); 
+  font-family: monospace;
+}
+.line-numbers {
+  padding: 10px 15px;
+  text-align: right;
+  background-color: var(--line-number-bg); /* Use variable */
+  color: var(--line-number-color); /* Use variable */
+  user-select: none;
+}
+#instructionCode {
+  background-color: var(--bg-color); /* Use variable */
+  color: var(--text-color); /* Use variable */
+  font-family: monospace;
+  border: none; /* Remove border potentially set by var */
+  padding: 10px;
+}
+/* frameBox */
+.frameBox {
+  flex: 0 0 70%; /* Không co giãn, chiếm 70% */
+  padding: 0 20px; /* Padding ngang (trái và phải) */
+}
 .frame {
-	width: 70%;
-	height: 30%;
-	border: 2px solid #333;
-	margin: 0 auto;
+  flex: 0 0 70%; /* Không co giãn, chiếm 70% */
+	background-color: var(--bg-color); /* Use variable */
+	border: 5px solid var(--border-color); /* Use variable */
 	overflow: hidden;
 	position: relative;
-	background: #fafafa;
-	
-	/* background-image: url('../imageReal.png');
-	background-size: 90%;
-	background-position: center;
-	background-repeat: no-repeat; */
+  font-family: monospace;
 }
 
 .content {
@@ -112,4 +275,45 @@ body {
 	transition: transform 0.1s ease;
 	width: auto;
 	height: auto;
+}
+
+#parsedOutputTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-family: monospace;
+  font-size: 14px;
+  border: 5px solid var(--border-color); /* Use variable */
+  color: var(--text-color); /* Set base text color for table */
+  background-color: var(--table-row-odd-bg); /* Set base background */
+}
+
+#parsedOutputTable thead {
+  background-color: var(--table-header-bg); /* Use variable */
+  color: var(--text-color); /* Use variable (or a specific --table-header-text-color if needed) */
+}
+
+#parsedOutputTable th,
+#parsedOutputTable td {
+  border: 1px solid var(--table-border-color); /* Use variable */
+  padding: 8px 12px;
+  text-align: left;
+}
+
+#parsedOutputTable tbody tr {
+  background-color: var(--table-row-odd-bg); /* Default odd row color */
+  transition: background-color 0.2s ease; /* Add transition for hover */
+}
+
+#parsedOutputTable tbody tr:nth-child(even) {
+  background-color: var(--table-row-even-bg); /* Use variable */
+}
+
+#parsedOutputTable tbody tr:hover {
+  background-color: var(--table-row-hover-bg); /* Use variable */
+}
+
+#parsedOutputTable td:last-child {
+  color: var(--emphasis-color); /* Use variable */
+  font-weight: bold;
 }
