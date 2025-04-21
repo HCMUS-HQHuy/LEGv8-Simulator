@@ -235,6 +235,8 @@ body {
   flex: 0 0 20%; /* Không co giãn, chiếm 30% */
   padding: 0 20px; /* Padding ngang (trái và phải) */
   margin-left: auto;
+  display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
+  flex-direction: column; /* Sắp xếp h2 và form theo cột */
 }
 .code-editor {
   display: flex;
@@ -256,6 +258,23 @@ body {
   border: none; /* Remove border potentially set by var */
   padding: 10px;
 }
+#parseInstructions {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 5px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  margin-top: 10px;
+  margin-right: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+}
+#parseInstructions:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
+
 /* frameBox */
 .frameBox {
   flex: 0 0 70%; /* Không co giãn, chiếm 70% */
@@ -276,7 +295,20 @@ body {
 	width: auto;
 	height: auto;
 }
-
+/* Output container */
+.outputContainer {
+  display: flex;
+  width: 100%; /* Toàn bộ chiều rộng của container */
+  align-items: flex-start; /* Đảm bảo các phần tử con bắt đầu từ đầu */
+  justify-content: space-between; /* Đẩy box đầu tiên sang trái, box cuối sang phải */
+}
+/* parsedOutputBox */
+.parsedOutputBox {
+  padding: 0 20px; /* Padding ngang (trái và phải) */
+  margin-left: 0px;
+  display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
+  flex-direction: column; /* Sắp xếp h2 và form theo cột */
+}
 #parsedOutputTable {
   width: 100%;
   border-collapse: collapse;
@@ -287,33 +319,35 @@ body {
   color: var(--text-color); /* Set base text color for table */
   background-color: var(--table-row-odd-bg); /* Set base background */
 }
-
 #parsedOutputTable thead {
   background-color: var(--table-header-bg); /* Use variable */
   color: var(--text-color); /* Use variable (or a specific --table-header-text-color if needed) */
 }
-
 #parsedOutputTable th,
 #parsedOutputTable td {
   border: 1px solid var(--table-border-color); /* Use variable */
   padding: 8px 12px;
   text-align: left;
 }
-
 #parsedOutputTable tbody tr {
   background-color: var(--table-row-odd-bg); /* Default odd row color */
   transition: background-color 0.2s ease; /* Add transition for hover */
 }
-
 #parsedOutputTable tbody tr:nth-child(even) {
   background-color: var(--table-row-even-bg); /* Use variable */
 }
-
 #parsedOutputTable tbody tr:hover {
   background-color: var(--table-row-hover-bg); /* Use variable */
 }
-
 #parsedOutputTable td:last-child {
   color: var(--emphasis-color); /* Use variable */
   font-weight: bold;
+}
+/* Registers */
+.registersBox {
+  flex: 0 0 20%; /* Không co giãn, chiếm 30% */
+  padding: 0 20px; /* Padding ngang (trái và phải) */
+  margin-left: 0px;
+  display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
+  flex-direction: column; /* Sắp xếp h2 và form theo cột */
 }

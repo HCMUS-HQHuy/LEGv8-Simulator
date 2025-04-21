@@ -501,33 +501,72 @@
       <!-- Add id="instructionCode" to the textarea -->
       <div class = "code-editor">
         <div class = "line-numbers" id = "lineNumbers"> 1 </div>
-        <textarea id = "instructionCode" name="message" rows="10" cols="30" placeholder="Enter LEGv8 code here, one instruction per line...">ADD X9, X20, X21</textarea>
+        <textarea id = "instructionCode" name="message" rows="36" cols="30" placeholder="Enter LEGv8 code here, one instruction per line...">ADD X9, X20, X21</textarea>
       </div>
-      <button id = "submit">Parse Instructions</button>
+      <button id = "parseInstructions">Parse Instructions</button>
     </form>
   </div>
 </div>
 
-<div class = "parsedOutputBox">
-  <h2>Parsed Output</h2>
-  
-  <!-- Muốn hiển thị lại parsedOutput thuần thì phải vào script.js mở code lại nha -->
-  <!-- <pre id="parsedOutput" rows="10" cols="50"></pre> -->
-  
-  <table id = "parsedOutputTable" border = "1" style = "border-collapse: collapse; width: 100%;">
-    <thead>
-      <tr>
-        <th>Line</th>
-        <th>Mnemonic</th>
-        <th>Type</th>
-        <th>Rd</th>
-        <th>Rn</th>
-        <th>Rm</th>
-        <th>Error</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<div class = "outputContainer">
+  <div class = "parsedOutputBox">
+    <h2>Parsed Output</h2>
+    
+    <!-- Muốn hiển thị lại parsedOutput thuần thì phải vào script.js mở code lại nha -->
+    <!-- <pre id="parsedOutput" rows="10" cols="50"></pre> -->
+    
+    <table id = "parsedOutputTable" border = "1" style = "border-collapse: collapse; width: 100%;">
+      <thead>
+        <tr>
+          <th>Line</th>
+          <th>Mnemonic</th>
+          <th>Type</th>
+          <th>Rd</th>
+          <th>Rn</th>
+          <th>Rm</th>
+          <th>Error</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class = "registersBox">
+    <h2>Flags</h2>
+    
+    <table id = "parsedOutputTable" style = "border-collapse: collapse; width: 100%;">
+      <thead>
+        <tr>
+          <th>N</th>
+          <th>Z</th>
+          <th>V</th>
+          <th>C</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <th>0</th>
+          <th>0</th>
+          <th>0</th>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Registers</h2>
+
+    <table id = "parsedOutputTable" style = "border-collapse: collapse; width: 100%;">
+      <thead>
+        <tr>
+          <th>X1</th>
+          <th>0x0000</th>
+          <th>X2</th>
+          <th>0x0000</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    </div>
 </div>
   
 <script type="module" src="./Scripts/script.js"></script>
