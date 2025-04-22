@@ -1,7 +1,7 @@
-import * as handleReceivInstruction from "./InstructionHandle/formSubmit.js"
-import * as ZoomDragAndDrop from "./HandleFrame/ZoomDragAndDrop.js"
-import * as SwitchThemes from "./HandleOutLook/Themes.js"
-import * as instructionLine from "./HandleOutLook/InstructionCode.js"
+import * as ZoomDragAndDrop from "./HandleFrame/zoomDragAndDrop.js"
+import * as SwitchThemes from "./HandleOutLook/themes.js"
+import * as instructionLine from "./HandleOutLook/instructionCode.js"
+import * as handleReceivInstruction from "./HandleInstruction/formSubmit.js"
 
 document.addEventListener('DOMContentLoaded', function() {
 	SwitchThemes.trigger();

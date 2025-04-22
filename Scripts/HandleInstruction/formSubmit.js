@@ -1,5 +1,5 @@
-import {encodeLegv8Instruction, parseLegv8Instruction} from "./Parsecode.js"
-import * as handleSignal from "./Signal.js"
+import {encodeLegv8Instruction, parseLegv8Instruction} from "./parsecode.js"
+import * as handleSignal from "./signal.js"
 
 export function trigger() {
 	// Get references to the form and the output area
