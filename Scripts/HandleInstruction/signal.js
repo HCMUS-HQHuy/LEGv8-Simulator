@@ -30,8 +30,8 @@ const IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID = "instruction-memory-to-alu-control-pat
 const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path";
 
 // --- Hằng số animation ---
-const DEFAULT_ANIMATION_DURATION = 2; // giây
-const FETCH_ANIMATION_DURATION = 1; // giây (cho PC -> Mem)
+const DEFAULT_ANIMATION_DURATION = 5; // giây
+const FETCH_ANIMATION_DURATION = 3; // giây (cho PC -> Mem)
 
 // loại lệnh (ADD / ORR / XOR / AND)
 let mnemonic = null;
@@ -466,9 +466,9 @@ export function displayControlSignalNodes(signals, startNow = true) {
         }
     }
     console.log(`Control signal nodes created (startNow=${startNow}).`);
-     if (startNow) {
-         startControlSignalAnimation(); // Bắt đầu ngay nếu được yêu cầu
-     }
+    if (startNow) {
+        startControlSignalAnimation(); // Bắt đầu ngay nếu được yêu cầu
+    }
 }
 
 /**
@@ -478,7 +478,10 @@ export function displayControlSignalNodes(signals, startNow = true) {
  * @param {boolean} [startNow=true] - Có bắt đầu animation ngay không.
  */
 export function displayDataSignalNodes(parsedInstruction, encodedInstruction, startNow = true) {
-    if (!dataSignalNodesGroup) return;
+    if (!dataSignalNodesGroup) {
+        console.warn("dataSignalNodesGroup is null!");
+        return;
+    }
     // while (dataSignalNodesGroup.firstChild) { /* Đã chuyển vào clearAll */ }
 
     if (!parsedInstruction || parsedInstruction.error || !encodedInstruction) {

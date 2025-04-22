@@ -34,78 +34,104 @@ export function trigger() {
 		currentPC = INITIALIZED_VALUE_PC;
 		updatePCDisplay(currentPC);
 
-		event.preventDefault();
-		const allCode = instructionTextarea.value;
-		const codeLines = allCode.split(/\r?\n/);
-		
-		let results = []; // Array to hold parsed results
+        event.preventDefault();
+        const allCode = instructionTextarea.value;
+        const codeLines = allCode.split(/\r?\n/);
+        let firstInstructionLine = null;
+        let firstLineIndex = -1;
 
-		// 3. Process each line
-		console.log("--- Processing Input ---");
-		codeLines.forEach((line, index) => {
-			const trimmedLine = line.trim(); // Remove leading/trailing whitespace
+        // --- Tìm dòng lệnh đầu tiên hợp lệ ---
+        for (let i = 0; i < codeLines.length; i++) {
+            const trimmedLine = codeLines[i].trim();
+            if (trimmedLine && !trimmedLine.startsWith('//') && !trimmedLine.startsWith(';')) {
+                firstInstructionLine = trimmedLine;
+                firstLineIndex = i;
+                break;
+            }
+        }
 
-			// Optional: Skip empty lines or comment lines
-			if (!trimmedLine || trimmedLine.startsWith('//') || trimmedLine.startsWith(';')) {
-				console.log(`Line ${index + 1}: Skipped (empty or comment)`);
-				return; // Move to the next line
-			}
-			console.log(`Line ${index + 1}: "${trimmedLine}"`);
+		if (firstInstructionLine === null) { 
+			console.warn("FirstInstructionLine is null"); 
+			return; 
+		}
 
-			// --- LẤY GIÁ TRỊ PC HIỆN TẠI TRƯỚC KHI TĂNG ---
-			const pcValueForFetch = currentPC;
+		// --- LẤY GIÁ TRỊ PC HIỆN TẠI TRƯỚC KHI TĂNG ---
+		console.log(`--- Processing Instruction at PC=0x${currentPC.toString(16).toUpperCase().padStart(8,'0')} ---`);
+		console.log(`Line ${firstLineIndex + 1}: "${firstInstructionLine}"`);
 
-			// --- TĂNG VÀ CẬP NHẬT PC DISPLAY ---
-			currentPC += PC_INCREMENT;
-			updatePCDisplay(currentPC); // Cập nhật hiển thị với giá trị MỚI
-			console.log(`PC incremented to: 0x${currentPC.toString(16).toUpperCase().padStart(8,'0')}`);
+		// --- LẤY GIÁ TRỊ PC HIỆN TẠI TRƯỚC KHI TĂNG ---
+		const pcValueForFetch = currentPC;
 
-			const parsedInstruction = parseLegv8Instruction(trimmedLine);
-			if (parsedInstruction) {
-				results.push({ lineNumber: index + 1, parsed: parsedInstruction });
-				console.log(`Parsed Line ${index + 1}:`, parsedInstruction);
+		// --- TĂNG VÀ CẬP NHẬT PC DISPLAY ---
+		currentPC += PC_INCREMENT;
+		updatePCDisplay(currentPC); // Cập nhật hiển thị với giá trị MỚI
+		console.log(`PC incremented to: 0x${currentPC.toString(16).toUpperCase().padStart(8,'0')}`);
+
+		// --- PARSE LỆNH ---
+		const parsedInstruction = parseLegv8Instruction(firstInstructionLine);
+		let results = [];
+		if (!parsedInstruction || parsedInstruction.error) {
+			console.error(`Error parsing line ${firstLineIndex + 1}: ${parsedInstruction?.error || 'Parser returned null'}`);
+			// Dọn dẹp nếu lỗi parse
+			handleSignal.displayControlSignalNodes(null);
+			handleSignal.displayDataSignalNodes(null); // Gọi hàm dọn dẹp data nodes
+			return;
+		}
+		results.push({ lineNumber: firstLineIndex + 1, parsed: parsedInstruction });
+		console.log(`Parsed Line ${firstLineIndex + 1}:`, parsedInstruction);
+
+		// --- MÃ HÓA LỆNH (Cần thiết để có mã máy) ---
+		const encodedInstruction = encodeLegv8Instruction(parsedInstruction);
+		if (!encodedInstruction || encodedInstruction.error) {
+			console.error("Encoding Error:", encodedInstruction?.error || "Encoder returned null");
+			handleSignal.displayControlSignalNodes(null);
+			handleSignal.displayDataSignalNodes(null);
+			return;
+		}
+		console.log("Encoded Binary :", encodedInstruction);
+		// --- HẾT MÃ HÓA ---
+
+		// --- XỬ LÝ ANIMATION VÀ TÍN HIỆU ---
+
+		// 1. Dọn dẹp tín hiệu từ chu kỳ trước
+		handleSignal.clearAllDisplaysAndSignals(); // Hàm mới để dọn dẹp tất cả
+
+		// 2. Tạo Animation cho PC đi đến Mem Addr (NEW)
+		handleSignal.animatePCToMemory(pcValueForFetch); // Truyền giá trị PC CŨ
+
+		// 3. Tạo Control Signals (từ lệnh đã parse)
+		const controlSignals = handleSignal.generateControlSignals(parsedInstruction);
+
+		// 4. Lên lịch hiển thị Control/Data Signals và Bắt đầu Animations SAU KHI PC đến nơi (hoặc sau delay)
+		// Chúng ta cần biết khi nào animation PC kết thúc HOẶC dùng delay cố định
+		const fetchDelay = 1000; // Giả sử 1 giây để PC đến và memory đọc
+
+		setTimeout(() => {
+			console.log("--- Fetch complete, processing instruction fields and signals ---");
+
+			// 4.1 Hiển thị Control Signals Nodes (KHÔNG BẮT ĐẦU ANIMATION VỘI)
+			if (controlSignals) {
+				handleSignal.displayControlSignalNodes(controlSignals, false); // Thêm cờ false để không tự bắt đầu
 			} else {
-				console.log(`Line ${index + 1}: Parser returned null/undefined`);
+				console.warn(`No control signals generated for line ${firstLineIndex + 1}.`);
+				handleSignal.displayControlSignalNodes(null, false); // Xóa node cũ
 			}
 
-			// 1. Dọn dẹp tín hiệu từ chu kỳ trước
-			handleSignal.clearAllDisplaysAndSignals(); // Hàm mới để dọn dẹp tất cả
+			// 4.2 Hiển thị Data Signals Nodes (Lệnh và các phần) (KHÔNG BẮT ĐẦU ANIMATION VỘI)
+			// Hàm displayDataSignalNodes cần mã máy 32-bit
+			handleSignal.displayDataSignalNodes(parsedInstruction, encodedInstruction, false); // Thêm mã máy và cờ false
 
-			// 2. Tạo Animation cho PC đi đến Mem Addr (NEW)
-			handleSignal.animatePCToMemory(pcValueForFetch); 
+			// 4.3 Bắt đầu đồng loạt các animation (Control và Data)
+			handleSignal.startAllSignalAnimations(); // Hàm mới để bắt đầu cả control và data
 
-			// 3. Tạo tín hiệu điều khiển
-			const controlSignals = handleSignal.generateControlSignals(parsedInstruction);
-			
-			const fetchDelay = 1000; // Giả sử 1 giây để PC đến và memory đọc
+		}, fetchDelay);
 
-			setTimeout(() => {
-				console.log("--- Fetch complete, processing instruction fields and signals ---");
-	
-				// 4.1 Hiển thị Control Signals Nodes (KHÔNG BẮT ĐẦU ANIMATION VỘI)
-				if (controlSignals) {
-					handleSignal.displayControlSignalNodes(controlSignals, false); // Thêm cờ false để không tự bắt đầu
-				} else {
-					console.warn(`No control signals generated for line ${firstLineIndex + 1}.`);
-					 handleSignal.displayControlSignalNodes(null, false); // Xóa node cũ
-				}
-	
-				// 4.2 Hiển thị Data Signals Nodes (Lệnh và các phần) (KHÔNG BẮT ĐẦU ANIMATION VỘI)
-				// Hàm displayDataSignalNodes cần mã máy 32-bit
-				handleSignal.displayDataSignalNodes(parsedInstruction, encodeLegv8Instruction(parseLegv8Instruction), false); // Thêm mã máy và cờ false
-	
-				// 4.3 Bắt đầu đồng loạt các animation (Control và Data)
-				handleSignal.startAllSignalAnimations(); // Hàm mới để bắt đầu cả control và data
-	
-			}, fetchDelay);
-
-			console.log("--- Processing Complete for Instruction ---");
-		});
-
+		console.log("--- Processing Complete for Instruction ---");
 		// Display the results in the output area
 		// parsedOutput.textContent = JSON.stringify(results, null, 2); // Pretty-print JSON output
 		updateParsedOutputTable(results);
 	});
+
 }
 
 function updateParsedOutputTable(data) {
