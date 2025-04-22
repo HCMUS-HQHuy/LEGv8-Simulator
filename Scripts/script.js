@@ -4,27 +4,6 @@ import {encodeLegv8Instruction, parseLegv8Instruction} from "./InstructionHandle
 // Wait for the HTML document to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
 
-	const content = document.getElementById('zoomContent');
-	const frame = document.getElementById('zoomFrame');
-	let scale = 1;
-
-	frame.addEventListener('wheel', function(e) {
-	if (e.ctrlKey) {
-		e.preventDefault(); // Ngăn không cho browser zoom
-		const delta = e.deltaY;
-		const zoomFactor = 0.1;
-
-		if (delta > 0) {
-		scale = Math.max(0.1, scale - zoomFactor);
-		} else {
-		scale = Math.min(5, scale + zoomFactor);
-		}
-
-		content.style.transform = `scale(${scale})`;
-	}
-	}, { passive: false });
-
-
 	// Get references to the form and the output area
 	const codeForm = document.getElementById('codeForm');
 	const instructionTextarea = document.getElementById('instructionCode');
