@@ -30,7 +30,7 @@ const IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID = "instruction-memory-to-alu-control-pat
 const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path";
 
 // --- Hằng số animation ---
-const DEFAULT_ANIMATION_DURATION = 5; // giây
+const DEFAULT_ANIMATION_DURATION = 2; // giây
 const FETCH_ANIMATION_DURATION = 3; // giây (cho PC -> Mem)
 
 // loại lệnh (ADD / ORR / XOR / AND)
@@ -88,7 +88,7 @@ export function generateControlSignals(parsedInstruction) {
  * @param {number} [duration=5] - Thời gian animation.
  * @param {string | null} [finalAluValue=null] - Giá trị 4-bit cuối cùng (chỉ dùng cho ALUOp).
  */
-function createSignalNodeElement(signalName, value, pathId, duration, onEndCallback = null) {
+function createSignalNodeElement(signalName, value, pathId, duration) {
     // *** KIỂM TRA PATH GỐC ***
     const pathElement = document.getElementById(pathId);
     if (!pathElement) {
@@ -183,11 +183,6 @@ function createSignalNodeElement(signalName, value, pathId, duration, onEndCallb
         else {
             console.warn(`Signal '${signalName}' (value: ${value}) finished, but no destination ID defined.`);
         }
-
-        if (typeof onEndCallback === 'function') {
-            onEndCallback(signalName, value); // Gọi callback khi kết thúc
-        }
-
     });
 
     const mpath = document.createElementNS(svgNS, 'mpath');
@@ -201,33 +196,11 @@ function createSignalNodeElement(signalName, value, pathId, duration, onEndCallb
     return nodeGroup;
 }
 
-// ... (hàm startControlSignalAnimation giữ nguyên) ...
-export function startControlSignalAnimation() {
-    if (!signalNodesGroup) {
-        console.error("SVG group 'control-signal-nodes' not found! Cannot start animation.");
-        return;
-    }
-    const animations = signalNodesGroup.querySelectorAll('animateMotion');
-    if (animations.length === 0) {
-        console.log("No signal nodes found to animate.");
-        return;
-    }
-    console.log(`Starting animation for ${animations.length} control signals.`);
-    animations.forEach(anim => {
-        const parentGroup = anim.closest('g');
-        if (parentGroup) {
-            parentGroup.setAttribute('visibility', 'visible');
-            anim.beginElement();
-        } else {
-            console.warn(`Could not find parent group for animation element:`, anim);
-        }
-    });
-}
-
 export function clearAllDisplaysAndSignals() {
     // Xóa text trong ALU Control
     const existingAluControlText = document.getElementById(ALU_CONTROL_DISPLAY_TEXT_ID);
     if (existingAluControlText) existingAluControlText.remove();
+    // Xóa text trong ALU chính
 
     // Xóa text trong ALU chính
     const mainAluElement = document.getElementById('add-2'); // ID ALU chính
@@ -450,10 +423,15 @@ function getValueEndPath(aluOpCombined) {
 }
 
 // (displayControlSignalNodes cập nhật để nhận cờ `startNow`)
-// (displayControlSignalNodes cập nhật để nhận cờ `startNow`)
-export function displayControlSignalNodes(signals, startNow = true, onSignalEnd = null) {
+export function displayControlSignalNodes(signals) {
 
-    if (!signals || !signalNodesGroup) { return; }
+    if (!signals || !signalNodesGroup) {
+        if (signalNodesGroup) { // Xóa node cũ nếu tín hiệu là null
+                while (signalNodesGroup.firstChild) signalNodesGroup.removeChild(signalNodesGroup.firstChild);
+        }
+        return;
+    }
+
 
     for (const [signalName, value] of Object.entries(signals)) {
         if (signalName === 'finalAluControlSignal') { continue; }
@@ -461,21 +439,14 @@ export function displayControlSignalNodes(signals, startNow = true, onSignalEnd 
         const finalAluValueForNode = (signalName === 'ALUOp') ? signals.finalAluControlSignal : null;
 
         const nodeElement = createSignalNodeElement(
-            signalName, value, pathIdToUse, DEFAULT_ANIMATION_DURATION, finalAluValueForNode, onSignalEnd
+            signalName, value, pathIdToUse, DEFAULT_ANIMATION_DURATION, finalAluValueForNode
         );
-        if (nodeElement) { /* ... append, set hidden if !startNow ... */
+        if (nodeElement) {
             signalNodesGroup.appendChild(nodeElement);
-            if (!startNow) {
-                 const anim = nodeElement.querySelector('animateMotion');
-                 const group = anim.closest('g');
-                 if(group) group.setAttribute('visibility', 'hidden');
-            }
-       }
+            // Đảm bảo ẩn ban đầu (đã set trong create...)
+        }
     }
-    console.log(`Control signal nodes created (startNow=${startNow}).`);
-    if (startNow) {
-        startControlSignalAnimation(); // Bắt đầu ngay nếu được yêu cầu
-    }
+    console.log(`Control signal nodes created (hidden).`);
 }
 
 /**
@@ -484,16 +455,18 @@ export function displayControlSignalNodes(signals, startNow = true, onSignalEnd 
  * @param {string} encodedInstruction - Mã máy 32-bit.
  * @param {boolean} [startNow=true] - Có bắt đầu animation ngay không.
  */
-export function displayDataSignalNodes(parsedInstruction, encodedInstruction, startNow = true, onDataEnd = null) {
+export function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
     if (!dataSignalNodesGroup) {
         console.warn("dataSignalNodesGroup is null!");
         return;
     }
 
     if (!parsedInstruction || parsedInstruction.error || !encodedInstruction) {
-       console.log("No valid instruction/encoding to display data signals.");
-       return;
-    }
+        console.log("No valid instruction/encoding to display data signals.");
+         // Xóa node data cũ nếu không có lệnh hợp lệ
+         while (dataSignalNodesGroup.firstChild) dataSignalNodesGroup.removeChild(dataSignalNodesGroup.firstChild);
+        return;
+     }
 
     // --- Tách các trường từ mã máy 32-bit ---
     // Thứ tự bit theo LEGv8/ARMv8 thường là từ phải sang trái (LSB là bit 0)
@@ -514,124 +487,115 @@ export function displayDataSignalNodes(parsedInstruction, encodedInstruction, st
     // --- Tạo node cho các trường dựa trên đường dẫn đã định nghĩa ---
     // Gửi Opcode/phần đầu đến Control Unit
     if (IMEM_OPCODE_TO_CONTROL_PATH_ID) {
-        const node = createDataNodeElement(`Op [31-21]`, opcode, IMEM_OPCODE_TO_CONTROL_PATH_ID, onDataEnd);
+        const node = createDataNodeElement(`Op [31-21]`, opcode, IMEM_OPCODE_TO_CONTROL_PATH_ID);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Rn đến cổng đọc Register 1
     if (IMEM_RN_TO_REG_PATH_ID && (parsedInstruction.type === 'R' || parsedInstruction.type === 'D' || parsedInstruction.type === 'I')) { // Rn dùng trong R, D, I
-        const node = createDataNodeElement(`Rn [9-5]`, rn, IMEM_RN_TO_REG_PATH_ID, onDataEnd);
+        const node = createDataNodeElement(`Rn [9-5]`, rn, IMEM_RN_TO_REG_PATH_ID);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Rm đến cổng đọc Register 2 (cho R-type)
     if (IMEM_RM_TO_REG_PATH_ID && parsedInstruction.type === 'R') {
-        const node = createDataNodeElement(`Rm [20-16]`, rm, IMEM_RM_TO_REG_PATH_ID, onDataEnd);
+        const node = createDataNodeElement(`Rm [20-16]`, rm, IMEM_RM_TO_REG_PATH_ID);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Rt đến cổng đọc Register 2 (cho D-type load/store, CBZ check)
     if (IMEM_RT_TO_REG_PATH_ID && (parsedInstruction.type === 'D' || parsedInstruction.type === 'CB')) {
-        const node = createDataNodeElement(`Rt [4-0 or 20-16]`, parsedInstruction.type === 'CB' ? rd : rm, IMEM_RT_TO_REG_PATH_ID, onDataEnd); // Rt là bit 4-0 hoặc 20-16 tùy ngữ cảnh parse
+        const node = createDataNodeElement(`Rt [4-0 or 20-16]`, parsedInstruction.type === 'CB' ? rd : rm, IMEM_RT_TO_REG_PATH_ID); // Rt là bit 4-0 hoặc 20-16 tùy ngữ cảnh parse
         if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Rd đến cổng Write Register (cho R-type, I-type, LDUR)
     if (IMEM_RD_TO_REG_PATH_ID && (parsedInstruction.type === 'R' || parsedInstruction.type === 'I' || parsedInstruction.mnemonic === 'LDUR')) {
-         const node = createDataNodeElement(`Rd [4-0]`, rd, IMEM_RD_TO_REG_PATH_ID, onDataEnd);
+         const node = createDataNodeElement(`Rd [4-0]`, rd, IMEM_RD_TO_REG_PATH_ID);
          if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Immediate đến Sign Extend (cho D-type, I-type)
     if (IMEM_IMM_TO_SIGN_EXTEND_PATH_ID && (parsedInstruction.type === 'D' || parsedInstruction.type === 'I')) {
         const immediateValue = parsedInstruction.type === 'D' ? dt_address : i_immediate;
-        const node = createDataNodeElement(`Imm`, immediateValue, IMEM_IMM_TO_SIGN_EXTEND_PATH_ID, onDataEnd);
+        const node = createDataNodeElement(`Imm`, immediateValue, IMEM_IMM_TO_SIGN_EXTEND_PATH_ID);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
    // Gửi Branch Address đến Shifter (cho CB-type, B-type)
     if (IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID && (parsedInstruction.type === 'CB' || parsedInstruction.type === 'B')) {
         const branchAddr = parsedInstruction.type === 'CB' ? cb_address : encodedInstruction.substring(6, 32); // B-format addr 26 bits
-        const node = createDataNodeElement(`BrAddr`, branchAddr, IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID, onDataEnd);
+        const node = createDataNodeElement(`BrAddr`, branchAddr, IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Function/shamt đến ALU Control (cho R-type)
      if (IMEM_FUNC_TO_ALU_CONTROL_PATH_ID && parsedInstruction.type === 'R') {
         const funcValue = shamt; // Giả sử shamt hoặc phần khác của opcode chứa thông tin func
-        const node = createDataNodeElement(`Func/Shamt`, funcValue, IMEM_FUNC_TO_ALU_CONTROL_PATH_ID, onDataEnd);
+        const node = createDataNodeElement(`Func/Shamt`, funcValue, IMEM_FUNC_TO_ALU_CONTROL_PATH_ID);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
-
     console.log("Data signal nodes created.");
-     if (startNow) {
-         startDataSignalAnimation();
-     }
 }
 
 /**
  * Tạo node cho giá trị dữ liệu (có thể là số hoặc chuỗi bit)
  */
-function createDataNodeElement(fieldName, value, pathId, duration, onEndCallback = null) {
+function createDataNodeElement(fieldName, value, pathId, duration = DEFAULT_ANIMATION_DURATION) {
     if (!dataSignalNodesGroup) return null;
-   const pathElement = document.getElementById(pathId);
-   if (!pathElement) {
-       console.warn(`Data Path Element ID "${pathId}" not found for field "${fieldName}".`);
-       return null;
-   }
-   const nodeGroupId = `data-node-${fieldName.replace(/\[|\]|-/g, '_')}`; // Tạo ID hợp lệ
-   const animationId = `data-anim-${fieldName.replace(/\[|\]|-/g, '_')}`;
-   const existingNode = document.getElementById(nodeGroupId);
-   if (existingNode) existingNode.remove();
-
-   const nodeGroup = document.createElementNS(svgNS, 'g');
-   nodeGroup.setAttribute('id', nodeGroupId);
-   nodeGroup.setAttribute('visibility', 'hidden'); // Ẩn ban đầu
-
-   const valueStr = value.toString();
-   const isLong = valueStr.length > 5; // Ví dụ: coi > 5 ký tự là dài
-
-   // Sử dụng hình chữ nhật
-   const shape = document.createElementNS(svgNS, 'rect');
-   const width = isLong ? 40 : 20;
-   const height = 16;
-   shape.setAttribute('width', String(width));
-   shape.setAttribute('height', String(height));
-   shape.setAttribute('rx', 3); shape.setAttribute('ry', 3);
-   shape.setAttribute('x', String(-width / 2)); // Canh giữa
-   shape.setAttribute('y', String(-height / 2));
-   shape.setAttribute('fill', '#4CAF50'); // Màu xanh lá cho data
-   shape.setAttribute('stroke', 'black');
-   shape.setAttribute('stroke-width', '1');
-
-   const text = document.createElementNS(svgNS, 'text');
-   text.setAttribute('text-anchor', 'middle');
-   text.setAttribute('dominant-baseline', 'central');
-   text.setAttribute('font-size', isLong ? '7' : '9'); // Font nhỏ hơn nữa
-   text.setAttribute('font-weight', 'normal'); // Không cần đậm?
-   text.setAttribute('fill', 'white');
-   text.textContent = valueStr;
-
-   const animateMotion = document.createElementNS(svgNS, 'animateMotion');
-   animateMotion.setAttribute('id', animationId);
-   animateMotion.setAttribute('dur', `${duration}s`);
-   animateMotion.setAttribute('begin', 'indefinite');
-   animateMotion.setAttribute('fill', 'freeze');
-
-   animateMotion.addEventListener('endEvent', (event) => { // Thêm event
-    console.log(`Data field '${fieldName}' (value: ${value}) animation finished.`);
-    // Tự hủy node data khi đến nơi?
-    event.target.closest('g')?.remove();
-
-    // *** GỌI CALLBACK NẾU CÓ ***
-    if (typeof onEndCallback === 'function') {
-        onEndCallback(fieldName, value); // Gọi callback khi kết thúc
+    const pathElement = document.getElementById(pathId);
+    if (!pathElement) {
+        console.warn(`Data Path Element ID "${pathId}" not found for field "${fieldName}".`);
+        return null;
     }
-    // *** HẾT GỌI CALLBACK ***
-});
+    const nodeGroupId = `data-node-${fieldName.replace(/\[|\]|-/g, '_')}`; // Tạo ID hợp lệ
+    const animationId = `data-anim-${fieldName.replace(/\[|\]|-/g, '_')}`;
+    const existingNode = document.getElementById(nodeGroupId);
+    if (existingNode) existingNode.remove();
 
-   const mpath = document.createElementNS(svgNS, 'mpath');
-   mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${pathId}`);
+    const nodeGroup = document.createElementNS(svgNS, 'g');
+    nodeGroup.setAttribute('id', nodeGroupId);
+    nodeGroup.setAttribute('visibility', 'hidden'); // Ẩn ban đầu
 
-   animateMotion.appendChild(mpath);
-   nodeGroup.appendChild(shape);
-   nodeGroup.appendChild(text);
-   nodeGroup.appendChild(animateMotion);
+    const valueStr = value.toString();
+    const isLong = valueStr.length > 5; // Ví dụ: coi > 5 ký tự là dài
 
-   return nodeGroup;
+    // Sử dụng hình chữ nhật
+    const shape = document.createElementNS(svgNS, 'rect');
+    const width = isLong ? 40 : 20;
+    const height = 16;
+    shape.setAttribute('width', String(width));
+    shape.setAttribute('height', String(height));
+    shape.setAttribute('rx', 3); shape.setAttribute('ry', 3);
+    shape.setAttribute('x', String(-width / 2)); // Canh giữa
+    shape.setAttribute('y', String(-height / 2));
+    shape.setAttribute('fill', '#4CAF50'); // Màu xanh lá cho data
+    shape.setAttribute('stroke', 'black');
+    shape.setAttribute('stroke-width', '1');
+
+    const text = document.createElementNS(svgNS, 'text');
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dominant-baseline', 'central');
+    text.setAttribute('font-size', isLong ? '7' : '9'); // Font nhỏ hơn nữa
+    text.setAttribute('font-weight', 'normal'); // Không cần đậm?
+    text.setAttribute('fill', 'white');
+    text.textContent = valueStr;
+
+    const animateMotion = document.createElementNS(svgNS, 'animateMotion');
+    animateMotion.setAttribute('id', animationId);
+    animateMotion.setAttribute('dur', `${duration}s`);
+    animateMotion.setAttribute('begin', 'indefinite');
+    animateMotion.setAttribute('fill', 'freeze');
+
+    animateMotion.addEventListener('endEvent', (event) => { // Thêm event
+        console.log(`Data field '${fieldName}' (value: ${value}) animation finished.`);
+        // Tự hủy node data khi đến nơi?
+        event.target.closest('g')?.remove();
+
+    });
+
+    const mpath = document.createElementNS(svgNS, 'mpath');
+    mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${pathId}`);
+
+    animateMotion.appendChild(mpath);
+    nodeGroup.appendChild(shape);
+    nodeGroup.appendChild(text);
+    nodeGroup.appendChild(animateMotion);
+
+    return nodeGroup;
 }
 
 /**
@@ -656,11 +620,24 @@ export function startDataSignalAnimation() {
     });
 }
 
-/**
- * Hàm mới để bắt đầu TẤT CẢ animation (NEW)
- */
-export function startAllSignalAnimations() {
-    console.log("Starting all signal animations...");
-    startControlSignalAnimation();
-    startDataSignalAnimation();
+export function startControlSignalAnimation() {
+    if (!signalNodesGroup) {
+        console.error("SVG group 'control-signal-nodes' not found! Cannot start animation.");
+        return;
+    }
+    const animations = signalNodesGroup.querySelectorAll('animateMotion');
+    if (animations.length === 0) {
+        console.log("No signal nodes found to animate.");
+        return;
+    }
+    console.log(`Starting animation for ${animations.length} control signals.`);
+    animations.forEach(anim => {
+        const parentGroup = anim.closest('g');
+        if (parentGroup) {
+            parentGroup.setAttribute('visibility', 'visible');
+            anim.beginElement();
+        } else {
+            console.warn(`Could not find parent group for animation element:`, anim);
+        }
+    });
 }
