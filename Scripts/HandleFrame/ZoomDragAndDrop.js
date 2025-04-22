@@ -1,6 +1,6 @@
 
 // Wait for the HTML document to be fully loaded
-document.addEventListener('DOMContentLoaded', function() {
+export function trigger() {
 
     const content = document.getElementById('zoomContent');
     const frame = document.getElementById('zoomFrame');
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			const rect = frame.getBoundingClientRect();
 			const mouseX = e.clientX - rect.left;
 			const mouseY = e.clientY - rect.top;
-			
+
 			const delta = e.deltaY;
 			const zoomFactor = 0.1;
 			const oldScale = scale; // Store old scale
@@ -117,4 +117,4 @@ document.addEventListener('DOMContentLoaded', function() {
         frame.addEventListener('mouseleave', stopDragging); // Stop if mouse leaves the frame
     }
     // ------------------------------------
-})
+}
