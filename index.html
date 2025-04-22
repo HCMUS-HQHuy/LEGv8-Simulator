@@ -515,7 +515,7 @@
     <!-- Muốn hiển thị lại parsedOutput thuần thì phải vào script.js mở code lại nha -->
     <!-- <pre id="parsedOutput" rows="10" cols="50"></pre> -->
     
-    <table id = "parsedOutputTable" border = "1" style = "border-collapse: collapse; width: 100%;">
+    <table class = "parsedOutputTable" style = "border-collapse: collapse; width: 100%;">
       <thead>
         <tr>
           <th>Line</th>
@@ -527,14 +527,16 @@
           <th>Error</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody id = "parsedOutputTable">
+
+      </tbody>
     </table>
   </div>
 
   <div class = "registersBox">
     <h2>Flags</h2>
     
-    <table id = "parsedOutputTable" style = "border-collapse: collapse; width: 100%;">
+    <table class = "parsedOutputTable" style = "border-collapse: collapse; width: 100%;">
       <thead>
         <tr>
           <th>N</th>
@@ -555,7 +557,7 @@
 
     <h2>Registers</h2>
 
-    <table id = "parsedOutputTable" style = "border-collapse: collapse; width: 100%;">
+    <table class = "parsedOutputTable" style = "border-collapse: collapse; width: 100%;">
       <thead>
         <tr>
           <th>X1</th>

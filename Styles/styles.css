@@ -309,7 +309,7 @@ body {
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
 }
-#parsedOutputTable {
+.parsedOutputTable {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
@@ -319,27 +319,27 @@ body {
   color: var(--text-color); /* Set base text color for table */
   background-color: var(--table-row-odd-bg); /* Set base background */
 }
-#parsedOutputTable thead {
+.parsedOutputTable thead {
   background-color: var(--table-header-bg); /* Use variable */
   color: var(--text-color); /* Use variable (or a specific --table-header-text-color if needed) */
 }
-#parsedOutputTable th,
-#parsedOutputTable td {
+.parsedOutputTable th,
+.parsedOutputTable td {
   border: 1px solid var(--table-border-color); /* Use variable */
   padding: 8px 12px;
   text-align: left;
 }
-#parsedOutputTable tbody tr {
+.parsedOutputTable tbody tr {
   background-color: var(--table-row-odd-bg); /* Default odd row color */
   transition: background-color 0.2s ease; /* Add transition for hover */
 }
-#parsedOutputTable tbody tr:nth-child(even) {
+.parsedOutputTable tbody tr:nth-child(even) {
   background-color: var(--table-row-even-bg); /* Use variable */
 }
-#parsedOutputTable tbody tr:hover {
+.parsedOutputTable tbody tr:hover {
   background-color: var(--table-row-hover-bg); /* Use variable */
 }
-#parsedOutputTable td:last-child {
+.parsedOutputTable td:last-child {
   color: var(--emphasis-color); /* Use variable */
   font-weight: bold;
 }

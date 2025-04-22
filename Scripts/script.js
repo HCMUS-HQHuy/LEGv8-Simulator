@@ -4,7 +4,6 @@ import {encodeLegv8Instruction, parseLegv8Instruction} from "./InstructionHandle
 // Wait for the HTML document to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
 
-
 	const content = document.getElementById('zoomContent');
 	const frame = document.getElementById('zoomFrame');
 	let scale = 1;
@@ -101,7 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
 }); // End DOMContentLoaded listener
 
 function updateParsedOutputTable(data) {
-	const tbody = document.querySelector("#parsedOutputTable tbody");
+	const tbody = document.getElementById("parsedOutputTable");
+	if (tbody == null) console.log("[WARNING] tbody is null");
 	tbody.innerHTML = ""; // Clear previous
 
 	data.forEach(entry => {
@@ -141,19 +141,21 @@ textarea.addEventListener("input", updateLineNumbers);
 // Gọi lúc load trang
 updateLineNumbers();
 
+//Themes
 const themeToggle = document.getElementById("themeToggle");
 
 // Khởi tạo mặc định dark mode
 document.body.classList.add("dark");
 
 themeToggle.addEventListener("click", () => {
-  if (document.body.classList.contains("dark")) {
-    document.body.classList.remove("dark");
-    document.body.classList.add("light");
-    themeToggle.textContent = "🌙 Dark Mode";
-  } else {
-    document.body.classList.remove("light");
-    document.body.classList.add("dark");
-    themeToggle.textContent = "🔆 Light Mode";
-  }
+if (document.body.classList.contains("dark")) {
+	document.body.classList.remove("dark");
+	document.body.classList.add("light");
+	themeToggle.textContent = "🌙 Dark Mode";
+} else {
+	document.body.classList.remove("light");
+	document.body.classList.add("dark");
+	themeToggle.textContent = "🔆 Light Mode";
+}
 });
+// End Themes
