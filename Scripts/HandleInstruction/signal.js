@@ -88,7 +88,7 @@ export function generateControlSignals(parsedInstruction) {
  * @param {number} [duration=5] - Thời gian animation.
  * @param {string | null} [finalAluValue=null] - Giá trị 4-bit cuối cùng (chỉ dùng cho ALUOp).
  */
-function createSignalNodeElement(signalName, value, pathId, duration) {
+function createSignalNodeElement(signalName, value, pathId, duration, onEndCallback = null) {
     // *** KIỂM TRA PATH GỐC ***
     const pathElement = document.getElementById(pathId);
     if (!pathElement) {
@@ -135,8 +135,8 @@ function createSignalNodeElement(signalName, value, pathId, duration) {
     animateMotion.setAttribute('fill', 'freeze');
 
     // XỬ LÝ SỰ KIỆN KẾT THÚC
-    animateMotion.addEventListener('endEvent', () => {
-        const destinationId = signalDestinations[signalName]; // Tra cứu đích gốc
+    animateMotion.addEventListener('endEvent', (event) => {
+        const destinationId = signalDestinations[signalName];
 
         // Khi tín hiệu "ALUOp" kết hợp đến ALU Control
         if (signalName === 'ALUOp' && destinationId === 'ALU-control') {
@@ -149,29 +149,30 @@ function createSignalNodeElement(signalName, value, pathId, duration) {
         }
         // Khi tín hiệu 4-bit cuối cùng đến ALU chính
         else if (signalName.startsWith(ALU_CONTROL_TO_ALU_NODE_ID_PREFIX)) {
-             console.log(`Final ALU Control Signal '${value}' reached main ALU (add-2).`);
-             // TODO: Logic cập nhật trạng thái/hình ảnh ALU chính ở đây
-             // Ví dụ: tìm phần tử 'add-2' và thay đổi text bên trong nó?
-             const mainAluElement = document.getElementById('add-2'); // Hoặc 'main-alu' nếu bạn đổi ID
-             if (mainAluElement) {
-                 let aluActionText = mainAluElement.querySelector('.alu-action-text'); // Thêm class này nếu muốn
-                 if (!aluActionText) {
-                     aluActionText = document.createElementNS(svgNS, 'text');
-                     aluActionText.setAttribute('class', 'alu-action-text');
-                     aluActionText.setAttribute('x', '60'); // Vị trí ví dụ
-                     aluActionText.setAttribute('y', '110'); // Vị trí ví dụ
-                     aluActionText.setAttribute('font-size', '10');
-                     aluActionText.setAttribute('text-anchor', 'middle');
-                     mainAluElement.appendChild(aluActionText);
-                 }
-                 // Tìm tên phép toán từ giá trị 4-bit
-                 let operationName = 'Unknown';
-                 if(value === "0010") operationName = 'ADD';
-                 else if(value === "0110") operationName = 'SUB';
-                 else if(value === "0000") operationName = 'AND';
-                 else if(value === "0001") operationName = 'ORR';
-                 aluActionText.textContent = `Op: ${operationName}`;
-             }
+            console.log(`Final ALU Control Signal '${value}' reached main ALU (add-2).`);
+            // TODO: Logic cập nhật trạng thái/hình ảnh ALU chính ở đây
+            // Ví dụ: tìm phần tử 'add-2' và thay đổi text bên trong nó?
+            const mainAluElement = document.getElementById('add-2'); // Hoặc 'main-alu' nếu bạn đổi ID
+            if (mainAluElement) {
+                let aluActionText = mainAluElement.querySelector('.alu-action-text'); // Thêm class này nếu muốn
+                if (!aluActionText) {
+                    aluActionText = document.createElementNS(svgNS, 'text');
+                    aluActionText.setAttribute('class', 'alu-action-text');
+                    aluActionText.setAttribute('x', '60'); // Vị trí ví dụ
+                    aluActionText.setAttribute('y', '110'); // Vị trí ví dụ
+                    aluActionText.setAttribute('font-size', '10');
+                    aluActionText.setAttribute('text-anchor', 'middle');
+                    mainAluElement.appendChild(aluActionText);
+                }
+                // Tìm tên phép toán từ giá trị 4-bit
+                let operationName = 'Unknown';
+                if(value === "0010") operationName = 'ADD';
+                else if(value === "0110") operationName = 'SUB';
+                else if(value === "0000") operationName = 'AND';
+                else if(value === "0001") operationName = 'ORR';
+                aluActionText.textContent = `Op: ${operationName}`;
+            }
+            event.target.closest('g')?.remove();
         }
         // Xử lý các tín hiệu khác đến đích
         else if (destinationId) {
@@ -182,6 +183,11 @@ function createSignalNodeElement(signalName, value, pathId, duration) {
         else {
             console.warn(`Signal '${signalName}' (value: ${value}) finished, but no destination ID defined.`);
         }
+
+        if (typeof onEndCallback === 'function') {
+            onEndCallback(signalName, value); // Gọi callback khi kết thúc
+        }
+
     });
 
     const mpath = document.createElementNS(svgNS, 'mpath');
@@ -255,7 +261,7 @@ export function clearAllDisplaysAndSignals() {
  * Tạo và bắt đầu animation cho PC đi đến Instruction Memory (NEW)
  * @param {number} pcValue - Giá trị PC để hiển thị trong animation
  */
-export function animatePCToMemory(pcValue) {
+export function animatePCToMemory(pcValue, onEndCallback = null) {
     if (!dataSignalNodesGroup) return;
     if (!PC_TO_IMEM_PATH_ID) {
         console.warn("Path ID 'PC_TO_IMEM_PATH_ID' is not defined.");
@@ -306,7 +312,11 @@ export function animatePCToMemory(pcValue) {
     // Xóa node sau khi animation kết thúc (không cần giữ lại ở đích)
     animateMotion.addEventListener('endEvent', (event) => {
         console.log(`PC value ${hexValue} reached Instruction Memory.`);
-        event.target.closest('g')?.remove(); // Tự hủy node khi đến nơi
+        // Gọi callback TRƯỚC KHI xóa node
+        if (typeof onEndCallback === 'function') {
+            onEndCallback(); // Gọi callback khi PC đến nơi
+        }
+        event.target.closest('g')?.remove(); // Tự hủy node sau khi xử lý xong
     });
 
     const mpath = document.createElementNS(svgNS, 'mpath');
@@ -441,11 +451,9 @@ function getValueEndPath(aluOpCombined) {
 
 // (displayControlSignalNodes cập nhật để nhận cờ `startNow`)
 // (displayControlSignalNodes cập nhật để nhận cờ `startNow`)
-export function displayControlSignalNodes(signals, startNow = true) {
-    clearAllDisplaysAndSignals(); // Gọi hàm dọn dẹp mới
+export function displayControlSignalNodes(signals, startNow = true, onSignalEnd = null) {
 
-    if (!signals || !signalNodesGroup) { /* ... */ return; }
-    // while (signalNodesGroup.firstChild) { /* Đã chuyển vào clearAll */ }
+    if (!signals || !signalNodesGroup) { return; }
 
     for (const [signalName, value] of Object.entries(signals)) {
         if (signalName === 'finalAluControlSignal') { continue; }
@@ -453,17 +461,16 @@ export function displayControlSignalNodes(signals, startNow = true) {
         const finalAluValueForNode = (signalName === 'ALUOp') ? signals.finalAluControlSignal : null;
 
         const nodeElement = createSignalNodeElement(
-            signalName, value, pathIdToUse, DEFAULT_ANIMATION_DURATION, finalAluValueForNode
+            signalName, value, pathIdToUse, DEFAULT_ANIMATION_DURATION, finalAluValueForNode, onSignalEnd
         );
-        if (nodeElement) {
+        if (nodeElement) { /* ... append, set hidden if !startNow ... */
             signalNodesGroup.appendChild(nodeElement);
-            // KHÔNG bắt đầu animation ở đây nếu startNow = false
             if (!startNow) {
                  const anim = nodeElement.querySelector('animateMotion');
                  const group = anim.closest('g');
-                 if(group) group.setAttribute('visibility', 'hidden'); // Đảm bảo ẩn ban đầu
+                 if(group) group.setAttribute('visibility', 'hidden');
             }
-        }
+       }
     }
     console.log(`Control signal nodes created (startNow=${startNow}).`);
     if (startNow) {
@@ -477,12 +484,11 @@ export function displayControlSignalNodes(signals, startNow = true) {
  * @param {string} encodedInstruction - Mã máy 32-bit.
  * @param {boolean} [startNow=true] - Có bắt đầu animation ngay không.
  */
-export function displayDataSignalNodes(parsedInstruction, encodedInstruction, startNow = true) {
+export function displayDataSignalNodes(parsedInstruction, encodedInstruction, startNow = true, onDataEnd = null) {
     if (!dataSignalNodesGroup) {
         console.warn("dataSignalNodesGroup is null!");
         return;
     }
-    // while (dataSignalNodesGroup.firstChild) { /* Đã chuyển vào clearAll */ }
 
     if (!parsedInstruction || parsedInstruction.error || !encodedInstruction) {
        console.log("No valid instruction/encoding to display data signals.");
@@ -508,45 +514,45 @@ export function displayDataSignalNodes(parsedInstruction, encodedInstruction, st
     // --- Tạo node cho các trường dựa trên đường dẫn đã định nghĩa ---
     // Gửi Opcode/phần đầu đến Control Unit
     if (IMEM_OPCODE_TO_CONTROL_PATH_ID) {
-        const node = createDataNodeElement(`Op [31-21]`, opcode, IMEM_OPCODE_TO_CONTROL_PATH_ID);
+        const node = createDataNodeElement(`Op [31-21]`, opcode, IMEM_OPCODE_TO_CONTROL_PATH_ID, onDataEnd);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Rn đến cổng đọc Register 1
     if (IMEM_RN_TO_REG_PATH_ID && (parsedInstruction.type === 'R' || parsedInstruction.type === 'D' || parsedInstruction.type === 'I')) { // Rn dùng trong R, D, I
-        const node = createDataNodeElement(`Rn [9-5]`, rn, IMEM_RN_TO_REG_PATH_ID);
+        const node = createDataNodeElement(`Rn [9-5]`, rn, IMEM_RN_TO_REG_PATH_ID, onDataEnd);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Rm đến cổng đọc Register 2 (cho R-type)
     if (IMEM_RM_TO_REG_PATH_ID && parsedInstruction.type === 'R') {
-        const node = createDataNodeElement(`Rm [20-16]`, rm, IMEM_RM_TO_REG_PATH_ID);
+        const node = createDataNodeElement(`Rm [20-16]`, rm, IMEM_RM_TO_REG_PATH_ID, onDataEnd);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Rt đến cổng đọc Register 2 (cho D-type load/store, CBZ check)
     if (IMEM_RT_TO_REG_PATH_ID && (parsedInstruction.type === 'D' || parsedInstruction.type === 'CB')) {
-        const node = createDataNodeElement(`Rt [4-0 or 20-16]`, parsedInstruction.type === 'CB' ? rd : rm, IMEM_RT_TO_REG_PATH_ID); // Rt là bit 4-0 hoặc 20-16 tùy ngữ cảnh parse
+        const node = createDataNodeElement(`Rt [4-0 or 20-16]`, parsedInstruction.type === 'CB' ? rd : rm, IMEM_RT_TO_REG_PATH_ID, onDataEnd); // Rt là bit 4-0 hoặc 20-16 tùy ngữ cảnh parse
         if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Rd đến cổng Write Register (cho R-type, I-type, LDUR)
     if (IMEM_RD_TO_REG_PATH_ID && (parsedInstruction.type === 'R' || parsedInstruction.type === 'I' || parsedInstruction.mnemonic === 'LDUR')) {
-         const node = createDataNodeElement(`Rd [4-0]`, rd, IMEM_RD_TO_REG_PATH_ID);
+         const node = createDataNodeElement(`Rd [4-0]`, rd, IMEM_RD_TO_REG_PATH_ID, onDataEnd);
          if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Immediate đến Sign Extend (cho D-type, I-type)
     if (IMEM_IMM_TO_SIGN_EXTEND_PATH_ID && (parsedInstruction.type === 'D' || parsedInstruction.type === 'I')) {
         const immediateValue = parsedInstruction.type === 'D' ? dt_address : i_immediate;
-        const node = createDataNodeElement(`Imm`, immediateValue, IMEM_IMM_TO_SIGN_EXTEND_PATH_ID);
+        const node = createDataNodeElement(`Imm`, immediateValue, IMEM_IMM_TO_SIGN_EXTEND_PATH_ID, onDataEnd);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
    // Gửi Branch Address đến Shifter (cho CB-type, B-type)
     if (IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID && (parsedInstruction.type === 'CB' || parsedInstruction.type === 'B')) {
         const branchAddr = parsedInstruction.type === 'CB' ? cb_address : encodedInstruction.substring(6, 32); // B-format addr 26 bits
-        const node = createDataNodeElement(`BrAddr`, branchAddr, IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID);
+        const node = createDataNodeElement(`BrAddr`, branchAddr, IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID, onDataEnd);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
     // Gửi Function/shamt đến ALU Control (cho R-type)
      if (IMEM_FUNC_TO_ALU_CONTROL_PATH_ID && parsedInstruction.type === 'R') {
         const funcValue = shamt; // Giả sử shamt hoặc phần khác của opcode chứa thông tin func
-        const node = createDataNodeElement(`Func/Shamt`, funcValue, IMEM_FUNC_TO_ALU_CONTROL_PATH_ID);
+        const node = createDataNodeElement(`Func/Shamt`, funcValue, IMEM_FUNC_TO_ALU_CONTROL_PATH_ID, onDataEnd);
         if (node) dataSignalNodesGroup.appendChild(node);
     }
 
@@ -559,7 +565,7 @@ export function displayDataSignalNodes(parsedInstruction, encodedInstruction, st
 /**
  * Tạo node cho giá trị dữ liệu (có thể là số hoặc chuỗi bit)
  */
-function createDataNodeElement(fieldName, value, pathId, duration = DEFAULT_ANIMATION_DURATION) {
+function createDataNodeElement(fieldName, value, pathId, duration, onEndCallback = null) {
     if (!dataSignalNodesGroup) return null;
    const pathElement = document.getElementById(pathId);
    if (!pathElement) {
@@ -605,10 +611,17 @@ function createDataNodeElement(fieldName, value, pathId, duration = DEFAULT_ANIM
    animateMotion.setAttribute('begin', 'indefinite');
    animateMotion.setAttribute('fill', 'freeze');
 
-   animateMotion.addEventListener('endEvent', () => {
-       console.log(`Data field '${fieldName}' (value: ${value}) animation finished.`);
-       // TODO: Xử lý khi data đến đích
-   });
+   animateMotion.addEventListener('endEvent', (event) => { // Thêm event
+    console.log(`Data field '${fieldName}' (value: ${value}) animation finished.`);
+    // Tự hủy node data khi đến nơi?
+    event.target.closest('g')?.remove();
+
+    // *** GỌI CALLBACK NẾU CÓ ***
+    if (typeof onEndCallback === 'function') {
+        onEndCallback(fieldName, value); // Gọi callback khi kết thúc
+    }
+    // *** HẾT GỌI CALLBACK ***
+});
 
    const mpath = document.createElementNS(svgNS, 'mpath');
    mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${pathId}`);

@@ -96,35 +96,38 @@ export function trigger() {
 		// 1. Dọn dẹp tín hiệu từ chu kỳ trước
 		handleSignal.clearAllDisplaysAndSignals(); // Hàm mới để dọn dẹp tất cả
 
-		// 2. Tạo Animation cho PC đi đến Mem Addr (NEW)
-		handleSignal.animatePCToMemory(pcValueForFetch); // Truyền giá trị PC CŨ
+		
+        // --- Định nghĩa callback sẽ chạy KHI PC đến nơi ---
+        const afterFetchCallback = () => {
+            console.log("--- PC animation finished, processing instruction fields and signals ---");
 
-		// 3. Tạo Control Signals (từ lệnh đã parse)
-		const controlSignals = handleSignal.generateControlSignals(parsedInstruction);
+            // Lấy lại control signals (đã tính toán trước đó)
+            const controlSignals = handleSignal.generateControlSignals(parsedInstruction); // Tính lại hoặc lưu trữ nếu cần tối ưu
 
-		// 4. Lên lịch hiển thị Control/Data Signals và Bắt đầu Animations SAU KHI PC đến nơi (hoặc sau delay)
-		// Chúng ta cần biết khi nào animation PC kết thúc HOẶC dùng delay cố định
-		const fetchDelay = 1000; // Giả sử 1 giây để PC đến và memory đọc
+            // 4.1 Hiển thị Control Signals Nodes (KHÔNG BẮT ĐẦU ANIMATION VỘI)
+            if (controlSignals) {
+                handleSignal.displayControlSignalNodes(controlSignals, false); // false = không bắt đầu ngay
+            } else {
+                 console.warn(`No control signals generated.`);
+                 handleSignal.displayControlSignalNodes(null, false);
+            }
 
-		setTimeout(() => {
-			console.log("--- Fetch complete, processing instruction fields and signals ---");
+            // 4.2 Hiển thị Data Signals Nodes (KHÔNG BẮT ĐẦU ANIMATION VỘI)
+            // Mã hóa lại hoặc lưu trữ mã máy nếu cần tối ưu
+            const encodedInstructionForData = encodeLegv8Instruction(parsedInstruction);
+            if(encodedInstructionForData && !encodedInstructionForData.error){
+				handleSignal.displayDataSignalNodes(parsedInstruction, encodedInstructionForData, false); // false = không bắt đầu ngay
+            } else {
+				console.error("Could not encode instruction for data display.");
+				handleSignal.displayDataSignalNodes(null, null, false); // Xóa node cũ
+            }
+            // 4.3 Bắt đầu đồng loạt các animation (Control và Data) MỚI được tạo
+            handleSignal.startAllSignalAnimations();
+        };
+        // --- Kết thúc định nghĩa callback ---
 
-			// 4.1 Hiển thị Control Signals Nodes (KHÔNG BẮT ĐẦU ANIMATION VỘI)
-			if (controlSignals) {
-				handleSignal.displayControlSignalNodes(controlSignals, false); // Thêm cờ false để không tự bắt đầu
-			} else {
-				console.warn(`No control signals generated for line ${firstLineIndex + 1}.`);
-				handleSignal.displayControlSignalNodes(null, false); // Xóa node cũ
-			}
-
-			// 4.2 Hiển thị Data Signals Nodes (Lệnh và các phần) (KHÔNG BẮT ĐẦU ANIMATION VỘI)
-			// Hàm displayDataSignalNodes cần mã máy 32-bit
-			handleSignal.displayDataSignalNodes(parsedInstruction, encodedInstruction, false); // Thêm mã máy và cờ false
-
-			// 4.3 Bắt đầu đồng loạt các animation (Control và Data)
-			handleSignal.startAllSignalAnimations(); // Hàm mới để bắt đầu cả control và data
-
-		}, fetchDelay);
+		// 2. Tạo Animation cho PC đi đến Mem Addr và TRUYỀN CALLBACK vào
+        handleSignal.animatePCToMemory(pcValueForFetch, afterFetchCallback); // Truyền hàm callback
 
 		console.log("--- Processing Complete for Instruction ---");
 		// Display the results in the output area
