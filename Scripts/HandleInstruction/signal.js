@@ -5,6 +5,9 @@ import signalDestinations from "./signalDestinations.js";
 const svgNS = "http://www.w3.org/2000/svg";
 const signalNodesGroup = document.getElementById('control-signal-nodes');
 
+// loại lệnh (ADD / ORR / XOR / AND)
+let mnemonic = null;
+
 /**
  * Tạo các tín hiệu điều khiển dựa trên lệnh đã được parse.
  * @param {object} parsedInstruction - Đối tượng lệnh đã được parse.
@@ -16,7 +19,7 @@ export function generateControlSignals(parsedInstruction) {
         console.error("Invalid or errored parsed instruction provided.");
         return null;
     }
-    const mnemonic = parsedInstruction.mnemonic;
+    mnemonic = parsedInstruction.mnemonic;
     const type = parsedInstruction.type;
     let instructionClass = null;
 
@@ -32,7 +35,6 @@ export function generateControlSignals(parsedInstruction) {
 
     // Lấy các tín hiệu gốc từ bảng
     const finalSignals = { ...controlSignalTable[instructionClass] };
-    let finalAluControlSignalValue = null; // Giá trị 4-bit cuối cùng
 
     // *** GỘP ALUOp1 VÀ ALUOp0 (NẾU CÓ) ***
     if (finalSignals.hasOwnProperty('ALUOp1') === false || finalSignals.hasOwnProperty('ALUOp0') === false) {
@@ -40,47 +42,9 @@ export function generateControlSignals(parsedInstruction) {
         return;
     }
     
-    const aluOpCombined = `${finalSignals.ALUOp1}${finalSignals.ALUOp0}`;
-    finalSignals.ALUOp = aluOpCombined;
+    finalSignals.ALUOp = `${finalSignals.ALUOp1}${finalSignals.ALUOp0}`;
     delete finalSignals.ALUOp1;
     delete finalSignals.ALUOp0;
-
-    
-    // Tính giá trị 4-bit dựa trên ALUOp và loại lệnh/mnemonic
-    switch (aluOpCombined) {
-        case "00": // LDUR, STUR
-            finalAluControlSignalValue = "0010"; // add
-            break;
-        case "01": // CBZ
-            finalAluControlSignalValue = "0111"; // pass input b (hoặc subtract nếu ALU làm vậy)
-            break;
-        case "10": // R-type
-            switch (mnemonic) { // Cần mnemonic để phân biệt R-type
-                case 'ADD':
-                    finalAluControlSignalValue = "0010"; // add
-                    break;
-                case 'SUB':
-                    finalAluControlSignalValue = "0110"; // subtract
-                    break;
-                case 'AND':
-                    finalAluControlSignalValue = "0000"; // AND
-                    break;
-                case 'ORR':
-                    finalAluControlSignalValue = "0001"; // OR
-                    break;
-                // Thêm các lệnh R-type khác nếu cần
-                default:
-                    console.warn(`Unknown R-type mnemonic '${mnemonic}' for ALUOp=10. Defaulting ALU control.`);
-                    finalAluControlSignalValue = "XXXX"; // Hoặc một giá trị mặc định/lỗi
-            }
-            break;
-        default:
-            console.warn(`Unknown ALUOp combination: ${aluOpCombined}`);
-            finalAluControlSignalValue = "XXXX"; // Giá trị lỗi
-    }
-
-    // Thêm tín hiệu 4-bit cuối cùng vào kết quả
-    finalSignals.finalAluControlSignal = finalAluControlSignalValue;
     console.log("Generated signals:", finalSignals);
 
     return finalSignals; // Trả về đối tượng signals đã được sửa đổi
@@ -95,7 +59,7 @@ export function generateControlSignals(parsedInstruction) {
  * @param {number} [duration=5] - Thời gian animation.
  * @param {string | null} [finalAluValue=null] - Giá trị 4-bit cuối cùng (chỉ dùng cho ALUOp).
  */
-function createSignalNodeElement(signalName, value, pathId, duration = 5, finalAluValue = null) {
+function createSignalNodeElement(signalName, value, pathId, duration) {
     // *** KIỂM TRA PATH GỐC ***
     const pathElement = document.getElementById(pathId);
     if (!pathElement) {
@@ -148,7 +112,7 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5, finalA
         // Khi tín hiệu "ALUOp" kết hợp đến ALU Control
         if (signalName === 'ALUOp' && destinationId === 'ALU-control') {
             if (typeof value !== 'undefined' && value !== null) {
-                handleAluControlArrival(value, finalAluValue);
+                handleAluControlArrival(value, getValueEndPath(value));
             } else { 
                 console.log("undefined value in ALUOp-> ALU Control"); 
                 return null; 
@@ -219,24 +183,15 @@ export function displayControlSignalNodes(signals) {
     clearAluControlDisplay(); // Reset trước khi tạo mới
 
     for (const [signalName, value] of Object.entries(signals)) {
-        // Bỏ qua việc tạo node cho tín hiệu 4-bit ở đây, nó sẽ được tạo sau
-        if (signalName === 'finalAluControlSignal') {
-            continue;
-        }
-
         let pathIdToUse;
         const lowerCaseSignalName = signalName.toLowerCase();
         pathIdToUse = `control-${lowerCaseSignalName}-path`; // Tìm path theo tên tín hiệu
-
-        // *** TRUYỀN THAM SỐ THỨ 5 (finalAluValue) CHO ALUOp ***
-        const finalAluValueForNode = (signalName === 'ALUOp') ? signals.finalAluControlSignal : null;
 
         const nodeElement = createSignalNodeElement(
             signalName,
             value,
             pathIdToUse,
-            2,
-            finalAluValueForNode
+            2
         );
         if (nodeElement) {
             signalNodesGroup.appendChild(nodeElement);
@@ -248,10 +203,10 @@ export function displayControlSignalNodes(signals) {
 
 // ... (hàm startControlSignalAnimation giữ nguyên) ...
 export function startControlSignalAnimation() {
-     if (!signalNodesGroup) {
+    if (!signalNodesGroup) {
         console.error("SVG group 'control-signal-nodes' not found! Cannot start animation.");
         return;
-     }
+    }
     const animations = signalNodesGroup.querySelectorAll('animateMotion');
     if (animations.length === 0) {
         console.log("No signal nodes found to animate.");
@@ -387,3 +342,40 @@ function handleAluControlArrival(arrivedAluOpValue, finalSignalToSend) {
     }, ALU_CONTROL_OUTPUT_DELAY);
 }
 
+function getValueEndPath(aluOpCombined) {
+    let finalAluControlSignalValue = null; // Giá trị 4-bit cuối cùng
+
+    // Tính giá trị 4-bit dựa trên ALUOp và loại lệnh/mnemonic
+    switch (aluOpCombined) {
+        case "00": // LDUR, STUR
+            finalAluControlSignalValue = "0010"; // add
+            break;
+        case "01": // CBZ
+            finalAluControlSignalValue = "0111"; // pass input b (hoặc subtract nếu ALU làm vậy)
+            break;
+        case "10": // R-type
+            switch (mnemonic) { // Cần mnemonic để phân biệt R-type
+                case 'ADD':
+                    finalAluControlSignalValue = "0010"; // add
+                    break;
+                case 'SUB':
+                    finalAluControlSignalValue = "0110"; // subtract
+                    break;
+                case 'AND':
+                    finalAluControlSignalValue = "0000"; // AND
+                    break;
+                case 'ORR':
+                    finalAluControlSignalValue = "0001"; // OR
+                    break;
+                // Thêm các lệnh R-type khác nếu cần
+                default:
+                    console.warn(`Unknown R-type mnemonic '${mnemonic}' for ALUOp=10. Defaulting ALU control.`);
+                    finalAluControlSignalValue = "XXXX"; // Hoặc một giá trị mặc định/lỗi
+            }
+            break;
+        default:
+            console.warn(`Unknown ALUOp combination: ${aluOpCombined}`);
+            finalAluControlSignalValue = "XXXX"; // Giá trị lỗi
+    }
+    return finalAluControlSignalValue;
+}
