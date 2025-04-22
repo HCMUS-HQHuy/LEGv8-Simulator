@@ -7,7 +7,6 @@ const signalNodesGroup = document.getElementById('control-signal-nodes');
 
 /**
  * Tạo các tín hiệu điều khiển dựa trên lệnh đã được parse.
- * *** SỬA ĐỔI: Gộp ALUOp1 và ALUOp0 thành ALUOp ***
  * @param {object} parsedInstruction - Đối tượng lệnh đã được parse.
  * @returns {object | null} Một đối tượng với các tên tín hiệu điều khiển làm key
  *                           và giá trị 0 hoặc 1, hoặc null nếu lệnh không được hỗ trợ.
@@ -32,56 +31,52 @@ export function generateControlSignals(parsedInstruction) {
     }
 
     // Lấy các tín hiệu gốc từ bảng
-    const baseSignals = controlSignalTable[instructionClass];
-    // Tạo bản sao để sửa đổi
-    const finalSignals = { ...baseSignals };
+    const finalSignals = { ...controlSignalTable[instructionClass] };
     let finalAluControlSignalValue = null; // Giá trị 4-bit cuối cùng
 
     // *** GỘP ALUOp1 VÀ ALUOp0 (NẾU CÓ) ***
-    if (finalSignals.hasOwnProperty('ALUOp1') && finalSignals.hasOwnProperty('ALUOp0')) {
-        const aluOpCombined = `${finalSignals.ALUOp1}${finalSignals.ALUOp0}`;
-        finalSignals.ALUOp = aluOpCombined;
-        delete finalSignals.ALUOp1;
-        delete finalSignals.ALUOp0;
-
-        
-        // Tính giá trị 4-bit dựa trên ALUOp và loại lệnh/mnemonic
-        switch (aluOpCombined) {
-            case "00": // LDUR, STUR
-                finalAluControlSignalValue = "0010"; // add
-                break;
-            case "01": // CBZ
-                finalAluControlSignalValue = "0111"; // pass input b (hoặc subtract nếu ALU làm vậy)
-                break;
-            case "10": // R-type
-                switch (mnemonic) { // Cần mnemonic để phân biệt R-type
-                    case 'ADD':
-                        finalAluControlSignalValue = "0010"; // add
-                        break;
-                    case 'SUB':
-                        finalAluControlSignalValue = "0110"; // subtract
-                        break;
-                    case 'AND':
-                        finalAluControlSignalValue = "0000"; // AND
-                        break;
-                    case 'ORR':
-                        finalAluControlSignalValue = "0001"; // OR
-                        break;
-                    // Thêm các lệnh R-type khác nếu cần
-                    default:
-                        console.warn(`Unknown R-type mnemonic '${mnemonic}' for ALUOp=10. Defaulting ALU control.`);
-                        finalAluControlSignalValue = "XXXX"; // Hoặc một giá trị mặc định/lỗi
-                }
-                break;
-            default:
-                console.warn(`Unknown ALUOp combination: ${aluOpCombined}`);
-                finalAluControlSignalValue = "XXXX"; // Giá trị lỗi
-        }
+    if (finalSignals.hasOwnProperty('ALUOp1') === false || finalSignals.hasOwnProperty('ALUOp0') === false) {
+        console.warn("ALUOp1 or ALUOp0 missing in base signals for", instructionClass);
+        return;
     }
-    else {
-        // Trường hợp không có ALUOp1/0 (có thể xảy ra nếu bảng thay đổi)
-         console.warn("ALUOp1 or ALUOp0 missing in base signals for", instructionClass);
-         finalAluControlSignalValue = "XXXX";
+    
+    const aluOpCombined = `${finalSignals.ALUOp1}${finalSignals.ALUOp0}`;
+    finalSignals.ALUOp = aluOpCombined;
+    delete finalSignals.ALUOp1;
+    delete finalSignals.ALUOp0;
+
+    
+    // Tính giá trị 4-bit dựa trên ALUOp và loại lệnh/mnemonic
+    switch (aluOpCombined) {
+        case "00": // LDUR, STUR
+            finalAluControlSignalValue = "0010"; // add
+            break;
+        case "01": // CBZ
+            finalAluControlSignalValue = "0111"; // pass input b (hoặc subtract nếu ALU làm vậy)
+            break;
+        case "10": // R-type
+            switch (mnemonic) { // Cần mnemonic để phân biệt R-type
+                case 'ADD':
+                    finalAluControlSignalValue = "0010"; // add
+                    break;
+                case 'SUB':
+                    finalAluControlSignalValue = "0110"; // subtract
+                    break;
+                case 'AND':
+                    finalAluControlSignalValue = "0000"; // AND
+                    break;
+                case 'ORR':
+                    finalAluControlSignalValue = "0001"; // OR
+                    break;
+                // Thêm các lệnh R-type khác nếu cần
+                default:
+                    console.warn(`Unknown R-type mnemonic '${mnemonic}' for ALUOp=10. Defaulting ALU control.`);
+                    finalAluControlSignalValue = "XXXX"; // Hoặc một giá trị mặc định/lỗi
+            }
+            break;
+        default:
+            console.warn(`Unknown ALUOp combination: ${aluOpCombined}`);
+            finalAluControlSignalValue = "XXXX"; // Giá trị lỗi
     }
 
     // Thêm tín hiệu 4-bit cuối cùng vào kết quả
@@ -213,17 +208,15 @@ function createSignalNodeElement(signalName, value, pathId, duration = 5, finalA
  */
 export function displayControlSignalNodes(signals) {
     if (!signals) {
-        console.log("No control signals generated to display.");
+        console.warn("No control signals generated to display.");
         return;
     }
     if (!signalNodesGroup) {
         console.error("SVG group 'control-signal-nodes' not found! Cannot display signals.");
         return;
     }
+
     clearAluControlDisplay(); // Reset trước khi tạo mới
-    while (signalNodesGroup.firstChild) {
-        signalNodesGroup.removeChild(signalNodesGroup.firstChild);
-    }
 
     for (const [signalName, value] of Object.entries(signals)) {
         // Bỏ qua việc tạo node cho tín hiệu 4-bit ở đây, nó sẽ được tạo sau
@@ -276,6 +269,7 @@ export function startControlSignalAnimation() {
     });
 }
 
+
 // *** THÊM BIẾN LƯU ID CỦA setTimeout ĐANG CHỜ ***
 let activeAluControlTimeoutId = null;
 const ALU_CONTROL_DISPLAY_TEXT_ID = "alu-control-output-value";
@@ -307,6 +301,10 @@ function clearAluControlDisplay() {
         clearTimeout(activeAluControlTimeoutId);
         activeAluControlTimeoutId = null;
         console.log("Cleared pending ALU Control output timeout.");
+    }
+
+    while (signalNodesGroup.firstChild) {
+        signalNodesGroup.removeChild(signalNodesGroup.firstChild);
     }
 }
 

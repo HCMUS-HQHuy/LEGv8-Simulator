@@ -5,16 +5,13 @@ export function trigger() {
 	// Get references to the form and the output area
 	const codeForm = document.getElementById('codeForm');
 	const instructionTextarea = document.getElementById('instructionCode');
-	// const parsedOutput = document.getElementById('parsedOutput');
 
 	// Add an event listener for the 'submit' event on the form
 	codeForm.addEventListener('submit', function(event) {
 		event.preventDefault();
 		const allCode = instructionTextarea.value;
 		const codeLines = allCode.split(/\r?\n/);
-
-		// Clear previous output
-		// parsedOutput.textContent = '';
+		
 		let results = []; // Array to hold parsed results
 
 		// 3. Process each line
@@ -27,18 +24,13 @@ export function trigger() {
 				console.log(`Line ${index + 1}: Skipped (empty or comment)`);
 				return; // Move to the next line
 			}
-
 			console.log(`Line ${index + 1}: "${trimmedLine}"`);
 
-			// 4. Use your parser function on the individual line
 			const parsedInstruction = parseLegv8Instruction(trimmedLine);
-
-			// Store or display the result
 			if (parsedInstruction) {
 				results.push({ lineNumber: index + 1, parsed: parsedInstruction });
 				console.log(`Parsed Line ${index + 1}:`, parsedInstruction);
 			} else {
-				// Handle cases where the parser might return null for valid but ignored lines
 				console.log(`Line ${index + 1}: Parser returned null/undefined`);
 			}
 
