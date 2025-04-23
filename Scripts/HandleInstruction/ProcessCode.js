@@ -1,6 +1,7 @@
 import * as parsedOutputTable from "./Compile/parsedOutputTable.js"
 import * as formatCode from "./Compile/formatCode.js"
-import * as fetching from "./Execute/fetch.js"
+import * as fetch from "./Execute/fetch.js"
+import * as decode from "./Execute/decode.js"
 
 export function trigger() {
 	codeForm.addEventListener('submit', function(event) {
@@ -17,7 +18,8 @@ export function trigger() {
 		// const pcValueForFetch = currentPC;
 		// console.log(`PC incremented to: 0x${currentPC.toString(16).toUpperCase().padStart(8,'0')}`);
 		const parsedInstruction = results[0].parsed;
-		fetching.trigger(parsedInstruction);
+		
+		fetch.trigger(decode.trigger(parsedInstruction));
 		
 	});
 
@@ -36,7 +38,7 @@ export function trigger() {
 		// const pcValueForFetch = currentPC;
 		// console.log(`PC incremented to: 0x${currentPC.toString(16).toUpperCase().padStart(8,'0')}`);
 		const parsedInstruction = results[0].parsed;
-		fetching.trigger(parsedInstruction);
+		fetch.trigger(parsedInstruction);
 	});
 }
 
