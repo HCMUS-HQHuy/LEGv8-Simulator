@@ -2,7 +2,7 @@ import * as parsedOutputTable from "./Compile/parsedOutputTable.js"
 import * as formatCode from "./Compile/formatCode.js"
 import * as fetch from "./Execute/fetch.js"
 import * as decode from "./Execute/decode.js"
-import * as execute from "./Execute/Execute.js"
+import * as execute from "./Execute/execute.js"
 
 export function trigger() {
 	codeForm.addEventListener('submit', function(event) {
