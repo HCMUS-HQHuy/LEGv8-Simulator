@@ -3,7 +3,8 @@ import {encodeLegv8Instruction} from "../Compile/parser.js"
 
 const svgNS = "http://www.w3.org/2000/svg";
 
-const dataSignalNodesGroup = document.getElementById('data-signal-nodes'); // Cần group này
+const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
+const dataSignalNodesFetchGroup = document.getElementById('data-signal-nodes-fetch');
 
 // --- PATH IDs CHO FETCH (Lấy từ SVG bạn cung cấp) ---
 const PC_TO_IMEM_PATH_ID = "pc-to-instruction-memory-path";
@@ -53,23 +54,40 @@ export function trigger(parsedInstruction) {
         return;
     }
 
-	dataSignalNodesGroup.appendChild(animatePCToMemory(0, parsedInstruction));
-	startDataSignalAnimation();
+	animatePCToMemory(0, parsedInstruction);
+	animatePCToAddALU(0);
 	console.log("--- Processing Complete for Instruction ---");
 }
 
 function animatePCToAddALU(pcValue) {
-	const hexValue = `0x${pcValue.toString(16).toUpperCase().padStart(8, '0')}`;
-	return dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-		value: hexValue,
-		fieldName: "PC_Increase",
-		onEndCallback: () => {
-			console.log("--- PC animation reached ADD ALU, creating and starting add ---");
-			// continue;
-		},
-		pathId: PC_TO_IMEM_PATH_ID,
+	const onEndCallback = () => {
+		const tmp = pcValue + 4;
+		dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
+			value: `0x${tmp.toString(16).toUpperCase().padStart(8, '0')}`,
+			fieldName: "PC_Increase",
+			onEndCallback: null,
+			pathId: "ALU-add-0-to-mux-0-0-path",
+			FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION + 10
+		}));
+		startDataSignalAnimation(dataSignalNodesFetchGroup);
+	};
+
+	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
+		value: `0x${(4).toString(16).toUpperCase().padStart(8, '0')}`,
+		fieldName: "Const-To-Add-Value",
+		onEndCallback: onEndCallback,
+		pathId: "const-4-to-ALU-add-0-path",
 		FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION
 	}));
+
+	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
+		value: `0x${pcValue.toString(16).toUpperCase().padStart(8, '0')}`,
+		fieldName: "PC-To-Add-Value",
+		onEndCallback: onEndCallback,
+		pathId: "pc-to-ALU-add-0-path",
+		FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION
+	}));
+	startDataSignalAnimation(dataSignalNodesFetchGroup);
 }
 
 /**
@@ -104,17 +122,18 @@ function animatePCToMemory(pcValue, parsedInstruction) {
 		}
 
 		// 2.4 Bắt đầu TẤT CẢ animation cho Data Signals (Opcode, Rn, Rm...)
-		startDataSignalAnimation();
+		startDataSignalAnimation(dataSignalNodesGroup);
 	};
 	const hexValue = `0x${pcValue.toString(16).toUpperCase().padStart(8, '0')}`;
 
-	return dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: hexValue,
 		fieldName: "PC_Addr",
 		onEndCallback: pcFetchCallback,
 		pathId: PC_TO_IMEM_PATH_ID,
 		FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION
 	}));
+	startDataSignalAnimation(dataSignalNodesGroup);
 }
 
 /**
@@ -204,7 +223,7 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 /**
  * Starts the animation for all data signal nodes. (NEW)
  */
-function startDataSignalAnimation() {
+function startDataSignalAnimation(dataSignalNodesGroup) {
 	const animations = dataSignalNodesGroup.querySelectorAll('animateMotion');
 	if (animations.length === 0) {
 		console.log("No data signal nodes found to animate.");
