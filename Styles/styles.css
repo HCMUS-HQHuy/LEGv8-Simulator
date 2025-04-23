@@ -409,7 +409,13 @@ body {
   align-items: flex-start;
 }
 
-#range-slider {
+.range-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+}
+.range-slider {
   -webkit-appearance: none; /* Xóa kiểu mặc định (Chrome, Safari) */
   width: 20%;
   height: 8px;
@@ -422,7 +428,7 @@ body {
 }
 
 /* Thanh trượt (thumb) */
-#range-slider::-webkit-slider-thumb {
+.range-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 18px;
@@ -434,7 +440,7 @@ body {
   transition: background 0.3s;
 }
 
-#range-slider::-moz-range-thumb {
+.range-slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
@@ -444,20 +450,33 @@ body {
 }
 
 /* Khi hover */
-#range-slider:hover::-webkit-slider-thumb {
+.range-slider:hover::-webkit-slider-thumb {
   background: #45a049;
 }
 
 /* Firefox track */
-#range-slider::-moz-range-track {
+.range-slider::-moz-range-track {
   height: 8px;
   background: #ddd;
   border-radius: 5px;
 }
+.range-label {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--text-color);
+}
+.range-value {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 17px;
+  color: var(--text-color);
+}
 
 .command-box {
   font-family: monospace;
-  font-size: 14px;
+  font-weight: bold;
+  font-size: 17px;
   bottom: 10px;
   left: 10px;
 

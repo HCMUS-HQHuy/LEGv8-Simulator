@@ -4,13 +4,14 @@
 <title> LEGv8 Visual Simulator - HCMUS </title>
 <link rel = "stylesheet" href = "Styles/styles.css">
 <link rel = "stylesheet" href = "Styles/animation-styles.css">
+<link rel="icon" type="image/png" href="hcmus_logo.png">
 </head>
 <body>
 
 <div class="header">
   <h2>LEGv8 Visual Simulator</h2>
 
-  <button id = "themeToggle">🌙 Dark Mode</button>
+  <button id = "themeToggle">🔆 Light Mode</button>
 </div>
 
 <div class = "codeAndFrameContainer">
@@ -501,8 +502,12 @@
       <button class = "stop-button"  id = "stop-animation" title = "Stop animation">⏺</button>
       <div class = "command-box" id = "command-box">ADD X9, X20, X21</div>
     </div>
-    <input type = "range" id="range-slider" min="0" max="100" value="50">
-    <label for = "range-slider">Speed: <span id="range-value">50</span>ms</label>
+    <div class="range-container">
+      <input type="range" id="range-slider" class="range-slider" min="0" max="100" value="50">
+      <label for="range-slider" class="range-label">
+        Speed: <span id="range-value" class="range-value">50</span>ms
+      </label>
+    </div>
   </div>
   
   <div class = "codeBox">
