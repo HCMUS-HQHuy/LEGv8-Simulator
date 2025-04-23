@@ -18,10 +18,9 @@
 
     <div class = "frame" id = "zoomFrame">
       <div class = "content" id = "zoomContent">
-      <svg viewBox = "0 0 2000 1000">
+      <svg viewBox = "0 0 1800 1050">
         <!-- Signal Lines Layer -->
         <g id = "signal-lines">
-
           <defs>
             <marker id = "circle" markerWidth = "8" markerHeight = "8" refX = "5" refY = "5">
               <circle cx = "5" cy = "5" r = "2" fill = "context-stroke" />
@@ -48,7 +47,7 @@
                 marker-end = "url(#circle)" />
           
           <path id         = "pc-to-ALU-add-1-path" 
-                d          = "M153,550 L215,550 L215,200 L400,200 L400,150 L1170,150" 
+                d          = "M153,550 L215,550 L215,200 L400,200 L400,150 L1270,150" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
           <path id         = temporary-circle
@@ -64,36 +63,36 @@
 
           <!-- ALU-add-id -->
           <path id         = "ALU-add-0-to-mux-0-0-path" 
-                d          = "M370,120 L1472,120" 
+                d          = "M370,120 L1572,120" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
 
           <path id         = "ALU-add-1-to-mux-0-1-path" 
-                d          = "M1265,200 L1475,200" 
+                d          = "M1365,200 L1575,200" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
               
           <path id         = "ALU-add-2-to-data-memory-path"
-                d          = "M1090,650 L1340,650"
+                d          = "M1290,650 L1440,650"
                 class      = "signal-line"
                 marker-end = "url(#arrow)" />
           
           <path id         = "ALU-add-2-to-mux-3-0-path"
-                d          = "M1090,650 L1270,650 L1270,850 L1510,850 L1510,750 L1530,750"
+                d          = "M1290,650 L1370,650 L1370,850 L1710,850 L1710,770"
                 class      = "signal-line"
                 marker-end = "url(#arrow)" />
           <path id         = temporary-circle
-                d          = "M1270,650"
+                d          = "M1370,650"
                 class      = "signal-line"
                 marker-end = "url(#circle)" />
           
           <path id         = "ALU-add-2-zero-path"
-                d          = "M1090,600 L1220,600 L1220,520 L1250,520"
+                d          = "M1290,600 L1320,600 L1320,520 L1350,520"
                 class      = "control-signal-line" />
 
           <!-- mux-id-status -->
           <path id         = "mux-0-to-pc-path" 
-                d          = "M1522,160 L1550,160 L1550,30 L60,30 L60,550 L92,550" 
+                d          = "M1622,160 L1650,160 L1650,30 L60,30 L60,550 L92,550" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
 
@@ -102,13 +101,13 @@
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
           
-          <path id         = "mux-2-to-register-path" 
-                d          = "M1065,680 L1080,680" 
+          <path id         = "mux-2-to-ALU-add-2-path" 
+                d          = "M1110,680 L1180,680" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />      
           
           <path id         = "mux-3-to-register-path" 
-                d          = "M1575,715 L1600,715 L1600,965 L725,965 L725,710 L775,710" 
+                d          = "M1730,715 L1760,715 L1760,1015 L725,1015 L725,710 L775,710" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
 
@@ -185,7 +184,7 @@
                 marker-end = "url(#arrow)" />
 
           <path id         = "instruction-memory-to-alu-control-path"
-                d          = "M420,630 L490,630 L490,840 L750,840 L750,990 L1190,990 L1190,935"
+                d          = "M420,630 L490,630 L490,840 L750,840 L750,990 L1130,990 L1130,935"
                 class      = "signal-line"
                 marker-end = "url(#arrow)" />
           <path id         = temporary-circle
@@ -215,7 +214,7 @@
 
           <!-- data-memory -->
           <path id         = "data-memory-to-mux-3-1-path"
-                d          = "M1490,680 L1530,680"
+                d          = "M1590,680 L1680,680"
                 class      = "signal-line"
                 marker-end = "url(#arrow)" />
 
@@ -225,31 +224,31 @@
                 class      = "control-signal-line" />
 
           <path id         = "control-uncondbranch-path"
-                d          = "M730,300 L1300,300 L1300,260 L1390,260"
+                d          = "M730,300 L1400,300 L1400,260 L1490,260"
                 class      = "control-signal-line" />
 
           <path id         = "control-branch-path"
-                d          = "M730,325 L1220,325 L1220,480 L1250,480"
+                d          = "M730,325 L1320,325 L1320,480 L1350,480"
                 class      = "control-signal-line" />
 
           <path id         = "control-memread-path"
-                d          = "M730,350 L1650,350 L1650,870 L1420,870 L1420,810"
+                d          = "M730,350 L1640,350 L1640,870 L1520,870 L1520,810"
                 class      = "control-signal-line" />
 
           <path id         = "control-memtoreg-path"
-                d          = "M730,375 L1555,375 L1555,665"
+                d          = "M730,375 L1710,375 L1710,665"
                 class      = "control-signal-line" />
 
           <path id         = "control-aluop-path"
-                d          = "M730,400 L1005,400 L1005,860 L1140,860"
+                d          = "M730,400 L1005,400 L1005,860 L1080,860"
                 class      = "ALU-control-signal-line" />
 
           <path id         = "control-memwrite-path"
-                d          = "M730,425 L1420,425 L1420,610"
+                d          = "M730,425 L1520,425 L1520,610"
                 class      = "control-signal-line" />
 
           <path id         = "control-alusrc-path"
-                d          = "M730,450 L1040,450 L1040,630"
+                d          = "M730,450 L1090,450 L1090,630"
                 class      = "control-signal-line" />
 
           <path id         = "control-regwrite-path"
@@ -258,17 +257,17 @@
 
           <!-- ALU-control -->
           <path id         = "ALU-control-to-ALU-2-path"
-                d          = "M1180,860 L1250,860 L1250,670"
+                d          = "M1180,860 L1250,860 L1250,685"
                 class      = "ALU-control-signal-line" />
 
           <!-- AND gate -->
           <path id         = "AND-gate-to-OR-gate-path"
-                d          = "M1330,500 L1350,500 L1350,290 L1390,290"
+                d          = "M1430,500 L1450,500 L1450,290 L1490,290"
                 class      = "control-signal-line" />
 
           <!-- OR gate -->
           <path id         = "OR-gate-to-mux-0-1-path"
-                d          = "M1450,280 1500,280 1500,200"
+                d          = "M1550,280 1600,280 1600,220"
                 class      = "control-signal-line" />
 
           <g id="control-signal-nodes">
@@ -321,7 +320,7 @@
 
             <text x = "205" y = "300"  class = "mem-label"> Instruction [31-0] </text> 
 
-            <text x = "465" y = "400"  class = "mem-label"> Instruction [31-21] </text> 
+            <text x = "465" y = "450"  class = "mem-label"> Instruction [31-21] </text> 
           </g>
 
           <!-- register  -->
@@ -431,7 +430,7 @@
           </g>
 
           <!-- ALU-control -->
-          <g id="ALU-control" transform = "translate(1190, 860)">
+          <g id="ALU-control" transform = "translate(1130, 860)">
             <ellipse cx = "0" cy = "0" rx = "50" ry = "70" class = "control-component" />
 
             <text x = "0" y = "-10" class = "control-label"> ALU </text>
@@ -472,7 +471,7 @@
           </g>
           
           <!-- mux-3 -->
-          <g id="mux-3" transform="translate(1650, 665)">
+          <g id="mux-3" transform="translate(1690, 665)">
             <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
             
             <text x = "14" y = "20" class = "mem-label"> 1 </text>
@@ -493,8 +492,7 @@
             <path d="M0,0 Q40,40 0,100 Q50,100 80,50 Q50,0 0,0"
                   stroke="deepskyblue" class="control-component" />
           </g>  
-      </g> <!-- End Components Layer -->
-
+        </g> <!-- End Components Layer -->
       </svg>
       </div>
     </div>
