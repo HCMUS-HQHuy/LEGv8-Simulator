@@ -268,7 +268,7 @@ body {
   border: none; /* Remove border potentially set by var */
   padding: 10px;
 }
-#parseInstructions {
+.button {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
@@ -280,7 +280,7 @@ body {
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
 }
-#parseInstructions:hover {
+.button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
   color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }
@@ -316,7 +316,7 @@ body {
   overflow: auto;
 }
 /* To make frameBox fullscreen style look better */
-#fullscreen-btn {
+.frame-button {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
@@ -330,7 +330,25 @@ body {
 
   position: absolute;
 }
-#fullscreen-btn:hover {
+.frame-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
+.start-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 60px;
+  right: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+}
+.start-button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
   color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }

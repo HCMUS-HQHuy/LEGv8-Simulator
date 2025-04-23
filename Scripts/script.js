@@ -55,8 +55,10 @@ function exitFullscreen() {
 function updateButtonState() {
     if (isFullscreen()) {
         fullscreenBtn.textContent = '✖'; // Đổi text thành Exit
+        fullscreenBtn.title = 'Exit fullscreen';
     } else {
         fullscreenBtn.textContent = '⛶'; // Đổi text thành Fullscreen
+        fullscreenBtn.title = 'Toggle fullscreen'
     }
 }
 
