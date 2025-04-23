@@ -1,5 +1,5 @@
 import controlSignalTable from "./Define/controlSignalTable.js";
-
+import { createNodeWithAnimation } from "./animation.js";
 // loại lệnh (ADD / ORR / XOR / AND)
 let mnemonic = null;
 
@@ -201,7 +201,6 @@ function displayControlSignalNodes(signals) {
 		}
 		return;
 	}
-
 
 	for (const [signalName, value] of Object.entries(signals)) {
 		if (signalName === 'finalAluControlSignal') { continue; }
