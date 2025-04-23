@@ -114,12 +114,12 @@
 
           <!-- sign-extend -->
           <path id         = "sign-extend-to-shift-left-2-path" 
-                d          = "M930,840 L990,840 L990,250 L1050,250" 
+                d          = "M930,840 L990,840 L990,250 L1100,250" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
 
           <path id         = "sign-extend-to-mux-2-1-path" 
-                d          = "M930,840 L990,840 L990,710 L1010,710" 
+                d          = "M930,840 L990,840 L990,710 L1060,710" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
           <path id         = temporary-circle
@@ -129,7 +129,7 @@
 
           <!-- shift-left-2 -->
           <path id         = "shift-left-2-to-add-1-path" 
-                d          = "M1140,250 L1170,250" 
+                d          = "M1190,250 L1270,250" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
 
@@ -185,7 +185,7 @@
                 marker-end = "url(#arrow)" />
 
           <path id         = "instruction-memory-to-alu-control-path"
-                d          = "M420,630 L490,630 L490,840 L750,840 L750,940 L1000,940 L1000,860 L1030,860"
+                d          = "M420,630 L490,630 L490,840 L750,840 L750,990 L1190,990 L1190,935"
                 class      = "signal-line"
                 marker-end = "url(#arrow)" />
           <path id         = temporary-circle
@@ -195,21 +195,21 @@
 
           <!-- register -->
           <path id         = "register-to-mux-2-0-path"
-                d          = "M950,650 L1010,650"
+                d          = "M950,650 L1060,650"
                 class      = "signal-line"
                 marker-end = "url(#arrow)" />
           
           <path id         = "register-to-ALU-add-2-path"
-                d          = "M950,560 L1080,560"
+                d          = "M950,560 L1180,560"
                 class      = "signal-line"
                 marker-end = "url(#arrow)" />
           
           <path id         = "register-to-data-memory-path"
-                d          = "M950,650 L970,650 L970,770 L1340,770"
+                d          = "M950,650 L1020,650 L1020,770 L1440,770"
                 class      = "signal-line"
                 marker-end = "url(#arrow)" />
           <path id         = temporary-circle
-                d          = "M970,650"
+                d          = "M1020,650"
                 class      = "signal-line"
                 marker-end = "url(#circle)" />
 
@@ -241,7 +241,7 @@
                 class      = "control-signal-line" />
 
           <path id         = "control-aluop-path"
-                d          = "M730,400 L980,400 L980,950 L1090,950 L1090,910"
+                d          = "M730,400 L1005,400 L1005,860 L1140,860"
                 class      = "ALU-control-signal-line" />
 
           <path id         = "control-memwrite-path"
@@ -258,7 +258,7 @@
 
           <!-- ALU-control -->
           <path id         = "ALU-control-to-ALU-2-path"
-                d          = "M1130,860 L1150,860 L1150,670"
+                d          = "M1180,860 L1250,860 L1250,670"
                 class      = "ALU-control-signal-line" />
 
           <!-- AND gate -->
@@ -350,7 +350,7 @@
           </g>
 
           <!-- data-memory  -->
-          <g id="data-memory" transform = "translate(1350, 610)">
+          <g id="data-memory" transform = "translate(1450, 610)">
             <rect width = "140" height = "200" class = "component" />
 
             <text x = "110" y = "165" class = "label"> Data </text>
@@ -375,14 +375,14 @@
           </g>
 
           <!-- add-1 -->
-          <g id="add-1" transform = "translate(1180, 130)">
+          <g id="add-1" transform = "translate(1280, 130)">
             <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.10)" class = "component"/>
 
             <text x = "55" y = "75" class = "label"> Add </text>
           </g>
 
           <!-- add-2 -->
-          <g id="add-2" transform = "translate(1090, 540)">
+          <g id="add-2" transform = "translate(1190, 540)">
             <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.5)" class = "component"/>
 
             <text x = "60" y = "90" class = "label"> ALU </text>
@@ -410,7 +410,7 @@
           </g>
 
           <!-- shift-left-2 -->
-          <g id="shift-left-2" transform = "translate(1100, 250)">
+          <g id="shift-left-2" transform = "translate(1150, 250)">
             <circle cx = "0" cy = "0" r = "40" class = "component"/>
             
             <text x = "0" y = "-10" class = "label"> Shift </text>
@@ -431,7 +431,7 @@
           </g>
 
           <!-- ALU-control -->
-          <g id="ALU-control" transform = "translate(1090, 860)">
+          <g id="ALU-control" transform = "translate(1190, 860)">
             <ellipse cx = "0" cy = "0" rx = "50" ry = "70" class = "control-component" />
 
             <text x = "0" y = "-10" class = "control-label"> ALU </text>
@@ -439,7 +439,7 @@
           </g>
 
           <!-- mux-0 -->
-          <g id="mux-0" transform = "translate(1480, 100)">
+          <g id="mux-0" transform = "translate(1580, 100)">
             <rect x = "0"  y = "0" width = "40" height = "120" rx = "20" ry = "20" class = "component"/>
             
             <text x = "14" y = "20"  class = "mem-label"> 0 </text>
@@ -461,7 +461,7 @@
           </g>
           
           <!-- mux-2 -->
-          <g id="mux-2" transform = "translate(1020, 630)">
+          <g id="mux-2" transform = "translate(1070, 630)">
             <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
             
             <text x = "14" y = "20" class = "mem-label"> 0 </text>
@@ -472,7 +472,7 @@
           </g>
           
           <!-- mux-3 -->
-          <g id="mux-3" transform="translate(1535, 665)">
+          <g id="mux-3" transform="translate(1650, 665)">
             <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
             
             <text x = "14" y = "20" class = "mem-label"> 1 </text>
@@ -483,13 +483,13 @@
           </g>
 
           <!-- AND gate -->
-          <g id="and-gate" transform="translate(1250, 450)">
+          <g id="and-gate" transform="translate(1350, 450)">
             <path d="M0,0 L40,0 A40,50 0 0,1 40,100 L0,100 Z"
                   stroke="deepskyblue" class="control-component" />
           </g>
 
           <!-- OR gate -->
-          <g id="or-gate" transform="translate(1370, 230)">
+          <g id="or-gate" transform="translate(1470, 230)">
             <path d="M0,0 Q40,40 0,100 Q50,100 80,50 Q50,0 0,0"
                   stroke="deepskyblue" class="control-component" />
           </g>  
