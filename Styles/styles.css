@@ -233,6 +233,7 @@ body {
   border: 2px solid var(--border-color); 
   background-color: var(--bg-color); 
   font-family: monospace;
+  overflow: hidden; 
 }
 .line-numbers {
   padding: 10px 15px;
@@ -242,11 +243,21 @@ body {
   user-select: none;
 }
 .instructionCode {
+  flex-grow: 1;  /* Cho phép textarea mở rộng để lấp đầy không gian còn lại */
   background-color: var(--bg-color); /* Use variable */
   color: var(--text-color); /* Use variable */
   font-family: monospace;
   border: none; /* Remove border potentially set by var */
   padding: 10px;
+  resize: none; /* Ngăn người dùng thay đổi kích thước textarea (tùy chọn) */
+  /* Đảm bảo các thuộc tính này không bị ghi đè */
+  box-shadow: none; 
+  outline: none;
+}
+/* **Quan trọng: Loại bỏ viền (outline) khi textarea được focus (nhấp vào)** */
+.instructionCode:focus {
+  outline: none; /* Loại bỏ viền xanh/cam mặc định của trình duyệt khi focus */
+  box-shadow: none; /* Đảm bảo không có bóng đổ nào khác xuất hiện khi focus */
 }
 .button {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
@@ -375,6 +386,7 @@ body {
   background-color: var(--table-row-odd-bg); /* Set base background */
 }
 .parsedOutputTable thead {
+  font-weight: bold;
   background-color: var(--table-header-bg); /* Use variable */
   color: var(--text-color); /* Use variable (or a specific --table-header-text-color if needed) */
 }
@@ -396,7 +408,6 @@ body {
 }
 .parsedOutputTable td:last-child {
   color: var(--emphasis-color); /* Use variable */
-  font-weight: bold;
 }
 /* Registers */
 .registersBox {
