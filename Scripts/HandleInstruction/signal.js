@@ -1,7 +1,6 @@
 import controlSignalTable from "./Execute/Define/controlSignalTable.js";
 import signalDestinations from "./Execute/Define/signalDestinations.js";
 
-
 const svgNS = "http://www.w3.org/2000/svg";
 const signalNodesGroup = document.getElementById('control-signal-nodes');
 const dataSignalNodesGroup = document.getElementById('data-signal-nodes'); // Cần group này
@@ -14,12 +13,6 @@ const ALU_CONTROL_TO_ALU_PATH_ID = "ALU-control-to-ALU-2-path";
 const ALU_CONTROL_OUTPUT_DELAY = 500; // ms
 
 
-// --- PATH IDs CHO FETCH (Lấy từ SVG bạn cung cấp) ---
-const PC_TO_IMEM_PATH_ID = "pc-to-instruction-memory-path";
-const PC_TO_ADD_ALU_PATH_ID = "pc-to-ALU-add-0-path";
-// Giả định có một path cho Lệnh đi ra, ví dụ đến khu vực Decode/Register Read
-// !! THAY THẾ BẰNG ID THỰC TẾ NẾU CÓ !!
-const IMEM_OUTPUT_BASE_PATH_ID = "instruction-memory-output-base-path"; // Path gốc lệnh đi ra
 // Path cho các trường cụ thể (lấy từ SVG)
 const IMEM_OPCODE_TO_CONTROL_PATH_ID = "instruction-memory-to-control-path";
 const IMEM_RN_TO_REG_PATH_ID = "instruction-memory-to-read-register-1-path"; // Instruction [9-5]
@@ -32,7 +25,6 @@ const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path
 
 // --- Hằng số animation ---
 const DEFAULT_ANIMATION_DURATION = 2; // giây
-const FETCH_ANIMATION_DURATION = 3; // giây (cho PC -> Mem)
 
 // loại lệnh (ADD / ORR / XOR / AND)
 let mnemonic = null;
@@ -229,82 +221,6 @@ export function clearAllDisplaysAndSignals() {
     }
     console.log("Cleared all signal displays and states.");
 }
-
-
-/**
- * Tạo và bắt đầu animation cho PC đi đến Instruction Memory (NEW)
- * @param {number} pcValue - Giá trị PC để hiển thị trong animation
- */
-export function animatePCToMemory(pcValue, onEndCallback = null) {
-    if (!dataSignalNodesGroup) return;
-    if (!PC_TO_IMEM_PATH_ID) {
-        console.warn("Path ID 'PC_TO_IMEM_PATH_ID' is not defined.");
-        return;
-    }
-    const pathElement = document.getElementById(PC_TO_IMEM_PATH_ID);
-    if (!pathElement) {
-        console.warn(`Path Element ID "${PC_TO_IMEM_PATH_ID}" not found.`);
-        return;
-    }
-
-    const fieldName = "PC_Addr";
-    const nodeGroupId = `data-node-${fieldName}`;
-    const animationId = `data-anim-${fieldName}`;
-
-    // Xóa node cũ nếu có
-    const existingNode = document.getElementById(nodeGroupId);
-    if (existingNode) existingNode.remove();
-
-    // Tạo node mới (dùng hình chữ nhật cho địa chỉ)
-    const nodeGroup = document.createElementNS(svgNS, 'g');
-    nodeGroup.setAttribute('id', nodeGroupId);
-    nodeGroup.setAttribute('visibility', 'visible'); // Hiện ngay
-
-    const hexValue = `0x${pcValue.toString(16).toUpperCase().padStart(8, '0')}`;
-
-    const shape = document.createElementNS(svgNS, 'rect');
-    const width = 40; const height = 16;
-    shape.setAttribute('width', String(width)); shape.setAttribute('height', String(height));
-    shape.setAttribute('rx', 3); shape.setAttribute('ry', 3);
-    shape.setAttribute('x', String(-width / 2)); shape.setAttribute('y', String(-height / 2));
-    shape.setAttribute('fill', '#FFC107'); // Màu vàng cho PC?
-    shape.setAttribute('stroke', 'black'); shape.setAttribute('stroke-width', '1');
-
-    const text = document.createElementNS(svgNS, 'text');
-    text.setAttribute('text-anchor', 'middle'); text.setAttribute('dominant-baseline', 'central');
-    text.setAttribute('font-size', '8'); // Font nhỏ
-    text.setAttribute('font-weight', 'normal');
-    text.setAttribute('fill', 'black'); // Chữ đen trên nền vàng
-    text.textContent = hexValue;
-
-    const animateMotion = document.createElementNS(svgNS, 'animateMotion');
-    animateMotion.setAttribute('id', animationId);
-    animateMotion.setAttribute('dur', `${FETCH_ANIMATION_DURATION}s`); // Thời gian fetch
-    animateMotion.setAttribute('begin', 'indefinite');
-    animateMotion.setAttribute('fill', 'freeze');
-
-    // Xóa node sau khi animation kết thúc (không cần giữ lại ở đích)
-    animateMotion.addEventListener('endEvent', (event) => {
-        console.log(`PC value ${hexValue} reached Instruction Memory.`);
-        // Gọi callback TRƯỚC KHI xóa node
-        if (typeof onEndCallback === 'function') {
-            onEndCallback(); // Gọi callback khi PC đến nơi
-        }
-        event.target.closest('g')?.remove(); // Tự hủy node sau khi xử lý xong
-    });
-
-    const mpath = document.createElementNS(svgNS, 'mpath');
-    mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${PC_TO_IMEM_PATH_ID}`);
-
-    animateMotion.appendChild(mpath);
-    nodeGroup.appendChild(shape);
-    nodeGroup.appendChild(text);
-    nodeGroup.appendChild(animateMotion);
-
-    dataSignalNodesGroup.appendChild(nodeGroup); // Thêm vào group data signals
-    animateMotion.beginElement(); // Bắt đầu ngay
-}
-
 
 /**
  * Hàm xử lý khi tín hiệu ALUOp kết hợp đến ALU Control.

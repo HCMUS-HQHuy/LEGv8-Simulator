@@ -1,0 +1,27 @@
+/* simulation_styles.css */
+
+/* General style for all data animation nodes */
+/* .data-node rect,
+.data-node circle, */
+
+.data-node rect {
+  stroke: black;
+  fill: #FFC107;
+  stroke-width: 1px;
+  rx: 3;
+  ry: 3;
+}
+
+.data-node text {
+  font-weight: normal;
+  fill: black; /* Default text color */
+  text-anchor: middle; /* Center text horizontally */
+  dominant-baseline: central; /* Center text vertically */
+  /* Default font size - can be overridden */
+  font-size: 9px;
+  /* Prevent text selection when dragging node */
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+}
