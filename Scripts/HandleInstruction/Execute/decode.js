@@ -90,11 +90,6 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
     const rn     = encodedInstruction.substring(22, 27); // Bit 9-5  (5 bits) - Thường là Rn
     const rd     = encodedInstruction.substring(27, 32); // Bit 4-0  (5 bits) - Thường là Rd hoặc Rt
 
-    // Các trường khác tùy loại lệnh (cần parse sâu hơn hoặc dùng trực tiếp từ encoded)
-    // const dt_address = encodedInstruction.substring(11, 20); // D-format DT address (9 bits) - Bit 20-12
-    // const i_immediate = encodedInstruction.substring(10, 22); // I-format immediate (12 bits) - Bit 21-10
-    // const cb_address = encodedInstruction.substring(8, 27); // CB-format address (19 bits) - Bit 26-8
-
     console.log("Creating data signal nodes for:", parsedInstruction.mnemonic);
 
     // --- Tạo node cho các trường dựa trên đường dẫn đã định nghĩa ---
