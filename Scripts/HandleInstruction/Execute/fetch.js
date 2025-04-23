@@ -48,16 +48,25 @@ function updatePCDisplay(value) { // Nhận giá trị để hiển thị
 }
 
 export function trigger(parsedInstruction) {
+	if (!dataSignalNodesGroup) {
+        console.warn("dataSignalNodesGroup is null!");
+        return;
+    }
+
 	dataSignalNodesGroup.appendChild(animatePCToMemory(0, parsedInstruction));
 	startDataSignalAnimation();
 	console.log("--- Processing Complete for Instruction ---");
 }
 
 function animatePCToAddALU(pcValue) {
+	const hexValue = `0x${pcValue.toString(16).toUpperCase().padStart(8, '0')}`;
 	return dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: hexValue,
 		fieldName: "PC_Increase",
-		onEndCallback: null,
+		onEndCallback: () => {
+			console.log("--- PC animation reached ADD ALU, creating and starting add ---");
+			// continue;
+		},
 		pathId: PC_TO_IMEM_PATH_ID,
 		FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION
 	}));
@@ -67,9 +76,7 @@ function animatePCToAddALU(pcValue) {
  * Tạo và bắt đầu animation cho PC đi đến Instruction Memory
  */
 function animatePCToMemory(pcValue, parsedInstruction) {
-    if (!dataSignalNodesGroup) return;
-
-	const pcFetchCallback = () => {
+    const pcFetchCallback = () => {
 		console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
 
 		// 2.1 Mã hóa lại hoặc lấy mã máy đã lưu
@@ -117,10 +124,6 @@ function animatePCToMemory(pcValue, parsedInstruction) {
  * @param {boolean} [startNow=true] - Có bắt đầu animation ngay không.
  */
 function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
-    if (!dataSignalNodesGroup) {
-        console.warn("dataSignalNodesGroup is null!");
-        return;
-    }
 
     if (!parsedInstruction || parsedInstruction.error || !encodedInstruction) {
         console.log("No valid instruction/encoding to display data signals.");
@@ -202,7 +205,6 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
  * Starts the animation for all data signal nodes. (NEW)
  */
 function startDataSignalAnimation() {
-	if (!dataSignalNodesGroup) return;
 	const animations = dataSignalNodesGroup.querySelectorAll('animateMotion');
 	if (animations.length === 0) {
 		console.log("No data signal nodes found to animate.");
