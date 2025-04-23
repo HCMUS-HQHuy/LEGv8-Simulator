@@ -1,4 +1,4 @@
-import controlSignalTable from "./Execute/Define/controlSignalTable.js";
+import controlSignalTable from "./Define/controlSignalTable.js";
 
 // loại lệnh (ADD / ORR / XOR / AND)
 let mnemonic = null;
