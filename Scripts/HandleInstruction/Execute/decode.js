@@ -15,31 +15,12 @@ const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path
 
 const DEFAULT_ANIMATION_DURATION = 2; // giây
 
-export function trigger(parsedInstruction) {
+export function trigger(parsedInstruction, opcodeArrivalCallback = null) {
 
 	if (!dataSignalNodesGroup) {
         console.warn("dataSignalNodesGroup is null!");
         return;
     }
-
-	const opcodeArrivalCallback = () => {
-		console.log("--- Opcode animation finished, generating and starting Control Signals ---");
-
-		// 3.1 Tính toán Control Signals
-		// const controlSignals = handleSignal.generateControlSignals(parsedInstruction);
-		const controlSignals = null;
-
-		// 3.2 Hiển thị Control Signals Nodes (ẩn)
-		if (controlSignals) {
-			// handleSignal.displayControlSignalNodes(controlSignals); // Hàm này giờ chỉ tạo node ẩn
-		} else {
-				console.warn(`No control signals generated.`);
-				// handleSignal.displayControlSignalNodes(null); // Xóa node cũ nếu có
-		}
-
-		// 3.3 Bắt đầu animation cho Control Signals
-		// handleSignal.startControlSignalAnimation();
-	};
 
 	console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
 	const encodedInstructionForData = encodeLegv8Instruction(parsedInstruction);
