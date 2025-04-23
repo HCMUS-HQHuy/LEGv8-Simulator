@@ -16,6 +16,7 @@ const ALU_CONTROL_OUTPUT_DELAY = 500; // ms
 
 // --- PATH IDs CHO FETCH (Lấy từ SVG bạn cung cấp) ---
 const PC_TO_IMEM_PATH_ID = "pc-to-instruction-memory-path";
+const PC_TO_ADD_ALU_PATH_ID = "pc-to-ALU-add-0-path";
 // Giả định có một path cho Lệnh đi ra, ví dụ đến khu vực Decode/Register Read
 // !! THAY THẾ BẰNG ID THỰC TẾ NẾU CÓ !!
 const IMEM_OUTPUT_BASE_PATH_ID = "instruction-memory-output-base-path"; // Path gốc lệnh đi ra
