@@ -21,13 +21,13 @@ const PC_TO_IMEM_PATH_ID = "pc-to-instruction-memory-path";
 const IMEM_OUTPUT_BASE_PATH_ID = "instruction-memory-output-base-path"; // Path gốc lệnh đi ra
 // Path cho các trường cụ thể (lấy từ SVG)
 const IMEM_OPCODE_TO_CONTROL_PATH_ID = "instruction-memory-to-control-path";
-const IMEM_RN_TO_REG_PATH_ID = "instruction-memory-to-data-memory-path"; // Dùng tạm path này, bạn cần path đúng đến Reg1
-const IMEM_RM_TO_REG_PATH_ID = "instruction-memory-to-mux-1-1-path"; // Dùng tạm path này, bạn cần path đúng đến Reg2 (cho R-type)
-const IMEM_RT_TO_REG_PATH_ID = "instruction-memory-to-mux-1-0-path"; // Dùng tạm path này, bạn cần path đúng đến Reg2 (cho load/store/CBZ)
-const IMEM_RD_TO_REG_PATH_ID = "instruction-memory-to-register-path"; // Path đến Write Register port
-const IMEM_IMM_TO_SIGN_EXTEND_PATH_ID = "instruction-memory-to-sign-extend-path";
+const IMEM_RN_TO_REG_PATH_ID = "instruction-memory-to-read-register-1-path"; // Instruction [9-5]
+const IMEM_RM_TO_REG_PATH_ID = "instruction-memory-to-mux-1-0-path"; // Instruction [20-16]
+const IMEM_RT_TO_REG_PATH_ID = "instruction-memory-to-mux-1-1-path"; // Dùng tạm path này, bạn cần path đúng đến Reg2 (cho load/store/CBZ)
+const IMEM_RD_TO_REG_PATH_ID = "instruction-memory-to-write-register-path"; // Instruction [4-0]
+const IMEM_IMM_TO_SIGN_EXTEND_PATH_ID = "instruction-memory-to-sign-extend-path"; // Cần điều chỉnh
 const IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID = "instruction-memory-to-alu-control-path"; // Dùng tạm path này, bạn cần path đến shift left 2
-const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path";
+const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path"; // Chưa hiểu đoạn này.
 
 // --- Hằng số animation ---
 const DEFAULT_ANIMATION_DURATION = 2; // giây
