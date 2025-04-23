@@ -46,7 +46,7 @@ export function trigger() {
 			const oldScale = scale; // Store old scale
 
 			if (delta > 0) {
-				scale = Math.max(0.1, scale - zoomFactor);
+				scale = Math.max(0.5, scale - zoomFactor);
 			} else {
 				scale = Math.min(5, scale + zoomFactor);
 			}
