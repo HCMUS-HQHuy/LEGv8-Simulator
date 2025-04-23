@@ -1,12 +1,4 @@
-/**
- * Represents the parsed components of a LEGv8 instruction.
- * @typedef {Object} ParsedInstruction
- * @property {string | null} mnemonic - The instruction mnemonic (e.g., "ADD", "LDUR"). Null if parsing fails.
- * @property {string[]} operands - An array of operand strings exactly as they appear (e.g., ["X1", "X2", "X3"], ["X0", "[X28", "#16]"]).
- * @property {string | null} type - An inferred instruction type (R, I, D, B, CB, IW, SYS, UNKNOWN). Null if parsing fails.
- * @property {Object | null} structuredOperands - Operands parsed into a more structured format based on type. Null if parsing fails or type is unknown/simple.
- * @property {string | null} error - An error message if parsing failed.
- */
+import { R_TYPE_OPCODES }  from "./Define/Opcode.js"
 
 /**
  * Parses a single line of LEGv8 assembly code.
@@ -203,25 +195,6 @@ function toBinary(number, bits) {
     let binaryString = number.toString(2);
     return binaryString.padStart(bits, '0');
 }
-
-/**
- * Bảng tra cứu Opcode cho một số lệnh R-type LEGv8.
- * Cần mở rộng bảng này cho các lệnh khác.
- */
-const R_TYPE_OPCODES = {
-    // Từ ví dụ: ADD Xd, Xn, Xm
-    'ADD':  '10001011000',
-    // Các ví dụ khác (opcode này là giả định/ví dụ, cần kiểm tra spec LEGv8)
-    'SUB':  '11001011000',
-    'AND':  '10001010000',
-    'ORR':  '10101010000',
-    'EOR':  '11001010000',
-    'LSL':  '11010011011', // LSL Rd, Rn, #shamt (requires shamt field)
-    'LSR':  '11010011010', // LSR Rd, Rn, #shamt (requires shamt field)
-    // Thêm các lệnh R-type khác vào đây
-};
-
-// Thêm các bảng Opcode cho loại I, D, B, CB... nếu cần
 
 /**
  * Mã hóa một đối tượng lệnh LEGv8 đã được parse thành chuỗi mã máy 32-bit.
