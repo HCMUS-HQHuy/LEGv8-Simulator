@@ -48,6 +48,26 @@ function updatePCDisplay(value) { // Nhận giá trị để hiển thị
 }
 
 export function trigger(parsedInstruction) {
+	dataSignalNodesGroup.appendChild(animatePCToMemory(0, parsedInstruction));
+	startDataSignalAnimation();
+	console.log("--- Processing Complete for Instruction ---");
+}
+
+function animatePCToAddALU(pcValue) {
+	return dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+		value: hexValue,
+		fieldName: "PC_Increase",
+		onEndCallback: null,
+		pathId: PC_TO_IMEM_PATH_ID,
+		FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION
+	}));
+}
+
+/**
+ * Tạo và bắt đầu animation cho PC đi đến Instruction Memory
+ */
+function animatePCToMemory(pcValue, parsedInstruction) {
+    if (!dataSignalNodesGroup) return;
 
 	const pcFetchCallback = () => {
 		console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
@@ -79,34 +99,19 @@ export function trigger(parsedInstruction) {
 		// 2.4 Bắt đầu TẤT CẢ animation cho Data Signals (Opcode, Rn, Rm...)
 		startDataSignalAnimation();
 	};
-	// --- Kết thúc định nghĩa pcFetchCallback ---
-	animatePCToMemory(0, pcFetchCallback);
-
-	console.log("--- Processing Complete for Instruction ---");
-}
-
-
-/**
- * Tạo và bắt đầu animation cho PC đi đến Instruction Memory
- * @param {number} pcValue - Giá trị PC để hiển thị trong animation
- */
-function animatePCToMemory(pcValue, onEndCallback = null) {
-    if (!dataSignalNodesGroup) return;
 	const hexValue = `0x${pcValue.toString(16).toUpperCase().padStart(8, '0')}`;
 
-	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+	return dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: hexValue,
 		fieldName: "PC_Addr",
-		onEndCallback: onEndCallback,
+		onEndCallback: pcFetchCallback,
 		pathId: PC_TO_IMEM_PATH_ID,
 		FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION
 	}));
-	startDataSignalAnimation();
 }
 
-
 /**
- * Hiển thị data signal nodes (instruction fields).
+ * Hiển thị data signal nodes
  * @param {object} parsedInstruction - Lệnh đã parse.
  * @param {string} encodedInstruction - Mã máy 32-bit.
  * @param {boolean} [startNow=true] - Có bắt đầu animation ngay không.
@@ -119,7 +124,6 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 
     if (!parsedInstruction || parsedInstruction.error || !encodedInstruction) {
         console.log("No valid instruction/encoding to display data signals.");
-         // Xóa node data cũ nếu không có lệnh hợp lệ
 		while (dataSignalNodesGroup.firstChild) dataSignalNodesGroup.removeChild(dataSignalNodesGroup.firstChild);
         return;
      }
@@ -149,8 +153,6 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 		pathId: IMEM_OPCODE_TO_CONTROL_PATH_ID,
 		FETCH_ANIMATION_DURATION: FETCH_ANIMATION_DURATION
 	}));
-
-
 
     // Gửi Rn đến cổng đọc Register 1
     if (parsedInstruction.type === 'R' || parsedInstruction.type === 'D' || parsedInstruction.type === 'I') { // Rn dùng trong R, D, I
@@ -236,7 +238,7 @@ function createNodeWithAnimation({
         return null;
     }
 
-	const nodeGroupId = `data-node-${fieldName.replace(/\[|\]|-/g, '_')}`; // Tạo ID hợp lệ
+	const nodeGroupId = `data-node-${fieldName.replace(/\[|\]|-/g, '_')}`;
     const animationId = `data-anim-${fieldName.replace(/\[|\]|-/g, '_')}`;
     const existingNode = document.getElementById(nodeGroupId);
     if (existingNode) existingNode.remove();
@@ -245,9 +247,10 @@ function createNodeWithAnimation({
 
     // Tạo node mới (dùng hình chữ nhật cho địa chỉ)
     const nodeGroup = document.createElementNS(svgNS, 'g');
+    nodeGroup.classList.add('data-node');
+
     nodeGroup.setAttribute('id', nodeGroupId);
     nodeGroup.setAttribute('visibility', 'hidden'); // Hiện ngay
-    nodeGroup.classList.add('data-node');
 
     // Tạo hình chữ nhật cho node
     const shape = document.createElementNS(svgNS, 'rect');
