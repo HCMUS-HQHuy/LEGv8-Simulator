@@ -1,4 +1,4 @@
-import * as handleSignal from "./../signal.js"
+import * as handleSignal from "../signal.js"
 
 export function trigger() {
 	
