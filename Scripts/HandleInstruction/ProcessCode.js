@@ -1,7 +1,7 @@
-import * as parsedOutputTable from "./ParseCode/parsedOutputTable.js"
+import * as parsedOutputTable from "./Compile/parsedOutputTable.js"
 import * as handleSignal from "./signal.js"
-import * as formatCode from "./ParseCode/formatCode.js"
-import {encodeLegv8Instruction} from "./ParseCode/parser.js"
+import * as formatCode from "./Compile/formatCode.js"
+import {encodeLegv8Instruction} from "./Compile/parser.js"
 
 
 // --- PC State ---
@@ -26,7 +26,7 @@ export function trigger() {
 
 		// 1. Dọn dẹp tín hiệu từ chu kỳ trước
 		handleSignal.clearAllDisplaysAndSignals();
-		
+
          // --- Định nghĩa callback sẽ chạy KHI OPCODE đến Control Unit ---
 		const opcodeArrivalCallback = () => {
             console.log("--- Opcode animation finished, generating and starting Control Signals ---");

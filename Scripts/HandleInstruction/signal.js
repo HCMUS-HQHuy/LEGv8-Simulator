@@ -1,5 +1,5 @@
-import controlSignalTable from "./Define/controlSignalTable.js";
-import signalDestinations from "./Define/signalDestinations.js";
+import controlSignalTable from "./Execute/Define/controlSignalTable.js";
+import signalDestinations from "./Execute/Define/signalDestinations.js";
 
 
 const svgNS = "http://www.w3.org/2000/svg";
