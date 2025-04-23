@@ -1,6 +1,7 @@
 /* --- Root Variables (Defaults to Dark Mode) --- */
 :root {
   --bg-color: #111;
+  --frame-bg-color: #111;
   --text-color: #1DCD9F;
   --border-color: #1DCD9F; /* Primary border, used for frame, code editor, toggle */
   --header-bg-color: #222;
@@ -30,6 +31,7 @@
 /* --- Light Mode Overrides --- */
 body.light {
   --bg-color: #ffffff;
+  --frame-bg-color: #faf9ea;
   --text-color: #000000;
   --border-color: #000000;
   --header-bg-color: #eeeeee;
@@ -287,21 +289,50 @@ body {
 .frameBox {
   flex: 0 0 70%; /* Không co giãn, chiếm 70% */
   padding: 0 20px; /* Padding ngang (trái và phải) */
+  overflow: auto;
 }
 .frame {
   flex: 0 0 70%; /* Không co giãn, chiếm 70% */
-	background-color: var(--bg-color); /* Use variable */
+	background-color: var(--frame-bg-color); /* Use variable */
 	border: 2px solid var(--border-color); /* Use variable */
 	overflow: hidden;
 	position: relative;
   font-family: monospace;
-}
 
+  position: relative;
+}
 .content {
 	transform-origin: top left;
 	transition: transform 0.1s ease;
 	width: auto;
 	height: auto;
+}
+.frameBox:-webkit-full-screen,
+.frameBox:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  background-color: var(--bg-color);
+  overflow: auto;
+}
+/* To make frameBox fullscreen style look better */
+#fullscreen-btn {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 10px;
+  right: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+}
+#fullscreen-btn:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }
 /* Output container */
 .outputContainer {
