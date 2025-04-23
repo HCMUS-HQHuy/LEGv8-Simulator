@@ -1,5 +1,5 @@
-import {encodeLegv8Instruction, parseLegv8Instruction} from "./Parsecode1.js"
-import * as handleSignal from "./Signal1.js"
+import {encodeLegv8Instruction, parseLegv8Instruction} from "./parsecode.js"
+import * as handleSignal from "./signal.js"
 
 
 // --- PC State ---
