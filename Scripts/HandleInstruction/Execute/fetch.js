@@ -1,5 +1,5 @@
 // import * as handleSignal from "../signal.js"
-import {startDataSignalAnimation, createNodeWithAnimation} from "./animation.js"
+import {startSignalAnimation, createNodeWithAnimation} from "./animation.js"
 
 const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
 const dataSignalNodesFetchGroup = document.getElementById('data-signal-nodes-fetch');
@@ -40,9 +40,9 @@ function animatePCToAddALU(pcValue) {
 			fieldName: "PC_Increase",
 			onEndCallback: null,
 			pathId: "ALU-add-0-to-mux-0-0-path",
-			FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION + 10
+			duration:  FETCH_ANIMATION_DURATION + 10
 		}));
-		startDataSignalAnimation(dataSignalNodesFetchGroup);
+		startSignalAnimation(dataSignalNodesFetchGroup);
 	};
 
 	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
@@ -50,7 +50,7 @@ function animatePCToAddALU(pcValue) {
 		fieldName: "Const-To-Add-Value",
 		onEndCallback: onEndCallback,
 		pathId: "const-4-to-ALU-add-0-path",
-		FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION
+		duration:  FETCH_ANIMATION_DURATION
 	}));
 
 	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
@@ -58,9 +58,9 @@ function animatePCToAddALU(pcValue) {
 		fieldName: "PC-To-Add-Value",
 		onEndCallback: onEndCallback,
 		pathId: "pc-to-ALU-add-0-path",
-		FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION
+		duration:  FETCH_ANIMATION_DURATION
 	}));
-	startDataSignalAnimation(dataSignalNodesFetchGroup);
+	startSignalAnimation(dataSignalNodesFetchGroup);
 }
 
 /**
@@ -74,7 +74,7 @@ function animatePCToMemory(pcValue, pcFetchCallback) {
 		fieldName: "PC_Addr",
 		onEndCallback: pcFetchCallback,
 		pathId: PC_TO_IMEM_PATH_ID,
-		FETCH_ANIMATION_DURATION:  FETCH_ANIMATION_DURATION
+		duration:  FETCH_ANIMATION_DURATION
 	}));
-	startDataSignalAnimation(dataSignalNodesGroup);
+	startSignalAnimation(dataSignalNodesGroup);
 }

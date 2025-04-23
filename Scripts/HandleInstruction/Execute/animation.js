@@ -1,7 +1,7 @@
 /**
  * Starts the animation for all data signal nodes. (NEW)
  */
-export function startDataSignalAnimation(dataSignalNodesGroup) {
+export function startSignalAnimation(dataSignalNodesGroup) {
     if (dataSignalNodesGroup == null) {
         console.error("dataSignalNodesGroup is null");
         return null;
@@ -29,7 +29,7 @@ export function createNodeWithAnimation({
     fieldName,
     onEndCallback, 
     pathId, 
-    FETCH_ANIMATION_DURATION 
+    duration 
 }) {
 	if (!pathId) {
         console.warn(`Path ID ${pathId} is not defined.`);
@@ -71,7 +71,7 @@ export function createNodeWithAnimation({
     // Tạo hiệu ứng chuyển động cho node
     const animateMotion = document.createElementNS(svgNS, 'animateMotion');
     animateMotion.setAttribute('id', animationId);
-    animateMotion.setAttribute('dur', `${FETCH_ANIMATION_DURATION}s`); // Thời gian fetch
+    animateMotion.setAttribute('dur', `${duration}s`); // Thời gian fetch
     animateMotion.setAttribute('begin', 'indefinite');
     animateMotion.setAttribute('fill', 'freeze');
 

@@ -1,4 +1,4 @@
-import {startDataSignalAnimation, createNodeWithAnimation} from "./animation.js"
+import {startSignalAnimation, createNodeWithAnimation} from "./animation.js"
 import { encodeLegv8Instruction } from "../Compile/parser.js";
 
 const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
@@ -42,7 +42,7 @@ export function trigger(parsedInstruction, opcodeArrivalCallback = null) {
 		} else {
 			console.error(`Could not find Opcode animation element with ID: ${opcodeAnimId}. Control signals will not be triggered.`);
 		}
-		startDataSignalAnimation(dataSignalNodesGroup);
+		startSignalAnimation(dataSignalNodesGroup);
 	};
 }
 
@@ -79,7 +79,7 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 		fieldName: `Op [31-21]`,
 		onEndCallback: null,
 		pathId: IMEM_OPCODE_TO_CONTROL_PATH_ID,
-		FETCH_ANIMATION_DURATION: DEFAULT_ANIMATION_DURATION
+		duration: DEFAULT_ANIMATION_DURATION
 	}));
 
     // Gửi Rn đến cổng đọc Register 1
@@ -89,7 +89,7 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 			fieldName: `Rn [9-5]`,
 			onEndCallback: null,
 			pathId: IMEM_RN_TO_REG_PATH_ID,
-			FETCH_ANIMATION_DURATION: DEFAULT_ANIMATION_DURATION
+			duration: DEFAULT_ANIMATION_DURATION
 		}));
     }
     // Gửi Rm đến cổng đọc Register 2 (cho R-type)
@@ -99,7 +99,7 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 			fieldName: `Rm [20-16]`,
 			onEndCallback: null,
 			pathId: IMEM_RM_TO_REG_PATH_ID,
-			FETCH_ANIMATION_DURATION: DEFAULT_ANIMATION_DURATION
+			duration: DEFAULT_ANIMATION_DURATION
 		}));
     }
     // Gửi Rd đến cổng Write Register (cho R-type, I-type, LDUR)
@@ -109,7 +109,7 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 			fieldName: `Rd [4-0]`,
 			onEndCallback: null,
 			pathId: IMEM_RD_TO_REG_PATH_ID,
-			FETCH_ANIMATION_DURATION: DEFAULT_ANIMATION_DURATION
+			duration: DEFAULT_ANIMATION_DURATION
 		}));
     }
     // Gửi Function/shamt đến ALU Control (cho R-type)
@@ -119,7 +119,7 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 			fieldName: `Func/Shamt`,
 			onEndCallback: null,
 			pathId: IMEM_FUNC_TO_ALU_CONTROL_PATH_ID,
-			FETCH_ANIMATION_DURATION: DEFAULT_ANIMATION_DURATION
+			duration: DEFAULT_ANIMATION_DURATION
 		}));
 
     }

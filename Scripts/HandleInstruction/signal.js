@@ -356,7 +356,7 @@ function createDataNodeElement(fieldName, value, pathId, duration = DEFAULT_ANIM
 /**
  * Starts the animation for all data signal nodes. (NEW)
  */
-export function startDataSignalAnimation() {
+export function startSignalAnimation() {
     if (!dataSignalNodesGroup) return;
     const animations = dataSignalNodesGroup.querySelectorAll('animateMotion');
     if (animations.length === 0) {
