@@ -241,7 +241,7 @@ body {
   color: var(--line-number-color); /* Use variable */
   user-select: none;
 }
-#instructionCode {
+.instructionCode {
   background-color: var(--bg-color); /* Use variable */
   color: var(--text-color); /* Use variable */
   font-family: monospace;
@@ -332,6 +332,24 @@ body {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
   color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }
+.stop-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 110px;
+  right: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+}
+.stop-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
 /* Output container */
 .outputContainer {
   display: flex;
@@ -363,8 +381,8 @@ body {
 .parsedOutputTable th,
 .parsedOutputTable td {
   border: 1px solid var(--table-border-color); /* Use variable */
-  padding: 8px 12px;
-  text-align: left;
+  padding: 8px 8px;
+  text-align: center;
 }
 .parsedOutputTable tbody tr {
   background-color: var(--table-row-odd-bg); /* Default odd row color */
@@ -382,9 +400,66 @@ body {
 }
 /* Registers */
 .registersBox {
-  flex: 0 0 20%; /* Không co giãn, chiếm 30% */
   padding: 0 20px; /* Padding ngang (trái và phải) */
   margin-left: 0px;
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
+}
+.registersBox {
+  align-items: flex-start;
+}
+
+#range-slider {
+  -webkit-appearance: none; /* Xóa kiểu mặc định (Chrome, Safari) */
+  width: 20%;
+  height: 8px;
+  border-radius: 5px;
+  background: linear-gradient(to right, #4CAF50 50%, #ddd 50%);
+  outline: none;
+  transition: background 0.3s;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+/* Thanh trượt (thumb) */
+#range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4CAF50;
+  border: 2px solid white;
+  box-shadow: 0 0 2px rgba(0,0,0,0.5);
+  transition: background 0.3s;
+}
+
+#range-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4CAF50;
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+/* Khi hover */
+#range-slider:hover::-webkit-slider-thumb {
+  background: #45a049;
+}
+
+/* Firefox track */
+#range-slider::-moz-range-track {
+  height: 8px;
+  background: #ddd;
+  border-radius: 5px;
+}
+
+.command-box {
+  font-family: monospace;
+  font-size: 14px;
+  bottom: 10px;
+  left: 10px;
+
+  position: absolute;
 }

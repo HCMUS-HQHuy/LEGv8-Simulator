@@ -498,8 +498,11 @@
       </div>
       <button class = "frame-button" id = "fullscreen-btn" title = "Toggle fullscreen"></button>
       <button class = "start-button" id = "start-animation" title = "Start animation">▶</button>
+      <button class = "stop-button"  id = "stop-animation" title = "Stop animation">⏺</button>
+      <div class = "command-box" id = "command-box">ADD X9, X20, X21</div>
     </div>
-    <!-- Single Button Placed Underneath -->
+    <input type = "range" id="range-slider" min="0" max="100" value="50">
+    <label for = "range-slider">Speed: <span id="range-value">50</span>ms</label>
   </div>
   
   <div class = "codeBox">
@@ -509,7 +512,7 @@
       <!-- Add id="instructionCode" to the textarea -->
       <div class = "code-editor">
         <div class = "line-numbers" id = "lineNumbers"> 1 </div>
-        <textarea id = "instructionCode" name="message" rows="35" cols="30" placeholder="Enter LEGv8 code here, one instruction per line...">ADD X9, X20, X21</textarea>
+        <textarea class = "instructionCode" id = "instructionCode" name="message" rows="35" cols="30" placeholder="Enter LEGv8 code here, one instruction per line...">ADD X9, X20, X21</textarea>
       </div>
       <button class = "button" id = "parseInstructions">Parse Instructions</button>
     </form>
@@ -517,13 +520,175 @@
 </div>
 
 <div class = "outputContainer">
+  <div class = "registersBox">
+    <h2>Flags</h2>
+    
+    <table class = "parsedOutputTable">
+      <thead>
+        <tr>
+          <th>N</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+        </tr>
+      </tbody>
+    </table>
+    <table class = "parsedOutputTable">
+      <thead>
+        <tr>
+          <th>Z</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+        </tr>
+      </tbody>
+    </table>
+    <table class = "parsedOutputTable">
+      <thead>
+        <tr>
+          <th>V</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+        </tr>
+      </tbody>
+    </table>
+    <table class = "parsedOutputTable">
+      <thead>
+        <tr>
+          <th>C</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class = "registersBox">
+    <h2>Registers</h2>
+
+    <table class = "parsedOutputTable">
+      <thead>
+        <tr>
+          <th>X01</th>
+          <th>X02</th>
+          <th>X03</th>
+          <th>X04</th>
+          <th>X05</th>
+          <th>X06</th>
+          <th>X07</th>
+          <th>X08</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+        </tr>
+      </tbody>
+    </table>
+    <table class = "parsedOutputTable">
+      <thead>
+        <tr>
+          <th>X09</th>
+          <th>X10</th>
+          <th>X11</th>
+          <th>X12</th>
+          <th>X13</th>
+          <th>X14</th>
+          <th>X15</th>
+          <th>X16</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+        </tr>
+      </tbody>
+    </table>
+    <table class = "parsedOutputTable">
+      <thead>
+        <tr>
+          <th>X17</th>
+          <th>X18</th>
+          <th>X19</th>
+          <th>X20</th>
+          <th>X21</th>
+          <th>X22</th>
+          <th>X23</th>
+          <th>X24</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+        </tr>
+      </tbody>
+    </table>
+    <table class = "parsedOutputTable">
+      <thead>
+        <tr>
+          <th>X25</th>
+          <th>X26</th>
+          <th>X27</th>
+          <th>X28</th>
+          <th>X29</th>
+          <th>X30</th>
+          <th>X31</th>
+          <th>X32</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+          <th>0x00000000</th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class = "parsedOutputBox">
     <h2>Parsed Output</h2>
     
     <!-- Muốn hiển thị lại parsedOutput thuần thì phải vào script.js mở code lại nha -->
     <!-- <pre id="parsedOutput" rows="10" cols="50"></pre> -->
     
-    <table class = "parsedOutputTable" style = "border-collapse: collapse; width: 100%;">
+    <table class = "parsedOutputTable">
       <thead>
         <tr>
           <th>Line</th>
@@ -536,47 +701,9 @@
         </tr>
       </thead>
       <tbody id = "parsedOutputTable">
-
       </tbody>
     </table>
   </div>
-
-  <div class = "registersBox">
-    <h2>Flags</h2>
-    
-    <table class = "parsedOutputTable" style = "border-collapse: collapse; width: 100%;">
-      <thead>
-        <tr>
-          <th>N</th>
-          <th>Z</th>
-          <th>V</th>
-          <th>C</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>0</th>
-          <th>0</th>
-          <th>0</th>
-          <th>0</th>
-        </tr>
-      </tbody>
-    </table>
-
-    <h2>Registers</h2>
-
-    <table class = "parsedOutputTable" style = "border-collapse: collapse; width: 100%;">
-      <thead>
-        <tr>
-          <th>X1</th>
-          <th>0x0000</th>
-          <th>X2</th>
-          <th>0x0000</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    </div>
 </div>
   
 <script type="module" src="./Scripts/script.js"></script>

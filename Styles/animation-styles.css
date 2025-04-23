@@ -19,6 +19,7 @@
   dominant-baseline: central; /* Center text vertically */
   /* Default font size - can be overridden */
   font-size: 9px;
+  font: monospace;
   /* Prevent text selection when dragging node */
   user-select: none;
   -webkit-user-select: none; /* Safari */

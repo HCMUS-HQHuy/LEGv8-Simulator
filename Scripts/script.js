@@ -82,3 +82,20 @@ document.addEventListener('MSFullscreenChange', updateButtonState);     // IE/Ed
 
 // Cập nhật trạng thái nút khi tải trang lần đầu (phòng trường hợp đặc biệt)
 updateButtonState();
+
+const rangeSlider = document.getElementById('range-slider');
+const rangeValue = document.getElementById('range-value');
+
+rangeSlider.addEventListener('input', () => {
+  rangeValue.textContent = rangeSlider.value;
+});
+
+const slider = document.getElementById('range-slider');
+
+function updateSliderBackground() {
+  const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+  slider.style.background = `linear-gradient(to right, #4CAF50 ${value}%, #ddd ${value}%)`;
+}
+
+slider.addEventListener('input', updateSliderBackground);
+updateSliderBackground(); // gọi 1 lần khi load
