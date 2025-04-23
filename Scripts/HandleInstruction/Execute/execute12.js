@@ -4,26 +4,31 @@ import controlSignalTable from "./Define/controlSignalTable.js";
 let mnemonic = null;
 
 const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
+const signalNodesGroup = document.getElementById('control-signal-nodes');
 
-export function trigger() {
+const DEFAULT_ANIMATION_DURATION = 2;
 
-	if (!dataSignalNodesGroup) {
-        console.warn("dataSignalNodesGroup is null!");
-        return;
-    }
-	console.log("--- Opcode animation finished, generating and starting Control Signals ---");
+export function trigger(parsedInstruction) {
+	return () => {
+		if (!dataSignalNodesGroup) {
+			console.warn("dataSignalNodesGroup is null!");
+			return;
+		}
+		console.log("--- Opcode animation finished, generating and starting Control Signals ---");
+	
+		const controlSignals = generateControlSignals(parsedInstruction);
+	
+		// 3.2 Hiển thị Control Signals Nodes (ẩn)
+		if (controlSignals) {
+			displayControlSignalNodes(controlSignals); // Hàm này giờ chỉ tạo node ẩn
+		} else {
+				console.warn(`No control signals generated.`);
+				// handleSignal.displayControlSignalNodes(null); // Xóa node cũ nếu có
+		}
+	
+		startControlSignalAnimation();
 
-	const controlSignals = generateControlSignals(parsedInstruction);
-
-	// 3.2 Hiển thị Control Signals Nodes (ẩn)
-	if (controlSignals) {
-		displayControlSignalNodes(controlSignals); // Hàm này giờ chỉ tạo node ẩn
-	} else {
-			console.warn(`No control signals generated.`);
-			// handleSignal.displayControlSignalNodes(null); // Xóa node cũ nếu có
-	}
-
-	startControlSignalAnimation();
+	};
 }
 
 /**
@@ -79,6 +84,7 @@ function generateControlSignals(parsedInstruction) {
  */
 function createSignalNodeElement(signalName, value, pathId, duration) {
 	// *** KIỂM TRA PATH GỐC ***
+	const svgNS = "http://www.w3.org/2000/svg";
 	const pathElement = document.getElementById(pathId);
 	if (!pathElement) {
 		console.warn(`SVG Path Element with ID "${pathId}" (lowercase expected) not found. Cannot create animation node for signal "${signalName}". Check SVG ID definition.`);

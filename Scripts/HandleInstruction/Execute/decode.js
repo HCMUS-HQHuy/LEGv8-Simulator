@@ -16,36 +16,34 @@ const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path
 const DEFAULT_ANIMATION_DURATION = 2; // giây
 
 export function trigger(parsedInstruction, opcodeArrivalCallback = null) {
-
 	if (!dataSignalNodesGroup) {
         console.warn("dataSignalNodesGroup is null!");
         return;
     }
-
-	console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
-	const encodedInstructionForData = encodeLegv8Instruction(parsedInstruction);
-	if(!encodedInstructionForData || encodedInstructionForData.error){
-		console.error("Cannot proceed without encoded instruction.");
-		return;
-	}
-
-
-	// 2.2 Hiển thị Data Signals Nodes (ẩn) - Bao gồm cả Opcode
-	displayDataSignalNodes(parsedInstruction, encodedInstructionForData);
-
-	// 2.3 Tìm animation của Opcode để gắn callback xử lý control signals
-	const opcodeFieldName = `Op [31-21]`; // Phải khớp với tên dùng trong createDataNodeElement
-	const opcodeAnimId = `data-anim-${opcodeFieldName.replace(/\[|\]|-/g, '_')}`;
-	const opcodeAnimation = document.getElementById(opcodeAnimId);
-
-	if (opcodeAnimation) {
-		// Gắn listener một lần duy nhất để tránh gọi lại nhiều lần nếu có lỗi
-		opcodeAnimation.addEventListener('endEvent', opcodeArrivalCallback, { once: true });
-		console.log(`Attached end event listener to Opcode animation (${opcodeAnimId})`);
-	} else {
-		console.error(`Could not find Opcode animation element with ID: ${opcodeAnimId}. Control signals will not be triggered.`);
-	}
-	startDataSignalAnimation(dataSignalNodesGroup);
+	return () => {
+		console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
+		const encodedInstructionForData = encodeLegv8Instruction(parsedInstruction);
+		if(!encodedInstructionForData || encodedInstructionForData.error){
+			console.error("Cannot proceed without encoded instruction.");
+			return;
+		}
+		// 2.2 Hiển thị Data Signals Nodes (ẩn) - Bao gồm cả Opcode
+		displayDataSignalNodes(parsedInstruction, encodedInstructionForData);
+	
+		// 2.3 Tìm animation của Opcode để gắn callback xử lý control signals
+		const opcodeFieldName = `Op [31-21]`; // Phải khớp với tên dùng trong createDataNodeElement
+		const opcodeAnimId = `data-anim-${opcodeFieldName.replace(/\[|\]|-/g, '_')}`;
+		const opcodeAnimation = document.getElementById(opcodeAnimId);
+	
+		if (opcodeAnimation) {
+			// Gắn listener một lần duy nhất để tránh gọi lại nhiều lần nếu có lỗi
+			opcodeAnimation.addEventListener('endEvent', opcodeArrivalCallback, { once: true });
+			console.log(`Attached end event listener to Opcode animation (${opcodeAnimId})`);
+		} else {
+			console.error(`Could not find Opcode animation element with ID: ${opcodeAnimId}. Control signals will not be triggered.`);
+		}
+		startDataSignalAnimation(dataSignalNodesGroup);
+	};
 }
 
 

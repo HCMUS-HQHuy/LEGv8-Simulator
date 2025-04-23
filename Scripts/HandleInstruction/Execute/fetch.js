@@ -26,8 +26,8 @@ function updatePCDisplay(value) { // Nhận giá trị để hiển thị
 	}
 }
 
-export function trigger(parsedInstruction) {
-	animatePCToMemory(0, parsedInstruction);
+export function trigger(pcFetchCallback) {
+	animatePCToMemory(0, pcFetchCallback);
 	animatePCToAddALU(0);
 	console.log("--- Processing Complete for Instruction ---");
 }
