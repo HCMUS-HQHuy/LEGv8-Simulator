@@ -15,7 +15,7 @@ const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path
 
 const DEFAULT_ANIMATION_DURATION = 2; // giây
 
-export function trigger(parsedInstruction, opcodeArrivalCallback = null) {
+export function trigger(parsedInstruction, opcodeArrivalCallback) {
 	if (!dataSignalNodesGroup) {
         console.warn("dataSignalNodesGroup is null!");
         return;
@@ -124,8 +124,8 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 	}));
 
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-		value: shamt, 
-		fieldName: `Func/Shamt`,
+		value: opcode, 
+		fieldName: `ALUOp`,
 		onEndCallback: null,
 		pathId: IMEM_FUNC_TO_ALU_CONTROL_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 

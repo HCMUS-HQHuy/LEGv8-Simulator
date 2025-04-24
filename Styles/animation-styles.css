@@ -29,6 +29,7 @@
   y: -10px;        /* Centered vertically (height/2) */
 }
 
+.parsed-node.ALUOp rect,
 .parsed-node.Op31-21 rect{
   width: 60px;   /* Default width */
   x: -30px;       /* Centered horizontally (width/2) */
