@@ -31,7 +31,7 @@ export function trigger(parsedInstruction, opcodeArrivalCallback = null) {
 		displayDataSignalNodes(parsedInstruction, encodedInstructionForData);
 	
 		// 2.3 Tìm animation của Opcode để gắn callback xử lý control signals
-		const opcodeFieldName = `Op [31-21]`; // Phải khớp với tên dùng trong createDataNodeElement
+		const opcodeFieldName = `Op31-21`; // Phải khớp với tên dùng trong createDataNodeElement
 		const opcodeAnimId = `data-anim-${opcodeFieldName.replace(/\[|\]|-/g, '_')}`;
 		const opcodeAnimation = document.getElementById(opcodeAnimId);
 	
@@ -76,40 +76,48 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: opcode, 
-		fieldName: `Op [31-21]`,
+		fieldName: `Op31-21`,
 		onEndCallback: null,
 		pathId: IMEM_OPCODE_TO_CONTROL_PATH_ID,
-		duration: DEFAULT_ANIMATION_DURATION
+		duration: DEFAULT_ANIMATION_DURATION, 
+		className: 'parsed-node',
+		shapeType: 'rect'
 	}));
 
     // Gửi Rn đến cổng đọc Register 1
     if (parsedInstruction.type === 'R' || parsedInstruction.type === 'D' || parsedInstruction.type === 'I') { // Rn dùng trong R, D, I
 		dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 			value: rn, 
-			fieldName: `Rn [9-5]`,
+			fieldName: `Rn9-5`,
 			onEndCallback: null,
 			pathId: IMEM_RN_TO_REG_PATH_ID,
-			duration: DEFAULT_ANIMATION_DURATION
+			duration: DEFAULT_ANIMATION_DURATION, 
+			className: 'parsed-node',
+			shapeType: 'rect'
 		}));
     }
     // Gửi Rm đến cổng đọc Register 2 (cho R-type)
     if (IMEM_RM_TO_REG_PATH_ID && parsedInstruction.type === 'R') {
 		dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 			value: rm, 
-			fieldName: `Rm [20-16]`,
+			fieldName: `Rm20-16`,
 			onEndCallback: null,
 			pathId: IMEM_RM_TO_REG_PATH_ID,
-			duration: DEFAULT_ANIMATION_DURATION
+			duration: DEFAULT_ANIMATION_DURATION, 
+			className: 'parsed-node',
+			shapeType: 'rect'
 		}));
     }
     // Gửi Rd đến cổng Write Register (cho R-type, I-type, LDUR)
     if (parsedInstruction.type === 'R' || parsedInstruction.type === 'I' || parsedInstruction.mnemonic === 'LDUR') {
 		dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 			value: rd, 
-			fieldName: `Rd [4-0]`,
+			fieldName: `Rd4-0`,
 			onEndCallback: null,
 			pathId: IMEM_RD_TO_REG_PATH_ID,
-			duration: DEFAULT_ANIMATION_DURATION
+			duration: DEFAULT_ANIMATION_DURATION, 
+			className: 'parsed-node',
+			shapeType: 'rect'
 		}));
     }
     // Gửi Function/shamt đến ALU Control (cho R-type)
@@ -119,7 +127,9 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 			fieldName: `Func/Shamt`,
 			onEndCallback: null,
 			pathId: IMEM_FUNC_TO_ALU_CONTROL_PATH_ID,
-			duration: DEFAULT_ANIMATION_DURATION
+			duration: DEFAULT_ANIMATION_DURATION, 
+			className: 'parsed-node',
+			shapeType: 'rect'
 		}));
 
     }

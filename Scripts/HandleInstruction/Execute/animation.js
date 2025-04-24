@@ -29,7 +29,9 @@ export function createNodeWithAnimation({
     fieldName,
     onEndCallback, 
     pathId, 
-    duration 
+    duration,
+    className,
+    shapeType
 }) {
 	if (!pathId) {
         console.warn(`Path ID ${pathId} is not defined.`);
@@ -50,19 +52,13 @@ export function createNodeWithAnimation({
 
     // Tạo node mới (dùng hình chữ nhật cho địa chỉ)
     const nodeGroup = document.createElementNS(svgNS, 'g');
-    nodeGroup.classList.add('data-node');
+    nodeGroup.classList.add(className, fieldName);
 
     nodeGroup.setAttribute('id', nodeGroupId);
-    nodeGroup.setAttribute('visibility', 'hidden'); // Hiện ngay
+    nodeGroup.setAttribute('visibility', 'hidden');
 
     // Tạo hình chữ nhật cho node
-    const shape = document.createElementNS(svgNS, 'rect');
-    const width = value.length > 8 ? 50 : 30;
-    const height = 16;
-    shape.setAttribute('width', String(width));
-    shape.setAttribute('height', String(height));
-    shape.setAttribute('x', String(-width / 2));
-    shape.setAttribute('y', String(-height / 2));
+    const shape = document.createElementNS(svgNS, shapeType);
 
     // Tạo text hiển thị giá trị hex cho PC
     const text = document.createElementNS(svgNS, 'text');

@@ -10,8 +10,31 @@
   stroke-width: 1px;
   rx: 3;
   ry: 3;
+
+  width: 60px;   /* Default width */
+  height: 20px;
+  x: -30px;       /* Centered horizontally (width/2) */
+  y: -10px;        /* Centered vertically (height/2) */
 }
 
+.parsed-node rect {
+  fill: rgb(0, 255, 170);
+  stroke-width: 1px;
+  rx: 3;
+  ry: 3;
+
+  width: 40px;   /* Default width */
+  height: 20px;
+  x: -20px;       /* Centered horizontally (width/2) */
+  y: -10px;        /* Centered vertically (height/2) */
+}
+
+.parsed-node.Op31-21 rect{
+  width: 60px;   /* Default width */
+  x: -30px;       /* Centered horizontally (width/2) */
+}
+
+.parsed-node text, 
 .data-node text {
   font-weight: normal;
   fill: black; /* Default text color */

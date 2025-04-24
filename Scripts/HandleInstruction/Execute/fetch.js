@@ -40,7 +40,9 @@ function animatePCToAddALU(pcValue) {
 			fieldName: "PC_Increase",
 			onEndCallback: null,
 			pathId: "ALU-add-0-to-mux-0-0-path",
-			duration:  FETCH_ANIMATION_DURATION + 10
+			duration:  FETCH_ANIMATION_DURATION + 10, 
+			className: 'data-node',
+			shapeType: 'rect'
 		}));
 		startSignalAnimation(dataSignalNodesFetchGroup);
 	};
@@ -50,7 +52,9 @@ function animatePCToAddALU(pcValue) {
 		fieldName: "Const-To-Add-Value",
 		onEndCallback: onEndCallback,
 		pathId: "const-4-to-ALU-add-0-path",
-		duration:  FETCH_ANIMATION_DURATION
+		duration:  FETCH_ANIMATION_DURATION, 
+		className: 'data-node',
+		shapeType: 'rect'
 	}));
 
 	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
@@ -58,7 +62,9 @@ function animatePCToAddALU(pcValue) {
 		fieldName: "PC-To-Add-Value",
 		onEndCallback: onEndCallback,
 		pathId: "pc-to-ALU-add-0-path",
-		duration:  FETCH_ANIMATION_DURATION
+		duration:  FETCH_ANIMATION_DURATION,
+		className: 'data-node',
+		shapeType: 'rect'
 	}));
 	startSignalAnimation(dataSignalNodesFetchGroup);
 }
@@ -74,7 +80,9 @@ function animatePCToMemory(pcValue, pcFetchCallback) {
 		fieldName: "PC_Addr",
 		onEndCallback: pcFetchCallback,
 		pathId: PC_TO_IMEM_PATH_ID,
-		duration:  FETCH_ANIMATION_DURATION
+		duration:  FETCH_ANIMATION_DURATION,
+		className: 'data-node',
+		shapeType: 'rect'
 	}));
 	startSignalAnimation(dataSignalNodesGroup);
 }
