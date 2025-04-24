@@ -90,8 +90,8 @@ export function generateState(parsedInstruction) {
 }
 
 function updatePC(currentState, parsedInstruction) {
+	const currentPC = currentState.PC.Newvalue;
     let nextPC = null;
-
     if (parsedInstruction.type === 'R') {
         nextPC = currentPC + 4;
         console.log(`PC Update (R-format): Sequential execution. Next PC=${nextPC}`);

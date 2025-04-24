@@ -1,5 +1,4 @@
 import {startSignalAnimation, createNodeWithAnimation} from "./animation.js"
-import { encodeLegv8Instruction } from "../Compile/parser.js";
 
 const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
 
@@ -15,10 +14,10 @@ const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path
 
 const DEFAULT_ANIMATION_DURATION = 2; // giây
 
-export function trigger(parsedInstruction, opcodeArrivalCallback) {
+export function trigger(instruction, opcodeArrivalCallback) {
 	return () => {
 		console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
-		displayDataSignalNodes(parsedInstruction, opcodeArrivalCallback);
+		displayDataSignalNodes(instruction, opcodeArrivalCallback);
 		startSignalAnimation(dataSignalNodesGroup);
 	};
 }
@@ -29,35 +28,9 @@ export function trigger(parsedInstruction, opcodeArrivalCallback) {
  * @param {string} encodedInstruction - Mã máy 32-bit.
  * @param {boolean} [startNow=true] - Có bắt đầu animation ngay không.
  */
-function displayDataSignalNodes(parsedInstruction, opcodeArrivalCallback) {
-
-	const encodedInstruction = encodeLegv8Instruction(parsedInstruction);
-	if(!encodedInstruction || encodedInstruction.error){
-		console.error("Cannot proceed without encoded instruction.");
-		return;
-	}
-
-    if (!parsedInstruction || parsedInstruction.error || !encodedInstruction) {
-        console.log("No valid instruction/encoding to display data signals.");
-		while (dataSignalNodesGroup.firstChild) dataSignalNodesGroup.removeChild(dataSignalNodesGroup.firstChild);
-        return;
-     }
-
-    // --- Tách các trường từ mã máy 32-bit ---
-    // Thứ tự bit theo LEGv8/ARMv8 thường là từ phải sang trái (LSB là bit 0)
-    const opcode = encodedInstruction.substring(0, 11); // Bit 31-21 (11 bits)
-    const rm     = encodedInstruction.substring(11, 16); // Bit 20-16 (5 bits) - Thường là Rm hoặc Rt
-    const shamt  = encodedInstruction.substring(16, 22); // Bit 15-10 (6 bits)
-    const rn     = encodedInstruction.substring(22, 27); // Bit 9-5  (5 bits) - Thường là Rn
-    const rd     = encodedInstruction.substring(27, 32); // Bit 4-0  (5 bits) - Thường là Rd hoặc Rt
-
-    console.log("Creating data signal nodes for:", parsedInstruction.mnemonic);
-
-    // --- Tạo node cho các trường dựa trên đường dẫn đã định nghĩa ---
-    // Gửi Opcode/phần đầu đến Control Unit
-
+function displayDataSignalNodes(instruction, opcodeArrivalCallback) {
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-		value: opcode, 
+		value: instruction.Instruction31_21, 
 		fieldName: `Op31-21`,
 		onEndCallback: [opcodeArrivalCallback],
 		pathId: IMEM_OPCODE_TO_CONTROL_PATH_ID,
@@ -67,7 +40,7 @@ function displayDataSignalNodes(parsedInstruction, opcodeArrivalCallback) {
 	}));
 
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-		value: rn, 
+		value: instruction.Instruction09_05, 
 		fieldName: `Rn9-5`,
 		onEndCallback: null,
 		pathId: IMEM_RN_TO_REG_PATH_ID,
@@ -77,16 +50,16 @@ function displayDataSignalNodes(parsedInstruction, opcodeArrivalCallback) {
 	}));
     
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-		value: rm, 
+		value: instruction.Instruction20_16, 
 		fieldName: `Rm20-16-to-mux0`,
-		onEndCallback: [()=>{document.getElementById('mux-1-0').textContent = rm}],
+		onEndCallback: [()=>{document.getElementById('mux-1-0').textContent = instruction.Instruction20_16}],
 		pathId: IMEM_RM_TO_REG_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
 		shapeType: 'rect'
 	}));
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-		value: rd, 
+		value: instruction.Instruction04_00, 
 		fieldName: `Rd4-0-to-write-reg`,
 		onEndCallback: null,
 		pathId: IMEM_RD_TO_REG_PATH_ID,
@@ -96,9 +69,9 @@ function displayDataSignalNodes(parsedInstruction, opcodeArrivalCallback) {
 	}));
 
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-		value: rd, 
+		value: instruction.Instruction04_00, 
 		fieldName: `Rd4-0-to-mux1`, // to mux
-		onEndCallback: [()=>{document.getElementById('mux-1-1').textContent = rd}],
+		onEndCallback: [()=>{document.getElementById('mux-1-1').textContent = instruction.Instruction04_00}],
 		pathId: IMEM_RT_TO_REG_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
@@ -106,7 +79,7 @@ function displayDataSignalNodes(parsedInstruction, opcodeArrivalCallback) {
 	}));
 
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-		value: opcode, 
+		value: instruction.Instruction31_21, 
 		fieldName: `ALUOp`,
 		onEndCallback: null,
 		pathId: IMEM_FUNC_TO_ALU_CONTROL_PATH_ID,

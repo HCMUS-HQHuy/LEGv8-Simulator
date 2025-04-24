@@ -1,75 +1,18 @@
-import controlSignalTable from "./Define/controlSignalTable.js";
 import { createNodeWithAnimation } from "./animation.js";
-// loại lệnh (ADD / ORR / XOR / AND)
-let mnemonic = null;
 
-const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
 const signalNodesGroup = document.getElementById('control-signal-nodes');
 
 const DEFAULT_ANIMATION_DURATION = 2;
 
-export function trigger(parsedInstruction) {
+export function trigger(controlSignals) {
 	return () => {
-		if (!dataSignalNodesGroup) {
-			console.warn("dataSignalNodesGroup is null!");
+		if (!controlSignals) {
+			console.warn("controlSignals is null!");
 			return;
 		}
-		console.log("--- Opcode animation finished, generating and starting Control Signals ---");
-	
-		const controlSignals = generateControlSignals(parsedInstruction);
-	
-		// 3.2 Hiển thị Control Signals Nodes (ẩn)
-		if (controlSignals) {
-			displayControlSignalNodes(controlSignals); // Hàm này giờ chỉ tạo node ẩn
-		} else {
-				console.warn(`No control signals generated.`);
-				// handleSignal.displayControlSignalNodes(null); // Xóa node cũ nếu có
-		}
-	
+		displayControlSignalNodes(controlSignals); // Hàm này giờ chỉ tạo node ẩn
 		startControlSignalAnimation();
 	};
-}
-
-/**
- * Tạo các tín hiệu điều khiển dựa trên lệnh đã được parse.
- * @param {object} parsedInstruction - Đối tượng lệnh đã được parse.
- * @returns {object | null} Một đối tượng với các tên tín hiệu điều khiển làm key
- *                           và giá trị 0 hoặc 1, hoặc null nếu lệnh không được hỗ trợ.
- */
-function generateControlSignals(parsedInstruction) {
-    if (!parsedInstruction || parsedInstruction.error || !parsedInstruction.mnemonic) {
-        console.error("Invalid or errored parsed instruction provided.");
-        return null;
-    }
-    mnemonic = parsedInstruction.mnemonic;
-    const type = parsedInstruction.type;
-    let instructionClass = null;
-
-    // Xác định instructionClass như cũ...
-    if (type === 'R' && controlSignalTable["R-format"]) { instructionClass = "R-format"; }
-    else if (mnemonic === 'LDUR' && controlSignalTable["LDUR"]) { instructionClass = "LDUR"; }
-    else if (mnemonic === 'STUR' && controlSignalTable["STUR"]) { instructionClass = "STUR"; }
-    else if (mnemonic === 'CBZ' && controlSignalTable["CBZ"]) { instructionClass = "CBZ"; }
-    else {
-        console.warn(`Control signals not defined for instruction: ${mnemonic} (Type: ${type})`);
-        return null;
-    }
-
-    // Lấy các tín hiệu gốc từ bảng
-    const finalSignals = { ...controlSignalTable[instructionClass] };
-
-    // *** GỘP ALUOp1 VÀ ALUOp0 (NẾU CÓ) ***
-    if (finalSignals.hasOwnProperty('ALUOp1') === false || finalSignals.hasOwnProperty('ALUOp0') === false) {
-        console.warn("ALUOp1 or ALUOp0 missing in base signals for", instructionClass);
-        return null;
-    }
-    
-    finalSignals.ALUOp = `${finalSignals.ALUOp1}${finalSignals.ALUOp0}`;
-    delete finalSignals.ALUOp1;
-    delete finalSignals.ALUOp0;
-    console.log("Generated signals:", finalSignals);
-
-    return finalSignals; // Trả về đối tượng signals đã được sửa đổi
 }
 
 // (displayControlSignalNodes cập nhật để nhận cờ `startNow`)

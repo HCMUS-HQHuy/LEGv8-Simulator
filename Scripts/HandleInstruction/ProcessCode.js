@@ -4,6 +4,7 @@ import * as formatCode from "./Compile/formatCode.js"
 import * as fetch from "./InstructionCycle/fetch.js"
 import * as decode from "./InstructionCycle/decode.js"
 import * as execute from "./InstructionCycle/execute.js"
+import * as run from "./Compile/processState.js"
 
 
 function processCode() {
@@ -13,11 +14,11 @@ function processCode() {
 		return;
 	}
 	parsedOutputTable.update(results);
-	
-
 	currentInstruction.update(results[0]);
+
 	const parsedInstruction = results[0].parsed;
-	fetch.trigger(decode.trigger(parsedInstruction, execute.trigger(parsedInstruction)));
+	const state = run.generateState(parsedInstruction);
+	fetch.trigger(state.PC, decode.trigger(state.InstructionMemory, execute.trigger(state.Control)));
 }
 
 export function trigger() {

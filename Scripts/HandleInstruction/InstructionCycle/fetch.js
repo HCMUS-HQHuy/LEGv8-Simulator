@@ -9,11 +9,6 @@ const PC_TO_IMEM_PATH_ID = "pc-to-instruction-memory-path";
 
 const FETCH_ANIMATION_DURATION = 2; // giây (cho PC -> Mem)
 
-// --- PC State ---
-const INITIALIZED_VALUE_PC = 15;
-let currentPC = INITIALIZED_VALUE_PC; // Initial PC value
-const PC_INCREMENT = 4;
-
 function updatePCDisplay(value) { // Nhận giá trị để hiển thị
 	const pcTextElement = document.getElementById('pc-value-text');
 	if (pcTextElement) {
@@ -24,18 +19,18 @@ function updatePCDisplay(value) { // Nhận giá trị để hiển thị
 	}
 }
 
-export function trigger(pcFetchCallback) {
-	updatePCDisplay(currentPC);
+export function trigger(PC, pcFetchCallback) {
+	updatePCDisplay(PC.OldValue);
 
-	animatePCToMemory(currentPC, pcFetchCallback);
-	animatePCToAddALU(currentPC);
+	animatePCToMemory(PC.OldValue, pcFetchCallback);
+	animatePCToAddALU(PC);
 	console.log("--- Processing Complete for Instruction ---");
 }
 
-function animatePCToAddALU(pcValue) {
+function animatePCToAddALU(PC) {
 	const onEndCallback = () => {
 		dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
-			value: `0x${(pcValue + PC_INCREMENT).toString(16).toUpperCase().padStart(8, '0')}`,
+			value: `0x${PC.Newvalue.toString(16).toUpperCase().padStart(8, '0')}`,
 			fieldName: "PC_Increase",
 			onEndCallback: null,
 			pathId: "ALU-add-0-to-mux-0-0-path",
@@ -47,7 +42,7 @@ function animatePCToAddALU(pcValue) {
 	};
 
 	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
-		value: `0x${(PC_INCREMENT).toString(16).toUpperCase().padStart(8, '0')}`,
+		value: `0x${PC.OldValue.toString(16).toUpperCase().padStart(8, '0')}`,
 		fieldName: "Const-To-Add-Value",
 		onEndCallback: [onEndCallback],
 		pathId: "const-4-to-ALU-add-0-path",
@@ -57,7 +52,7 @@ function animatePCToAddALU(pcValue) {
 	}));
 
 	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
-		value: `0x${pcValue.toString(16).toUpperCase().padStart(8, '0')}`,
+		value: `0x${PC.OldValue.toString(16).toUpperCase().padStart(8, '0')}`,
 		fieldName: "PC-To-Add-Value",
 		onEndCallback: [onEndCallback],
 		pathId: "pc-to-ALU-add-0-path",
