@@ -8,7 +8,7 @@ const IMEM_RN_TO_REG_PATH_ID = "instruction-memory-to-read-register-1-path"; // 
 const IMEM_RM_TO_REG_PATH_ID = "instruction-memory-to-mux-1-0-path"; // Instruction [20-16]
 const IMEM_RT_TO_REG_PATH_ID = "instruction-memory-to-mux-1-1-path"; // Dùng tạm path này, bạn cần path đúng đến Reg2 (cho load/store/CBZ)
 const IMEM_RD_TO_REG_PATH_ID = "instruction-memory-to-write-register-path"; // Instruction [4-0]
-const IMEM_IMM_TO_SIGN_EXTEND_PATH_ID = "instruction-memory-to-sign-extend-path"; // Cần điều chỉnh
+const IMEM_IMM_TO_SIGN_EXTEND_PATH_ID = "instruction-memory-to-sign-extend-path";
 const IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID = "instruction-memory-to-alu-control-path"; // Dùng tạm path này, bạn cần path đến shift left 2
 const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path"; // Chưa hiểu đoạn này.
 
@@ -17,7 +17,7 @@ const DEFAULT_ANIMATION_DURATION = 2; // giây
 export function trigger(state, opcodeArrivalCallback) {
 	return () => {
 		console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
-		displayDataSignalNodes(state.InstructionMemory, state.Register, opcodeArrivalCallback);
+		displayDataSignalNodes(state.InstructionMemory, state.Register, state.SignExtend, opcodeArrivalCallback);
 		startSignalAnimation(dataSignalNodesGroup);
 	};
 }
@@ -28,7 +28,7 @@ export function trigger(state, opcodeArrivalCallback) {
  * @param {string} encodedInstruction - Mã máy 32-bit.
  * @param {boolean} [startNow=true] - Có bắt đầu animation ngay không.
  */
-function displayDataSignalNodes(instruction, register, opcodeArrivalCallback) {
+function displayDataSignalNodes(instruction, register, signExtend, opcodeArrivalCallback) {
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: instruction.Instruction31_21, 
 		fieldName: `Op31-21`,
@@ -83,6 +83,20 @@ function displayDataSignalNodes(instruction, register, opcodeArrivalCallback) {
 		fieldName: `ALUOp`,
 		onEndCallback: null,
 		pathId: IMEM_FUNC_TO_ALU_CONTROL_PATH_ID,
+		duration: DEFAULT_ANIMATION_DURATION, 
+		className: 'parsed-node',
+		shapeType: 'rect'
+	}));
+
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+		value: signExtend.input, 
+		fieldName: `SignExtend`,
+		onEndCallback: [
+			()=>{
+				document.getElementById("sign-extend-text").textContent=signExtend.input;
+			}
+		],
+		pathId: IMEM_IMM_TO_SIGN_EXTEND_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
 		shapeType: 'rect'

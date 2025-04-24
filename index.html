@@ -285,6 +285,12 @@
             <!-- Các node 0/1 sẽ được thêm vào đây bằng JavaScript -->
           </g>
 
+          <g id="data-to-alu">
+            <!-- Các node 0/1 sẽ được thêm vào đây bằng JavaScript -->
+          </g>
+
+          
+
           <!-- Chấm tròn di chuyển theo đường path -->
           <circle id = "point" r="5" fill="red" visibility="hidden">
             <animateMotion id = "animationDot" dur="2s" rotate="auto" fill="freeze" begin="indefinite">
@@ -437,11 +443,14 @@
             
             <text x = "0" y = "-10" class = "label"> Sign- </text>
             <text x = "0" y = "10"  class = "label"> extend </text>
-
+            
             <text x = "-100" y = "-20" class = "mem-label"> 32 </text> 
             <text x = "-90" y = "0"   class = "label"> ╲ </text> 
             <text x = "70"   y = "-20" class = "mem-label"> 64 </text> 
             <text x = "80"   y = "0"   class = "label"> ╲ </text> 
+            
+            <text id="sign-extend-text" x = "0" y = "30"  class = "instruction"></text>
+            
           </g>
 
           <!-- ALU-control -->

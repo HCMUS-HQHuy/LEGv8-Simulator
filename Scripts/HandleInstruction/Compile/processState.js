@@ -32,8 +32,12 @@ const state = {
 	Add1: {
 
 	},
-	Add2: {
-
+	ALU: {
+		input1: null,
+		input2: null,
+		option: null,
+		output: null,
+		zero  : null
 	},
 	Control: {
 		Reg2Loc:  0, // X -> 0
@@ -62,13 +66,16 @@ const state = {
 
 	},
 	Mux1: {
+		input0: null,
 		input1: null,
-		input2: null,
 		option: null,
 		output: null
 	},
 	Mux2: {
-
+		input0: null,
+		input1: null,
+		option: null,
+		output: null
 	},
 	Mux3: {
 
@@ -91,6 +98,7 @@ export function generateState(parsedInstruction) {
 	updateALUControl(state);
 	updateSignExtend(state);
 	updateMux1(state);
+	updateMux2(state);
 	updateRegister(state);
 	return state;
 }
@@ -178,18 +186,22 @@ function updateControlUnit(currentState) {
     }
 }
 
-function updateSignExtend(currentState) {
-    // 1. Kiểm tra đầu vào
-    if (!currentState || !currentState.SignExtend || !currentState.InstructionMemory || !currentState.Control || !currentState.InstructionMemory.Instruction31_00 || currentState.InstructionMemory.Instruction31_00.length !== 32) {
-        console.error("Error: Invalid state or missing required fields in updateSignExtend.");
-        if (currentState && currentState.SignExtend) {
-            currentState.SignExtend.input = null;
-            currentState.SignExtend.output = null;
-        }
-        return;
-    }
 
-    const control = currentState.Control;
+function signExtend(binaryString, originalBitLength, targetBitLength = 64) {
+    const signBit = binaryString[0];
+    let extendedBinaryString;
+    if (signBit === '1') {
+        const padding = '1'.repeat(targetBitLength - originalBitLength);
+        extendedBinaryString = padding + binaryString;
+    } else {
+        const padding = '0'.repeat(targetBitLength - originalBitLength);
+        extendedBinaryString = padding + binaryString;
+    }
+}
+
+function updateSignExtend(currentState) {
+
+	const control = currentState.Control;
     const fullInstruction = currentState.InstructionMemory.Instruction31_00;
     const opcode = currentState.InstructionMemory.Instruction31_21;
 
@@ -242,9 +254,13 @@ function updateSignExtend(currentState) {
     } else if (control.Branch === 1) {
         inputBinary = fullInstruction.substring(8, 27); // Bits 23-5 (19 bits)
         originalBits = 19;
-    }
-    // Else (ví dụ R-format không dùng immediate, BR): SignExtend không hoạt động, input/output là null.
-
+    } else {
+		const inputHex = parseInt(fullInstruction, 2).toString(16).toUpperCase();
+		currentState.SignExtend.input = `0x${inputHex}`;
+		const outputValue = signExtend(fullInstruction, originalBits, targetBits);
+		currentState.SignExtend.output = `0x${parseInt(outputValue, 2).toString(16).toUpperCase()}`;
+		return;
+	}
     let outputValue = null;
     if (inputBinary !== null && originalBits > 0) {
         outputValue = signExtend(inputBinary, originalBits, targetBits);
@@ -328,8 +344,8 @@ function updateMux1(currentState) {
     const input2_Rm   = currentState.InstructionMemory.Instruction20_16; // Bits [20:16]
     const selector    = currentState.Control.Reg2Loc;                    // Tín hiệu điều khiển
 
-    currentState.Mux1.input1 = input1_RtRd;
-    currentState.Mux1.input2 = input2_Rm;
+    currentState.Mux1.input0 = input1_RtRd;
+    currentState.Mux1.input1 = input2_Rm;
     currentState.Mux1.option = selector;
 
     let outputValue = null; // Giá trị mặc định nếu selector không hợp lệ
@@ -343,6 +359,27 @@ function updateMux1(currentState) {
     }
     currentState.Mux1.output = outputValue;
     console.log("Mux1 Updated:", currentState.Mux1);
+}
+
+function updateMux2(currentState) {
+	const input0_RegData2 = currentState.Register.ReadData2;
+    const input1_SignExt  = currentState.SignExtend.output;
+    const selector        = currentState.Control.ALUSrc;
+
+	currentState.Mux2.input0 = input0_RegData2;
+    currentState.Mux2.input1 = input1_SignExt;
+    currentState.Mux2.option = selector;
+
+    let outputValue = null;
+
+    if (selector === 0) {
+        outputValue = input0_RegData2;
+    } else if (selector === 1) {
+        outputValue = input1_SignExt;
+    } else {
+        console.warn(`Mux2: Invalid selector value '${selector}'. Output will be null.`);
+    }
+    currentState.Mux2.output = outputValue;
 }
 
 function updateRegister(currentState) {
@@ -385,3 +422,4 @@ function updateRegister(currentState) {
 
 	console.log("Register State Updated:", currentState.Register);
 }
+

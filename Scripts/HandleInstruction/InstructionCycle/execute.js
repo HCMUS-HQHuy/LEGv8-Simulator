@@ -1,3 +1,4 @@
+import { sendDataToAlu } from "./aluOperation.js";
 import { createNodeWithAnimation, startSignalAnimation } from "./animation.js";
 
 const signalNodesGroup = document.getElementById('control-signal-nodes');
