@@ -16,36 +16,12 @@ const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path
 const DEFAULT_ANIMATION_DURATION = 2; // giây
 
 export function trigger(parsedInstruction, opcodeArrivalCallback) {
-	if (!dataSignalNodesGroup) {
-        console.warn("dataSignalNodesGroup is null!");
-        return;
-    }
 	return () => {
 		console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
-		const encodedInstructionForData = encodeLegv8Instruction(parsedInstruction);
-		if(!encodedInstructionForData || encodedInstructionForData.error){
-			console.error("Cannot proceed without encoded instruction.");
-			return;
-		}
-		// 2.2 Hiển thị Data Signals Nodes (ẩn) - Bao gồm cả Opcode
-		displayDataSignalNodes(parsedInstruction, encodedInstructionForData);
-	
-		// 2.3 Tìm animation của Opcode để gắn callback xử lý control signals
-		const opcodeFieldName = `Op31-21`; // Phải khớp với tên dùng trong createDataNodeElement
-		const opcodeAnimId = `data-anim-${opcodeFieldName.replace(/\[|\]|-/g, '_')}`;
-		const opcodeAnimation = document.getElementById(opcodeAnimId);
-	
-		if (opcodeAnimation) {
-			// Gắn listener một lần duy nhất để tránh gọi lại nhiều lần nếu có lỗi
-			opcodeAnimation.addEventListener('endEvent', opcodeArrivalCallback, { once: true });
-			console.log(`Attached end event listener to Opcode animation (${opcodeAnimId})`);
-		} else {
-			console.error(`Could not find Opcode animation element with ID: ${opcodeAnimId}. Control signals will not be triggered.`);
-		}
+		displayDataSignalNodes(parsedInstruction, opcodeArrivalCallback);
 		startSignalAnimation(dataSignalNodesGroup);
 	};
 }
-
 
 /**
  * Hiển thị data signal nodes
@@ -53,7 +29,13 @@ export function trigger(parsedInstruction, opcodeArrivalCallback) {
  * @param {string} encodedInstruction - Mã máy 32-bit.
  * @param {boolean} [startNow=true] - Có bắt đầu animation ngay không.
  */
-function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
+function displayDataSignalNodes(parsedInstruction, opcodeArrivalCallback) {
+
+	const encodedInstruction = encodeLegv8Instruction(parsedInstruction);
+	if(!encodedInstruction || encodedInstruction.error){
+		console.error("Cannot proceed without encoded instruction.");
+		return;
+	}
 
     if (!parsedInstruction || parsedInstruction.error || !encodedInstruction) {
         console.log("No valid instruction/encoding to display data signals.");
@@ -77,7 +59,7 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: opcode, 
 		fieldName: `Op31-21`,
-		onEndCallback: null,
+		onEndCallback: [opcodeArrivalCallback],
 		pathId: IMEM_OPCODE_TO_CONTROL_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
@@ -96,8 +78,8 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
     
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: rm, 
-		fieldName: `Rm20-16`,
-		onEndCallback: null,
+		fieldName: `Rm20-16-to-mux0`,
+		onEndCallback: [()=>{document.getElementById('mux-1-0').textContent = rm}],
 		pathId: IMEM_RM_TO_REG_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
@@ -115,8 +97,8 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: rd, 
-		fieldName: `Rd4-0-to-mux`, // to mux
-		onEndCallback: null,
+		fieldName: `Rd4-0-to-mux1`, // to mux
+		onEndCallback: [()=>{document.getElementById('mux-1-1').textContent = rd}],
 		pathId: IMEM_RT_TO_REG_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',

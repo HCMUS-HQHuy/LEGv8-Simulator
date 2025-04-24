@@ -38,6 +38,11 @@ export function createNodeWithAnimation({
         return;
     }
 
+    if (value == null || value === "") {
+        console.warn(`value is not valid! ${fieldName}, ${value}`);
+        return;
+    }
+
 	if (!document.getElementById(pathId)) {
         console.warn(`Data Path Element ID "${pathId}" not found for field "${fieldName}".`);
         return null;
