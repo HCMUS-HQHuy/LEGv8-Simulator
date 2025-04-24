@@ -27,7 +27,6 @@ export function trigger(parsedInstruction) {
 		}
 	
 		startControlSignalAnimation();
-
 	};
 }
 
@@ -62,7 +61,7 @@ function generateControlSignals(parsedInstruction) {
     // *** GỘP ALUOp1 VÀ ALUOp0 (NẾU CÓ) ***
     if (finalSignals.hasOwnProperty('ALUOp1') === false || finalSignals.hasOwnProperty('ALUOp0') === false) {
         console.warn("ALUOp1 or ALUOp0 missing in base signals for", instructionClass);
-        return;
+        return null;
     }
     
     finalSignals.ALUOp = `${finalSignals.ALUOp1}${finalSignals.ALUOp0}`;
@@ -72,6 +71,53 @@ function generateControlSignals(parsedInstruction) {
 
     return finalSignals; // Trả về đối tượng signals đã được sửa đổi
 }
+
+// (displayControlSignalNodes cập nhật để nhận cờ `startNow`)
+function displayControlSignalNodes(signals) {
+
+	if (!signals || !signalNodesGroup) {
+		if (signalNodesGroup) { // Xóa node cũ nếu tín hiệu là null
+			while (signalNodesGroup.firstChild) signalNodesGroup.removeChild(signalNodesGroup.firstChild);
+		}
+		return;
+	}
+
+	for (const [signalName, value] of Object.entries(signals)) {
+		signalNodesGroup.appendChild(createNodeWithAnimation({ 
+			value: value,
+			fieldName: signalName,
+			onEndCallback: null,
+			pathId: `control-${signalName.toLowerCase()}-path`,
+			duration: DEFAULT_ANIMATION_DURATION,
+			className: "signal-control-unit",
+			shapeType: 'circle'
+		}));
+	}
+	console.log(`Control signal nodes created (hidden).`);
+}
+
+function startControlSignalAnimation() {
+	if (!signalNodesGroup) {
+		console.error("SVG group 'control-signal-nodes' not found! Cannot start animation.");
+		return;
+	}
+	const animations = signalNodesGroup.querySelectorAll('animateMotion');
+	if (animations.length === 0) {
+		console.log("No signal nodes found to animate.");
+		return;
+	}
+	console.log(`Starting animation for ${animations.length} control signals.`);
+	animations.forEach(anim => {
+		const parentGroup = anim.closest('g');
+		if (parentGroup) {
+			parentGroup.setAttribute('visibility', 'visible');
+			anim.beginElement();
+		} else {
+			console.warn(`Could not find parent group for animation element:`, anim);
+		}
+	});
+}
+
 
 /**
  * Tạo SVG cho một node tín hiệu (0/1 hoặc chuỗi) và animation của nó.
@@ -83,51 +129,6 @@ function generateControlSignals(parsedInstruction) {
  * @param {string | null} [finalAluValue=null] - Giá trị 4-bit cuối cùng (chỉ dùng cho ALUOp).
  */
 function createSignalNodeElement(signalName, value, pathId, duration) {
-	// *** KIỂM TRA PATH GỐC ***
-	const svgNS = "http://www.w3.org/2000/svg";
-	const pathElement = document.getElementById(pathId);
-	if (!pathElement) {
-		console.warn(`SVG Path Element with ID "${pathId}" (lowercase expected) not found. Cannot create animation node for signal "${signalName}". Check SVG ID definition.`);
-		return null;
-	}
-	const nodeGroupId = `node-${signalName}`;
-	const animationId = `anim-${signalName}`;
-	const existingNode = document.getElementById(nodeGroupId);
-	if (existingNode) existingNode.remove();
-
-	const nodeGroup = document.createElementNS(svgNS, 'g');
-	nodeGroup.setAttribute('id', nodeGroupId);
-	nodeGroup.setAttribute('visibility', 'hidden');
-
-	// --- Tạo circle và text (điều chỉnh kích thước/màu sắc) ---
-	const circle = document.createElementNS(svgNS, 'circle');
-	const isMultiBit = typeof value === 'string' && value.length > 1;
-	const radius = isMultiBit ? 10 : 8; // Lớn hơn cho multi-bit
-	circle.setAttribute('r', String(radius));
-	let fillColor = '#0074D9'; // Default blue (0)
-	if (value === 1 || value === '1') { fillColor = '#FF4136'; }
-	else if (isMultiBit && signalName === 'ALUOp') { fillColor = '#FF851B'; }
-	else if (isMultiBit && signalName.startsWith(ALU_CONTROL_TO_ALU_NODE_ID_PREFIX)) { fillColor = '#2ECC40'; }
-	circle.setAttribute('fill', fillColor);
-	circle.setAttribute('stroke', 'black');
-	circle.setAttribute('stroke-width', '1');
-
-	const text = document.createElementNS(svgNS, 'text');
-	text.setAttribute('text-anchor', 'middle');
-	text.setAttribute('dominant-baseline', 'central');
-	const fontSize = isMultiBit ? 9 : 10;
-	text.setAttribute('font-size', String(fontSize));
-	text.setAttribute('font-weight', 'bold');
-	text.setAttribute('fill', 'white');
-	text.textContent = (typeof value !== 'undefined' && value !== null) ? value.toString() : '?';
-	// --- Hết tạo circle/text ---
-
-
-	const animateMotion = document.createElementNS(svgNS, 'animateMotion');
-	animateMotion.setAttribute('id', animationId);
-	animateMotion.setAttribute('dur', `${duration}s`);
-	animateMotion.setAttribute('begin', 'indefinite');
-	animateMotion.setAttribute('fill', 'freeze');
 
 	// // XỬ LÝ SỰ KIỆN KẾT THÚC
 	// animateMotion.addEventListener('endEvent', (event) => {
@@ -180,62 +181,13 @@ function createSignalNodeElement(signalName, value, pathId, duration) {
 	// 	}
 	// });
 
-	const mpath = document.createElementNS(svgNS, 'mpath');
-	mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${pathId}`);
-
-	animateMotion.appendChild(mpath);
-	nodeGroup.appendChild(circle);
-	nodeGroup.appendChild(text);
-	nodeGroup.appendChild(animateMotion);
-
-	return nodeGroup;
-}
-
-
-// (displayControlSignalNodes cập nhật để nhận cờ `startNow`)
-function displayControlSignalNodes(signals) {
-
-	if (!signals || !signalNodesGroup) {
-		if (signalNodesGroup) { // Xóa node cũ nếu tín hiệu là null
-				while (signalNodesGroup.firstChild) signalNodesGroup.removeChild(signalNodesGroup.firstChild);
-		}
-		return;
-	}
-
-	for (const [signalName, value] of Object.entries(signals)) {
-		if (signalName === 'finalAluControlSignal') { continue; }
-		let pathIdToUse = `control-${signalName.toLowerCase()}-path`;
-		const finalAluValueForNode = (signalName === 'ALUOp') ? signals.finalAluControlSignal : null;
-
-		const nodeElement = createSignalNodeElement(
-			signalName, value, pathIdToUse, DEFAULT_ANIMATION_DURATION, finalAluValueForNode
-		);
-		if (nodeElement) {
-			signalNodesGroup.appendChild(nodeElement);
-			// Đảm bảo ẩn ban đầu (đã set trong create...)
-		}
-	}
-	console.log(`Control signal nodes created (hidden).`);
-}
-
-function startControlSignalAnimation() {
-	if (!signalNodesGroup) {
-		console.error("SVG group 'control-signal-nodes' not found! Cannot start animation.");
-		return;
-	}
-	const animations = signalNodesGroup.querySelectorAll('animateMotion');
-	if (animations.length === 0) {
-		console.log("No signal nodes found to animate.");
-		return;
-	}
-	console.log(`Starting animation for ${animations.length} control signals.`);
-	animations.forEach(anim => {
-		const parentGroup = anim.closest('g');
-		if (parentGroup) {
-			parentGroup.setAttribute('visibility', 'visible');
-			anim.beginElement();
-		} else {
-			console.warn(`Could not find parent group for animation element:`, anim);
-		}
+	return createNodeWithAnimation({ 
+		value: value,
+		fieldName: signalName,
+		onEndCallback: null,
+		pathId: pathId,
+		duration: duration,
+		className: "signal-control-unit",
+		shapeType: 'circle'
 	});
 }

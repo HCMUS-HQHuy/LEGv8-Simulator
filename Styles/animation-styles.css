@@ -18,7 +18,7 @@
 }
 
 .parsed-node rect {
-  fill: rgb(0, 255, 170);
+  fill: rgb(31, 110, 0);
   stroke-width: 1px;
   rx: 3;
   ry: 3;
@@ -34,14 +34,36 @@
   x: -30px;       /* Centered horizontally (width/2) */
 }
 
-.parsed-node text, 
+.signal-control-unit.value-0 circle {
+  r: 8px;
+  fill: #0074D9;
+  stroke: black;
+  /* stroke-width: 1px; */
+}
+
+.signal-control-unit.value-1 circle {
+  r: 8px;
+  fill: #FF4136;
+  stroke: black;
+  stroke-width: 1px;
+}
+
+.signal-control-unit.ALUOp circle {
+  r: 10px;
+  fill: #FF851B;
+  stroke: black;
+  stroke-width: 1px;
+}
+
+.parsed-node text,
+.signal-control-unit text,
 .data-node text {
-  font-weight: normal;
-  fill: black; /* Default text color */
+  font-weight: bolder;
+  fill: white; /* Default text color */
   text-anchor: middle; /* Center text horizontally */
   dominant-baseline: central; /* Center text vertically */
   /* Default font size - can be overridden */
-  font-size: 9px;
+  font-size: 10px;
   font: monospace;
   /* Prevent text selection when dragging node */
   user-select: none;

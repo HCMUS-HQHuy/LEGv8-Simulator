@@ -52,7 +52,7 @@ export function createNodeWithAnimation({
 
     // Tạo node mới (dùng hình chữ nhật cho địa chỉ)
     const nodeGroup = document.createElementNS(svgNS, 'g');
-    nodeGroup.classList.add(className, fieldName);
+    nodeGroup.classList.add(className, fieldName, `value-${value}`);
 
     nodeGroup.setAttribute('id', nodeGroupId);
     nodeGroup.setAttribute('visibility', 'hidden');
