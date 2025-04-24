@@ -9,8 +9,9 @@ const IMEM_RM_TO_REG_PATH_ID = "instruction-memory-to-mux-1-0-path"; // Instruct
 const IMEM_RT_TO_REG_PATH_ID = "instruction-memory-to-mux-1-1-path"; // Dùng tạm path này, bạn cần path đúng đến Reg2 (cho load/store/CBZ)
 const IMEM_RD_TO_REG_PATH_ID = "instruction-memory-to-write-register-path"; // Instruction [4-0]
 const IMEM_IMM_TO_SIGN_EXTEND_PATH_ID = "instruction-memory-to-sign-extend-path";
-const IMEM_BRANCH_ADDR_TO_SHIFT_PATH_ID = "instruction-memory-to-alu-control-path"; // Dùng tạm path này, bạn cần path đến shift left 2
 const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path"; // Chưa hiểu đoạn này.
+const SIGN_EXTEND_TO_MUX_PATH_ID = "sign-extend-to-mux-2-1-path"; // Chưa hiểu đoạn này.
+const SIGN_EXTEND_TO_SHIFT_LEFT2_PATH_ID = "sign-extend-to-shift-left-2-path"; // Chưa hiểu đoạn này.
 
 const DEFAULT_ANIMATION_DURATION = 2; // giây
 
@@ -94,7 +95,25 @@ function displayDataSignalNodes(instruction, register, signExtend, opcodeArrival
 		onEndCallback: [
 			()=>{
 				document.getElementById("sign-extend-text").textContent=signExtend.input;
-			}
+				dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+					value: signExtend.output, 
+					fieldName: `sign-extend-to-mux`,
+					onEndCallback: [()=>{ document.getElementById("mux-2-1").textContent=signExtend.output}],
+					pathId: "sign-extend-to-mux-2-1-path",
+					duration: DEFAULT_ANIMATION_DURATION, 
+					className: 'parsed-node',
+					shapeType: 'rect'
+				}));
+				dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+					value: signExtend.output, 
+					fieldName: `sign-extend-to-shift`,
+					onEndCallback: [()=>{ document.getElementById("shift-left-2-text").textContent=signExtend.output}],
+					pathId: "sign-extend-to-shift-left-2-path",
+					duration: DEFAULT_ANIMATION_DURATION, 
+					className: 'parsed-node',
+					shapeType: 'rect'
+				}));
+			},
 		],
 		pathId: IMEM_IMM_TO_SIGN_EXTEND_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 

@@ -188,15 +188,7 @@ function updateControlUnit(currentState) {
 
 
 function signExtend(binaryString, originalBitLength, targetBitLength = 64) {
-    const signBit = binaryString[0];
-    let extendedBinaryString;
-    if (signBit === '1') {
-        const padding = '1'.repeat(targetBitLength - originalBitLength);
-        extendedBinaryString = padding + binaryString;
-    } else {
-        const padding = '0'.repeat(targetBitLength - originalBitLength);
-        extendedBinaryString = padding + binaryString;
-    }
+	return  binaryString[0].repeat(targetBitLength - originalBitLength) + binaryString;
 }
 
 function updateSignExtend(currentState) {
@@ -257,7 +249,7 @@ function updateSignExtend(currentState) {
     } else {
 		const inputHex = parseInt(fullInstruction, 2).toString(16).toUpperCase();
 		currentState.SignExtend.input = `0x${inputHex}`;
-		const outputValue = signExtend(fullInstruction, originalBits, targetBits);
+		const outputValue = signExtend(fullInstruction, 32, targetBits);
 		currentState.SignExtend.output = `0x${parseInt(outputValue, 2).toString(16).toUpperCase()}`;
 		return;
 	}
