@@ -15,10 +15,8 @@ let currentPC = INITIALIZED_VALUE_PC; // Initial PC value
 const PC_INCREMENT = 4;
 
 function updatePCDisplay(value) { // Nhận giá trị để hiển thị
-	// *** GIẢ ĐỊNH: ID của text hiển thị PC là "pc-value-text" ***
 	const pcTextElement = document.getElementById('pc-value-text');
 	if (pcTextElement) {
-		// Hiển thị dưới dạng Hex 8 chữ số (cho địa chỉ 32-bit)
 		const hexValue = value.toString(16).toUpperCase().padStart(8, '0');
 		pcTextElement.textContent = `0x${hexValue}`;
 	} else {
@@ -27,20 +25,21 @@ function updatePCDisplay(value) { // Nhận giá trị để hiển thị
 }
 
 export function trigger(pcFetchCallback) {
+	updatePCDisplay(currentPC);
+
 	animatePCToMemory(0, pcFetchCallback);
-	animatePCToAddALU(0);
+	animatePCToAddALU(currentPC);
 	console.log("--- Processing Complete for Instruction ---");
 }
 
 function animatePCToAddALU(pcValue) {
 	const onEndCallback = () => {
-		const tmp = pcValue + 4;
 		dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
-			value: `0x${tmp.toString(16).toUpperCase().padStart(8, '0')}`,
+			value: `0x${(pcValue + PC_INCREMENT).toString(16).toUpperCase().padStart(8, '0')}`,
 			fieldName: "PC_Increase",
 			onEndCallback: null,
 			pathId: "ALU-add-0-to-mux-0-0-path",
-			duration:  FETCH_ANIMATION_DURATION + 10, 
+			duration:  FETCH_ANIMATION_DURATION, 
 			className: 'data-node',
 			shapeType: 'rect'
 		}));
@@ -48,7 +47,7 @@ function animatePCToAddALU(pcValue) {
 	};
 
 	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
-		value: `0x${(4).toString(16).toUpperCase().padStart(8, '0')}`,
+		value: `0x${(PC_INCREMENT).toString(16).toUpperCase().padStart(8, '0')}`,
 		fieldName: "Const-To-Add-Value",
 		onEndCallback: onEndCallback,
 		pathId: "const-4-to-ALU-add-0-path",
