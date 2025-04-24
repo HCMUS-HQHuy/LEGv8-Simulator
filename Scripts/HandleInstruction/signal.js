@@ -1,5 +1,5 @@
 
-import signalDestinations from "./Execute/Define/signalDestinations.js";
+import signalDestinations from "./InstructionCycle/Define/signalDestinations.js";
 
 const svgNS = "http://www.w3.org/2000/svg";
 const signalNodesGroup = document.getElementById('control-signal-nodes');
