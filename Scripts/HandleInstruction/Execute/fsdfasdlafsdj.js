@@ -71,7 +71,7 @@ function generateControlSignals(parsedInstruction) {
 
     return finalSignals; // Trả về đối tượng signals đã được sửa đổi
 }
-fsdfasdfas
+
 // (displayControlSignalNodes cập nhật để nhận cờ `startNow`)
 function displayControlSignalNodes(signals) {
 
