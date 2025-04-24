@@ -18,7 +18,7 @@ function processCode() {
 
 	const parsedInstruction = results[0].parsed;
 	const state = run.generateState(parsedInstruction);
-	fetch.trigger(state.PC, decode.trigger(state.InstructionMemory, execute.trigger(state)));
+	fetch.trigger(state.PC, decode.trigger(state, execute.trigger(state)));
 }
 
 export function trigger() {

@@ -20,7 +20,9 @@ export function trigger(state) {
 				signalNodesGroup.appendChild(createNodeWithAnimation({ 
 					value: state.Mux1.output,
 					fieldName: 'reg2loc-mux-to-reg',
-					onEndCallback: [()=>{document.getElementById('read2').textContent = state.Mux1.output;}],
+					onEndCallback: [
+						()=>{document.getElementById('read2').textContent = state.Register.Read2;}
+					],
 					pathId: 'mux-1-to-register-path',
 					duration: DEFAULT_ANIMATION_DURATION,
 					className: 'data-node',
@@ -34,11 +36,9 @@ export function trigger(state) {
 			MemRead:  null,
 			MemWrite: null,
 			Branch:   null,
-			UncondBranch:   null,
+			UncondBranch: null,
 			ALUOp: null
 		}
-
-
 
 		displayControlSignalNodes(controlSignals, onEndCallbacks); // Hàm này giờ chỉ tạo node ẩn
 		startControlSignalAnimation();

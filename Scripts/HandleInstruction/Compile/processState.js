@@ -15,6 +15,7 @@ const state = {
 		Instruction31_00: null,
 	},
 	Register: {
+		option: null,
 		Read1: null,
 		Read2: null,
 		WriteReg: null, 
@@ -77,12 +78,11 @@ const state = {
 	},
 	OrGate: {
 
+	},
+	registerValues: {
+
 	}
-}
-
-const register = {
-
-}
+};
 
 export function generateState(parsedInstruction) {
 	updatePC(state, parsedInstruction);
@@ -90,7 +90,8 @@ export function generateState(parsedInstruction) {
 	updateControlUnit(state);
 	updateALUControl(state);
 	updateSignExtend(state);
-	updateMux1(state) 
+	updateMux1(state);
+	updateRegister(state);
 	return state;
 }
 
@@ -342,4 +343,45 @@ function updateMux1(currentState) {
     }
     currentState.Mux1.output = outputValue;
     console.log("Mux1 Updated:", currentState.Mux1);
+}
+
+function updateRegister(currentState) {
+    const regWriteEnable  = currentState.Control.RegWrite;
+    const readAddr1Binary = currentState.InstructionMemory.Instruction09_05;
+    const readAddr2Binary = currentState.Mux1.output;
+    const writeAddrBinary = currentState.InstructionMemory.Instruction04_00;
+    const writeDataValue  = null; // Placeholder - Actual data comes from MemToReg Mux later
+
+	const formatRegIndex = (a) => {
+		const index = (a && a.length === 5) ? parseInt(a, 2) : null
+        if (index === null) {
+			console.warn('index is null in process State');
+            return null;
+        } 
+		if (index === 31) return 'XZR';
+        if (index >= 0 && index < 31) return 'X' + String(index).padStart(2, '0');
+		console.warn(`Formatting invalid register index: ${index}`);
+		return null;
+    };
+
+    const readIndex1 = formatRegIndex(readAddr1Binary);
+    const readIndex2 = formatRegIndex(readAddr2Binary);
+    const writeIndex = formatRegIndex(writeAddrBinary);
+
+    // 4. Simulate Register Reads
+    let readData1Output = null;
+    let readData2Output = null;
+
+    if (readIndex1 !== null) readData1Output = currentState.registerValues[readIndex1] ?? 0;
+    if (readIndex2 !== null) readData2Output = currentState.registerValues[readIndex2] ?? 0;
+
+    currentState.Register.option = regWriteEnable;       // Store the RegWrite signal
+    currentState.Register.Read1 = readIndex1;            // Store read address 1 (index)
+    currentState.Register.Read2 = readIndex2;            // Store read address 2 (index)
+    currentState.Register.WriteReg = writeIndex;         // Store potential write address (index)
+    currentState.Register.WriteData = writeDataValue;    // Store placeholder for write data
+    currentState.Register.ReadData1 = readData1Output;   // Store data read from port 1
+    currentState.Register.ReadData2 = readData2Output;   // Store data read from port 2
+
+	console.log("Register State Updated:", currentState.Register);
 }

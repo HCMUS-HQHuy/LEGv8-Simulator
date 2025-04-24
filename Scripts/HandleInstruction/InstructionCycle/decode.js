@@ -14,10 +14,10 @@ const IMEM_FUNC_TO_ALU_CONTROL_PATH_ID = "instruction-memory-to-alu-control-path
 
 const DEFAULT_ANIMATION_DURATION = 2; // giây
 
-export function trigger(instruction, opcodeArrivalCallback) {
+export function trigger(state, opcodeArrivalCallback) {
 	return () => {
 		console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
-		displayDataSignalNodes(instruction, opcodeArrivalCallback);
+		displayDataSignalNodes(state.InstructionMemory, state.Register, opcodeArrivalCallback);
 		startSignalAnimation(dataSignalNodesGroup);
 	};
 }
@@ -28,7 +28,7 @@ export function trigger(instruction, opcodeArrivalCallback) {
  * @param {string} encodedInstruction - Mã máy 32-bit.
  * @param {boolean} [startNow=true] - Có bắt đầu animation ngay không.
  */
-function displayDataSignalNodes(instruction, opcodeArrivalCallback) {
+function displayDataSignalNodes(instruction, register, opcodeArrivalCallback) {
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: instruction.Instruction31_21, 
 		fieldName: `Op31-21`,
@@ -42,7 +42,7 @@ function displayDataSignalNodes(instruction, opcodeArrivalCallback) {
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: instruction.Instruction09_05, 
 		fieldName: `Rn9-5`,
-		onEndCallback: [()=>{document.getElementById('read1').textContent = instruction.Instruction09_05}],
+		onEndCallback: [()=>{document.getElementById('read1').textContent = register.Read1}],
 		pathId: IMEM_RN_TO_REG_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
@@ -61,7 +61,7 @@ function displayDataSignalNodes(instruction, opcodeArrivalCallback) {
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: instruction.Instruction04_00, 
 		fieldName: `Rd4-0-to-write-reg`,
-		onEndCallback: [()=>{document.getElementById('write-reg').textContent = instruction.Instruction04_00}],
+		onEndCallback: [()=>{document.getElementById('write-reg').textContent = register.WriteReg}],
 		pathId: IMEM_RD_TO_REG_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
