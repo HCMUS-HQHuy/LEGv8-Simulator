@@ -74,9 +74,15 @@ export function createNodeWithAnimation({
     // Xóa node sau khi animation kết thúc (không cần giữ lại ở đích)
     animateMotion.addEventListener('endEvent', (event) => {
         console.log(`PC value ${value} reached Instruction Memory.`);
-        if (typeof onEndCallback === 'function') {
-            onEndCallback(); // Gọi callback khi PC đến nơi
+        if (Array.isArray(onEndCallback)) {
+            onEndCallback.forEach(cb => {
+                if (typeof cb === 'function') {
+                    cb();
+                }
+                else console.warn("onEndCallback list contains a non-function");
+            });
         }
+
         event.target.closest('g')?.remove(); // Tự hủy node sau khi xử lý xong
     });
     // Tạo mpath để di chuyển node dọc theo đường dẫn

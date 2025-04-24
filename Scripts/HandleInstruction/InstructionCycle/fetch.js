@@ -27,7 +27,7 @@ function updatePCDisplay(value) { // Nhận giá trị để hiển thị
 export function trigger(pcFetchCallback) {
 	updatePCDisplay(currentPC);
 
-	animatePCToMemory(0, pcFetchCallback);
+	animatePCToMemory(currentPC, pcFetchCallback);
 	animatePCToAddALU(currentPC);
 	console.log("--- Processing Complete for Instruction ---");
 }
@@ -49,7 +49,7 @@ function animatePCToAddALU(pcValue) {
 	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
 		value: `0x${(PC_INCREMENT).toString(16).toUpperCase().padStart(8, '0')}`,
 		fieldName: "Const-To-Add-Value",
-		onEndCallback: onEndCallback,
+		onEndCallback: [onEndCallback],
 		pathId: "const-4-to-ALU-add-0-path",
 		duration:  FETCH_ANIMATION_DURATION, 
 		className: 'data-node',
@@ -59,7 +59,7 @@ function animatePCToAddALU(pcValue) {
 	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
 		value: `0x${pcValue.toString(16).toUpperCase().padStart(8, '0')}`,
 		fieldName: "PC-To-Add-Value",
-		onEndCallback: onEndCallback,
+		onEndCallback: [onEndCallback],
 		pathId: "pc-to-ALU-add-0-path",
 		duration:  FETCH_ANIMATION_DURATION,
 		className: 'data-node',
@@ -74,10 +74,19 @@ function animatePCToAddALU(pcValue) {
 function animatePCToMemory(pcValue, pcFetchCallback) {
 	const hexValue = `0x${pcValue.toString(16).toUpperCase().padStart(8, '0')}`;
 
+	const showAddress = () => {
+		const ele = document.getElementById('read-address-instruction-memory');
+		if (ele) {
+			ele.textContent = `0x${hexValue}`;
+		} else {
+			console.warn("Element ('read-address-instrsuction-memory') not found.");
+		}
+	};
+
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: hexValue,
 		fieldName: "PC_Addr",
-		onEndCallback: pcFetchCallback,
+		onEndCallback: [pcFetchCallback, showAddress],
 		pathId: PC_TO_IMEM_PATH_ID,
 		duration:  FETCH_ANIMATION_DURATION,
 		className: 'data-node',

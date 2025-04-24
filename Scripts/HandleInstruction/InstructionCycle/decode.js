@@ -84,54 +84,54 @@ function displayDataSignalNodes(parsedInstruction, encodedInstruction) {
 		shapeType: 'rect'
 	}));
 
-    // Gửi Rn đến cổng đọc Register 1
-    if (parsedInstruction.type === 'R' || parsedInstruction.type === 'D' || parsedInstruction.type === 'I') { // Rn dùng trong R, D, I
-		dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-			value: rn, 
-			fieldName: `Rn9-5`,
-			onEndCallback: null,
-			pathId: IMEM_RN_TO_REG_PATH_ID,
-			duration: DEFAULT_ANIMATION_DURATION, 
-			className: 'parsed-node',
-			shapeType: 'rect'
-		}));
-    }
-    // Gửi Rm đến cổng đọc Register 2 (cho R-type)
-    if (IMEM_RM_TO_REG_PATH_ID && parsedInstruction.type === 'R') {
-		dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-			value: rm, 
-			fieldName: `Rm20-16`,
-			onEndCallback: null,
-			pathId: IMEM_RM_TO_REG_PATH_ID,
-			duration: DEFAULT_ANIMATION_DURATION, 
-			className: 'parsed-node',
-			shapeType: 'rect'
-		}));
-    }
-    // Gửi Rd đến cổng Write Register (cho R-type, I-type, LDUR)
-    if (parsedInstruction.type === 'R' || parsedInstruction.type === 'I' || parsedInstruction.mnemonic === 'LDUR') {
-		dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-			value: rd, 
-			fieldName: `Rd4-0`,
-			onEndCallback: null,
-			pathId: IMEM_RD_TO_REG_PATH_ID,
-			duration: DEFAULT_ANIMATION_DURATION, 
-			className: 'parsed-node',
-			shapeType: 'rect'
-		}));
-    }
-    // Gửi Function/shamt đến ALU Control (cho R-type)
-     if (parsedInstruction.type === 'R') {
-		dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-			value: shamt, 
-			fieldName: `Func/Shamt`,
-			onEndCallback: null,
-			pathId: IMEM_FUNC_TO_ALU_CONTROL_PATH_ID,
-			duration: DEFAULT_ANIMATION_DURATION, 
-			className: 'parsed-node',
-			shapeType: 'rect'
-		}));
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+		value: rn, 
+		fieldName: `Rn9-5`,
+		onEndCallback: null,
+		pathId: IMEM_RN_TO_REG_PATH_ID,
+		duration: DEFAULT_ANIMATION_DURATION, 
+		className: 'parsed-node',
+		shapeType: 'rect'
+	}));
+    
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+		value: rm, 
+		fieldName: `Rm20-16`,
+		onEndCallback: null,
+		pathId: IMEM_RM_TO_REG_PATH_ID,
+		duration: DEFAULT_ANIMATION_DURATION, 
+		className: 'parsed-node',
+		shapeType: 'rect'
+	}));
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+		value: rd, 
+		fieldName: `Rd4-0-to-write-reg`,
+		onEndCallback: null,
+		pathId: IMEM_RD_TO_REG_PATH_ID,
+		duration: DEFAULT_ANIMATION_DURATION, 
+		className: 'parsed-node',
+		shapeType: 'rect'
+	}));
 
-    }
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+		value: rd, 
+		fieldName: `Rd4-0-to-mux`, // to mux
+		onEndCallback: null,
+		pathId: IMEM_RT_TO_REG_PATH_ID,
+		duration: DEFAULT_ANIMATION_DURATION, 
+		className: 'parsed-node',
+		shapeType: 'rect'
+	}));
+
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+		value: shamt, 
+		fieldName: `Func/Shamt`,
+		onEndCallback: null,
+		pathId: IMEM_FUNC_TO_ALU_CONTROL_PATH_ID,
+		duration: DEFAULT_ANIMATION_DURATION, 
+		className: 'parsed-node',
+		shapeType: 'rect'
+	}));
+
     console.log("Data signal nodes created.");
 }
