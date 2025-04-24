@@ -18,7 +18,7 @@ const DEFAULT_ANIMATION_DURATION = 2; // giây
 export function trigger(state, opcodeArrivalCallback) {
 	return () => {
 		console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
-		displayDataSignalNodes(state.InstructionMemory, state.Register, state.SignExtend, opcodeArrivalCallback);
+		displayDataSignalNodes(state, opcodeArrivalCallback);
 		startSignalAnimation();
 	};
 }
@@ -29,7 +29,11 @@ export function trigger(state, opcodeArrivalCallback) {
  * @param {string} encodedInstruction - Mã máy 32-bit.
  * @param {boolean} [startNow=true] - Có bắt đầu animation ngay không.
  */
-function displayDataSignalNodes(instruction, register, signExtend, opcodeArrivalCallback) {
+function displayDataSignalNodes(state, opcodeArrivalCallback) {
+	const instruction = state.InstructionMemory;
+	const register    = state.Register;
+	const signExtend  = state.SignExtend;
+
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: instruction.Instruction31_21, 
 		fieldName: `Op31-21`,
@@ -95,24 +99,7 @@ function displayDataSignalNodes(instruction, register, signExtend, opcodeArrival
 		onEndCallback: [
 			()=>{
 				document.getElementById("sign-extend-text").textContent=signExtend.input;
-				dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-					value: signExtend.output, 
-					fieldName: `sign-extend-to-mux`,
-					onEndCallback: [()=>{ document.getElementById("mux-2-1").textContent=signExtend.output}],
-					pathId: "sign-extend-to-mux-2-1-path",
-					duration: DEFAULT_ANIMATION_DURATION, 
-					className: 'parsed-node',
-					shapeType: 'rect'
-				}));
-				dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-					value: signExtend.output, 
-					fieldName: `sign-extend-to-shift`,
-					onEndCallback: [()=>{ document.getElementById("shift-left-2-text").textContent=signExtend.output}],
-					pathId: "sign-extend-to-shift-left-2-path",
-					duration: DEFAULT_ANIMATION_DURATION, 
-					className: 'parsed-node',
-					shapeType: 'rect'
-				}));
+				handleFromSignExtend(state);
 			},
 		],
 		pathId: IMEM_IMM_TO_SIGN_EXTEND_PATH_ID,
@@ -122,4 +109,39 @@ function displayDataSignalNodes(instruction, register, signExtend, opcodeArrival
 	}));
 
     console.log("Data signal nodes created.");
+}
+
+function handleFromSignExtend(state) {
+	const signExtend  = state.SignExtend;
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+		value: signExtend.output, 
+		fieldName: `sign-extend-to-mux`,
+		onEndCallback: [()=>{ document.getElementById("mux-2-1").textContent=signExtend.output}],
+		pathId: "sign-extend-to-mux-2-1-path",
+		duration: DEFAULT_ANIMATION_DURATION, 
+		className: 'parsed-node',
+		shapeType: 'rect'
+	}));
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+		value: signExtend.output, 
+		fieldName: `sign-extend-to-shift`,
+		onEndCallback: [()=>{ 
+			document.getElementById("shift-left-2-text").textContent=signExtend.output;
+			dataSignalNodesGroup.appendChild(createNodeWithAnimation({
+				value: state.ShiftLeft2.output, 
+				fieldName: `shift-to-add`,
+				onEndCallback: [()=>{ document.getElementById("add-1-1").textContent=state.ShiftLeft2.output}],
+				pathId: "shift-left-2-to-add-1-path",
+				duration: DEFAULT_ANIMATION_DURATION, 
+				className: 'parsed-node',
+				shapeType: 'rect'
+			}));
+			startSignalAnimation();
+		}],
+		pathId: "sign-extend-to-shift-left-2-path",
+		duration: DEFAULT_ANIMATION_DURATION, 
+		className: 'parsed-node',
+		shapeType: 'rect'
+	}));
+	startSignalAnimation();	
 }

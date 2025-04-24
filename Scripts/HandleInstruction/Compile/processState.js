@@ -51,7 +51,8 @@ const state = {
 		ALUOp: 'XX'
 	},
 	ShiftLeft2: {
-
+        input: null,
+        output: null,
 	},
 	SignExtend: {
 		input: null,
@@ -99,6 +100,7 @@ export function generateState(parsedInstruction) {
 	updateSignExtend(state);
 	updateMux1(state);
 	updateMux2(state);
+    updateShiftLeft2(state);
 	updateRegister(state);
 	return state;
 }
@@ -415,3 +417,32 @@ function updateRegister(currentState) {
 	console.log("Register State Updated:", currentState.Register);
 }
 
+function updateShiftLeft2(currentState) {
+    const hexInputValue = currentState?.SignExtend?.output;
+    currentState.ShiftLeft2.input = hexInputValue; // Lưu input gốc
+    let outputHex = null;
+
+    if (hexInputValue && typeof hexInputValue === 'string' &&
+        (hexInputValue.startsWith('0x') || hexInputValue.startsWith('0X')))
+    {
+        try {
+            const inputBigInt = BigInt(hexInputValue);
+            const shiftedBigInt = inputBigInt << 2n; // Dùng 2n cho BigInt literal
+            const sixtyFourBitMask = (1n << 64n) - 1n; // Tạo mask 0xFFFFFFFFFFFFFFFF
+            const resultIn64Bit = shiftedBigInt & sixtyFourBitMask;
+            let hexString = resultIn64Bit.toString(16);
+            const paddedHexString = hexString.padStart(16, '0');
+            outputHex = '0x' + paddedHexString;
+
+        } catch (e) {
+            console.error(`ShiftLeft2 Error processing hex '${hexInputValue}': ${e.message}`);
+            outputHex = null;
+        }
+    } else if (hexInputValue !== null && hexInputValue !== undefined) {
+         console.warn(`ShiftLeft2 Warning: Input '${hexInputValue}' is not a valid hex string starting with "0x".`);
+         outputHex = null;
+    }
+    currentState.ShiftLeft2.output = outputHex;
+
+    console.log("ShiftLeft2 Updated:", currentState.ShiftLeft2);
+}
