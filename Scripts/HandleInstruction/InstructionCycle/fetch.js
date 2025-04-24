@@ -2,7 +2,6 @@
 import {startSignalAnimation, createNodeWithAnimation} from "./animation.js"
 
 const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
-const dataSignalNodesFetchGroup = document.getElementById('data-signal-nodes-fetch');
 
 // --- PATH IDs CHO FETCH (Lấy từ SVG bạn cung cấp) ---
 const PC_TO_IMEM_PATH_ID = "pc-to-instruction-memory-path";
@@ -24,12 +23,13 @@ export function trigger(PC, pcFetchCallback) {
 
 	animatePCToMemory(PC.OldValue, pcFetchCallback);
 	animatePCToAddALU(PC);
+	startSignalAnimation();
 	console.log("--- Processing Complete for Instruction ---");
 }
 
 function animatePCToAddALU(PC) {
 	const onEndCallback = () => {
-		dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
+		dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 			value: `0x${PC.Newvalue.toString(16).toUpperCase().padStart(8, '0')}`,
 			fieldName: "PC_Increase",
 			onEndCallback: null,
@@ -38,10 +38,10 @@ function animatePCToAddALU(PC) {
 			className: 'data-node',
 			shapeType: 'rect'
 		}));
-		startSignalAnimation(dataSignalNodesFetchGroup);
+		startSignalAnimation();
 	};
 
-	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: `0x${PC.OldValue.toString(16).toUpperCase().padStart(8, '0')}`,
 		fieldName: "Const-To-Add-Value",
 		onEndCallback: [onEndCallback],
@@ -51,7 +51,7 @@ function animatePCToAddALU(PC) {
 		shapeType: 'rect'
 	}));
 
-	dataSignalNodesFetchGroup.appendChild(createNodeWithAnimation({
+	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: `0x${PC.OldValue.toString(16).toUpperCase().padStart(8, '0')}`,
 		fieldName: "PC-To-Add-Value",
 		onEndCallback: [onEndCallback],
@@ -60,7 +60,6 @@ function animatePCToAddALU(PC) {
 		className: 'data-node',
 		shapeType: 'rect'
 	}));
-	startSignalAnimation(dataSignalNodesFetchGroup);
 }
 
 /**
@@ -87,5 +86,4 @@ function animatePCToMemory(pcValue, pcFetchCallback) {
 		className: 'data-node',
 		shapeType: 'rect'
 	}));
-	startSignalAnimation(dataSignalNodesGroup);
 }

@@ -1,11 +1,16 @@
 import { sendDataToAlu } from "./aluOperation.js";
 import { createNodeWithAnimation, startSignalAnimation } from "./animation.js";
 
-const signalNodesGroup = document.getElementById('control-signal-nodes');
+const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
 
 const DEFAULT_ANIMATION_DURATION = 2;
 
 export function trigger(state) {
+	if (!dataSignalNodesGroup) {
+		console.error("SVG group 'control-signal-nodes' not found! Cannot start animation.");
+		return;
+	}
+
 	return () => {
 		const controlSignals = state.Control;
 		if (!controlSignals) {
@@ -18,7 +23,7 @@ export function trigger(state) {
 				
 				document.getElementById("mux-1-0-background").style.display = 'block';
 
-				signalNodesGroup.appendChild(createNodeWithAnimation({ 
+				dataSignalNodesGroup.appendChild(createNodeWithAnimation({ 
 					value: state.Mux1.output,
 					fieldName: 'reg2loc-mux-to-reg',
 					onEndCallback: [
@@ -29,7 +34,7 @@ export function trigger(state) {
 					className: 'data-node',
 					shapeType: 'rect'
 				}));
-				startSignalAnimation(signalNodesGroup);
+				startSignalAnimation();
 			}],
 			ALUSrc:   null,
 			MemtoReg: null,
@@ -48,16 +53,10 @@ export function trigger(state) {
 
 // (displayControlSignalNodes cập nhật để nhận cờ `startNow`)
 function displayControlSignalNodes(signals, onEndCallbacks) {
-
-	if (!signals || !signalNodesGroup) {
-		if (signalNodesGroup) { // Xóa node cũ nếu tín hiệu là null
-			while (signalNodesGroup.firstChild) signalNodesGroup.removeChild(signalNodesGroup.firstChild);
-		}
-		return;
-	}
+	if (!signals) return;
 
 	for (const [signalName, value] of Object.entries(signals)) {
-		signalNodesGroup.appendChild(createNodeWithAnimation({ 
+		dataSignalNodesGroup.appendChild(createNodeWithAnimation({ 
 			value: value,
 			fieldName: signalName,
 			onEndCallback: onEndCallbacks[signalName],
@@ -71,11 +70,7 @@ function displayControlSignalNodes(signals, onEndCallbacks) {
 }
 
 function startControlSignalAnimation() {
-	if (!signalNodesGroup) {
-		console.error("SVG group 'control-signal-nodes' not found! Cannot start animation.");
-		return;
-	}
-	const animations = signalNodesGroup.querySelectorAll('animateMotion');
+	const animations = dataSignalNodesGroup.querySelectorAll('animateMotion');
 	if (animations.length === 0) {
 		console.log("No signal nodes found to animate.");
 		return;

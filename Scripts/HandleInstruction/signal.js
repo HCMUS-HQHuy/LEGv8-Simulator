@@ -2,8 +2,7 @@
 import signalDestinations from "./InstructionCycle/Define/signalDestinations.js";
 
 const svgNS = "http://www.w3.org/2000/svg";
-const signalNodesGroup = document.getElementById('control-signal-nodes');
-const dataSignalNodesGroup = document.getElementById('data-signal-nodes'); // Cần group này
+const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
 
 // *** THÊM BIẾN LƯU ID CỦA setTimeout ĐANG CHỜ ***
 let activeAluControlTimeoutId = null;
@@ -47,9 +46,9 @@ export function clearAllDisplaysAndSignals() {
     }
 
     // Xóa tất cả các node tín hiệu (Control và Data)
-    if (signalNodesGroup) {
-        while (signalNodesGroup.firstChild) {
-            signalNodesGroup.removeChild(signalNodesGroup.firstChild);
+    if (dataSignalNodesGroup) {
+        while (dataSignalNodesGroup.firstChild) {
+            dataSignalNodesGroup.removeChild(dataSignalNodesGroup.firstChild);
         }
     }
     if (dataSignalNodesGroup) {
@@ -127,7 +126,7 @@ function handleAluControlArrival(arrivedAluOpValue, finalSignalToSend) {
         );
 
         if (newNodeElement) {
-            signalNodesGroup.appendChild(newNodeElement);
+            dataSignalNodesGroup.appendChild(newNodeElement);
             const newAnimation = newNodeElement.querySelector('animateMotion');
             if (newAnimation) {
                 const parentGroup = newAnimation.closest('g');
@@ -180,9 +179,9 @@ function getValueEndPath(aluOpCombined) {
 // (displayControlSignalNodes cập nhật để nhận cờ `startNow`)
 export function displayControlSignalNodes(signals) {
 
-    if (!signals || !signalNodesGroup) {
-        if (signalNodesGroup) { // Xóa node cũ nếu tín hiệu là null
-                while (signalNodesGroup.firstChild) signalNodesGroup.removeChild(signalNodesGroup.firstChild);
+    if (!signals || !dataSignalNodesGroup) {
+        if (dataSignalNodesGroup) { // Xóa node cũ nếu tín hiệu là null
+                while (dataSignalNodesGroup.firstChild) dataSignalNodesGroup.removeChild(dataSignalNodesGroup.firstChild);
         }
         return;
     }
@@ -197,7 +196,7 @@ export function displayControlSignalNodes(signals) {
             signalName, value, pathIdToUse, DEFAULT_ANIMATION_DURATION, finalAluValueForNode
         );
         if (nodeElement) {
-            signalNodesGroup.appendChild(nodeElement);
+            dataSignalNodesGroup.appendChild(nodeElement);
             // Đảm bảo ẩn ban đầu (đã set trong create...)
         }
     }
@@ -376,11 +375,11 @@ export function startSignalAnimation() {
 }
 
 export function startControlSignalAnimation() {
-    if (!signalNodesGroup) {
+    if (!dataSignalNodesGroup) {
         console.error("SVG group 'control-signal-nodes' not found! Cannot start animation.");
         return;
     }
-    const animations = signalNodesGroup.querySelectorAll('animateMotion');
+    const animations = dataSignalNodesGroup.querySelectorAll('animateMotion');
     if (animations.length === 0) {
         console.log("No signal nodes found to animate.");
         return;

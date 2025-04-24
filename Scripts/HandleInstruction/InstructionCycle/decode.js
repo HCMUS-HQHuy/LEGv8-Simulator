@@ -18,7 +18,7 @@ export function trigger(state, opcodeArrivalCallback) {
 	return () => {
 		console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
 		displayDataSignalNodes(state.InstructionMemory, state.Register, state.SignExtend, opcodeArrivalCallback);
-		startSignalAnimation(dataSignalNodesGroup);
+		startSignalAnimation();
 	};
 }
 

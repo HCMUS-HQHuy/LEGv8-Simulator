@@ -1,7 +1,6 @@
-/**
- * Starts the animation for all data signal nodes. (NEW)
- */
-export function startSignalAnimation(dataSignalNodesGroup) {
+const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
+
+export function startSignalAnimation() {
     if (dataSignalNodesGroup == null) {
         console.error("dataSignalNodesGroup is null");
         return null;
