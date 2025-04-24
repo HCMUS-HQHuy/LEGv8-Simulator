@@ -36,7 +36,7 @@ export function getResult() {
 		handleSignal.displayDataSignalNodes(null); // Gọi hàm dọn dẹp data nodes
 		return null;
 	}
-	results.push({ lineNumber: firstLineIndex + 1, parsed: parsedInstruction });
+	results.push({ lineNumber: firstLineIndex + 1, assemblyInstruction: firstInstructionLine, parsed: parsedInstruction });
 	console.log(`Parsed Line ${firstLineIndex + 1}:`, parsedInstruction);
 	return results;
 }

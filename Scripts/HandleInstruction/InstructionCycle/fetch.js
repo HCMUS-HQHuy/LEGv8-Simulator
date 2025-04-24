@@ -7,7 +7,7 @@ const dataSignalNodesFetchGroup = document.getElementById('data-signal-nodes-fet
 // --- PATH IDs CHO FETCH (Lấy từ SVG bạn cung cấp) ---
 const PC_TO_IMEM_PATH_ID = "pc-to-instruction-memory-path";
 
-const FETCH_ANIMATION_DURATION = 3; // giây (cho PC -> Mem)
+const FETCH_ANIMATION_DURATION = 2; // giây (cho PC -> Mem)
 
 // --- PC State ---
 const INITIALIZED_VALUE_PC = 15;
