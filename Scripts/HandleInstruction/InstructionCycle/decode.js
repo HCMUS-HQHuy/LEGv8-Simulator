@@ -130,7 +130,11 @@ function handleFromSignExtend(state) {
 			dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 				value: state.ShiftLeft2.output, 
 				fieldName: `shift-to-add`,
-				onEndCallback: [()=>{ document.getElementById("add-1-1").textContent=state.ShiftLeft2.output}],
+				onEndCallback: [
+					()=>{ 
+						document.getElementById("add-1-1").textContent=state.ShiftLeft2.output;
+					}
+				],
 				pathId: "shift-left-2-to-add-1-path",
 				duration: DEFAULT_ANIMATION_DURATION, 
 				className: 'parsed-node',

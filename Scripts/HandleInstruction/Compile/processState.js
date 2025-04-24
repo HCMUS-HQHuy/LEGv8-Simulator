@@ -30,7 +30,9 @@ const state = {
 
 	},
 	Add1: {
-
+        input1: null,
+        input2: null,
+        output: null
 	},
 	ALU: {
 		input1: null,
@@ -102,6 +104,7 @@ export function generateState(parsedInstruction) {
 	updateMux2(state);
     updateShiftLeft2(state);
 	updateRegister(state);
+    updateAdd1(state);
 	return state;
 }
 
@@ -445,4 +448,42 @@ function updateShiftLeft2(currentState) {
     currentState.ShiftLeft2.output = outputHex;
 
     console.log("ShiftLeft2 Updated:", currentState.ShiftLeft2);
+}
+
+function updateAdd1(currentState) {
+
+    const hexInputPC = currentState.PC.Newvalue;
+    const hexInputSL2 = currentState.ShiftLeft2.output;
+
+    currentState.Add1.input1 = hexInputPC;
+    currentState.Add1.input2 = hexInputSL2;
+
+    let outputHex = null;
+    const isValidHex = (hex) => typeof hex === 'string' && (hex.startsWith('0x') || hex.startsWith('0X'));
+
+    if (hexInputPC && hexInputSL2 && isValidHex(hexInputPC) && isValidHex(hexInputSL2))
+    {
+        try {
+            const bigIntPC = BigInt(hexInputPC);
+            const bigIntSL2 = BigInt(hexInputSL2);
+            const sumBigInt = bigIntPC + bigIntSL2;
+            const sixtyFourBitMask = (1n << 64n) - 1n; // Mask 0xFF...FF
+            const resultIn64Bit = sumBigInt & sixtyFourBitMask;
+            let hexString = resultIn64Bit.toString(16);
+            const paddedHexString = hexString.padStart(16, '0');
+
+            // 9. Add "0x" prefix
+            outputHex = '0x' + paddedHexString;
+
+        } catch (e) {
+            console.error(`Add1 Error processing hex inputs '${hexInputPC}', '${hexInputSL2}': ${e.message}`);
+            outputHex = null; // Set output to null on error
+        }
+    } else {
+        if (hexInputPC !== null || hexInputSL2 !== null) {
+             console.warn(`Add1 Warning: One or both inputs are invalid hex strings. PC='${hexInputPC}', SL2='${hexInputSL2}'`);
+        }
+    }
+    currentState.Add1.output = outputHex;
+    console.log("Add1 Updated:", currentState.Add1);
 }
