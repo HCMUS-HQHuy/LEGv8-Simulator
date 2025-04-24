@@ -1,5 +1,5 @@
-import controlSignalTable from "./Scripts/HandleInstruction/InstructionCycle/Define/controlSignalTable.js";
-import { createNodeWithAnimation } from "./Scripts/HandleInstruction/InstructionCycle/animation.js";
+import controlSignalTable from "./Define/controlSignalTable.js";
+import { createNodeWithAnimation } from "./animation.js";
 // loại lệnh (ADD / ORR / XOR / AND)
 let mnemonic = null;
 

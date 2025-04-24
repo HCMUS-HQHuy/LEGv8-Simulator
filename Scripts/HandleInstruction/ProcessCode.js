@@ -1,8 +1,8 @@
 import * as parsedOutputTable from "./Compile/parsedOutputTable.js"
 import * as formatCode from "./Compile/formatCode.js"
-import * as fetch from "./Execute/fetch.js"
-import * as decode from "./Execute/decode.js"
-import * as execute from "./Execute/execute.js"
+import * as fetch from "./InstructionCycle/fetch.js"
+import * as decode from "./InstructionCycle/decode.js"
+import * as execute from "./InstructionCycle/execute.js"
 
 function processCode() {
 	const results = formatCode.getResult();
