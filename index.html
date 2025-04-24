@@ -300,6 +300,7 @@
             <rect width = "50" height = "100" class = "component" />
 
             <text x = "25" y = "50" class = "label"> PC </text>
+            <!-- HQH add -->
             <text id="pc-value-text" x = "20" y = "125" class="instruction"></text>
           </g>
 
@@ -353,6 +354,13 @@
 
             <text x = "115" y = "130" class = "mem-label"> Read </text>
             <text x = "110" y = "150" class = "mem-label"> data 2 </text>
+            
+            <!-- HQH add -->
+            <text id="read1" x = "5" y = "110" class = "instruction">  </text>
+            <text id="read2" x = "5" y = "130" class = "instruction">  </text>
+            <text id="write-reg" x = "5" y = "140" class = "instruction">  </text>
+            <text id="write-data" x = "5" y = "160" class = "instruction">  </text>
+
           </g>
 
           <!-- data-memory  -->
@@ -464,7 +472,10 @@
             <text x = "20" y = "50" class = "label">     u </text>
             <text x = "20" y = "65" class = "label">     x </text>
             <text x = "14" y = "90" class = "mem-label"> 1 </text>
-
+            
+            <!-- HQH add -->
+            <rect id = "mux-1-0-background" x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style="display: none; fill:aqua"/>
+            <!-- <rect id = "mux-1-1-background" x = "0" y = "0"> </rect> -->
             <text id="mux-1-0" x = "10"  y = "35" class="instruction"></text>
             <text id="mux-1-1" x = "10"  y = "65" class="instruction"></text>
 

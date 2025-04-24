@@ -61,7 +61,10 @@ const state = {
 
 	},
 	Mux1: {
-
+		input1: null,
+		input2: null,
+		option: null,
+		output: null
 	},
 	Mux2: {
 
@@ -86,6 +89,8 @@ export function generateState(parsedInstruction) {
 	updateInstructionMemory(state, parsedInstruction);
 	updateControlUnit(state);
 	updateALUControl(state);
+	updateSignExtend(state);
+	updateMux1(state) 
 	return state;
 }
 
@@ -315,4 +320,26 @@ function updateALUControl(currentState) {
     currentState.ALUControl.output = aluControlCode;
 
     console.log("ALU Control Updated:", currentState.ALUControl);
+}
+
+function updateMux1(currentState) {
+    const input1_RtRd = currentState.InstructionMemory.Instruction04_00; // Bits [4:0]
+    const input2_Rm   = currentState.InstructionMemory.Instruction20_16; // Bits [20:16]
+    const selector    = currentState.Control.Reg2Loc;                    // Tín hiệu điều khiển
+
+    currentState.Mux1.input1 = input1_RtRd;
+    currentState.Mux1.input2 = input2_Rm;
+    currentState.Mux1.option = selector;
+
+    let outputValue = null; // Giá trị mặc định nếu selector không hợp lệ
+
+    if (selector === 0) {
+        outputValue = input2_Rm;
+    } else if (selector === 1) {
+        outputValue = input1_RtRd;
+    } else {
+        console.warn(`Mux1: Invalid selector value '${selector}'. Output will be null.`);
+    }
+    currentState.Mux1.output = outputValue;
+    console.log("Mux1 Updated:", currentState.Mux1);
 }
