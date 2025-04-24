@@ -42,7 +42,7 @@ function displayDataSignalNodes(instruction, opcodeArrivalCallback) {
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: instruction.Instruction09_05, 
 		fieldName: `Rn9-5`,
-		onEndCallback: null,
+		onEndCallback: [()=>{document.getElementById('read1').textContent = instruction.Instruction09_05}],
 		pathId: IMEM_RN_TO_REG_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
@@ -61,7 +61,7 @@ function displayDataSignalNodes(instruction, opcodeArrivalCallback) {
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
 		value: instruction.Instruction04_00, 
 		fieldName: `Rd4-0-to-write-reg`,
-		onEndCallback: null,
+		onEndCallback: [()=>{document.getElementById('write-reg').textContent = instruction.Instruction04_00}],
 		pathId: IMEM_RD_TO_REG_PATH_ID,
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
