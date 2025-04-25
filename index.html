@@ -358,13 +358,14 @@
 
             <text x = "115" y = "130" class = "mem-label"> Read </text>
             <text x = "110" y = "150" class = "mem-label"> data 2 </text>
+
+            <text id = "regwrite-to-register-value" x = "95" y = "-5" class = "mem-control-label">0</text>
             
             <!-- HQH add -->
             <text id="read1" x = "5" y = "60" class = "instruction">  </text>
             <text id="read2" x = "5" y = "90" class = "instruction">  </text>
             <text id="write-reg" x = "5" y = "130" class = "instruction">  </text>
             <text id="write-data" x = "5" y = "160" class = "instruction">  </text>
-
           </g>
 
           <!-- data-memory  -->
@@ -381,6 +382,9 @@
 
             <text x = "85"  y = "65"  class = "mem-label"> Read </text>
             <text x = "95"  y = "85"  class = "mem-label"> data </text>
+
+            <text id = "memwrite-to-data-memory-value" x = "55" y = "-5" class = "mem-control-label">0</text>
+            <text id = "memread-to-data-memory-value" x = "55" y = "220" class = "mem-control-label">0</text>
           </g>
           
           <!-- ALU -->
@@ -409,6 +413,7 @@
             
             <text x = "50" y = "65" class = "mem-control-label"> Zero </text>
             
+            <text id = "" x = "0" y = "0" class = "mem-control-label">0</text>
           </g>
           <!-- End Alu -->
 
@@ -466,16 +471,24 @@
           <g id="mux-0" transform = "translate(1580, 100)">
             <rect x = "0"  y = "0" width = "40" height = "120" rx = "20" ry = "20" class = "component"/>
             
+            <path id = "mux-0-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,60 L0,60 Z" class = "mux-select-0"/>
+            <path id = "mux-0-1-selected" d = "M0,60 L40,60 L40,100 A20,20 0 0 1 20,120 A20,20 0 0 1 0,100 Z" class = "mux-select-1"/>
+            
             <text x = "14" y = "20"  class = "mem-label"> 0 </text>
             <text x = "20" y = "40"  class = "label">     M </text>
             <text x = "20" y = "60"  class = "label">     u </text>
             <text x = "20" y = "80"  class = "label">     x </text>
             <text x = "14" y = "110" class = "mem-label"> 1 </text>
+
+            <text id = "or-gate-to-mux-0-value" x = "5" y = "140" class = "mem-control-label">0</text>
           </g>
-          
+
           <!-- mux-1 -->
           <g id="mux-1" transform = "translate(670, 555)">
             <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
+
+            <path id = "mux-1-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,45 L0,45 Z" class = "mux-select-0"/>
+            <path id = "mux-1-1-selected" d = "M0,45 L40,45 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-1"/>
             
             <text x = "14" y = "20" class = "mem-label"> 0 </text>
             <text x = "20" y = "35" class = "label">     M </text>
@@ -495,6 +508,9 @@
           <g id="mux-2" transform = "translate(1070, 630)">
             <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
             
+            <path id = "mux-2-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,50 L0,50 Z" class = "mux-select-0"/>
+            <path id = "mux-2-1-selected" d = "M0,50 L40,50 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-1"/>
+
             <text x = "14" y = "20" class = "mem-label"> 0 </text>
             <text x = "20" y = "35" class = "label">     M </text>
             <text x = "20" y = "50" class = "label">     u </text>
@@ -510,6 +526,9 @@
           <g id="mux-3" transform="translate(1690, 665)">
             <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
             
+            <path id = "mux-3-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,50 L0,50 Z" class = "mux-select-0"/>
+            <path id = "mux-3-1-selected" d = "M0,50 L40,50 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-1"/>
+
             <text x = "14" y = "20" class = "mem-label"> 1 </text>
             <text x = "20" y = "35" class = "label">     M </text>
             <text x = "20" y = "50" class = "label">     u </text>
