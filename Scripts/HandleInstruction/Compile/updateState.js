@@ -1,118 +1,24 @@
 import {parseLegv8Instruction, encodeLegv8Instruction} from "./parser.js"
+import {Components} from "./Define/components.js"
 
-const state = {
-	PC: {
-		OldValue: null,
-		Newvalue: 15
-	},
-	InstructionMemory: {
-		ReadAddress: null,
-		Instruction: null,
-		Instruction31_21: null,
-		Instruction09_05: null,
-		Instruction20_16: null,
-		Instruction04_00: null,
-		Instruction31_00: null,
-	},
-	Register: {
-		option: null,
-		Read1: null,
-		Read2: null,
-		WriteReg: null, 
-		WriteData: null,
-		ReadData1: null,
-		ReadData2: null
-	},
-	DataMemory: {
 
-	},
-	Add0: {
-        input1: null,
-        input2: null,
-        output: null
-	},
-	Add1: {
-        input1: null,
-        input2: null,
-        output: null
-	},
-	ALU: {
-		input1: null,
-		input2: null,
-		option: null,
-		output: null,
-		zero  : null
-	},
-	Control: {
-		Reg2Loc:  0, // X -> 0
-        ALUSrc:   0,
-        MemtoReg: 0, // X -> 0
-        RegWrite: 1,
-        MemRead:  0,
-        MemWrite: 0,
-        Branch:   0, // X -> 0
-        UncondBranch:   0, // X -> 0
-		ALUOp: 'XX'
-	},
-	ShiftLeft2: {
-        input: null,
-        output: null,
-	},
-	SignExtend: {
-		input: null,
-		output: null,
-	},
-	ALUControl: {
-		ALUOp: null,
-		Opcode: null,
-		output: null,
-	},
-	Mux0: {
-
-	},
-	Mux1: {
-		input0: null,
-		input1: null,
-		option: null,
-		output: null
-	},
-	Mux2: {
-		input0: null,
-		input1: null,
-		option: null,
-		output: null
-	},
-	Mux3: {
-
-	},
-	AndGate: {
-
-	},
-	OrGate: {
-
-	},
-	registerValues: {
-
-	}
-};
-
-export function generateState(parsedInstruction) {
-	updatePC(state, parsedInstruction);
-	updateInstructionMemory(state, parsedInstruction);
-	updateControlUnit(state);
-	updateALUControl(state);
-	updateSignExtend(state);
-	updateMux1(state);
-	updateMux2(state);
-    updateShiftLeft2(state);
-	updateRegister(state);
-    updateAdd1(state);
-    updateAdd0(state);
-	return state;
+export function udpateComponents(parsedInstruction) {
+	updatePC(Components, parsedInstruction);
+	updateInstructionMemory(Components, parsedInstruction);
+	updateControlUnit(Components);
+	updateALUControl(Components);
+	updateSignExtend(Components);
+	updateMux1(Components);
+	updateMux2(Components);
+    updateShiftLeft2(Components);
+	updateRegister(Components);
+    updateAdd1(Components);
+    updateAdd0(Components);
+	return Components;
 }
 
 function updatePC(currentState, parsedInstruction) {
-	const currentPC = currentState.PC.Newvalue;
+	const currentPC = currentState.PC.NewValue;
     let nextPC = null;
     if (parsedInstruction.type === 'R') {
         nextPC = currentPC + 4;
@@ -123,25 +29,24 @@ function updatePC(currentState, parsedInstruction) {
         console.error(`Error: updatePC_RFormatOnly should only receive R-format instructions. Received: ${parsedInstruction.type}`);
         return;
     }
-    currentState.PC.OldValue = currentState.PC.Newvalue;
-    currentState.PC.Newvalue = nextPC;
-    console.log(`PC updated: Old=${currentState.PC.OldValue}, New=${currentState.PC.Newvalue}`);
+    currentState.PC.OldValue = currentState.PC.NewValue;
+    currentState.PC.NewValue = nextPC;
+    console.log(`PC updated: Old=${currentState.PC.OldValue}, New=${currentState.PC.NewValue}`);
 }
 
 function updateInstructionMemory(currentState, parsedInstruction) {
 	currentState.InstructionMemory.ReadAddress = `0x${currentState.PC.OldValue.toString(16).toUpperCase()}`;
 	const encodedInstruction = encodeLegv8Instruction(parsedInstruction);
-	currentState.InstructionMemory.Instruction = encodedInstruction;
 	currentState.InstructionMemory.Instruction31_00 = encodedInstruction;
-	currentState.InstructionMemory.Instruction31_21 = encodedInstruction.substring(0, 11);
-	currentState.InstructionMemory.Instruction20_16 = encodedInstruction.substring(11, 16);
-	currentState.InstructionMemory.Instruction09_05 = encodedInstruction.substring(22, 27);
-	currentState.InstructionMemory.Instruction04_00 = encodedInstruction.substring(27, 32);
+	currentState.InstructionMemory.Opcode_31_21 = encodedInstruction.substring(0, 11);
+	currentState.InstructionMemory.Rm_20_16 = encodedInstruction.substring(11, 16);
+	currentState.InstructionMemory.Rn_09_05 = encodedInstruction.substring(22, 27);
+	currentState.InstructionMemory.RdRt_04_00 = encodedInstruction.substring(27, 32);
 	console.log("Creating data signal nodes for:", parsedInstruction.mnemonic);
 }
 
 function updateControlUnit(currentState) {
-    const opcode = currentState.InstructionMemory.Instruction31_21; // Lấy chuỗi 11 bit opcode
+    const opcode = currentState.InstructionMemory.Opcode_31_21; // Lấy chuỗi 11 bit opcode
 
     // 2. Xác định các opcode R-format (Cần kiểm tra lại danh sách này cho chính xác)
     const rFormatOpcodes = [
@@ -203,7 +108,7 @@ function updateSignExtend(currentState) {
 
 	const control = currentState.Control;
     const fullInstruction = currentState.InstructionMemory.Instruction31_00;
-    const opcode = currentState.InstructionMemory.Instruction31_21;
+    const opcode = currentState.InstructionMemory.Opcode_31_21;
 
     let inputBinary = null;
     let originalBits = 0;
@@ -273,7 +178,7 @@ function updateSignExtend(currentState) {
 
 function updateALUControl(currentState) {
     const aluOpSignal = currentState.Control.ALUOp; // Tín hiệu 2-bit từ Control chính
-    const mainOpcode = currentState.InstructionMemory.Instruction31_21; // Opcode 11-bit
+    const mainOpcode = currentState.InstructionMemory.Opcode_31_21; // Opcode 11-bit
 
     currentState.ALUControl.ALUOp = aluOpSignal;
     currentState.ALUControl.Opcode = mainOpcode;
@@ -340,8 +245,8 @@ function updateALUControl(currentState) {
 }
 
 function updateMux1(currentState) {
-    const input1_RtRd = currentState.InstructionMemory.Instruction04_00; // Bits [4:0]
-    const input2_Rm   = currentState.InstructionMemory.Instruction20_16; // Bits [20:16]
+    const input1_RtRd = currentState.InstructionMemory.RdRt_04_00; // Bits [4:0]
+    const input2_Rm   = currentState.InstructionMemory.Rm_20_16; // Bits [20:16]
     const selector    = currentState.Control.Reg2Loc;                    // Tín hiệu điều khiển
 
     currentState.Mux1.input0 = input1_RtRd;
@@ -384,9 +289,9 @@ function updateMux2(currentState) {
 
 function updateRegister(currentState) {
     const regWriteEnable  = currentState.Control.RegWrite;
-    const readAddr1Binary = currentState.InstructionMemory.Instruction09_05;
+    const readAddr1Binary = currentState.InstructionMemory.Rn_09_05;
     const readAddr2Binary = currentState.Mux1.output;
-    const writeAddrBinary = currentState.InstructionMemory.Instruction04_00;
+    const writeAddrBinary = currentState.InstructionMemory.RdRt_04_00;
     const writeDataValue  = null; // Placeholder - Actual data comes from MemToReg Mux later
 
 	const formatRegIndex = (a) => {
@@ -413,9 +318,9 @@ function updateRegister(currentState) {
     if (readIndex2 !== null) readData2Output = currentState.registerValues[readIndex2] ?? 0;
 
     currentState.Register.option = regWriteEnable;       // Store the RegWrite signal
-    currentState.Register.Read1 = readIndex1;            // Store read address 1 (index)
-    currentState.Register.Read2 = readIndex2;            // Store read address 2 (index)
-    currentState.Register.WriteReg = writeIndex;         // Store potential write address (index)
+    currentState.Register.read1 = readIndex1;            // Store read address 1 (index)
+    currentState.Register.read2 = readIndex2;            // Store read address 2 (index)
+    currentState.Register.writeReg = writeIndex;         // Store potential write address (index)
     currentState.Register.WriteData = writeDataValue;    // Store placeholder for write data
     currentState.Register.ReadData1 = readData1Output;   // Store data read from port 1
     currentState.Register.ReadData2 = readData2Output;   // Store data read from port 2

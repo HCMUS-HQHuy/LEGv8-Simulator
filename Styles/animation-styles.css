@@ -29,8 +29,8 @@
   y: -10px;        /* Centered vertically (height/2) */
 }
 
-.parsed-node.ALUOp rect,
-.parsed-node.Op31-21 rect{
+.parsed-node.ALUControl\.Opcode rect,
+.parsed-node.Control\.Input rect{
   width: 60px;   /* Default width */
   x: -30px;       /* Centered horizontally (width/2) */
 }
@@ -49,7 +49,7 @@
   stroke-width: 1px;
 }
 
-.signal-control-unit.ALUOp circle {
+.signal-control-unit.ALUControl\.ALUOp circle {
   r: 10px;
   fill: #FF851B;
   stroke: black;

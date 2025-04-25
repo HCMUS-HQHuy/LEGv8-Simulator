@@ -1,4 +1,4 @@
-import { R_TYPE_OPCODES }  from "../InstructionCycle/Define/Opcode.js"
+import { R_TYPE_OPCODES }  from "./Define/Opcode.js"
 
 /**
  * Parses a single line of LEGv8 assembly code.
