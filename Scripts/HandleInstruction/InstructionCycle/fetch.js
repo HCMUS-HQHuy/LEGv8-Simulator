@@ -1,5 +1,5 @@
 // import * as handleSignal from "../signal.js"
-import {startSignalAnimation, createNodeWithAnimation} from "./animation.js"
+import {createNodeWithAnimation} from "./animation.js"
 
 const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
 
@@ -23,7 +23,6 @@ export function trigger(PC, pcFetchCallback) {
 
 	animatePCToMemory(PC.OldValue, pcFetchCallback);
 	animatePCToAddALU(PC);
-	startSignalAnimation();
 	console.log("--- Processing Complete for Instruction ---");
 }
 
@@ -38,7 +37,6 @@ function animatePCToAddALU(PC) {
 			className: 'data-node',
 			shapeType: 'rect'
 		}));
-		startSignalAnimation();
 	};
 
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({

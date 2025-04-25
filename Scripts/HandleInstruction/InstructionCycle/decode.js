@@ -1,4 +1,4 @@
-import {startSignalAnimation, createNodeWithAnimation} from "./animation.js"
+import {createNodeWithAnimation} from "./animation.js"
 
 const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
 
@@ -19,7 +19,6 @@ export function trigger(state, opcodeArrivalCallback) {
 	return () => {
 		console.log("--- PC animation finished, creating and starting Data Signals (incl. Opcode) ---");
 		displayDataSignalNodes(state, opcodeArrivalCallback);
-		startSignalAnimation();
 	};
 }
 
@@ -140,12 +139,10 @@ function handleFromSignExtend(state) {
 				className: 'parsed-node',
 				shapeType: 'rect'
 			}));
-			startSignalAnimation();
 		}],
 		pathId: "sign-extend-to-shift-left-2-path",
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
 		shapeType: 'rect'
 	}));
-	startSignalAnimation();	
 }

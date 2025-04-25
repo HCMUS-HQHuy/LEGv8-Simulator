@@ -1,5 +1,5 @@
 import { sendDataToAlu } from "./aluOperation.js";
-import { createNodeWithAnimation, startSignalAnimation } from "./animation.js";
+import { createNodeWithAnimation} from "./animation.js";
 
 const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
 
@@ -34,7 +34,6 @@ export function trigger(state) {
 					className: 'data-node',
 					shapeType: 'rect'
 				}));
-				startSignalAnimation();
 			}],
 			ALUSrc:   null,
 			MemtoReg: null,
@@ -47,7 +46,6 @@ export function trigger(state) {
 		}
 
 		displayControlSignalNodes(controlSignals, onEndCallbacks); // Hàm này giờ chỉ tạo node ẩn
-		startControlSignalAnimation();
 	};
 }
 
@@ -67,22 +65,4 @@ function displayControlSignalNodes(signals, onEndCallbacks) {
 		}));
 	}
 	console.log(`Control signal nodes created (hidden).`);
-}
-
-function startControlSignalAnimation() {
-	const animations = dataSignalNodesGroup.querySelectorAll('animateMotion');
-	if (animations.length === 0) {
-		console.log("No signal nodes found to animate.");
-		return;
-	}
-	console.log(`Starting animation for ${animations.length} control signals.`);
-	animations.forEach(anim => {
-		const parentGroup = anim.closest('g');
-		if (parentGroup) {
-			parentGroup.setAttribute('visibility', 'visible');
-			anim.beginElement();
-		} else {
-			console.warn(`Could not find parent group for animation element:`, anim);
-		}
-	});
 }
