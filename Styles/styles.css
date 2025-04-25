@@ -153,6 +153,22 @@ body {
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
 }
+.mux-select-0 {
+  fill: aqua; 
+  stroke: aqua; 
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.5;
+  visibility: hidden;
+}
+.mux-select-1 {
+  fill: red; 
+  stroke: red; 
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.5;
+  visibility: hidden;
+}
 
 /* label */
 .label {
