@@ -2,12 +2,9 @@ import * as parsedOutputTable from "./Compile/parsedOutputTable.js"
 import * as currentInstruction from "./Compile/currentInstruction.js"
 import * as animate from "./InstructionCycle/animation.js"
 import * as formatCode from "./Compile/formatCode.js"
-import * as fetch from "./InstructionCycle/fetch.js"
-import * as decode from "./InstructionCycle/decode.js"
-import * as execute from "./InstructionCycle/execute.js"
-import * as run from "./Compile/processState.js"
+import * as run from "./Compile/updateState.js"
 
-import * as infor from "./InstructionCycle/Define/information.js"
+import * as generateSignal from "./InstructionCycle/generateSignal.js"
 
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -36,14 +33,14 @@ function processCode() {
 		console.error("formatcode: Have some problem!");
 		return;
 	}
-	// parsedOutputTable.update(results);
-	// currentInstruction.update(results[0]);
+	parsedOutputTable.update(results);
+	currentInstruction.update(results[0]);
 
-	// const parsedInstruction = results[0].parsed;
-	// const state = run.generateState(parsedInstruction);
+	const parsedInstruction = results[0].parsed;
 	// fetch.trigger(state, decode.trigger(state, execute.trigger(state)));
-
-	infor.run();
+	
+	const components = run.udpateComponents(parsedInstruction);
+	generateSignal.trigger(components);
 
 	playAnimationsSequentially();
 }

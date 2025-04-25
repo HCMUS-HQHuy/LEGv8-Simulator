@@ -1,4 +1,5 @@
 import {parseLegv8Instruction, encodeLegv8Instruction} from "./parser.js"
+import {Components} from "./Define/components.js"
 
 const state = {
 	PC: {
@@ -96,7 +97,7 @@ const state = {
 	}
 };
 
-export function generateState(parsedInstruction) {
+export function udpateComponents(parsedInstruction) {
 	updatePC(state, parsedInstruction);
 	updateInstructionMemory(state, parsedInstruction);
 	updateControlUnit(state);
@@ -108,7 +109,7 @@ export function generateState(parsedInstruction) {
 	updateRegister(state);
     updateAdd1(state);
     updateAdd0(state);
-	return state;
+	return Components;
 }
 
 function updatePC(currentState, parsedInstruction) {
