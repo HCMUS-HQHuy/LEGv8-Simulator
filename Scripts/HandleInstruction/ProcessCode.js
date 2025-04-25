@@ -16,13 +16,19 @@ const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes3'),
 	document.getElementById('data-signal-nodes4'),
 	document.getElementById('data-signal-nodes5'),
-	document.getElementById('data-signal-nodes0'),
-	document.getElementById('data-signal-nodes1'),
-	document.getElementById('data-signal-nodes2'),
-	document.getElementById('data-signal-nodes0'),
-	document.getElementById('data-signal-nodes1'),
-	document.getElementById('data-signal-nodes2'),
+	document.getElementById('data-signal-nodes6'),
+	document.getElementById('data-signal-nodes7'),
+	document.getElementById('data-signal-nodes8'),
+	document.getElementById('data-signal-nodes9')
 ];
+
+async function playAnimationsSequentially() {
+	for (let i = 0; i < dataSignalNodesGroup.length; i++) {
+		const success = animate.startSignalAnimation(dataSignalNodesGroup[i]);
+		if (success === false) break;
+		await new Promise(resolve => setTimeout(resolve, 2000)); // chờ 2 giây
+	}
+}
 
 function processCode() {
 	const results = formatCode.getResult();
@@ -39,13 +45,7 @@ function processCode() {
 
 	infor.run();
 
-	let i = 0;
-	const intervalId = setInterval(() => {
-		if (i >= dataSignalNodesGroup.length || animate.startSignalAnimation(dataSignalNodesGroup[i]) == false) {
-			clearInterval(intervalId); // dừng interval
-			i = i + 1;
-		}
-	}, 2100);
+	playAnimationsSequentially();
 }
 
 export function trigger() {

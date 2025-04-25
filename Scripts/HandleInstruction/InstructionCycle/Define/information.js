@@ -259,12 +259,10 @@ const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes3'),
 	document.getElementById('data-signal-nodes4'),
 	document.getElementById('data-signal-nodes5'),
-	document.getElementById('data-signal-nodes0'),
-	document.getElementById('data-signal-nodes1'),
-	document.getElementById('data-signal-nodes2'),
-	document.getElementById('data-signal-nodes0'),
-	document.getElementById('data-signal-nodes1'),
-	document.getElementById('data-signal-nodes2'),
+	document.getElementById('data-signal-nodes6'),
+	document.getElementById('data-signal-nodes7'),
+	document.getElementById('data-signal-nodes8'),
+	document.getElementById('data-signal-nodes9')
 ];
 
 function getValueFromComponents(source, components) {
@@ -277,36 +275,46 @@ function setValueInComponents(target, value, components) {
 	if (components[comp]) components[comp][field] = value;
 }
 
-function traverseAndAnimate(currentNode, depth = 0, visited = new Set()) {
-	if (visited.has(currentNode)) return;
-	visited.add(currentNode);
+function traverseAndAnimateBFS(startNode) {
+	const visited = new Set();
+	const queue = [{ node: startNode, depth: 0 }];
+	while (queue.length > 0) {
+		const { node: currentNode, depth } = queue.shift();
+		if (visited.has(currentNode)) continue;
+		visited.add(currentNode);
 
-	const connections = Connections[currentNode];
-	if (!connections) return;
-	console.log(`${depth}: currentNode ${currentNode}`);
-	connections.forEach(conn => {
-		const { source, target, pathId } = conn;
+		const connections = Connections[currentNode];
+		if (!connections) continue;
+		console.log(`${depth}: currentNode ${currentNode}`);
 
-		// Gán giá trị từ source sang target (giả lập truyền dữ liệu)
-		const value = getValueFromComponents(source, Components);
-		setValueInComponents(target, value, Components);
-		// Animation hiển thị truyền dữ liệu
-		dataSignalNodesGroup[depth].appendChild(createNodeWithAnimation({
-			value: value,
-			fieldName: `${source}-to-${target}`,
-			onEndCallback: null, // Tạm thời chưa cần event
-			pathId: pathId,
-			duration: 2,
-			className: 'parsed-node',
-			shapeType: 'rect'
-		}));
-	});
-	connections.forEach(conn => {
-		const targetComponent = conn.target.split('.')[0];
-		traverseAndAnimate(targetComponent, depth + 1,visited);
-	});
+		// First process all current connections (same level)
+		connections.forEach(conn => {
+			const { source, target, pathId } = conn;
+
+			const value = getValueFromComponents(source, Components);
+			setValueInComponents(target, value, Components);
+
+			dataSignalNodesGroup[depth].appendChild(createNodeWithAnimation({
+				value: value,
+				fieldName: `${source}-to-${target}`,
+				onEndCallback: null,
+				pathId: pathId,
+				duration: 2,
+				className: 'parsed-node',
+				shapeType: 'rect'
+			}));
+		});
+
+		// Then enqueue target components for the next level
+		connections.forEach(conn => {
+			const targetComponent = conn.target.split('.')[0];
+			if (!visited.has(targetComponent)) {
+				queue.push({ node: targetComponent, depth: depth + 1 });
+			}
+		});
+	}
 }
 
 export function run() {
-	traverseAndAnimate("PC");
+	traverseAndAnimateBFS("PC");
 }
