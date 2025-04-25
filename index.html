@@ -368,6 +368,37 @@
             <text id="write-data" x = "5" y = "160" class = "instruction">  </text>
           </g>
 
+          <!-- <g id="clone-register" transform = "translate(1400, 600) scale(2)">
+            <rect width = "170" height = "220" class = "component" />
+
+            <text x = "115" y = "205" class = "label"> Registers </text>
+
+            <text x = "5"   y = "20"  class = "mem-label"> Read </text>
+            <text x = "5"   y = "40"  class = "mem-label"> register 1 </text>
+              
+            <text x = "5"   y = "75"  class = "mem-label"> Read </text>
+            <text x = "5"   y = "95"  class = "mem-label"> register 2 </text>
+      
+            <text x = "5"   y = "145" class = "mem-label"> Write </text>
+            <text x = "5"   y = "165" class = "mem-label"> register </text>
+              
+            <text x = "5"   y = "190" class = "mem-label"> Write </text>
+            <text x = "5"   y = "210" class = "mem-label"> data </text>
+
+            <text x = "115" y = "40"  class = "mem-label"> Read </text>
+            <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
+
+            <text x = "115" y = "130" class = "mem-label"> Read </text>
+            <text x = "110" y = "150" class = "mem-label"> data 2 </text>
+
+            <text id = "regwrite-to-register-value" x = "95" y = "-5" class = "mem-control-label">0</text>
+            
+            <text id="read1" x = "5" y = "60" class = "instruction">  </text>
+            <text id="read2" x = "5" y = "90" class = "instruction">  </text>
+            <text id="write-reg" x = "5" y = "130" class = "instruction">  </text>
+            <text id="write-data" x = "5" y = "160" class = "instruction">  </text>
+          </g> -->
+
           <!-- data-memory  -->
           <g id="data-memory" transform = "translate(1450, 610)">
             <rect width = "140" height = "200" class = "component" />
@@ -561,14 +592,17 @@
         </g> <!-- End Components Layer -->
       </svg>
       </div>
+
       <button class = "frame-button" id = "fullscreen-btn" title = "Toggle fullscreen"></button>
       <button class = "start-button" id = "start-animation" title = "Start animation">▶</button>
       <button class = "stop-button"  id = "stop-animation" title = "Stop animation">⏺</button>
+
       <div class = "command-box">
         <p id = "assembly-instruction"> </p>
-        <p id = "machine-language-instruction"> ADD X9, X20, X21 </p>
+        <p id = "machine-language-instruction">ADD X9, X20, X21</p>
       </div>
     </div>
+
     <div class="range-container">
       <input type="range" id="range-slider" class="range-slider" min="0" max="100" value="50">
       <label for="range-slider" class="range-label">

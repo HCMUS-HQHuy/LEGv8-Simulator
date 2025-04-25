@@ -305,8 +305,6 @@ body {
 	overflow: hidden;
 	position: relative;
   font-family: monospace;
-
-  position: relative;
 }
 .content {
 	transform-origin: top left;
@@ -504,8 +502,8 @@ body {
   font-family: monospace;
   font-weight: bold;
   font-size: 17px;
-  bottom: 10px;
-  left: 10px;
+  bottom: 0px;
+  left: 20px;
 
   position: absolute;
 }
