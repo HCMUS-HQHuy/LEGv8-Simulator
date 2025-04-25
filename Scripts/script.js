@@ -175,3 +175,21 @@ function updateMuxDisplay() {
 }
 
 updateMuxDisplay();
+
+const registerGroup = document.getElementById('register');
+const svgContainer = document.querySelector('svg');  // Chọn phần tử SVG chứa nhóm
+
+registerGroup.addEventListener('click', (event) => {
+    // Tạo phiên bản clone của nhóm 'register'
+    const clonedGroup = registerGroup.cloneNode(true);
+
+    // Thêm phiên bản clone vào trong SVG
+    svgContainer.appendChild(clonedGroup);
+
+    // Phóng to và di chuyển bản sao đến vị trí (0, 0)
+    clonedGroup.setAttribute('transform', 'translate(10, 10) scale(2)');  // Di chuyển và phóng to gấp 2 lần
+
+    setTimeout(() => {
+        clonedGroup.remove();  // Xóa bản sao sau 2 giây
+    }, 2000);
+});
