@@ -147,7 +147,6 @@ const Components = {
 	}
 };
 
-
 const Connections = {
 	PC: [
 		{ source: 'PC.Newvalue', target: 'InstructionMemory.ReadAddress', pathId: 'pc-to-instruction-memory-path' },
@@ -236,6 +235,102 @@ const Connections = {
 	]
 };
 
+const requiredTriggers = {
+	PC: 0,
+	Const4: 0,
+	InstructionMemory: 1,
+	Register: 4,
+	DataMemory: 3,
+	Add0: 2,
+	Add1: 2,
+	ALU: 3,
+	Control: 1,
+	ShiftLeft2: 1,
+	SignExtend: 1,
+	ALUControl: 2,
+	Mux0: 3,
+	Mux1: 3,
+	Mux2: 3,
+	Mux3: 3,
+	AndGate: 2,
+	OrGate: 2
+};
+
+const shape = {
+	PC: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Const4: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	InstructionMemory: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Register: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	DataMemory: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Add0: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Add1: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	ALU: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Control: {
+		className: 'signal-control-unit',
+		shapeType: 'circle'
+	},
+	ShiftLeft2: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	SignExtend: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	ALUControl: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Mux0: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Mux1: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Mux2: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Mux3: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	AndGate: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	OrGate: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	}
+};
+
 
 import {createNodeWithAnimation} from "../animation.js"
 const dataSignalNodesGroup = [
@@ -261,7 +356,7 @@ function setValueInComponents(target, value, components) {
 	if (components[comp]) components[comp][field] = value;
 }
 
-function traverseAndAnimateBFS(startNode, requiredTriggers) {
+function traverseAndAnimateBFS(startNode) {
 	const visited = new Set();
 	const queue = [{ node: startNode, depth: 0 }, {node: "Const4", depth: 0}];
 	const triggerCount = {};
@@ -289,18 +384,15 @@ function traverseAndAnimateBFS(startNode, requiredTriggers) {
 				onEndCallback: null,
 				pathId: pathId,
 				duration: 2,
-				className: 'parsed-node',
-				shapeType: 'rect'
+				className: shape[currentNode].className,
+				shapeType: shape[currentNode].shapeType
 			}));
 
 			const targetComponent = target.split('.')[0];
 
 			triggerCount[targetComponent]++;
 
-			console.log(`currernt: ${currentNode}  ${targetComponent}: triggerCNT: ${triggerCount[targetComponent]} and required: ${requiredTriggers[targetComponent]}`)
-
 			if (triggerCount[targetComponent] === requiredTriggers[targetComponent]) {
-				console.log("HELLO!\n");
 				queue.push({ node: targetComponent, depth: depth + 1 });
 			}
 		});
@@ -308,24 +400,5 @@ function traverseAndAnimateBFS(startNode, requiredTriggers) {
 }
 
 export function run() {
-	traverseAndAnimateBFS("PC", {
-		PC: 0,
-		Const4: 0,
-		InstructionMemory: 1,
-		Register: 4,
-		DataMemory: 3,
-		Add0: 2,
-		Add1: 2,
-		ALU: 3,
-		Control: 1,
-		ShiftLeft2: 1,
-		SignExtend: 1,
-		ALUControl: 2,
-		Mux0: 3,
-		Mux1: 3,
-		Mux2: 3,
-		Mux3: 3,
-		AndGate: 2,
-		OrGate: 2
-	});
+	traverseAndAnimateBFS("PC");
 }
