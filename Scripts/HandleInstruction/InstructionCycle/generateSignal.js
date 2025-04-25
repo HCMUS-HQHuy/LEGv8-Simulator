@@ -183,77 +183,47 @@ const shapes = {
 	}
 };
 
-const onEndCallbacks = {
-	PC: [ () => {} ],
-	Const4: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	InstructionMemory: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Register: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	DataMemory: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Add0: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Add1: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	ALU: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Control: {
-		className: 'signal-control-unit',
-		shapeType: 'circle'
-	},
-	ShiftLeft2: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	SignExtend: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	ALUControl: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Mux0: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Mux1: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Mux2: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Mux3: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	AndGate: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	OrGate: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	}
-};
+const signalCallbackTable = {
+	"InstructionMemory.ReadAddress": null,
+	"Add0.input1": null,
+	"Add1.input1": null,
+	"Add0.input2": null,
+	"Control.Input": null,
+	"ALUControl.Opcode": null,
+	"Register.Read1": null,
+	"Register.WriteReg": null,
+	"Mux1.input0": null,
+	"Mux1.input1": null,
+	"SignExtend.input": null,
+	"Mux0.input0": null,
+	"Mux1.option": null,
+	"OrGate.input1": null,
+	"AndGate.input1": null,
+	"DataMemory.readEnable": null,
+	"Mux3.option": null,
+	"ALUControl.ALUOp": null,
+	"DataMemory.writeEnable": null,
+	"Mux2.option": null,
+	"Register.writeEnable": null,
+	"ShiftLeft2.input": null,
+	"Mux2.input1": null,
+	"Register.read2": null,
+	"ALU.option": null,
+	"Add1.input2": null,
+	"Mux2.input0": null,
+	"ALU.input2": null,
+	"DataMemory.WriteData": null,
+	"Mux0.input1": null,
+	"ALU.input1": null,
+	"Mux3.input1": null,
+	"DataMemory.address": null,
+	"Mux3.input0": null,
+	"AndGate.input2": null,
+	"Register.WriteData": null,
+	"OrGate.input2": null,
+	"PC.NewValue": null
+  };
+  
 
 import {createNodeWithAnimation} from "./animation.js"
 const dataSignalNodesGroup = [
@@ -304,13 +274,14 @@ function traverseAndAnimateBFS(startNode, components) {
 				queue.push({ node: targetComponent, depth: depth + 1 });
 			}
 
-			console.log(`from: ${source} to : ${target}`);
+			// console.log(`from: ${source} to : ${target}`);
+			console.log(`target : ${target}`);
 
 			dataSignalNodesGroup[depth].appendChild(createNodeWithAnimation({
 				value: value,
 				// fieldName: `${source}-to-${target}`,
 				fieldName: `${target}`,
-				onEndCallback: null,
+				onEndCallback: signalCallbackTable[`${target}`],
 				pathId: pathId,
 				duration: 2,
 				className: shapes[currentNode].className,

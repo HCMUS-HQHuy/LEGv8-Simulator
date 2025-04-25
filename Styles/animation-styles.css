@@ -49,7 +49,7 @@
   stroke-width: 1px;
 }
 
-.signal-control-unit.ALUOp circle {
+.signal-control-unit.ALUControl\.ALUOp circle {
   r: 10px;
   fill: #FF851B;
   stroke: black;
