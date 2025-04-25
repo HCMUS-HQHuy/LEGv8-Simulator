@@ -7,6 +7,22 @@ import * as decode from "./InstructionCycle/decode.js"
 import * as execute from "./InstructionCycle/execute.js"
 import * as run from "./Compile/processState.js"
 
+import * as infor from "./InstructionCycle/Define/information.js"
+
+const dataSignalNodesGroup = [
+	document.getElementById('data-signal-nodes0'),
+	document.getElementById('data-signal-nodes1'),
+	document.getElementById('data-signal-nodes2'),
+	document.getElementById('data-signal-nodes3'),
+	document.getElementById('data-signal-nodes4'),
+	document.getElementById('data-signal-nodes5'),
+	document.getElementById('data-signal-nodes0'),
+	document.getElementById('data-signal-nodes1'),
+	document.getElementById('data-signal-nodes2'),
+	document.getElementById('data-signal-nodes0'),
+	document.getElementById('data-signal-nodes1'),
+	document.getElementById('data-signal-nodes2'),
+];
 
 function processCode() {
 	const results = formatCode.getResult();
@@ -14,18 +30,22 @@ function processCode() {
 		console.error("formatcode: Have some problem!");
 		return;
 	}
-	parsedOutputTable.update(results);
-	currentInstruction.update(results[0]);
+	// parsedOutputTable.update(results);
+	// currentInstruction.update(results[0]);
 
-	const parsedInstruction = results[0].parsed;
-	const state = run.generateState(parsedInstruction);
-	fetch.trigger(state, decode.trigger(state, execute.trigger(state)));
+	// const parsedInstruction = results[0].parsed;
+	// const state = run.generateState(parsedInstruction);
+	// fetch.trigger(state, decode.trigger(state, execute.trigger(state)));
 
+	infor.run();
+
+	let i = 0;
 	const intervalId = setInterval(() => {
-		if (animate.startSignalAnimation() == false) {
+		if (i >= dataSignalNodesGroup.length || animate.startSignalAnimation(dataSignalNodesGroup[i]) == false) {
 			clearInterval(intervalId); // dừng interval
+			i = i + 1;
 		}
-	}, 2050);
+	}, 2100);
 }
 
 export function trigger() {
