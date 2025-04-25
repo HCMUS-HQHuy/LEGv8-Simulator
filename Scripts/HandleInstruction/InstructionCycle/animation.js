@@ -3,13 +3,13 @@ const dataSignalNodesGroup = document.getElementById('data-signal-nodes');
 export function startSignalAnimation() {
     if (dataSignalNodesGroup == null) {
         console.error("dataSignalNodesGroup is null");
-        return null;
+        return false;
     }
 
 	const animations = dataSignalNodesGroup.querySelectorAll('animateMotion');
 	if (animations.length === 0) {
 		console.log("No data signal nodes found to animate.");
-		return;
+		return false;
 	}
 	console.log(`Starting animation for ${animations.length} data signals.`);
 	animations.forEach(anim => {
@@ -21,6 +21,7 @@ export function startSignalAnimation() {
 			console.warn(`Could not find parent group for data animation element:`, anim);
 		}
 	});
+    return true;
 }
 
 export function createNodeWithAnimation({ 

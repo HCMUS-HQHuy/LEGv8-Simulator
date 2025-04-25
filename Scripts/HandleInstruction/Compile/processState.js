@@ -27,7 +27,9 @@ const state = {
 
 	},
 	Add0: {
-
+        input1: null,
+        input2: null,
+        output: null
 	},
 	Add1: {
         input1: null,
@@ -105,6 +107,7 @@ export function generateState(parsedInstruction) {
     updateShiftLeft2(state);
 	updateRegister(state);
     updateAdd1(state);
+    updateAdd0(state);
 	return state;
 }
 
@@ -126,7 +129,7 @@ function updatePC(currentState, parsedInstruction) {
 }
 
 function updateInstructionMemory(currentState, parsedInstruction) {
-	currentState.InstructionMemory.ReadAddress = currentState.PC.Newvalue;
+	currentState.InstructionMemory.ReadAddress = `0x${currentState.PC.OldValue.toString(16).toUpperCase()}`;
 	const encodedInstruction = encodeLegv8Instruction(parsedInstruction);
 	currentState.InstructionMemory.Instruction = encodedInstruction;
 	currentState.InstructionMemory.Instruction31_00 = encodedInstruction;
@@ -255,7 +258,7 @@ function updateSignExtend(currentState) {
 		const inputHex = parseInt(fullInstruction, 2).toString(16).toUpperCase();
 		currentState.SignExtend.input = `0x${inputHex}`;
 		const outputValue = signExtend(fullInstruction, 32, targetBits);
-		currentState.SignExtend.output = `0x${parseInt(outputValue, 2).toString(16).toUpperCase()}`;
+		currentState.SignExtend.output = parseInt(outputValue, 2);
 		return;
 	}
     let outputValue = null;
@@ -364,7 +367,7 @@ function updateMux2(currentState) {
     const selector        = currentState.Control.ALUSrc;
 
 	currentState.Mux2.input0 = input0_RegData2;
-    currentState.Mux2.input1 = input1_SignExt;
+    currentState.Mux2.input1 = `0x${input1_SignExt.toString(16).toUpperCase()}`;
     currentState.Mux2.option = selector;
 
     let outputValue = null;
@@ -421,69 +424,27 @@ function updateRegister(currentState) {
 }
 
 function updateShiftLeft2(currentState) {
-    const hexInputValue = currentState?.SignExtend?.output;
-    currentState.ShiftLeft2.input = hexInputValue; // Lưu input gốc
-    let outputHex = null;
-
-    if (hexInputValue && typeof hexInputValue === 'string' &&
-        (hexInputValue.startsWith('0x') || hexInputValue.startsWith('0X')))
-    {
-        try {
-            const inputBigInt = BigInt(hexInputValue);
-            const shiftedBigInt = inputBigInt << 2n; // Dùng 2n cho BigInt literal
-            const sixtyFourBitMask = (1n << 64n) - 1n; // Tạo mask 0xFFFFFFFFFFFFFFFF
-            const resultIn64Bit = shiftedBigInt & sixtyFourBitMask;
-            let hexString = resultIn64Bit.toString(16);
-            const paddedHexString = hexString.padStart(16, '0');
-            outputHex = '0x' + paddedHexString;
-
-        } catch (e) {
-            console.error(`ShiftLeft2 Error processing hex '${hexInputValue}': ${e.message}`);
-            outputHex = null;
-        }
-    } else if (hexInputValue !== null && hexInputValue !== undefined) {
-         console.warn(`ShiftLeft2 Warning: Input '${hexInputValue}' is not a valid hex string starting with "0x".`);
-         outputHex = null;
-    }
-    currentState.ShiftLeft2.output = outputHex;
+    const value = currentState?.SignExtend?.output;
+    currentState.ShiftLeft2.input = `0x${value.toString(16).toUpperCase()}`;
+    currentState.ShiftLeft2.output = (value << 2);
 
     console.log("ShiftLeft2 Updated:", currentState.ShiftLeft2);
 }
 
+function updateAdd0(currentState) {
+    const hexInputPCOld = currentState.PC.OldValue;
+    const constantInput4 = 4; // Input 2 is the constant 4
+    currentState.Add0.input1 = `0x${hexInputPCOld.toString(16)}`;
+    currentState.Add0.input2 = `0x${constantInput4.toString(16)}`;
+    currentState.Add0.output = hexInputPCOld + constantInput4;
+    console.log("Add0 Updated:", currentState.Add0);
+}
+
 function updateAdd1(currentState) {
-
-    const hexInputPC = currentState.PC.Newvalue;
+    const hexInputPC = currentState.PC.OldValue;
     const hexInputSL2 = currentState.ShiftLeft2.output;
-
-    currentState.Add1.input1 = hexInputPC;
-    currentState.Add1.input2 = hexInputSL2;
-
-    let outputHex = null;
-    const isValidHex = (hex) => typeof hex === 'string' && (hex.startsWith('0x') || hex.startsWith('0X'));
-
-    if (hexInputPC && hexInputSL2 && isValidHex(hexInputPC) && isValidHex(hexInputSL2))
-    {
-        try {
-            const bigIntPC = BigInt(hexInputPC);
-            const bigIntSL2 = BigInt(hexInputSL2);
-            const sumBigInt = bigIntPC + bigIntSL2;
-            const sixtyFourBitMask = (1n << 64n) - 1n; // Mask 0xFF...FF
-            const resultIn64Bit = sumBigInt & sixtyFourBitMask;
-            let hexString = resultIn64Bit.toString(16);
-            const paddedHexString = hexString.padStart(16, '0');
-
-            // 9. Add "0x" prefix
-            outputHex = '0x' + paddedHexString;
-
-        } catch (e) {
-            console.error(`Add1 Error processing hex inputs '${hexInputPC}', '${hexInputSL2}': ${e.message}`);
-            outputHex = null; // Set output to null on error
-        }
-    } else {
-        if (hexInputPC !== null || hexInputSL2 !== null) {
-             console.warn(`Add1 Warning: One or both inputs are invalid hex strings. PC='${hexInputPC}', SL2='${hexInputSL2}'`);
-        }
-    }
-    currentState.Add1.output = outputHex;
+    currentState.Add1.input1 = `0x${hexInputPC.toString(16).toUpperCase()}`;
+    currentState.Add1.input2 = `0x${hexInputSL2.toString(16).toUpperCase()}`;
+    currentState.Add1.output = hexInputPC + hexInputSL2;
     console.log("Add1 Updated:", currentState.Add1);
 }

@@ -111,27 +111,26 @@ function displayDataSignalNodes(state, opcodeArrivalCallback) {
 }
 
 function handleFromSignExtend(state) {
-	const signExtend  = state.SignExtend;
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-		value: signExtend.output, 
+		value: state.Mux2.input1, 
 		fieldName: `sign-extend-to-mux`,
-		onEndCallback: [()=>{ document.getElementById("mux-2-1").textContent=signExtend.output}],
+		onEndCallback: [()=>{ document.getElementById("mux-2-1").textContent=state.Mux2.input1}],
 		pathId: "sign-extend-to-mux-2-1-path",
 		duration: DEFAULT_ANIMATION_DURATION, 
 		className: 'parsed-node',
 		shapeType: 'rect'
 	}));
 	dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-		value: signExtend.output, 
+		value: state.ShiftLeft2.input, 
 		fieldName: `sign-extend-to-shift`,
 		onEndCallback: [()=>{ 
-			document.getElementById("shift-left-2-text").textContent=signExtend.output;
+			document.getElementById("shift-left-2-text").textContent=state.ShiftLeft2.input;
 			dataSignalNodesGroup.appendChild(createNodeWithAnimation({
-				value: state.ShiftLeft2.output, 
+				value: state.Add1.input2, 
 				fieldName: `shift-to-add`,
 				onEndCallback: [
 					()=>{ 
-						document.getElementById("add-1-1").textContent=state.ShiftLeft2.output;
+						document.getElementById("add-1-2").textContent=state.Add1.input2;
 					}
 				],
 				pathId: "shift-left-2-to-add-1-path",

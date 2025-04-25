@@ -19,20 +19,13 @@ function processCode() {
 
 	const parsedInstruction = results[0].parsed;
 	const state = run.generateState(parsedInstruction);
-	fetch.trigger(state.PC, decode.trigger(state, execute.trigger(state)));
-
-	let count = 0;
-	const maxCalls = 5; // số lần gọi tối đa
-	const interval = 2100;
+	fetch.trigger(state, decode.trigger(state, execute.trigger(state)));
 
 	const intervalId = setInterval(() => {
-		animate.startSignalAnimation();
-		count++;
-
-		if (count >= maxCalls) {
+		if (animate.startSignalAnimation() == false) {
 			clearInterval(intervalId); // dừng interval
 		}
-	}, interval);
+	}, 2050);
 }
 
 export function trigger() {
