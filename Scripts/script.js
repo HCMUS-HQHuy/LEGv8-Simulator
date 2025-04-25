@@ -174,4 +174,4 @@ function updateMuxDisplay() {
     }
 }
 
-updateMuxDisplay();
+// updateMuxDisplay();

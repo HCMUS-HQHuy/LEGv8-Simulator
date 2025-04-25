@@ -222,7 +222,7 @@ const signalCallbackTable = {
 	"Register.WriteData": null,
 	"OrGate.input2": null,
 	"PC.NewValue": null
-  };
+};
   
 
 import {createNodeWithAnimation} from "./animation.js"
@@ -276,6 +276,8 @@ function traverseAndAnimateBFS(startNode, components) {
 
 			// console.log(`from: ${source} to : ${target}`);
 			console.log(`target : ${target}`);
+			if (signalCallbackTable[`${target}`])
+				console.warn(`onEndCallBack: ${signalCallbackTable[`${target}`]}`);
 
 			dataSignalNodesGroup[depth].appendChild(createNodeWithAnimation({
 				value: value,
@@ -292,5 +294,13 @@ function traverseAndAnimateBFS(startNode, components) {
 }
 
 export function trigger(components) {
+	signalCallbackTable["Mux1.option"] = [
+		() => {
+			document.getElementById(`mux-1-${components.Mux1.option}-selected`).style.visibility = "visible";
+			document.getElementById(`mux-1-${components.Mux1.option ^ 1}-selected`).style.visibility = "hidden";
+			console.warn(`mux-1-${components.Mux1.option}-selected`);
+		}
+	];
+
 	traverseAndAnimateBFS("PC", components);
 }
