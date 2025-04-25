@@ -108,11 +108,83 @@ const requiredTriggers = {
 	OrGate: 2
 };
 
-const shape = {
+const shapes = {
 	PC: {
+		className: 'data-node',
+		shapeType: 'rect'
+	},
+	Const4: {
+		className: 'data-node',
+		shapeType: 'rect'
+	},
+	InstructionMemory: {
 		className: 'parsed-node',
 		shapeType: 'rect'
 	},
+	Register: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	DataMemory: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Add0: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Add1: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	ALU: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Control: {
+		className: 'signal-control-unit',
+		shapeType: 'circle'
+	},
+	ShiftLeft2: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	SignExtend: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	ALUControl: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Mux0: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Mux1: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Mux2: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	Mux3: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	AndGate: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	},
+	OrGate: {
+		className: 'parsed-node',
+		shapeType: 'rect'
+	}
+};
+
+const onEndCallbacks = {
+	PC: [ () => {} ],
 	Const4: {
 		className: 'parsed-node',
 		shapeType: 'rect'
@@ -183,7 +255,6 @@ const shape = {
 	}
 };
 
-
 import {createNodeWithAnimation} from "./animation.js"
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -227,23 +298,24 @@ function traverseAndAnimateBFS(startNode, components) {
 			const value = getValueFromComponents(source, components);
 			setValueInComponents(target, value, components);
 
-			dataSignalNodesGroup[depth].appendChild(createNodeWithAnimation({
-				value: value,
-				fieldName: `${source}-to-${target}`,
-				onEndCallback: null,
-				pathId: pathId,
-				duration: 2,
-				className: shape[currentNode].className,
-				shapeType: shape[currentNode].shapeType
-			}));
-
 			const targetComponent = target.split('.')[0];
-
 			triggerCount[targetComponent]++;
-
 			if (triggerCount[targetComponent] === requiredTriggers[targetComponent]) {
 				queue.push({ node: targetComponent, depth: depth + 1 });
 			}
+
+			console.log(`from: ${source} to : ${target}`);
+
+			dataSignalNodesGroup[depth].appendChild(createNodeWithAnimation({
+				value: value,
+				// fieldName: `${source}-to-${target}`,
+				fieldName: `${target}`,
+				onEndCallback: null,
+				pathId: pathId,
+				duration: 2,
+				className: shapes[currentNode].className,
+				shapeType: shapes[currentNode].shapeType
+			}));
 		});
 	}
 }
