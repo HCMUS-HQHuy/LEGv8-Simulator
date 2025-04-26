@@ -142,6 +142,8 @@ import {createNodeWithAnimation} from "./animation.js"
 import { computeOutputs } from "./computationOutputs.js";
 import { encodeLegv8Instruction } from "../Compile/parser.js";
 import { SPEED_ANIMATION } from "./animationSpeed.js";
+import { watchDataMemory } from "../Compile/memoryState.js";
+import { watchRegisters } from "../Compile/memoryState.js";
 
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -260,6 +262,8 @@ export function initialize(code) {
 		() => {document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;}
 	];
 
+	watchDataMemory(Components.DataMemory);
+	watchRegisters(Components.Register);
 	Components.PC.value = 0;
 	
 	code.forEach(key => {
