@@ -2,12 +2,13 @@ import * as ZoomDragAndDrop from "./HandleFrame/zoomDragAndDrop.js"
 import * as SwitchThemes from "./HandleOutLook/themes.js"
 import * as instructionLine from "./HandleOutLook/instructionCode.js"
 import * as handleReceivInstruction from "./HandleInstruction/ProcessCode.js"
-
+import * as animationSpeed from "./HandleInstruction/InstructionCycle/animationSpeed.js"
 document.addEventListener('DOMContentLoaded', function() {
 	SwitchThemes.trigger();
 	ZoomDragAndDrop.trigger();
 	instructionLine.trigger();
 
+    animationSpeed.trigger();
 	// LOGIC BEGIN
 	handleReceivInstruction.trigger();
 
@@ -93,23 +94,6 @@ document.addEventListener('MSFullscreenChange', updateButtonState);     // IE/Ed
 
 // Cập nhật trạng thái nút khi tải trang lần đầu (phòng trường hợp đặc biệt)
 updateButtonState();
-
-const rangeSlider = document.getElementById('range-slider');
-const rangeValue = document.getElementById('range-value');
-
-rangeSlider.addEventListener('input', () => {
-    rangeValue.textContent = rangeSlider.value;
-});
-
-const slider = document.getElementById('range-slider');
-
-function updateSliderBackground() {
-    const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
-    slider.style.background = `linear-gradient(to right, #4CAF50 ${value}%, #ddd ${value}%)`;
-}
-
-slider.addEventListener('input', updateSliderBackground);
-updateSliderBackground(); // gọi 1 lần khi load
 
 let mux_0_status = 0; // -1, 0, 1
 let mux_1_status = 0; // -1, 0, 1

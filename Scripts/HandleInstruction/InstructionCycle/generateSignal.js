@@ -135,12 +135,13 @@ const signalCallbackTable = {
 	"OrGate.input2": null,
 	"PC.value": null
 };
-  
+
 import { getComponents } from "../Compile/Define/components.js";
 import { Connections } from "../Compile/Define/Connections.js"
 import {createNodeWithAnimation} from "./animation.js"
 import { computeOutputs } from "./computationOutputs.js";
 import { encodeLegv8Instruction } from "../Compile/parser.js";
+import { SPEED_ANIMATION } from "./animationSpeed.js";
 
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -206,7 +207,7 @@ function traverseAndAnimateBFS(startNode, components) {
 				fieldName: `${target}`,
 				onEndCallback: signalCallbackTable[`${target}`],
 				pathId: pathId,
-				duration: 1,
+				duration: SPEED_ANIMATION / 1000,
 				className: shapes[currentNode].className,
 				shapeType: shapes[currentNode].shapeType
 			}));

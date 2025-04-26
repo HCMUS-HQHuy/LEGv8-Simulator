@@ -4,6 +4,7 @@ import * as animate from "./InstructionCycle/animation.js"
 import * as formatCode from "./Compile/formatCode.js"
 
 import * as generateSignal from "./InstructionCycle/generateSignal.js"
+import {SPEED_ANIMATION} from "./InstructionCycle/animationSpeed.js"
 
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -22,7 +23,7 @@ async function playAnimationsSequentially(promise) {
 	for (let i = 0; i < dataSignalNodesGroup.length; i++) {
 		const success = animate.startSignalAnimation(dataSignalNodesGroup[i]);
 		if (success === false) break;
-		await new Promise(resolve => setTimeout(resolve, 1000));
+		await new Promise(resolve => setTimeout(resolve, SPEED_ANIMATION));
 	}
 	promise();
 }

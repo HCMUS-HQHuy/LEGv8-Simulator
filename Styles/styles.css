@@ -457,7 +457,7 @@ body {
   width: 20%;
   height: 8px;
   border-radius: 5px;
-  background: linear-gradient(to right, #4CAF50 50%, #ddd 50%);
+  background: linear-gradient(to right, #4CAF50 0%, #ddd 0%);
   outline: none;
   transition: background 0.3s;
   margin: 10px 0;
