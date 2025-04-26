@@ -4,7 +4,7 @@ export function computeOutputs(componentName, components) {
 	switch (componentName) {
 		case 'InstructionMemory':
 			const InstructionMemory = components[componentName];
-			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress];
+			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2];
 			InstructionMemory.Instruction31_00 = encodedInstruction;
 			InstructionMemory.Opcode_31_21 = encodedInstruction.substring(0, 11);
 			InstructionMemory.Rm_20_16 = encodedInstruction.substring(11, 16);

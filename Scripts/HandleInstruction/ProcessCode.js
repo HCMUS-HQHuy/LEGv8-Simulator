@@ -18,15 +18,16 @@ const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes9')
 ];
 
-async function playAnimationsSequentially() {
+async function playAnimationsSequentially(promise) {
 	for (let i = 0; i < dataSignalNodesGroup.length; i++) {
 		const success = animate.startSignalAnimation(dataSignalNodesGroup[i]);
 		if (success === false) break;
-		await new Promise(resolve => setTimeout(resolve, 2000));
+		await new Promise(resolve => setTimeout(resolve, 1000));
 	}
+	promise();
 }
 
-function processCode() {
+async function processCode() {
 	const results = formatCode.getResult();
 	if (results == null) {
 		console.error("formatcode: Have some problem!");
@@ -34,19 +35,17 @@ function processCode() {
 	}
 	parsedOutputTable.update(results);
 	currentInstruction.update(results[0]);
-
-	// const parsedInstruction = results[0].parsed;
-	// fetch.trigger(state, decode.trigger(state, execute.trigger(state)));
-	
-	// const components = run.getComponents(parsedInstruction);
-	console.log(`results: ${results[0].assemblyInstruction}`);
+	console.log(`results: ${results.length}`);
 	const Components = generateSignal.initialize(results);
 
 	console.log("---------------START----------------");
 	while (true) {
 		const index = generateSignal.start(Components);
+		console.log(`index: ${index}`);
 		if (index == -1) break;
-		playAnimationsSequentially();
+		await new Promise((promise) => {
+			playAnimationsSequentially(promise);
+		});
 	}
 	console.log("---------------END----------------");
 }

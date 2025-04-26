@@ -207,7 +207,7 @@ function traverseAndAnimateBFS(startNode, components) {
 				fieldName: `${target}`,
 				onEndCallback: signalCallbackTable[`${target}`],
 				pathId: pathId,
-				duration: 2,
+				duration: 1,
 				className: shapes[currentNode].className,
 				shapeType: shapes[currentNode].shapeType
 			}));
@@ -271,7 +271,7 @@ export function initialize(code) {
 }
 
 export function start(Components) {
-	if (Components.PC.value >= Components.InstructionMemory.instruction.length) {
+	if (Components.PC.value >= Components.InstructionMemory.instruction.length * 4) {
 		return -1;
 	}
 	traverseAndAnimateBFS("PC", Components);
