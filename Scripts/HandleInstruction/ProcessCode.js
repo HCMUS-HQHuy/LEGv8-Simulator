@@ -39,6 +39,12 @@ function compileCode() {
 }
 
 async function execute(results) {
+	dataSignalNodesGroup.forEach(group => {
+		if (group) {
+		  group.innerHTML = '';  // Xóa tất cả các phần tử con trong <g>
+		}
+	  });
+
 	if (results == null) {
 		console.warn("formatcode: Have some problem!");
 		return;
