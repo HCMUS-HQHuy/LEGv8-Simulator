@@ -41,9 +41,6 @@ async function processCode() {
 
 	console.log("---------------START----------------");
 	state.executing = true;
-	const rangeSlider = document.getElementById('range-slider');
-	const value = (rangeSlider.value - rangeSlider.min) / (rangeSlider.max - rangeSlider.min) * 100;
-	rangeSlider.style.background = `linear-gradient(to right,rgb(78, 92, 79) ${value}%, #ddd ${value}%)`;
 	while (true) {
 		const index = generateSignal.start(Components);
 		console.log(`index: ${index}`);
@@ -52,7 +49,6 @@ async function processCode() {
 			playAnimationsSequentially(promise);
 		});
 	}
-	rangeSlider.style.background = `linear-gradient(to right, #4CAF50 ${value}%, #ddd ${value}%)`;
 	state.executing = false;
 	console.log("---------------END----------------");
 }

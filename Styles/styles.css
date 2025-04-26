@@ -457,7 +457,7 @@ body {
   width: 20%;
   height: 8px;
   border-radius: 5px;
-  background: linear-gradient(to right, #4CAF50 40%, #ddd 40%);
+  background: linear-gradient(to right, rgb(67, 161, 70) 40%, #ddd 40%);
   outline: none;
   transition: background 0.3s;
   margin: 10px 0;
@@ -471,7 +471,7 @@ body {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #4CAF50;
+  background: var(--thumb-color, rgb(67, 161, 70));;
   border: 2px solid white;
   box-shadow: 0 0 2px rgba(0,0,0,0.5);
   transition: background 0.3s;
