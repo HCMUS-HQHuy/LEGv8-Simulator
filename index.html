@@ -305,7 +305,7 @@
 
             <text x = "25" y = "50" class = "label"> PC </text>
             
-            <text id = "pc-value-text" x = "-30" y = "125" class = "mem-control-label" font-weight = "bold"> 0x0 </text>
+            <text id = "pc-value-text" x = "4" y = "125" class = "mem-control-label" font-weight = "bold"> 0x00 </text>
           </g>
 
           <!-- instruction-memory -->
@@ -502,6 +502,8 @@
             <path id = "mux-0-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,60 L0,60 Z" class = "mux-select-0"/>
             <path id = "mux-0-1-selected" d = "M0,60 L40,60 L40,100 A20,20 0 0 1 20,120 A20,20 0 0 1 0,100 Z" class = "mux-select-1"/>
             
+            <rect x = "0"  y = "0" width = "40" height = "120" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
+            
             <text x = "14" y = "20"  class = "mem-label"> 0 </text>
             <text x = "20" y = "40"  class = "label">     M </text>
             <text x = "20" y = "60"  class = "label">     u </text>
@@ -514,9 +516,11 @@
           <!-- mux-1 -->
           <g id="mux-1" transform = "translate(670, 555)">
             <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
-
+            
             <path id = "mux-1-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,45 L0,45 Z" class = "mux-select-0"/>
             <path id = "mux-1-1-selected" d = "M0,45 L40,45 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-1"/>
+            
+            <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
             
             <text x = "14" y = "20" class = "mem-label"> 0 </text>
             <text x = "20" y = "35" class = "label">     M </text>
@@ -540,6 +544,8 @@
             
             <path id = "mux-2-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,50 L0,50 Z" class = "mux-select-0"/>
             <path id = "mux-2-1-selected" d = "M0,50 L40,50 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-1"/>
+            
+            <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
 
             <text x = "14" y = "20" class = "mem-label"> 0 </text>
             <text x = "20" y = "35" class = "label">     M </text>
@@ -559,6 +565,8 @@
             
             <path id = "mux-3-0-selected" d = "M0,50 L40,50 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-0"/>
             <path id = "mux-3-1-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,50 L0,50 Z" class = "mux-select-1"/>
+            
+            <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
 
             <text x = "14" y = "20" class = "mem-label"> 1 </text>
             <text x = "20" y = "35" class = "label">     M </text>
@@ -769,7 +777,7 @@
       </thead>
       <tbody>
         <tr>
-          <th>0</th>
+          <th id = "N">0</th>
         </tr>
       </tbody>
     </table>
@@ -781,7 +789,7 @@
       </thead>
       <tbody>
         <tr>
-          <th>0</th>
+          <th id = "Z">0</th>
         </tr>
       </tbody>
     </table>
@@ -793,7 +801,7 @@
       </thead>
       <tbody>
         <tr>
-          <th>0</th>
+          <th id = "V">0</th>
         </tr>
       </tbody>
     </table>
@@ -805,7 +813,7 @@
       </thead>
       <tbody>
         <tr>
-          <th>0</th>
+          <th id = "C">0</th>
         </tr>
       </tbody>
     </table>
@@ -829,14 +837,14 @@
       </thead>
       <tbody>
         <tr>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
+          <th id = "X00">0x00000000</th>
+          <th id = "X01">0x00000000</th>
+          <th id = "X02">0x00000000</th>
+          <th id = "X03">0x00000000</th>
+          <th id = "X04">0x00000000</th>
+          <th id = "X05">0x00000000</th>
+          <th id = "X06">0x00000000</th>
+          <th id = "X07">0x00000000</th>
         </tr>
       </tbody>
     </table>
@@ -855,14 +863,14 @@
       </thead>
       <tbody>
         <tr>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
+          <th id = "X08">0x00000000</th>
+          <th id = "X09">0x00000000</th>
+          <th id = "X10">0x00000000</th>
+          <th id = "X11">0x00000000</th>
+          <th id = "X12">0x00000000</th>
+          <th id = "X13">0x00000000</th>
+          <th id = "X14">0x00000000</th>
+          <th id = "X15">0x00000000</th>
         </tr>
       </tbody>
     </table>
@@ -881,14 +889,14 @@
       </thead>
       <tbody>
         <tr>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
+          <th id = "X16">0x00000000</th>
+          <th id = "X17">0x00000000</th>
+          <th id = "X18">0x00000000</th>
+          <th id = "X19">0x00000000</th>
+          <th id = "X20">0x00000000</th>
+          <th id = "X21">0x00000000</th>
+          <th id = "X22">0x00000000</th>
+          <th id = "X23">0x00000000</th>
         </tr>
       </tbody>
     </table>
@@ -907,14 +915,14 @@
       </thead>
       <tbody>
         <tr>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
-          <th>0x00000000</th>
+          <th id = "X24">0x00000000</th>
+          <th id = "X25">0x00000000</th>
+          <th id = "X26">0x00000000</th>
+          <th id = "X27">0x00000000</th>
+          <th id = "SP">0x00000000</th>
+          <th id = "FP">0x00000000</th>
+          <th id = "LR">0x00000000</th>
+          <th id = "XZR">0x00000000</th>
         </tr>
       </tbody>
     </table>
@@ -926,48 +934,82 @@
     <!-- Muốn hiển thị lại parsedOutput thuần thì phải vào script.js mở code lại nha -->
     <!-- <pre id="parsedOutput" rows="10" cols="50"></pre> -->
     
-    <table class = "parsedOutputTable">
-      <thead>
-        <tr>
-          <th>Address</th>
-          <th>Value</th>
-        </tr>
-      </thead>
-      <tbody id = "data-memory-table-values">
-        <tr>
-          <th>0x0000 0000</th>
-          <th>0x0000</th>
-        </tr>
-        <tr>
-          <th>0x0000 0008</th>
-          <th>0x0000</th>
-        </tr>
-        <tr>
-          <th>0x0000 0010</th>
-          <th>0x0000</th>
-        </tr>
-        <tr>
-          <th>0x0000 0018</th>
-          <th>0x0000</th>
-        </tr>
-        <tr>
-          <th>0x0000 0020</th>
-          <th>0x0000</th>
-        </tr>
-        <tr>
-          <th>0x0000 0028</th>
-          <th>0x0000</th>
-        </tr>
-        <tr>
-          <th>0x0000 0030</th>
-          <th>0x0000</th>
-        </tr>
-        <tr>
-          <th>0x0000 0038</th>
-          <th>0x0000</th>
-        </tr>
-      </tbody>
-    </table>
+    <div class = "table-scroll-wrapper">
+      <table class = "dataMemoryTable">
+        <thead>
+          <tr>
+            <th>Address</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody id = "data-memory-table-values">
+          <tr><th>0x0000</th><th id = "0x0000">0x0000</th></tr>
+          <tr><th>0x0008</th><th id = "0x0008">0x0000</th></tr>
+          <tr><th>0x0010</th><th id = "0x0010">0x0000</th></tr>
+          <tr><th>0x0018</th><th id = "0x0018">0x0000</th></tr>
+          <tr><th>0x0020</th><th id = "0x0020">0x0000</th></tr>
+          <tr><th>0x0028</th><th id = "0x0028">0x0000</th></tr>
+          <tr><th>0x0030</th><th id = "0x0030">0x0000</th></tr>
+          <tr><th>0x0038</th><th id = "0x0038">0x0000</th></tr>
+          <tr><th>0x0040</th><th id = "0x0040">0x0000</th></tr>
+          <tr><th>0x0048</th><th id = "0x0048">0x0000</th></tr>
+          <tr><th>0x0050</th><th id = "0x0050">0x0000</th></tr>
+          <tr><th>0x0058</th><th id = "0x0058">0x0000</th></tr>
+          <tr><th>0x0060</th><th id = "0x0060">0x0000</th></tr>
+          <tr><th>0x0068</th><th id = "0x0068">0x0000</th></tr>
+          <tr><th>0x0070</th><th id = "0x0070">0x0000</th></tr>
+          <tr><th>0x0078</th><th id = "0x0078">0x0000</th></tr>
+          <tr><th>0x0080</th><th id = "0x0080">0x0000</th></tr>
+          <tr><th>0x0088</th><th id = "0x0088">0x0000</th></tr>
+          <tr><th>0x0090</th><th id = "0x0090">0x0000</th></tr>
+          <tr><th>0x0098</th><th id = "0x0098">0x0000</th></tr>
+          <tr><th>0x00a0</th><th id = "0x00a0">0x0000</th></tr>
+          <tr><th>0x00a8</th><th id = "0x00a8">0x0000</th></tr>
+          <tr><th>0x00b0</th><th id = "0x00b0">0x0000</th></tr>
+          <tr><th>0x00b8</th><th id = "0x00b8">0x0000</th></tr>
+          <tr><th>0x00c0</th><th id = "0x00c0">0x0000</th></tr>
+          <tr><th>0x00c8</th><th id = "0x00c8">0x0000</th></tr>
+          <tr><th>0x00d0</th><th id = "0x00d0">0x0000</th></tr>
+          <tr><th>0x00d8</th><th id = "0x00d8">0x0000</th></tr>
+          <tr><th>0x00e0</th><th id = "0x00e0">0x0000</th></tr>
+          <tr><th>0x00e8</th><th id = "0x00e8">0x0000</th></tr>
+          <tr><th>0x00f0</th><th id = "0x00f0">0x0000</th></tr>
+          <tr><th>0x00f8</th><th id = "0x00f8">0x0000</th></tr>
+          <tr><th>0x0100</th><th id = "0x0100">0x0000</th></tr>
+          <tr><th>0x0108</th><th id = "0x0108">0x0000</th></tr>
+          <tr><th>0x0110</th><th id = "0x0110">0x0000</th></tr>
+          <tr><th>0x0118</th><th id = "0x0118">0x0000</th></tr>
+          <tr><th>0x0120</th><th id = "0x0120">0x0000</th></tr>
+          <tr><th>0x0128</th><th id = "0x0128">0x0000</th></tr>
+          <tr><th>0x0130</th><th id = "0x0130">0x0000</th></tr>
+          <tr><th>0x0138</th><th id = "0x0138">0x0000</th></tr>
+          <tr><th>0x0140</th><th id = "0x0140">0x0000</th></tr>
+          <tr><th>0x0148</th><th id = "0x0148">0x0000</th></tr>
+          <tr><th>0x0150</th><th id = "0x0150">0x0000</th></tr>
+          <tr><th>0x0158</th><th id = "0x0158">0x0000</th></tr>
+          <tr><th>0x0160</th><th id = "0x0160">0x0000</th></tr>
+          <tr><th>0x0168</th><th id = "0x0168">0x0000</th></tr>
+          <tr><th>0x0170</th><th id = "0x0170">0x0000</th></tr>
+          <tr><th>0x0178</th><th id = "0x0178">0x0000</th></tr>
+          <tr><th>0x0180</th><th id = "0x0180">0x0000</th></tr>
+          <tr><th>0x0188</th><th id = "0x0188">0x0000</th></tr>
+          <tr><th>0x0190</th><th id = "0x0190">0x0000</th></tr>
+          <tr><th>0x0198</th><th id = "0x0198">0x0000</th></tr>
+          <tr><th>0x01a0</th><th id = "0x01a0">0x0000</th></tr>
+          <tr><th>0x01a8</th><th id = "0x01a8">0x0000</th></tr>
+          <tr><th>0x01b0</th><th id = "0x01b0">0x0000</th></tr>
+          <tr><th>0x01b8</th><th id = "0x01b8">0x0000</th></tr>
+          <tr><th>0x01c0</th><th id = "0x01c0">0x0000</th></tr>
+          <tr><th>0x01c8</th><th id = "0x01c8">0x0000</th></tr>
+          <tr><th>0x01d0</th><th id = "0x01d0">0x0000</th></tr>
+          <tr><th>0x01d8</th><th id = "0x01d8">0x0000</th></tr>
+          <tr><th>0x01e0</th><th id = "0x01e0">0x0000</th></tr>
+          <tr><th>0x01e8</th><th id = "0x01e8">0x0000</th></tr>
+          <tr><th>0x01f0</th><th id = "0x01f0">0x0000</th></tr>
+          <tr><th>0x01f8</th><th id = "0x01f8">0x0000</th></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
   

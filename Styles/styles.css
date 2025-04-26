@@ -404,7 +404,7 @@ body {
 .parsedOutputTable {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-top: 5px;
   font-family: monospace;
   font-size: 14px;
   border: 2px solid var(--border-color); /* Use variable */
@@ -433,6 +433,63 @@ body {
   background-color: var(--table-row-hover-bg); /* Use variable */
 }
 .parsedOutputTable td:last-child {
+  color: var(--emphasis-color); /* Use variable */
+}
+.table-scroll-wrapper {
+  max-height: calc(9 * 33px); /* hoặc ví dụ: 256px */
+  overflow-y: auto;
+  position: relative;
+  border: 2px solid var(--border-color); /* Use variable */
+}
+/* Scrollbar: thanh cuộn màu xanh lá, bắt đầu từ thead */
+.table-scroll-wrapper::-webkit-scrollbar {
+  width: 5px; /* Độ rộng thanh cuộn */
+}
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: limegreen;
+  border-radius: 4px;
+  height: 20px; /* Chiều cao tối thiểu */
+}
+/* Cái này cần thêm để giới hạn chiều dài thumb */
+.table-scroll-wrapper::-webkit-scrollbar-thumb:vertical {
+  min-height: 20px;
+  max-height: 20px;
+}
+.table-scroll-wrapper::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.dataMemoryTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: monospace;
+  font-size: 14px;
+  color: var(--text-color); /* Set base text color for table */
+  background-color: var(--table-row-odd-bg); /* Set base background */
+}
+.dataMemoryTable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  font-weight: bold;
+  background-color: var(--table-header-bg); /* Use variable */
+  color: var(--text-color); /* Use variable (or a specific --table-header-text-color if needed) */
+}
+.dataMemoryTable th,
+.dataMemoryTable td {
+  border: 1px solid var(--table-border-color); /* Use variable */
+  padding: 8px;
+  text-align: center;
+}
+.dataMemoryTable tbody tr {
+  background-color: var(--table-row-odd-bg); /* Default odd row color */
+}
+.dataMemoryTable tbody tr:nth-child(even) {
+  background-color: var(--table-row-even-bg); /* Use variable */
+}
+.dataMemoryTable tbody tr:hover {
+  background-color: var(--table-row-hover-bg); /* Use variable */
+}
+.dataMemoryTable td:last-child {
   color: var(--emphasis-color); /* Use variable */
 }
 /* Registers */
