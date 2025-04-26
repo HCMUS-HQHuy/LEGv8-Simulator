@@ -514,8 +514,12 @@ body {
   font-family: monospace;
   font-weight: bold;
   font-size: 17px;
-  bottom: 0px;
-  left: 20px;
-
+  bottom: -2px;
+  left: -2px;
+  padding: 10px; /* Thêm khoảng cách giữa nội dung và border */
   position: absolute;
+}
+.command-box p {
+  margin: 0; /* Loại bỏ khoảng cách ngoài của thẻ p */
+  line-height: 1; /* Chỉnh khoảng cách giữa các dòng trong thẻ p */
 }
