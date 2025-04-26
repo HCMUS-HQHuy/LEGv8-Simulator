@@ -3,23 +3,23 @@ import {Components} from "./Define/components.js"
 import {R_TYPE_OPCODES} from "./Define/Opcode.js"
 
 
-export function udpateComponents(parsedInstruction) {
-	updateInstructionMemory(Components, parsedInstruction);
-	updateControlUnit(Components);
-	updateALUControl(Components);
-	updateSignExtend(Components);
-	updateMux1(Components);
-	updateMux2(Components);
-    updateShiftLeft2(Components);
-	updateRegister(Components);
-    updateAdd1(Components);
-    updateAdd0(Components);
-    updateALU(Components);
-    updateAndGate(Components);
-    updateOrGate(Components);
+export function getComponents(parsedInstruction) {
+	// updateInstructionMemory(Components, parsedInstruction);
+	// updateControlUnit(Components);
+	// updateALUControl(Components);
+	// updateSignExtend(Components);
+	// updateMux1(Components);
+	// updateMux2(Components);
+    // updateShiftLeft2(Components);
+	// updateRegister(Components);
+    // updateAdd1(Components);
+    // updateAdd0(Components);
+    // updateALU(Components);
+    // updateAndGate(Components);
+    // updateOrGate(Components);
 
-    updateMux0(Components);
-    updatePC(Components);
+    // updateMux0(Components);
+    // updatePC(Components);
 	return Components;
 }
 
@@ -38,193 +38,6 @@ function updateInstructionMemory(currentState, parsedInstruction) {
 	console.log("Creating data signal nodes for:", parsedInstruction.mnemonic);
 }
 
-function updateControlUnit(currentState) {
-    const opcode = currentState.InstructionMemory.Opcode_31_21; // Lấy chuỗi 11 bit opcode
-
-    const brOpcode = '11010110000'; // BR
-
-    if (Object.values(R_TYPE_OPCODES).includes(opcode)) {
-        // --- Lệnh R-Format thông thường (ADD, SUB, AND, ORR, ...) ---
-        currentState.Control.Reg2Loc = 0;       // Theo yêu cầu X -> 0
-        currentState.Control.ALUSrc = 0;        // ALU dùng [Rm]
-        currentState.Control.MemtoReg = 0;      // Kết quả từ ALU ghi vào Reg
-        currentState.Control.RegWrite = 1;      // Có ghi thanh ghi Rd
-        currentState.Control.MemRead = 0;       // Không đọc Mem
-        currentState.Control.MemWrite = 0;      // Không ghi Mem
-        currentState.Control.Branch = 0;        // Không phải Branch có điều kiện
-        currentState.Control.UncondBranch = 0;  // Không phải Branch không điều kiện
-        currentState.Control.ALUOp = '10';      // ALU Control sẽ dựa vào funct bits
-        console.log(`Control set for R-format instruction (Opcode: ${opcode})`);
-
-    } else if (opcode === brOpcode) {
-        // --- Lệnh BR (Định dạng R nhưng tín hiệu khác) ---
-        currentState.Control.Reg2Loc = 0;       // Theo yêu cầu X -> 0
-        currentState.Control.ALUSrc = 0;        // Không quan trọng lắm (đầu vào 2 ALU)
-        currentState.Control.MemtoReg = 0;      // Không ghi Reg -> Don't Care (X -> 0)
-        currentState.Control.RegWrite = 0;      // Không ghi thanh ghi
-        currentState.Control.MemRead = 0;
-        currentState.Control.MemWrite = 0;
-        currentState.Control.Branch = 0;        // updatePC xử lý BR, không cần tín hiệu này
-        currentState.Control.UncondBranch = 0;  // updatePC xử lý BR, không cần tín hiệu này
-        currentState.Control.ALUOp = 'XX';      // ALU không thực hiện phép toán chính (hoặc '00'/'01')
-        console.log(`Control set for BR instruction (Opcode: ${opcode})`);
-    } else {
-        console.warn(`Opcode ${opcode} is not R-format. Resetting control signals.`);
-        currentState.Control.Reg2Loc = 0;
-        currentState.Control.ALUSrc = 0;
-        currentState.Control.MemtoReg = 0;
-        currentState.Control.RegWrite = 0;
-        currentState.Control.MemRead = 0;
-        currentState.Control.MemWrite = 0;
-        currentState.Control.Branch = 0;
-        currentState.Control.UncondBranch = 0;
-        currentState.Control.ALUOp = 'XX'; // Không xác định
-    }
-}
-
-function updateSignExtend(currentState) {
-
-    const signExtend = (binaryString, originalBitLength, targetBitLength = 64) => {
-        return  binaryString[0].repeat(targetBitLength - originalBitLength) + binaryString;
-    }
-
-	const control = currentState.Control;
-    const fullInstruction = currentState.InstructionMemory.Instruction31_00;
-    const opcode = currentState.InstructionMemory.Opcode_31_21;
-
-    let inputBinary = null;
-    let originalBits = 0;
-    const targetBits = 64;
-
-    // 2. Xác định đầu vào cho Sign Extend dựa trên tín hiệu và loại lệnh
-    if (control.ALUSrc === 1) {
-        // --- ALUSrc = 1: ALU dùng Immediate. Cần xác định loại Immediate ---
-        // Kiểm tra các loại lệnh dùng ALUSrc=1: I-type, D-type, IW-type
-
-        // D-type (LDUR/STUR): Offset 9 bit (DT-address)
-        if (opcode === '11111000010' || opcode === '11111000000') {
-            inputBinary = fullInstruction.substring(11, 20); // Bits 20-12 (9 bits)
-            originalBits = 9;
-        }
-        // I-type (ADDI/SUBI): Immediate 12 bit
-        else if (opcode?.startsWith('1001000100') || opcode?.startsWith('1101000100')) {
-            inputBinary = fullInstruction.substring(10, 22); // Bits 21-10 (12 bits)
-            originalBits = 12;
-        }
-         // IW-type (MOVZ/MOVK): Immediate 16 bit
-        else if (opcode?.startsWith('110100101')) {
-             inputBinary = fullInstruction.substring(11, 27); // Bits 20-5 (16 bits) --> Kiểm tra lại spec! spec nói bit 20-5
-             originalBits = 16;
-             // Lưu ý quan trọng: MOVZ thường là *ZERO* extend. Nếu cần chính xác,
-             // bạn nên có một khối ZeroExtend riêng hoặc logic đặc biệt ở đây.
-             // Tạm thời vẫn dùng SignExtend theo yêu cầu chung.
-        }
-        // Thêm các trường hợp khác nếu có (ví dụ: ANDI, ORRI - cũng là I-type 12 bit)
-         else if (opcode?.startsWith('1001001000') || // ANDI
-                  opcode?.startsWith('1011001000') || // ORRI
-                  opcode?.startsWith('1101001000'))   // EORI
-         {
-             inputBinary = fullInstruction.substring(10, 22); // Bits 21-10 (12 bits)
-             originalBits = 12;
-         }
-         else {
-            // ALUSrc=1 nhưng không khớp loại lệnh nào ở trên? Có thể là lỗi logic Control Unit.
-            console.warn(`Warning: ALUSrc is 1, but opcode ${opcode} doesn't match expected I/D/IW types needing immediate for ALU.`);
-         }
-
-    } else if (control.UncondBranch === 1) {
-        // --- UncondBranch = 1: Lệnh B ---
-        // Offset 26 bit
-        inputBinary = fullInstruction.substring(6, 32); // Bits 25-0 (26 bits)
-        originalBits = 26;
-
-    } else if (control.Branch === 1) {
-        inputBinary = fullInstruction.substring(8, 27); // Bits 23-5 (19 bits)
-        originalBits = 19;
-    } else {
-		const inputHex = parseInt(fullInstruction, 2).toString(16).toUpperCase();
-		currentState.SignExtend.input = `0x${inputHex}`;
-		const outputValue = signExtend(fullInstruction, 32, targetBits);
-		currentState.SignExtend.output = parseInt(outputValue, 2);
-		return;
-	}
-    let outputValue = null;
-    if (inputBinary !== null && originalBits > 0) {
-        outputValue = signExtend(inputBinary, originalBits, targetBits);
-    }
-    currentState.SignExtend.input = inputBinary;
-    currentState.SignExtend.output = outputValue;
-
-    console.log("Sign Extend Updated:", currentState.SignExtend);
-}
-
-function updateALUControl(currentState) {
-    const aluOpSignal = currentState.Control.ALUOp; // Tín hiệu 2-bit từ Control chính
-    const mainOpcode = currentState.InstructionMemory.Opcode_31_21; // Opcode 11-bit
-
-    currentState.ALUControl.ALUOp = aluOpSignal;
-    currentState.ALUControl.Opcode = mainOpcode;
-
-    let aluControlCode = '1111';
-    switch (aluOpSignal) {
-        case '00':
-            aluControlCode = '0010'; // Mã ADD
-            break;
-        case '01':
-            aluControlCode = '0110'; // Mã SUB
-            break;
-        case '10':
-            switch (mainOpcode) {
-                case '10001011000': aluControlCode = '0010'; break; // ADD
-                case '11001011000': aluControlCode = '0110'; break; // SUB
-                case '10001010000': aluControlCode = '0000'; break; // AND
-                case '10101010000': aluControlCode = '0001'; break; // ORR
-                case '11101010000': aluControlCode = '1000'; break; // EOR
-                case '11010011010': aluControlCode = '1001'; break; // LSR (Kiểm tra opcode)
-                case '11010011011': aluControlCode = '1010'; break; // LSL (Kiểm tra opcode)
-                // Thêm các lệnh R-type khác nếu hỗ trợ
-                // case '10011011000': aluControlCode = 'xxxx'; break; // MUL (cần mã riêng)
-                case '11010110000': // BR
-                    aluControlCode = '1101'; // Mã Pass A (giả định ALU chuyển địa chỉ từ Rn)
-                                             // Hoặc '1111' (NOP) nếu ALU không dùng
-                    break;
-                default:
-                    aluControlCode = '1111'; // Mã UNKNOWN/ERROR
-                    console.warn(`ALU Control: Unknown R-type opcode ${mainOpcode} for ALUOp='10'`);
-                    break;
-            }
-            break;
-
-        case '11': // Dành cho I-type instructions (Arithmetic/Logic/Move Wide)
-            // Hoạt động cụ thể phụ thuộc vào opcode 11 bit
-            if (mainOpcode.startsWith('1001000100')) { // ADDI
-                aluControlCode = '0010'; // Mã ADD
-            } else if (mainOpcode.startsWith('1101000100')) { // SUBI
-                aluControlCode = '0110'; // Mã SUB
-            } else if (mainOpcode.startsWith('1001001000')) { // ANDI
-                aluControlCode = '0000'; // Mã AND
-            } else if (mainOpcode.startsWith('1011001000')) { // ORRI
-                aluControlCode = '0001'; // Mã ORR
-            } else if (mainOpcode.startsWith('1101001000')) { // EORI
-                aluControlCode = '1000'; // Mã EOR
-            } else if (mainOpcode.startsWith('110100101')) { // MOVZ / MOVK
-                aluControlCode = '1100'; // Mã Pass B (ALU chuyển immediate đã mở rộng)
-            } else {
-                 aluControlCode = '1111'; // Mã UNKNOWN/ERROR
-                 console.warn(`ALU Control: Unknown I/IW-type opcode ${mainOpcode} for ALUOp='11'`);
-            }
-            break;
-
-        case 'XX': // Trường hợp lỗi từ Control Unit chính
-        default:
-            aluControlCode = '1111'; // Mã ERROR
-            console.error(`ALU Control: Received invalid ALUOp signal '${aluOpSignal}' from main Control.`);
-            break;
-    }
-    currentState.ALUControl.output = aluControlCode;
-
-    console.log("ALU Control Updated:", currentState.ALUControl);
-}
 
 function updateMux1(currentState) {
     const input1_RtRd = currentState.InstructionMemory.RdRt_04_00; // Bits [4:0]
@@ -300,9 +113,9 @@ function updateRegister(currentState) {
     if (readIndex2 !== null) readData2Output = currentState.registerValues[readIndex2] ?? 0;
 
     currentState.Register.option = regWriteEnable;       // Store the RegWrite signal
-    currentState.Register.read1 = readIndex1;            // Store read address 1 (index)
-    currentState.Register.read2 = readIndex2;            // Store read address 2 (index)
-    currentState.Register.writeReg = writeIndex;         // Store potential write address (index)
+    currentState.Register.Read1 = readIndex1;            // Store read address 1 (index)
+    currentState.Register.Read2 = readIndex2;            // Store read address 2 (index)
+    currentState.Register.WriteReg = writeIndex;         // Store potential write address (index)
     currentState.Register.WriteData = writeDataValue;    // Store placeholder for write data
     currentState.Register.ReadData1 = readData1Output;   // Store data read from port 1
     currentState.Register.ReadData2 = readData2Output;   // Store data read from port 2

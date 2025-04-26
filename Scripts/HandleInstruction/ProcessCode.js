@@ -39,8 +39,8 @@ function processCode() {
 	const parsedInstruction = results[0].parsed;
 	// fetch.trigger(state, decode.trigger(state, execute.trigger(state)));
 	
-	const components = run.udpateComponents(parsedInstruction);
-	generateSignal.trigger(components);
+	// const components = run.getComponents(parsedInstruction);
+	generateSignal.trigger();
 
 	playAnimationsSequentially();
 }

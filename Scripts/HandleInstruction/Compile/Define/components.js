@@ -1,12 +1,15 @@
 export const Components = {
 	PC: {
-		value: 15
+		value: 0
 	},
 	Const4: {
 		value: 4
 	},
 	InstructionMemory: {
-		ReadAddress: "0x00000000",
+		instruction: [
+			"10001011000101010000001010001001"
+		],
+		ReadAddress: -1,
 	
 		Instruction31_00: "10001011000000110000000010000001",  // VD: ADD X1, X2, X3
 	
@@ -22,10 +25,16 @@ export const Components = {
 		Imm26_25_0:    "00000000000000000000000000", // B-type
 	},
 	Register: {
+		registerValues: [
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 100, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0
+		],
 		option: 0,
-		read1: 0,
-		read2: 0,
-		writeReg: 0, 
+		Read1: -1,
+		Read2: 0,
+		WriteReg: 0, 
 		WriteData: 0,
 		ReadData1: 0,
 		ReadData2: 0
@@ -56,7 +65,7 @@ export const Components = {
 		Reg2Loc:  0,
         ALUSrc:   0,
         MemtoReg: 0,
-        RegWrite: 1,
+        RegWrite: 0,
         MemRead:  0,
         MemWrite: 0,
         Branch:   0,
@@ -109,39 +118,5 @@ export const Components = {
 		input1: 0,
 		input2: 0,
 		output: 0
-	},
-	registerValues: {
-		X0: 0,
-		X1: 0,
-		X2: 0,
-		X3: 0,
-		X4: 0,
-		X5: 0,
-		X6: 0,
-		X7: 0,
-		X8: 0,
-		X9: 0,
-		X10: 0,
-		X11: 0,
-		X12: 0,
-		X13: 0,
-		X14: 0,
-		X15: 0,
-		X16: 0,
-		X17: 0,
-		X18: 0,
-		X19: 0,
-		X20: 100,
-		X21: 0,
-		X22: 0,
-		X23: 0,
-		X24: 0,
-		X25: 0,
-		X26: 0,
-		X27: 0,
-		X28: 0,
-		X29: 0,
-		X30: 0,
-		X31: 0
 	}
 };
