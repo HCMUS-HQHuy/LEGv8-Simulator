@@ -147,6 +147,12 @@ body {
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
 }
+.selected-component {
+  fill: var(--component-fill); 
+  stroke: var(--border-color); 
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
 .control-component {
   fill: var(--component-fill); 
   stroke: var(--control-color); 
@@ -209,6 +215,7 @@ body {
   font-family: sans-serif;
   font-size: 15px;
   fill: var(--control-color); 
+  font-weight: bold;
 }
 .label-start {
   font-family: sans-serif;

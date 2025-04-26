@@ -304,8 +304,8 @@
             <rect width = "50" height = "100" class = "component" />
 
             <text x = "25" y = "50" class = "label"> PC </text>
-            <!-- HQH add -->
-            <text id="pc-value-text" x = "20" y = "125" class="instruction"></text>
+            
+            <text id = "pc-value-text" x = "-30" y = "125" class = "mem-control-label" font-weight = "bold"> 0x00000000 </text>
           </g>
 
           <!-- instruction-memory -->
@@ -587,102 +587,141 @@
         </g> <!-- End Components Layer -->
       </g>
 
-      <g id="instruction-memory-selected" transform = "translate(-500, -500)">
-        <rect width = "130" height = "200" class = "component" />
+      <g id = "selected-component">
+        <defs>
+          <marker id = "arrow" markerWidth = "4" markerHeight = "4" refX = "2" refY = "2" orient = "auto">
+            <path d = "M0,0 L4,2 L0,4 z" fill = "context-stroke" />
+          </marker>
+        </defs>
 
-        <text x = "65" y = "165" class = "label"> Instruction </text>
-        <text x = "65" y = "185" class = "label"> memory</text>
-    
-        <text x = "5"  y = "20"  class = "mem-label"> Read </text>
-        <text x = "5"  y = "40"  class = "mem-label"> address </text>
-        <text id = "" x = "5"  y = "60" class = "component-value"> 0x12 </text>
-        
-        <text x = "35" y = "95"  class = "mem-label"> Instruction </text> 
-        <text x = "75" y = "115" class = "mem-label"> [31-0] </text> 
-        <text id = "" x = "15"  y = "135" class = "component-value"> 0x00000000 </text>
-      </g>
+        <g id="instruction-memory-selected" transform = "translate(-500, -500)">
+          <rect x = "-10" y = "-10" width = "147" height = "217" class = "selected-component" />
+          <rect width = "130" height = "200" class = "component" />
 
-      <g id="register-selected" transform = "translate(-500, -500)">
-        <rect width = "170" height = "220" class = "component" />
-
-        <text x = "115" y = "205" class = "label"> Registers </text>
-
-        <text x = "5"   y = "20"  class = "mem-label"> Read </text>
-        <text x = "5"   y = "40"  class = "mem-label"> register 1 </text>
-        <text id = "" x = ""  y = "" class = "component-value"> 00000 </text>
-
-        <text x = "5"   y = "75"  class = "mem-label"> Read </text>
-        <text x = "5"   y = "95"  class = "mem-label"> register 2 </text>
-        <text id = "" x = ""  y = "" class = "component-value"> 00000 </text>
-  
-        <text x = "5"   y = "145" class = "mem-label"> Write </text>
-        <text x = "5"   y = "165" class = "mem-label"> register </text>
-        <text id = "" x = ""  y = "" class = "component-value"> 00000 </text>
+          <text x = "65" y = "165" class = "label"> Instruction </text>
+          <text x = "65" y = "185" class = "label"> memory</text>
+      
+          <text x = "5"  y = "20"  class = "mem-label"> Read </text>
+          <text x = "5"  y = "40"  class = "mem-label"> address </text>
+          <text id = "instruction-memory-read-address-value" x = "5"  y = "55" class = "component-value"> 0x12 </text>
           
-        <text x = "5"   y = "190" class = "mem-label"> Write </text>
-        <text x = "5"   y = "210" class = "mem-label"> data </text>
-        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+          <text x = "35" y = "95"  class = "mem-label"> Instruction </text> 
+          <text x = "75" y = "115" class = "mem-label"> [31-0] </text>
+          <text id = "instruction-memory-instruction-[31-0]-value" x = "42"  y = "135" class = "component-value"> 0x00000000 </text>
+        </g>
 
-        <text x = "115" y = "40"  class = "mem-label"> Read </text>
-        <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
-        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+        <g id="register-selected" transform = "translate(-500, -500)">
+          <rect x = "-10" y = "-10" width = "187" height = "237" class = "selected-component" />
+          <rect width = "170" height = "220" class = "component" />
 
-        <text x = "115" y = "130" class = "mem-label"> Read </text>
-        <text x = "110" y = "150" class = "mem-label"> data 2 </text>
-        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
-      </g>
+          <text x = "115" y = "205" class = "label"> Registers </text>
 
-      <g id="data-memory-selected" transform = "translate(-500, -500)">
-        <rect width = "140" height = "200" class = "component" />
+          <text x = "5"   y = "20"  class = "mem-label"> Read </text>
+          <text x = "5"   y = "40"  class = "mem-label"> register 1 </text>
+          <text id = "register-read-register-1-value" x = "5"  y = "55" class = "component-value"> 00000 </text>
 
-        <text x = "110" y = "165" class = "label"> Data </text>
-        <text x = "90"  y = "185" class = "label"> memory </text>
+          <text x = "5"   y = "75"  class = "mem-label"> Read </text>
+          <text x = "5"   y = "95"  class = "mem-label"> register 2 </text>
+          <text id = "register-read-register-2-value" x = "5"  y = "110" class = "component-value"> 00000 </text>
+    
+          <text x = "5"   y = "130" class = "mem-label"> Write </text>
+          <text x = "5"   y = "150" class = "mem-label"> register </text>
+          <text id = "register-write-register-value" x = "5"  y = "165" class = "component-value"> 00000 </text>
+            
+          <text x = "5"   y = "182" class = "mem-label"> Write </text>
+          <text x = "5"   y = "202" class = "mem-label"> data </text>
+          <text id = "register-write-data-value" x = "5"  y = "215" class = "component-value"> 0x00 </text>
 
-        <text x = "5"   y = "45"  class = "mem-label"> Address </text>
-        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+          <text x = "115" y = "40"  class = "mem-label"> Read </text>
+          <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
+          <text id = "register-read-data-1-value" x = "130"  y = "75" class = "component-value"> 0x00 </text>
+          
+          <text x = "115" y = "130" class = "mem-label"> Read </text>
+          <text x = "110" y = "150" class = "mem-label"> data 2 </text>
+          <text id = "register-read-data-2-value" x = "130"  y = "165" class = "component-value"> 0x00 </text>
+        </g>
 
-        <text x = "5"   y = "155" class = "mem-label"> Write </text>
-        <text x = "5"   y = "175" class = "mem-label"> data </text>
-        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+        <g id="data-memory-selected" transform = "translate(-500, -500)">
+          <rect x = "-10" y = "-10" width = "157" height = "217" class = "selected-component" />
+          <rect width = "140" height = "200" class = "component" />
 
-        <text x = "85"  y = "65"  class = "mem-label"> Read </text>
-        <text x = "95"  y = "85"  class = "mem-label"> data </text>
-        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
-      </g>
+          <text x = "110" y = "165" class = "label"> Data </text>
+          <text x = "90"  y = "185" class = "label"> memory </text>
 
-      <g id="add-2-selected" transform = "translate(-500, -500)">
-        <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.5)" class = "component"/>
+          <text x = "5"   y = "45"  class = "mem-label"> Address </text>
+          <text id = "data-memory-address-value" x = "5"  y = "60" class = "component-value"> 0x00 </text>
 
-        <text x = "60" y = "90" class = "label"> ALU </text>
-        
-        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
-        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+          <text x = "5"   y = "155" class = "mem-label"> Write </text>
+          <text x = "5"   y = "175" class = "mem-label"> data </text>
+          <text id = "data-memory-write-data-value" x = "5"  y = "190" class = "component-value"> 0x00 </text>
 
-        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
-        
-        <text x = "50" y = "65" class = "component-value"> Zero </text>
-      </g>
+          <text x = "85"  y = "65"  class = "mem-label"> Read </text>
+          <text x = "95"  y = "85"  class = "mem-label"> data </text>
+          <text id = "data-read-data-value" x = "100"  y = "100" class = "component-value"> 0x00 </text>
+        </g>
 
-      <g id="shift-left-2-selected" transform = "translate(-500, -500)">
-        <circle cx = "0" cy = "0" r = "40" class = "component"/>
-        
-        <text x = "0" y = "-10" class = "label"> Shift </text>
-        <text x = "0" y = "10"  class = "label"> left 2 </text>
+        <g id="add-2-selected" transform = "translate(-500, -500)">
+          <rect x = "-10" y = "-60" width = "117" height = "243" class = "selected-component" />
+          <path d = "M50,25 L50,-20" class = "signal-line" marker-end = "url(#arrow)"/> 
 
-        <text id = "" x = ""  y = "" class = "component-value"> 0x0000000000000000 </text>
+          <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.5)" class = "component"/>
 
-        <text id = "" x = ""  y = "" class = "component-value"> 0x0000000000000000 </text>
-      </g>
+          <text x = "60" y = "90" class = "label"> ALU </text>
+          
+          <text id = "add-2-input-upper-value" x = "5"  y = "40" class = "component-value"> 0x00 </text>
+          <text id = "add-2-input-lower-value" x = "5"  y = "145" class = "component-value"> 0x00 </text>
 
-      <g id="sign-extend-selected" transform = "translate(-500, -500)">
-        <circle cx = "0" cy = "0" r = "50" class = "component"/>
-        
-        <text x = "0" y = "-10" class = "label"> Sign- </text>
-        <text x = "0" y = "10"  class = "label"> extend </text>
+          <text id = "add-2-output-value" x = "65"  y = "115" class = "component-value"> 0x00 </text>
+          
+          <rect x = "0"  y = "-50" width = "25" height = "25" class = "component"/>
+          <text x = "12"  y = "-35" class = "label">N</text>
+          <text id = "add-2-n-value" x = "8"  y = "-10" class = "component-value"> 0 </text>
 
-        <text id = "" x = ""  y = "" class = "component-value"> 0x00000000 </text>
+          <rect x = "25" y = "-50" width = "25" height = "25" class = "component"/>
+          <text x = "37"  y = "-35" class = "label">Z</text>
+          <text id = "add-2-z-value" x = "33"  y = "-10" class = "component-value"> 0 </text>
+          
+          <rect x = "50" y = "-50" width = "25" height = "25" class = "component"/>
+          <text x = "62"  y = "-35" class = "label">C</text>
+          <text id = "add-2-z-value" x = "58"  y = "-10" class = "component-value"> 0 </text>
+          
+          <rect x = "75" y = "-50" width = "25" height = "25" class = "component"/>
+          <text x = "87"  y = "-35" class = "label">V</text>
+          <text id = "add-2-z-value" x = "83"  y = "-10" class = "component-value"> 0 </text>
+        </g>
 
-        <text id = "" x = ""  y = "" class = "component-value"> 0x0000000000000000 </text>
+        <g id="shift-left-2-selected" transform = "translate(-500, -500)">
+          <rect x = "-200" y = "-50" width = "400" height = "95" class = "selected-component"/>
+          <circle cx = "0" cy = "0" r = "40" class = "component"/>
+          
+          <text x = "0" y = "-10" class = "label"> Shift </text>
+          <text x = "0" y = "10"  class = "label"> left 2 </text>
+          
+          <path d = "M-190,0 L-45,0" class = "signal-line" marker-end = "url(#arrow)"/>
+          <text id = "shift-left-2-input-value" x = "-192"  y = "20" class = "component-value"> 0x0000000000000000 </text>
+          
+          <path d = "M40,0 L185,0" class = "signal-line" marker-end = "url(#arrow)"/>
+          <text id = "shift-left-2-output-value" x = "42"  y = "20" class = "component-value"> 0x0000000000000000 </text>
+        </g>
+
+        <g id="sign-extend-selected" transform = "translate(-500, -500)">
+          <rect x = "-200" y = "-50" width = "400" height = "95" class = "selected-component"/>
+          <circle cx = "0" cy = "0" r = "40" class = "component"/>
+          
+          <text x = "0" y = "-10" class = "label"> Sign- </text>
+          <text x = "0" y = "10"  class = "label"> extend </text>
+
+          <path d = "M-190,0 L-45,0" class = "signal-line" marker-end = "url(#arrow)"/>
+          <text id = "sign-extend-input-value" x = "-125"  y = "27" class = "component-value"> 0x00000000 </text>
+          
+          <path d = "M40,0 L185,0" class = "signal-line" marker-end = "url(#arrow)"/>
+          <text id = "sign-extend-output-value" x = "42"  y = "27" class = "component-value"> 0x0000000000000000 </text>
+
+          <text x = "-100" y = "-20" class = "mem-label"> 32 </text> 
+          <text x = "-90" y = "0"   class = "label"> ╲ </text> 
+          <text x = "70"   y = "-20" class = "mem-label"> 64 </text> 
+          <text x = "80"   y = "0"   class = "label"> ╲ </text>
+        </g>
       </g>
 
       </svg>
@@ -779,6 +818,7 @@
     <table class = "parsedOutputTable">
       <thead>
         <tr>
+          <th>X00</th>
           <th>X01</th>
           <th>X02</th>
           <th>X03</th>
@@ -786,7 +826,6 @@
           <th>X05</th>
           <th>X06</th>
           <th>X07</th>
-          <th>X08</th>
         </tr>
       </thead>
       <tbody>
@@ -805,6 +844,7 @@
     <table class = "parsedOutputTable">
       <thead>
         <tr>
+          <th>X08</th>
           <th>X09</th>
           <th>X10</th>
           <th>X11</th>
@@ -812,7 +852,6 @@
           <th>X13</th>
           <th>X14</th>
           <th>X15</th>
-          <th>X16</th>
         </tr>
       </thead>
       <tbody>
@@ -831,6 +870,7 @@
     <table class = "parsedOutputTable">
       <thead>
         <tr>
+          <th>X16</th>
           <th>X17</th>
           <th>X18</th>
           <th>X19</th>
@@ -838,7 +878,6 @@
           <th>X21</th>
           <th>X22</th>
           <th>X23</th>
-          <th>X24</th>
         </tr>
       </thead>
       <tbody>
@@ -857,14 +896,14 @@
     <table class = "parsedOutputTable">
       <thead>
         <tr>
+          <th>X24</th>
           <th>X25</th>
           <th>X26</th>
           <th>X27</th>
-          <th>X28</th>
-          <th>X29</th>
-          <th>X30</th>
-          <th>X31</th>
-          <th>X32</th>
+          <th>SP</th>
+          <th>FP</th>
+          <th>LR</th>
+          <th>XZR</th>
         </tr>
       </thead>
       <tbody>

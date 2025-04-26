@@ -184,7 +184,7 @@ const dataMemoryGroup = document.getElementById('data-memory');
 
 let clonedGroupPrevious = null;
 
-function component_selected(group, groupId, posX, posY) {
+function component_selected(group, groupId, posX, posY, scale) {
     group.addEventListener('click', (event) => {
         // Nếu có bản sao trước đó, xóa nó
         if (clonedGroupPrevious) {
@@ -194,7 +194,7 @@ function component_selected(group, groupId, posX, posY) {
 
         // Phóng to và di chuyển bản sao đến vị trí (10, 10) và scale 2
         clonedGroupPrevious = document.getElementById(groupId);
-        document.getElementById(groupId).setAttribute('transform', `translate(${posX}, ${posY}) scale(2)`);  // Di chuyển và phóng to gấp 2 lần
+        document.getElementById(groupId).setAttribute('transform', `translate(${posX}, ${posY}) scale(${scale})`);  // Di chuyển và phóng to gấp 2 lần
 
         // Lắng nghe sự kiện click trên toàn bộ document
         event.stopPropagation();
@@ -209,9 +209,9 @@ function component_selected(group, groupId, posX, posY) {
     });
 }
 
-component_selected(instructionMemoryGroup, "instruction-memory-selected", 10, 10)
-component_selected(registerGroup, "register-selected", 10, 10)
-component_selected(signExtendGroup, "sign-extend-selected", 120, 120)
-component_selected(ALUGroup, "add-2-selected", 10, 10)
-component_selected(shiftLeft2Group, "shift-left-2-selected", 100, 100)
-component_selected(dataMemoryGroup, "data-memory-selected", 10, 10)
+component_selected(instructionMemoryGroup, "instruction-memory-selected", 10, 10, 1.5)
+component_selected(registerGroup, "register-selected", 10, 10, 1.5)
+component_selected(signExtendGroup, "sign-extend-selected", 295, 70, 1.5)
+component_selected(ALUGroup, "add-2-selected", 10, 85, 1.5)
+component_selected(shiftLeft2Group, "shift-left-2-selected", 295, 70, 1.5)
+component_selected(dataMemoryGroup, "data-memory-selected", 10, 10, 1.5)
