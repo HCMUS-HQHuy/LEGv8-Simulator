@@ -444,6 +444,7 @@ body {
 }
 .table-scroll-wrapper {
   max-height: calc(9 * 33px); /* hoặc ví dụ: 256px */
+  overflow-x: hidden;
   overflow-y: auto;
   position: relative;
   border: 2px solid var(--border-color); /* Use variable */
