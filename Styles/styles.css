@@ -245,8 +245,8 @@ body {
 /* Code and Frame container */
 .codeAndFrameContainer {
   display: flex;
+  align-items: stretch; 
   width: 100%; /* Toàn bộ chiều rộng của container */
-  align-items: flex-start; /* Đảm bảo các phần tử con bắt đầu từ đầu */
 }
 /* codeBox */
 .codeBox {
@@ -255,6 +255,7 @@ body {
   margin-left: auto;
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
+  overflow: hidden;
 }
 .code-editor {
   display: flex;
@@ -264,11 +265,12 @@ body {
   overflow: hidden; 
 }
 .line-numbers {
-  padding: 10px 15px;
+  padding: 10px 10px;
   text-align: right;
   background-color: var(--line-number-bg); /* Use variable */
   color: var(--line-number-color); /* Use variable */
   user-select: none;
+  overflow: hidden; 
 }
 .instructionCode {
   flex-grow: 1;  /* Cho phép textarea mở rộng để lấp đầy không gian còn lại */
@@ -287,13 +289,18 @@ body {
   outline: none; /* Loại bỏ viền xanh/cam mặc định của trình duyệt khi focus */
   box-shadow: none; /* Đảm bảo không có bóng đổ nào khác xuất hiện khi focus */
 }
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* nếu muốn căn giữa theo chiều dọc */
+}
 .button {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 8px 16px;
   margin-top: 10px;
-  margin-right: 10px;
+  margin-right: 0px;
   font-size: 16px;
   cursor: pointer;
   border-radius: 8px;
@@ -306,7 +313,7 @@ body {
 
 /* frameBox */
 .frameBox {
-  flex: 0 0 70%; /* Không co giãn, chiếm 70% */
+  flex: 0  70%; /* Không co giãn, chiếm 70% */
   padding: 0 20px; /* Padding ngang (trái và phải) */
   overflow: auto;
 }
