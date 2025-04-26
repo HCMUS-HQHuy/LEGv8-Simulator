@@ -71,7 +71,7 @@ const Connections = {
 		{ source: 'Control.ALUOp',        target: 'ALUControl.ALUOp', pathId: 'control-aluop-path' },
 		{ source: 'Control.MemWrite',     target: 'DataMemory.writeEnable', pathId: 'control-memwrite-path' },
 		{ source: 'Control.ALUSrc',       target: 'Mux2.option', pathId: 'control-alusrc-path' },
-		{ source: 'Control.RegWrite',     target: 'Register.writeEnable', pathId: 'control-regwrite-path' }
+		{ source: 'Control.RegWrite',     target: 'Register.option', pathId: 'control-regwrite-path' }
 	],
 
 	ALUControl: [
@@ -204,7 +204,7 @@ const signalCallbackTable = {
 	"ALUControl.ALUOp": null,
 	"DataMemory.writeEnable": null,
 	"Mux2.option": null,
-	"Register.writeEnable": null,
+	"Register.option": null,
 	"ShiftLeft2.input": null,
 	"Mux2.input1": null,
 	"Register.read2": null,

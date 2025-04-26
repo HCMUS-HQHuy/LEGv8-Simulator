@@ -1,5 +1,6 @@
 import {parseLegv8Instruction, encodeLegv8Instruction} from "./parser.js"
 import {Components} from "./Define/components.js"
+import {R_TYPE_OPCODES} from "./Define/Opcode.js"
 
 
 export function udpateComponents(parsedInstruction) {
@@ -48,19 +49,9 @@ function updateInstructionMemory(currentState, parsedInstruction) {
 function updateControlUnit(currentState) {
     const opcode = currentState.InstructionMemory.Opcode_31_21; // Lấy chuỗi 11 bit opcode
 
-    // 2. Xác định các opcode R-format (Cần kiểm tra lại danh sách này cho chính xác)
-    const rFormatOpcodes = [
-        '10001011000', // ADD
-        '11001011000', // SUB
-        '10001010000', // AND
-        '10101010000', // ORR
-        '11101010000', // EOR
-        '11010011010', // LSR (Ví dụ)
-        '11010011011'  // LSL (Ví dụ)
-    ];
     const brOpcode = '11010110000'; // BR
 
-    if (rFormatOpcodes.includes(opcode)) {
+    if (Object.values(R_TYPE_OPCODES).includes(opcode)) {
         // --- Lệnh R-Format thông thường (ADD, SUB, AND, ORR, ...) ---
         currentState.Control.Reg2Loc = 0;       // Theo yêu cầu X -> 0
         currentState.Control.ALUSrc = 0;        // ALU dùng [Rm]
@@ -99,12 +90,11 @@ function updateControlUnit(currentState) {
     }
 }
 
-
-function signExtend(binaryString, originalBitLength, targetBitLength = 64) {
-	return  binaryString[0].repeat(targetBitLength - originalBitLength) + binaryString;
-}
-
 function updateSignExtend(currentState) {
+
+    const signExtend = (binaryString, originalBitLength, targetBitLength = 64) => {
+        return  binaryString[0].repeat(targetBitLength - originalBitLength) + binaryString;
+    }
 
 	const control = currentState.Control;
     const fullInstruction = currentState.InstructionMemory.Instruction31_00;
