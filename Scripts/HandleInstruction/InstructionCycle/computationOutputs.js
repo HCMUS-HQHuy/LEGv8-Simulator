@@ -23,6 +23,9 @@ export function computeOutputs(componentName, components) {
 		case 'Register':
 			updateRegister(components);
 			break;
+        case 'DataMemory':
+            updateDataMemory(components);
+            break;
 		case 'Add0':
 		case 'Add1':
 			const input1 = components[componentName].input1;
@@ -227,7 +230,6 @@ function updateALUControl(currentState) {
     console.log("ALU Control Updated:", currentState.ALUControl);
 }
 
-
 function updateSignExtend(currentState) {
 
     const signExtend = (binaryString, originalBitLength, targetBitLength = 64) => {
@@ -242,14 +244,12 @@ function updateSignExtend(currentState) {
     let originalBits = 0;
     const targetBits = 64;
 
-    // 2. Xác định đầu vào cho Sign Extend dựa trên tín hiệu và loại lệnh
     if (control.ALUSrc === 1) {
-        // --- ALUSrc = 1: ALU dùng Immediate. Cần xác định loại Immediate ---
-        // Kiểm tra các loại lệnh dùng ALUSrc=1: I-type, D-type, IW-type
-
         // D-type (LDUR/STUR): Offset 9 bit (DT-address)
         if (opcode === '11111000010' || opcode === '11111000000') {
+            console.warn(`SignExtend: ${fullInstruction}`);
             inputBinary = fullInstruction.substring(11, 20); // Bits 20-12 (9 bits)
+            console.warn(`SignExtendL ${parseInt(inputBinary, 2)} - ${inputBinary} `);
             originalBits = 9;
         }
         // I-type (ADDI/SUBI): Immediate 12 bit
@@ -257,7 +257,6 @@ function updateSignExtend(currentState) {
             inputBinary = fullInstruction.substring(10, 22); // Bits 21-10 (12 bits)
             originalBits = 12;
         }
-         // IW-type (MOVZ/MOVK): Immediate 16 bit
         else if (opcode?.startsWith('110100101')) {
              inputBinary = fullInstruction.substring(11, 27); // Bits 20-5 (16 bits) --> Kiểm tra lại spec! spec nói bit 20-5
              originalBits = 16;
@@ -299,11 +298,10 @@ function updateSignExtend(currentState) {
         outputValue = signExtend(inputBinary, originalBits, targetBits);
     }
     currentState.SignExtend.input = inputBinary;
-    currentState.SignExtend.output = outputValue;
+    currentState.SignExtend.output = parseInt(outputValue, 2);
 
     console.log("Sign Extend Updated:", currentState.SignExtend);
 }
-
 
 function updateRegister(currentState) {
     const readAddr1Binary = currentState.InstructionMemory.Rn_09_05;
@@ -335,4 +333,23 @@ function updateRegister(currentState) {
 	}
     currentState.Register.ReadData1 = readData1Output;
     currentState.Register.ReadData2 = readData2Output;
+}
+
+
+function updateDataMemory(currentState) {
+    const address = currentState.ALU.output;
+    const writeData = currentState.Register.ReadData2;
+
+    if (currentState.DataMemory.WriteData !== writeData || 
+		currentState.DataMemory.address!== address) {
+		console.warn("have some problems in datamemory update value");
+        console.warn(`${currentState.DataMemory.WriteData} -> ${writeData}`);
+	}
+    if (currentState.DataMemory.writeEnable === 1) {
+        currentState.DataMemory.Values[address] = writeData;
+        currentState.DataMemory.ReadData = -1;
+    }
+    if (currentState.DataMemory.readEnable === 1) {
+        currentState.DataMemory.ReadData = currentState.DataMemory.Values[address];
+    }
 }

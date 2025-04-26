@@ -1,4 +1,3 @@
-import * as parsedOutputTable from "./Compile/parsedOutputTable.js"
 import * as currentInstruction from "./Compile/currentInstruction.js"
 import * as animate from "./InstructionCycle/animation.js"
 import * as formatCode from "./Compile/formatCode.js"
@@ -34,7 +33,6 @@ function compileCode() {
 		console.error("formatcode: Have some problem!");
 		return;
 	}
-	parsedOutputTable.update(results);
 	return results;
 }
 

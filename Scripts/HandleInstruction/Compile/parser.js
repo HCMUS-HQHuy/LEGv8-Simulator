@@ -255,7 +255,7 @@ export function encodeLegv8Instruction(parsedInstruction) {
             const rtBin = toBinary(rtNum, 5);
             const rnBin = toBinary(rnNum, 5);
             const immediateBin = toBinary(immediate, 9);
-            const machineCode = `${opcode}${rnBin}${rtBin}00${immediateBin}`;
+            const machineCode = `${opcode}${immediateBin}00${rnBin}${rtBin}`;
         
             if (machineCode.length !== 32) {
                 return { error: `Internal error: Generated code length is not 32 bits (${machineCode.length})` };

@@ -184,7 +184,7 @@ function traverseAndAnimateBFS(startNode, components) {
 
 			const value = getValueFromComponents(source, components);
 
-			// console.log(`source: ${source} -> ${target} value: ${value}`);
+			console.log(`source: ${source} -> ${target} value: ${value}`);
 
 			setValueInComponents(target, value, components);
 

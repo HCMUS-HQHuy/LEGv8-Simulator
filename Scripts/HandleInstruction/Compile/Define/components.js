@@ -39,9 +39,12 @@ export function getComponents() {
 			ReadData2: 0
 		},
 		DataMemory: {
+			Values: [0, 0, 0, 0, 0, 0, 0, 0],
 			address: 0,
 			WriteData: 0,
-			ReadData: 0
+			ReadData: 0,
+			writeEnable: 0,
+			readEnable: 0
 		},
 		Add0: {
 			input1: 0,
