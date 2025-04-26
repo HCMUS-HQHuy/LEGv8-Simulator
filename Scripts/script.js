@@ -174,20 +174,44 @@ function updateMuxDisplay() {
     }
 }
 
-const registerGroup = document.getElementById('register');
 const svgContainer = document.querySelector('svg');  // Chọn phần tử SVG chứa nhóm
+const instructionMemoryGroup = document.getElementById('instruction-memory');
+const registerGroup = document.getElementById('register');
+const signExtendGroup = document.getElementById('sign-extend');
+const ALUGroup = document.getElementById('add-2');
+const shiftLeft2Group = document.getElementById('shift-left-2');
+const dataMemoryGroup = document.getElementById('data-memory');
 
-registerGroup.addEventListener('click', (event) => {
-    // Tạo phiên bản clone của nhóm 'register'
-    const clonedGroup = registerGroup.cloneNode(true);
+let clonedGroupPrevious = null;
 
-    // Thêm phiên bản clone vào trong SVG
-    svgContainer.appendChild(clonedGroup);
+function component_selected(group, groupId, posX, posY) {
+    group.addEventListener('click', (event) => {
+        // Nếu có bản sao trước đó, xóa nó
+        if (clonedGroupPrevious) {
+            clonedGroupPrevious.setAttribute('transform', 'translate(-500, -500)');
+            clonedGroupPrevious = null;
+        }
 
-    // Phóng to và di chuyển bản sao đến vị trí (0, 0)
-    clonedGroup.setAttribute('transform', 'translate(10, 10) scale(2)');  // Di chuyển và phóng to gấp 2 lần
+        // Phóng to và di chuyển bản sao đến vị trí (10, 10) và scale 2
+        clonedGroupPrevious = document.getElementById(groupId);
+        document.getElementById(groupId).setAttribute('transform', `translate(${posX}, ${posY}) scale(2)`);  // Di chuyển và phóng to gấp 2 lần
 
-    setTimeout(() => {
-        clonedGroup.remove();  // Xóa bản sao sau 2 giây
-    }, 2000);
-});
+        // Lắng nghe sự kiện click trên toàn bộ document
+        event.stopPropagation();
+        // Lắng nghe sự kiện click trên toàn bộ document để xóa bản sao nếu click ra ngoài
+        document.addEventListener('click', function handleClickOutside(event) {
+            // Kiểm tra nếu click ra ngoài clonedGroup
+            if (!document.getElementById(groupId).contains(event.target)) {
+                document.getElementById(groupId).setAttribute('transform', 'translate(-500, -500)');
+                document.removeEventListener('click', handleClickOutside);  // Loại bỏ sự kiện để không bị gọi lại
+            }
+        });
+    });
+}
+
+component_selected(instructionMemoryGroup, "instruction-memory-selected", 10, 10)
+component_selected(registerGroup, "register-selected", 10, 10)
+component_selected(signExtendGroup, "sign-extend-selected", 120, 120)
+component_selected(ALUGroup, "add-2-selected", 10, 10)
+component_selected(shiftLeft2Group, "shift-left-2-selected", 100, 100)
+component_selected(dataMemoryGroup, "data-memory-selected", 10, 10)

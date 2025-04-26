@@ -205,6 +205,11 @@ body {
   font-size: 20px;
   fill: var(--control-color); 
 }
+.component-value {
+  font-family: sans-serif;
+  font-size: 15px;
+  fill: var(--control-color); 
+}
 .label-start {
   font-family: sans-serif;
   font-size: 10px;

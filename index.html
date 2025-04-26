@@ -19,8 +19,8 @@
     <h2>Frame</h2>
 
     <div class = "frame" id = "zoomFrame">
-      <div class = "content" id = "zoomContent">
       <svg viewBox = "0 0 1800 1050">
+      <g class = "content" id = "zoomContent">
         <!-- Signal Lines Layer -->
         <g id = "signal-lines">
           <defs>
@@ -334,7 +334,7 @@
 
             <text x = "465" y = "450"  class = "mem-label"> Instruction [31-21] </text> 
           </g>
-
+          
           <!-- register  -->
           <g id="register" transform = "translate(780, 520)">
             <rect width = "170" height = "220" class = "component" />
@@ -360,12 +360,6 @@
             <text x = "110" y = "150" class = "mem-label"> data 2 </text>
 
             <text id = "regwrite-to-register-value" x = "95" y = "-5" class = "mem-control-label">0</text>
-            
-            <!-- HQH add -->
-            <text id="read1" x = "5" y = "60" class = "instruction">  </text>
-            <text id="read2" x = "5" y = "90" class = "instruction">  </text>
-            <text id="write-reg" x = "5" y = "130" class = "instruction">  </text>
-            <text id="write-data" x = "5" y = "160" class = "instruction">  </text>
           </g>
 
           <!-- <g id="clone-register" transform = "translate(1400, 600) scale(2)">
@@ -417,7 +411,7 @@
             <text id = "memwrite-to-data-memory-value" x = "55" y = "-5" class = "mem-control-label">0</text>
             <text id = "memread-to-data-memory-value" x = "55" y = "220" class = "mem-control-label">0</text>
           </g>
-          
+
           <!-- ALU -->
           <!-- add-0 -->
           <g id="add-0" transform = "translate(300, 57)">
@@ -446,6 +440,7 @@
             
             <text id = "alu-control-to-add-2-value" x = "65" y = "160" class = "mem-control-label">0000</text>
           </g>
+
           <!-- End Alu -->
 
           <!-- control -->
@@ -590,8 +585,107 @@
             <text id = "and-gate-to-or-gate-value" x = "-5" y = "80" class = "mem-control-label">0</text>
           </g>  
         </g> <!-- End Components Layer -->
+      </g>
+
+      <g id="instruction-memory-selected" transform = "translate(-500, -500)">
+        <rect width = "130" height = "200" class = "component" />
+
+        <text x = "65" y = "165" class = "label"> Instruction </text>
+        <text x = "65" y = "185" class = "label"> memory</text>
+    
+        <text x = "5"  y = "20"  class = "mem-label"> Read </text>
+        <text x = "5"  y = "40"  class = "mem-label"> address </text>
+        <text id = "" x = "5"  y = "60" class = "component-value"> 0x12 </text>
+        
+        <text x = "35" y = "95"  class = "mem-label"> Instruction </text> 
+        <text x = "75" y = "115" class = "mem-label"> [31-0] </text> 
+        <text id = "" x = "15"  y = "135" class = "component-value"> 0x00000000 </text>
+      </g>
+
+      <g id="register-selected" transform = "translate(-500, -500)">
+        <rect width = "170" height = "220" class = "component" />
+
+        <text x = "115" y = "205" class = "label"> Registers </text>
+
+        <text x = "5"   y = "20"  class = "mem-label"> Read </text>
+        <text x = "5"   y = "40"  class = "mem-label"> register 1 </text>
+        <text id = "" x = ""  y = "" class = "component-value"> 00000 </text>
+
+        <text x = "5"   y = "75"  class = "mem-label"> Read </text>
+        <text x = "5"   y = "95"  class = "mem-label"> register 2 </text>
+        <text id = "" x = ""  y = "" class = "component-value"> 00000 </text>
+  
+        <text x = "5"   y = "145" class = "mem-label"> Write </text>
+        <text x = "5"   y = "165" class = "mem-label"> register </text>
+        <text id = "" x = ""  y = "" class = "component-value"> 00000 </text>
+          
+        <text x = "5"   y = "190" class = "mem-label"> Write </text>
+        <text x = "5"   y = "210" class = "mem-label"> data </text>
+        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+
+        <text x = "115" y = "40"  class = "mem-label"> Read </text>
+        <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
+        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+
+        <text x = "115" y = "130" class = "mem-label"> Read </text>
+        <text x = "110" y = "150" class = "mem-label"> data 2 </text>
+        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+      </g>
+
+      <g id="data-memory-selected" transform = "translate(-500, -500)">
+        <rect width = "140" height = "200" class = "component" />
+
+        <text x = "110" y = "165" class = "label"> Data </text>
+        <text x = "90"  y = "185" class = "label"> memory </text>
+
+        <text x = "5"   y = "45"  class = "mem-label"> Address </text>
+        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+
+        <text x = "5"   y = "155" class = "mem-label"> Write </text>
+        <text x = "5"   y = "175" class = "mem-label"> data </text>
+        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+
+        <text x = "85"  y = "65"  class = "mem-label"> Read </text>
+        <text x = "95"  y = "85"  class = "mem-label"> data </text>
+        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+      </g>
+
+      <g id="add-2-selected" transform = "translate(-500, -500)">
+        <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.5)" class = "component"/>
+
+        <text x = "60" y = "90" class = "label"> ALU </text>
+        
+        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+
+        <text id = "" x = ""  y = "" class = "component-value"> 0x00 </text>
+        
+        <text x = "50" y = "65" class = "component-value"> Zero </text>
+      </g>
+
+      <g id="shift-left-2-selected" transform = "translate(-500, -500)">
+        <circle cx = "0" cy = "0" r = "40" class = "component"/>
+        
+        <text x = "0" y = "-10" class = "label"> Shift </text>
+        <text x = "0" y = "10"  class = "label"> left 2 </text>
+
+        <text id = "" x = ""  y = "" class = "component-value"> 0x0000000000000000 </text>
+
+        <text id = "" x = ""  y = "" class = "component-value"> 0x0000000000000000 </text>
+      </g>
+
+      <g id="sign-extend-selected" transform = "translate(-500, -500)">
+        <circle cx = "0" cy = "0" r = "50" class = "component"/>
+        
+        <text x = "0" y = "-10" class = "label"> Sign- </text>
+        <text x = "0" y = "10"  class = "label"> extend </text>
+
+        <text id = "" x = ""  y = "" class = "component-value"> 0x00000000 </text>
+
+        <text id = "" x = ""  y = "" class = "component-value"> 0x0000000000000000 </text>
+      </g>
+
       </svg>
-      </div>
 
       <button class = "frame-button" id = "fullscreen-btn" title = "Toggle fullscreen"></button>
       <button class = "start-button" id = "start-animation" title = "Start animation">▶</button>
