@@ -2,7 +2,6 @@ import * as parsedOutputTable from "./Compile/parsedOutputTable.js"
 import * as currentInstruction from "./Compile/currentInstruction.js"
 import * as animate from "./InstructionCycle/animation.js"
 import * as formatCode from "./Compile/formatCode.js"
-import * as run from "./Compile/updateState.js"
 
 import * as generateSignal from "./InstructionCycle/generateSignal.js"
 
@@ -19,15 +18,16 @@ const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes9')
 ];
 
-async function playAnimationsSequentially() {
+async function playAnimationsSequentially(promise) {
 	for (let i = 0; i < dataSignalNodesGroup.length; i++) {
 		const success = animate.startSignalAnimation(dataSignalNodesGroup[i]);
 		if (success === false) break;
-		await new Promise(resolve => setTimeout(resolve, 2000)); // chờ 2 giây
+		await new Promise(resolve => setTimeout(resolve, 1000));
 	}
+	promise();
 }
 
-function processCode() {
+async function processCode() {
 	const results = formatCode.getResult();
 	if (results == null) {
 		console.error("formatcode: Have some problem!");
@@ -35,14 +35,19 @@ function processCode() {
 	}
 	parsedOutputTable.update(results);
 	currentInstruction.update(results[0]);
+	console.log(`results: ${results.length}`);
+	const Components = generateSignal.initialize(results);
 
-	const parsedInstruction = results[0].parsed;
-	// fetch.trigger(state, decode.trigger(state, execute.trigger(state)));
-	
-	const components = run.udpateComponents(parsedInstruction);
-	generateSignal.trigger(components);
-
-	playAnimationsSequentially();
+	console.log("---------------START----------------");
+	while (true) {
+		const index = generateSignal.start(Components);
+		console.log(`index: ${index}`);
+		if (index == -1) break;
+		await new Promise((promise) => {
+			playAnimationsSequentially(promise);
+		});
+	}
+	console.log("---------------END----------------");
 }
 
 export function trigger() {

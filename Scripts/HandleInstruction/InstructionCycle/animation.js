@@ -11,7 +11,6 @@ export function startSignalAnimation(dataSignalNodesGroup = base) {
 		console.log("No data signal nodes found to animate.");
 		return false;
 	}
-	console.log(`Starting animation for ${animations.length} data signals.`);
 	animations.forEach(anim => {
 		const parentGroup = anim.closest('g');
 		if (parentGroup) {
@@ -78,7 +77,6 @@ export function createNodeWithAnimation({
 
     // Xóa node sau khi animation kết thúc (không cần giữ lại ở đích)
     animateMotion.addEventListener('endEvent', (event) => {
-        console.log(`PC value ${value} reached Instruction Memory.`);
         if (Array.isArray(onEndCallback)) {
             onEndCallback.forEach(cb => {
                 if (typeof cb === 'function') {
@@ -88,16 +86,13 @@ export function createNodeWithAnimation({
             });
         }
 
-        event.target.closest('g')?.remove(); // Tự hủy node sau khi xử lý xong
+        event.target.closest('g')?.remove();
     });
-    // Tạo mpath để di chuyển node dọc theo đường dẫn
     const mpath = document.createElementNS(svgNS, 'mpath');
     mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${pathId}`);
 
-    // Thêm mpath vào animateMotion
     animateMotion.appendChild(mpath);
 
-    // Thêm các phần tử con vào group
     nodeGroup.appendChild(shape);
     nodeGroup.appendChild(text);
     nodeGroup.appendChild(animateMotion);

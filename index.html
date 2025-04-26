@@ -305,7 +305,7 @@
 
             <text x = "25" y = "50" class = "label"> PC </text>
             
-            <text id = "pc-value-text" x = "-30" y = "125" class = "mem-control-label" font-weight = "bold"> 0x00000000 </text>
+            <text id = "pc-value-text" x = "-30" y = "125" class = "mem-control-label" font-weight = "bold"> 0x0 </text>
           </g>
 
           <!-- instruction-memory -->
@@ -359,7 +359,7 @@
             <text x = "115" y = "130" class = "mem-label"> Read </text>
             <text x = "110" y = "150" class = "mem-label"> data 2 </text>
 
-            <text id = "regwrite-to-register-value" x = "95" y = "-5" class = "mem-control-label">0</text>
+            <text id = "register-option-value" x = "95" y = "-5" class = "mem-control-label"></text>
           </g>
 
           <!-- <g id="clone-register" transform = "translate(1400, 600) scale(2)">
@@ -408,8 +408,8 @@
             <text x = "85"  y = "65"  class = "mem-label"> Read </text>
             <text x = "95"  y = "85"  class = "mem-label"> data </text>
 
-            <text id = "memwrite-to-data-memory-value" x = "55" y = "-5" class = "mem-control-label">0</text>
-            <text id = "memread-to-data-memory-value" x = "55" y = "220" class = "mem-control-label">0</text>
+            <text id = "data-memory-write-enable-value" x = "55" y = "-5" class = "mem-control-label"></text>
+            <text id = "data-memory-read-enable-value" x = "55" y = "220" class = "mem-control-label"></text>
           </g>
 
           <!-- ALU -->
@@ -438,7 +438,7 @@
             
             <text x = "50" y = "65" class = "mem-control-label"> Zero </text>
             
-            <text id = "alu-control-to-add-2-value" x = "65" y = "160" class = "mem-control-label">0000</text>
+            <text id = "alu-option-value" x = "65" y = "160" class = "mem-control-label"></text>
           </g>
 
           <!-- End Alu -->
@@ -492,7 +492,7 @@
             <text x = "0" y = "-10" class = "control-label"> ALU </text>
             <text x = "0" y = "10"  class = "control-label"> Control </text>
 
-            <text id = "aluop-to-alu-control-value" x = "-75" y = "-5" class = "mem-control-label">00</text>
+            <text id = "alu-control-aluop-value" x = "-75" y = "-5" class = "mem-control-label"></text>
           </g>
 
           <!-- mux-0 -->
@@ -573,16 +573,16 @@
           <g id="and-gate" transform="translate(1350, 450)">
             <path d="M0,0 L40,0 A40,50 0 0,1 40,100 L0,100 Z" stroke="deepskyblue" class="control-component" />
             
-            <text id = "branch-to-and-gate-value" x = "-15" y = "25" class = "mem-control-label">0</text>
-            <text id = "add-2-to-and-gate-value" x = "-15" y = "90" class = "mem-control-label">0</text>
+            <text id = "and-gate-input1-value" x = "-15" y = "25" class = "mem-control-label"></text>
+            <text id = "and-gate-input2-value" x = "-15" y = "90" class = "mem-control-label"></text>
           </g>
 
           <!-- OR gate -->
           <g id="or-gate" transform="translate(1470, 230)">
             <path d="M0,0 Q40,40 0,100 Q50,100 80,50 Q50,0 0,0" stroke="deepskyblue" class="control-component" />
 
-            <text id = "uncondbranch-to-or-gate-value" x = "-5" y = "25" class = "mem-control-label">0</text>
-            <text id = "and-gate-to-or-gate-value" x = "-5" y = "80" class = "mem-control-label">0</text>
+            <text id = "or-gate-input1-value" x = "-5" y = "25" class = "mem-control-label"></text>
+            <text id = "or-gate-input2-value" x = "-5" y = "80" class = "mem-control-label"></text>
           </g>  
         </g> <!-- End Components Layer -->
       </g>
@@ -751,7 +751,14 @@
       <!-- Add id="instructionCode" to the textarea -->
       <div class = "code-editor">
         <div class = "line-numbers" id = "lineNumbers"> 1 </div>
-        <textarea class = "instructionCode" id = "instructionCode" name="message" rows="35" cols="30" placeholder="Enter LEGv8 code here, one instruction per line...">ADD X9, X20, X21</textarea>
+        <textarea class = "instructionCode" id = "instructionCode" name="message" rows="35" cols="30" placeholder="Enter LEGv8 code here, one instruction per line...">
+          ADD X9, X20, X21
+          ADD X9, X20, X21
+          ADD X9, X20, X21
+          ADD X9, X20, X21
+          ADD X9, X20, X21
+          
+        </textarea>
       </div>
       <button class = "button" id = "parseInstructions">Parse Instructions</button>
     </form>
