@@ -17,6 +17,8 @@ export function udpateComponents(parsedInstruction) {
     updateALU(Components);
     updateAndGate(Components);
     updateOrGate(Components);
+
+    updateMux0(Components);
     updatePC(Components);
 	return Components;
 }
@@ -435,4 +437,13 @@ function updateOrGate(currentState) {
     currentState.AndGate.input1 = input1_UnControlBranch;
     currentState.AndGate.input2 = input2_AndGate;
     currentState.AndGate.output = (input1_UnControlBranch === 1 || input2_AndGate === 1) ? 1 : 0;
+}
+
+function updateMux0(currentState) {
+    const selector = currentState.OrGate.output;
+    currentState.Mux0.input0 = currentState.Add0.output;
+    currentState.Mux0.input1 = currentState.Add1.output;
+    currentState.Mux0.option = selector;
+    currentState.Mux0.output = currentState.Mux0[`input${selector}`];
+    console.log("Mux1 Updated:", currentState.Mux0);
 }
