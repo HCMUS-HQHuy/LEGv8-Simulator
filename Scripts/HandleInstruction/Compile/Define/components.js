@@ -1,7 +1,6 @@
 export const Components = {
 	PC: {
-		OldValue: 0,
-		NewValue: 15
+		value: 15
 	},
 	Const4: {
 		value: 4

@@ -4,7 +4,6 @@ import {R_TYPE_OPCODES} from "./Define/Opcode.js"
 
 
 export function udpateComponents(parsedInstruction) {
-	updatePC(Components, parsedInstruction);
 	updateInstructionMemory(Components, parsedInstruction);
 	updateControlUnit(Components);
 	updateALUControl(Components);
@@ -16,28 +15,18 @@ export function udpateComponents(parsedInstruction) {
     updateAdd1(Components);
     updateAdd0(Components);
     updateALU(Components);
+    updateAndGate(Components);
+    updateOrGate(Components);
+    updatePC(Components);
 	return Components;
 }
 
-function updatePC(currentState, parsedInstruction) {
-	const currentPC = currentState.PC.NewValue;
-    let nextPC = null;
-    if (parsedInstruction.type === 'R') {
-        nextPC = currentPC + 4;
-        console.log(`PC Update (R-format): Sequential execution. Next PC=${nextPC}`);
-    } else {
-        console.warn(`Warning: updatePC_RFormatOnly received a non-R-format instruction (${parsedInstruction.type}). Defaulting to PC + 4.`);
-        nextPC = currentPC + 4;
-        console.error(`Error: updatePC_RFormatOnly should only receive R-format instructions. Received: ${parsedInstruction.type}`);
-        return;
-    }
-    currentState.PC.OldValue = currentState.PC.NewValue;
-    currentState.PC.NewValue = nextPC;
-    console.log(`PC updated: Old=${currentState.PC.OldValue}, New=${currentState.PC.NewValue}`);
+function updatePC(currentState) {
+    currentState.PC.value = currentState.Mux0.output;
 }
 
 function updateInstructionMemory(currentState, parsedInstruction) {
-	currentState.InstructionMemory.ReadAddress = `0x${currentState.PC.OldValue.toString(16).toUpperCase()}`;
+	currentState.InstructionMemory.ReadAddress = `0x${currentState.PC.value.toString(16).toUpperCase()}`;
 	const encodedInstruction = encodeLegv8Instruction(parsedInstruction);
 	currentState.InstructionMemory.Instruction31_00 = encodedInstruction;
 	currentState.InstructionMemory.Opcode_31_21 = encodedInstruction.substring(0, 11);
@@ -328,7 +317,7 @@ function updateShiftLeft2(currentState) {
 }
 
 function updateAdd0(currentState) {
-    const hexInputPCOld = currentState.PC.OldValue;
+    const hexInputPCOld = currentState.PC.value;
     const constantInput4 = 4; // Input 2 is the constant 4
     currentState.Add0.input1 = `0x${hexInputPCOld.toString(16)}`;
     currentState.Add0.input2 = `0x${constantInput4.toString(16)}`;
@@ -337,7 +326,7 @@ function updateAdd0(currentState) {
 }
 
 function updateAdd1(currentState) {
-    const hexInputPC = currentState.PC.OldValue;
+    const hexInputPC = currentState.PC.value;
     const hexInputSL2 = currentState.ShiftLeft2.output;
     currentState.Add1.input1 = `0x${hexInputPC.toString(16).toUpperCase()}`;
     currentState.Add1.input2 = `0x${hexInputSL2.toString(16).toUpperCase()}`;
@@ -430,4 +419,20 @@ function updateALU(currentState) {
         currentState.ALU.output = null; // Indicate error
         currentState.ALU.zero = 0;      // Default zero flag on error
     }
+}
+
+function updateAndGate(currentState) {
+    const input1_Branch = currentState.Control.Branch;
+    const input2_Zero = currentState.ALU.zero;
+    currentState.AndGate.input1 = input1_Branch;
+    currentState.AndGate.input2 = input2_Zero;
+    currentState.AndGate.output = (input1_Branch === 1 && input2_Zero === 1) ? 1 : 0;
+}
+
+function updateOrGate(currentState) {
+    const input1_UnControlBranch = currentState.Control.UncondBranch;
+    const input2_AndGate = currentState.AndGate.output;
+    currentState.AndGate.input1 = input1_UnControlBranch;
+    currentState.AndGate.input2 = input2_AndGate;
+    currentState.AndGate.output = (input1_UnControlBranch === 1 || input2_AndGate === 1) ? 1 : 0;
 }

@@ -1,9 +1,9 @@
 
 const Connections = {
 	PC: [
-		{ source: 'PC.NewValue', target: 'InstructionMemory.ReadAddress', pathId: 'pc-to-instruction-memory-path' },
-		{ source: 'PC.NewValue', target: 'Add0.input1', pathId: 'pc-to-ALU-add-0-path' },
-		{ source: 'PC.NewValue', target: 'Add1.input1', pathId: 'pc-to-ALU-add-1-path' }
+		{ source: 'PC.value', target: 'InstructionMemory.ReadAddress', pathId: 'pc-to-instruction-memory-path' },
+		{ source: 'PC.value', target: 'Add0.input1', pathId: 'pc-to-ALU-add-0-path' },
+		{ source: 'PC.value', target: 'Add1.input1', pathId: 'pc-to-ALU-add-1-path' }
 	],
 	Const4: [
 		{ source: 'Const4.value', target: 'Add0.input2', pathId: 'const-4-to-ALU-add-0-path' }
@@ -57,7 +57,7 @@ const Connections = {
 		{ source: 'Mux1.output', target: 'Register.read2', pathId: 'mux-1-to-register-path' }
 	],
 	Mux0: [
-		{ source: 'Mux0.output', target: 'PC.NewValue', pathId: 'mux-0-to-pc-path' }
+		{ source: 'Mux0.output', target: 'PC.value', pathId: 'mux-0-to-pc-path' }
 	],
 	DataMemory: [
 		{ source: 'DataMemory.ReadData', target: 'Mux3.input1', pathId: 'data-memory-to-mux-3-1-path' }
@@ -222,7 +222,7 @@ const signalCallbackTable = {
 	"AndGate.input2": null,
 	"Register.WriteData": null,
 	"OrGate.input2": null,
-	"PC.NewValue": null
+	"PC.value": null
 };
   
 
@@ -334,6 +334,10 @@ export function trigger(components) {
 			() => {document.getElementById(`or-gate-input${i}-value`).textContent = components.OrGate[`input${i}`];}
 		];
 	}
+
+	signalCallbackTable[`PC.value`] = [
+		() => {document.getElementById(`pc-value-text`).textContent = components.PC.value;}
+	];
 
 	traverseAndAnimateBFS("PC", components);
 }
