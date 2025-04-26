@@ -306,5 +306,34 @@ export function trigger(components) {
 		];
 	}
 
+	new Set(['write', 'read']).forEach(val => {
+		signalCallbackTable[`DataMemory.${val}Enable`] = [
+			() => {
+				document.getElementById(`data-memory-${val}-enable-value`).textContent = components.DataMemory[`${val}Enable`];
+			}
+		];
+	})
+
+	signalCallbackTable[`ALUControl.ALUOp`] = [
+		() => {document.getElementById(`alu-control-aluop-value`).textContent = components.ALUControl.ALUOp;}
+	];
+
+	signalCallbackTable[`ALU.option`] = [
+		() => {document.getElementById(`alu-option-value`).textContent = components.ALU.option;}
+	];
+
+	signalCallbackTable[`Register.option`] = [
+		() => {document.getElementById(`register-option-value`).textContent = components.Register.option;}
+	];
+
+	for (let i = 1; i <= 2; i++) {
+		signalCallbackTable[`AndGate.input${i}`] = [
+			() => {document.getElementById(`and-gate-input${i}-value`).textContent = components.AndGate[`input${i}`];}
+		];
+		signalCallbackTable[`OrGate.input${i}`] = [
+			() => {document.getElementById(`or-gate-input${i}-value`).textContent = components.OrGate[`input${i}`];}
+		];
+	}
+
 	traverseAndAnimateBFS("PC", components);
 }
