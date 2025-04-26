@@ -4,7 +4,7 @@ import * as animate from "./InstructionCycle/animation.js"
 import * as formatCode from "./Compile/formatCode.js"
 
 import * as generateSignal from "./InstructionCycle/generateSignal.js"
-import {SPEED_ANIMATION} from "./InstructionCycle/animationSpeed.js"
+import {SPEED_ANIMATION, state} from "./InstructionCycle/animationSpeed.js"
 
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -40,6 +40,10 @@ async function processCode() {
 	const Components = generateSignal.initialize(results);
 
 	console.log("---------------START----------------");
+	state.executing = true;
+	const rangeSlider = document.getElementById('range-slider');
+	const value = (rangeSlider.value - rangeSlider.min) / (rangeSlider.max - rangeSlider.min) * 100;
+	rangeSlider.style.background = `linear-gradient(to right,rgb(78, 92, 79) ${value}%, #ddd ${value}%)`;
 	while (true) {
 		const index = generateSignal.start(Components);
 		console.log(`index: ${index}`);
@@ -48,13 +52,15 @@ async function processCode() {
 			playAnimationsSequentially(promise);
 		});
 	}
+	rangeSlider.style.background = `linear-gradient(to right, #4CAF50 ${value}%, #ddd ${value}%)`;
+	state.executing = false;
 	console.log("---------------END----------------");
 }
 
 export function trigger() {
 	codeForm.addEventListener('submit', function(event) {
         event.preventDefault();
-		processCode();		
+		processCode();
 	});
 
 	const restartButton = document.getElementById('start-animation');
