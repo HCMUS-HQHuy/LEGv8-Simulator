@@ -10,11 +10,6 @@
   stroke-width: 1px;
   rx: 3;
   ry: 3;
-
-  width: 60px;   /* Default width */
-  height: 20px;
-  x: -30px;       /* Centered horizontally (width/2) */
-  y: -10px;        /* Centered vertically (height/2) */
 }
 
 .parsed-node rect {
@@ -22,17 +17,6 @@
   stroke-width: 1px;
   rx: 3;
   ry: 3;
-
-  width: 40px;   /* Default width */
-  height: 20px;
-  x: -20px;       /* Centered horizontally (width/2) */
-  y: -10px;        /* Centered vertically (height/2) */
-}
-
-.parsed-node.ALUControl\.Opcode rect,
-.parsed-node.Control\.Input rect{
-  width: 60px;   /* Default width */
-  x: -30px;       /* Centered horizontally (width/2) */
 }
 
 .signal-control-unit.value-0 circle {
@@ -43,7 +27,7 @@
 }
 
 .signal-control-unit.value-1 circle {
-  r: 8px;
+  r: 10px;
   fill: #FF4136;
   stroke: black;
   stroke-width: 1px;
@@ -64,7 +48,7 @@
   text-anchor: middle; /* Center text horizontally */
   dominant-baseline: central; /* Center text vertically */
   /* Default font size - can be overridden */
-  font-size: 10px;
+  font-size: 20px;
   font: monospace;
   /* Prevent text selection when dragging node */
   user-select: none;

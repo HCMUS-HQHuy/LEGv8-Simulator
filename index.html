@@ -305,7 +305,7 @@
 
             <text x = "25" y = "50" class = "label"> PC </text>
             
-            <text id = "pc-value-text" x = "4" y = "125" class = "mem-control-label" font-weight = "bold"> 0x00 </text>
+            <text id = "pc-value-text" x = "4" y = "120" class = "mem-control-label" font-weight = "bold"> 0x00 </text>
           </g>
 
           <!-- instruction-memory -->
@@ -625,28 +625,28 @@
           <text x = "115" y = "205" class = "label"> Registers </text>
 
           <text x = "5"   y = "20"  class = "mem-label"> Read </text>
-          <text x = "5"   y = "40"  class = "mem-label"> register 1 </text>
-          <text id = "register-read-register-1-value" x = "5"  y = "55" class = "component-value"> 00000 </text>
+          <text x = "5"   y = "36"  class = "mem-label"> register 1 </text>
+          <text id = "register-read-register-1-value" x = "5"  y = "52" class = "component-value"> 00000 </text>
 
           <text x = "5"   y = "75"  class = "mem-label"> Read </text>
-          <text x = "5"   y = "95"  class = "mem-label"> register 2 </text>
-          <text id = "register-read-register-2-value" x = "5"  y = "110" class = "component-value"> 00000 </text>
+          <text x = "5"   y = "91"  class = "mem-label"> register 2 </text>
+          <text id = "register-read-register-2-value" x = "5"  y = "107" class = "component-value"> 00000 </text>
     
           <text x = "5"   y = "130" class = "mem-label"> Write </text>
-          <text x = "5"   y = "150" class = "mem-label"> register </text>
-          <text id = "register-write-register-value" x = "5"  y = "165" class = "component-value"> 00000 </text>
+          <text x = "5"   y = "146" class = "mem-label"> register </text>
+          <text id = "register-write-register-value" x = "5"  y = "161" class = "component-value"> 00000 </text>
             
           <text x = "5"   y = "182" class = "mem-label"> Write </text>
-          <text x = "5"   y = "202" class = "mem-label"> data </text>
-          <text id = "register-write-data-value" x = "5"  y = "215" class = "component-value"> 0x00 </text>
+          <text x = "5"   y = "197" class = "mem-label"> data </text>
+          <text id = "register-write-data-value" x = "5"  y = "209" class = "component-value"> 0x00 </text>
 
           <text x = "115" y = "40"  class = "mem-label"> Read </text>
           <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
-          <text id = "register-read-data-1-value" x = "130"  y = "75" class = "component-value"> 0x00 </text>
+          <text id = "register-read-data-1-value" x = "130"  y = "72" class = "component-value"> 0x00 </text>
           
           <text x = "115" y = "130" class = "mem-label"> Read </text>
           <text x = "110" y = "150" class = "mem-label"> data 2 </text>
-          <text id = "register-read-data-2-value" x = "130"  y = "165" class = "component-value"> 0x00 </text>
+          <text id = "register-read-data-2-value" x = "130"  y = "162" class = "component-value"> 0x00 </text>
         </g>
 
         <g id="data-memory-selected" transform = "translate(-500, -500)">
@@ -758,7 +758,7 @@
     <!-- Add id="instructionCode" to the textarea -->
     <div class = "code-editor">
       <div class = "line-numbers" id = "lineNumbers"> 1 </div>
-      <textarea class = "instructionCode" id = "instructionCode" name="message" rows="35" cols="30" placeholder="Enter LEGv8 code here, one instruction per line...">LDUR X9, [X22, #64]</textarea>
+      <textarea class = "instructionCode" id = "instructionCode" name="message" rows="35" cols="30" placeholder="Enter LEGv8 code here, one instruction per line...">LDUR X9, [X22, #4]</textarea>
     </div>
     <button class = "button" id = "parseInstructions">Parse Instructions</button>
     <button class = "button" id = "execute">Execute</button>

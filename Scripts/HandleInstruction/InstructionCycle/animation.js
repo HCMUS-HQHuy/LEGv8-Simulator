@@ -93,9 +93,30 @@ export function createNodeWithAnimation({
 
     animateMotion.appendChild(mpath);
 
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dominant-baseline', 'middle');
+    text.setAttribute('x', '0');
+    text.setAttribute('y', '0');
+
+    // Delay 1 frame để text được render, rồi đo
+    requestAnimationFrame(() => {
+        const bbox = text.getBBox();
+        const paddingX = 10;
+        const paddingY = 5;
+
+        const width = bbox.width + paddingX * 2;
+        const height = bbox.height + paddingY * 2;
+
+        shape.setAttribute('width', width);
+        shape.setAttribute('height', height);
+        shape.setAttribute('x', -width / 2);
+        shape.setAttribute('y', -height / 2);
+    });
+
     nodeGroup.appendChild(shape);
     nodeGroup.appendChild(text);
     nodeGroup.appendChild(animateMotion);
 
     return nodeGroup;
 }
+

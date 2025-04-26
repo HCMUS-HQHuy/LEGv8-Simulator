@@ -207,12 +207,12 @@ body {
   font-weight: bold;
 }
 .mem-control-label {
-  font-family: sans-serif;
+  font-family: monospace;
   font-size: 20px;
   fill: var(--control-color); 
 }
 .component-value {
-  font-family: sans-serif;
+  font-family: monospace;
   font-size: 15px;
   fill: var(--control-color); 
   font-weight: bold;
