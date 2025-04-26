@@ -83,7 +83,7 @@ const Connections = {
 	],
 
 	OrGate: [
-		{ source: 'OrGate.output', target: 'Mux0.input1', pathId: 'OR-gate-to-mux-0-1-path' }
+		{ source: 'OrGate.output', target: 'Mux0.option', pathId: 'OR-gate-to-mux-0-1-path' }
 	]
 };
 
@@ -214,6 +214,7 @@ const signalCallbackTable = {
 	"ALU.input2": null,
 	"DataMemory.WriteData": null,
 	"Mux0.input1": null,
+	"Mux0.option": null,
 	"ALU.input1": null,
 	"Mux3.input1": null,
 	"DataMemory.address": null,
@@ -275,9 +276,10 @@ function traverseAndAnimateBFS(startNode, components) {
 			}
 
 			// console.log(`from: ${source} to : ${target}`);
+			// console.log(`target : ${targetComponent} -> cnt: ${triggerCount[targetComponent]}`);
 			console.log(`target : ${target}`);
-			if (signalCallbackTable[`${target}`])
-				console.warn(`onEndCallBack: ${signalCallbackTable[`${target}`]}`);
+			// if (signalCallbackTable[`${target}`])
+			// 	console.warn(`onEndCallBack: ${signalCallbackTable[`${target}`]}`);
 
 			dataSignalNodesGroup[depth].appendChild(createNodeWithAnimation({
 				value: value,
@@ -294,13 +296,15 @@ function traverseAndAnimateBFS(startNode, components) {
 }
 
 export function trigger(components) {
-	signalCallbackTable["Mux1.option"] = [
-		() => {
-			document.getElementById(`mux-1-${components.Mux1.option}-selected`).style.visibility = "visible";
-			document.getElementById(`mux-1-${components.Mux1.option ^ 1}-selected`).style.visibility = "hidden";
-			console.warn(`mux-1-${components.Mux1.option}-selected`);
-		}
-	];
+	for (let i = 0; i <= 3; i++) {
+		signalCallbackTable[`Mux${i}.option`] = [
+			() => {
+				document.getElementById(`mux-${i}-${components.Mux1.option}-selected`).style.visibility = "visible";
+				document.getElementById(`mux-${i}-${components.Mux1.option ^ 1}-selected`).style.visibility = "hidden";
+				document.getElementById(`mux-${i}-value`).textContent = components.Mux1.option;
+			}
+		];
+	}
 
 	traverseAndAnimateBFS("PC", components);
 }
