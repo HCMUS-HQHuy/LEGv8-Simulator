@@ -136,10 +136,11 @@ const signalCallbackTable = {
 	"PC.value": null
 };
   
-import { Components } from "../Compile/Define/components.js";
+import { getComponents } from "../Compile/Define/components.js";
 import { Connections } from "../Compile/Define/Connections.js"
 import {createNodeWithAnimation} from "./animation.js"
 import { computeOutputs } from "./computationOutputs.js";
+import { encodeLegv8Instruction } from "../Compile/parser.js";
 
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -213,7 +214,8 @@ function traverseAndAnimateBFS(startNode, components) {
 	}
 }
 
-export function trigger() {
+export function initialize(code) {
+	const Components = getComponents();
 	for (let i = 0; i <= 3; i++) {
 		signalCallbackTable[`Mux${i}.option`] = [
 			() => {
@@ -257,5 +259,19 @@ export function trigger() {
 		() => {document.getElementById(`pc-value-text`).textContent = Components.PC.value;}
 	];
 
+	Components.PC.value = 0;
+	
+	code.forEach(key => {
+		const encodedInstruction = encodeLegv8Instruction(key.parsed);
+		Components.InstructionMemory.instruction.push(encodedInstruction);
+	});
+	
+	return Components;
+}
+
+export function start(Components) {
+	if (Components.InstructionMemory.ReadAddress >= Components.InstructionMemory.instruction.length)
+		return -1;
 	traverseAndAnimateBFS("PC", Components);
+	return Components.InstructionMemory.ReadAddress;
 }
