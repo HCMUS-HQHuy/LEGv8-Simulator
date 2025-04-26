@@ -39,7 +39,7 @@ export function computeOutputs(componentName, components) {
 			const a = components[componentName].input1;
 			const b = components[componentName].input2;
 			components[componentName].output = doALUOperation(op, a, b);
-			components[componentName].zero = (components[componentName].output === 0);
+			components[componentName].zero = (components[componentName].output === 0 ? 1 : 0);
 			break;
 
 		case 'Mux0':
@@ -64,13 +64,51 @@ export function computeOutputs(componentName, components) {
 	}
 }
 
-function doALUOperation(op, a, b) {
-	switch(op) {
-		case 'ADD': return a + b;
-		case 'SUB': return a - b;
-		case 'AND': return a & b;
-		case 'OR':  return a | b;
-		default: return 0;
+function doALUOperation(aluControlCode, operand1, operand2) {
+	console.warn(`Option: ${aluControlCode} -> ${operand1} -> ${operand2}`);
+	switch (aluControlCode) {
+		case '0010': // ADD
+			return operand1 + operand2;
+		case '0110': // SUB (used for SUB, SUBI, and comparisons for branches)
+			return operand1 - operand2;
+		case '0000': // AND
+			return operand1 & operand2;
+		case '0001': // ORR
+			return operand1 | operand2;
+		case '1000': // EOR (XOR)
+			return operand1 ^ operand2;
+		case '1001': // LSR (Logical Shift Right)
+			// !! Quan trọng: Phép dịch trong JS/BigInt cần xử lý số âm đặc biệt
+			// !! để mô phỏng đúng LSR (điền 0). Cách dễ nhất là dùng mask.
+			// !! Lượng dịch (shamt) thường đến từ instruction bits, không phải operand2.
+			// !! -> Cần lấy shamt từ InstructionMemory.Shamt_15_10
+			const shamtLSR = currentState.InstructionMemory?.Shamt_15_10 ? parseInt(currentState.InstructionMemory.Shamt_15_10, 2) : 0;
+			const sixtyFourBitMaskLSR = (1n << 64n) - 1n;
+			// Chuyển operand1 thành số không dấu 64bit trước khi dịch
+			const unsignedOperand1LSR = operand1 & sixtyFourBitMaskLSR;
+			return unsignedOperand1LSR >> BigInt(shamtLSR);
+			
+		case '1010': // LSL (Logical Shift Left)
+			// Lượng dịch (shamt) từ instruction bits.
+			const shamtLSL = currentState.InstructionMemory?.Shamt_15_10 ? parseInt(currentState.InstructionMemory.Shamt_15_10, 2) : 0;
+			 // Dịch trái có thể tự nhiên hoạt động đúng với BigInt
+			 // Nhưng vẫn nên mask kết quả để đảm bảo 64-bit
+			return operand1 << BigInt(shamtLSL);
+			
+		case '1100': // Pass Input B (operand2)
+			return operand2;
+			
+		case '1101': // Pass Input A (operand1)
+			return operand1;
+			
+		// Thêm các mã khác nếu cần (SLT, MUL, DIV...)
+		// case '0111': // SLT (Set on Less Than) - Ví dụ
+		//     resultBigInt = (operand1 < operand2) ? 1n : 0n;
+		//     break;
+		case '1111': // Error code from ALUControl
+		default:
+			console.warn(`ALU Warning: Received unknown or error ALU control code '${aluControlCode}'. Outputting 0.`);
+			return;
 	}
 }
 
@@ -265,22 +303,12 @@ function updateSignExtend(currentState) {
 
 
 function updateRegister(currentState) {
-    const regWriteEnable  = currentState.Control.RegWrite;
     const readAddr1Binary = currentState.InstructionMemory.Rn_09_05;
     const readAddr2Binary = currentState.Mux1.output;
     const writeAddrBinary = currentState.InstructionMemory.RdRt_04_00;
 
 	const formatRegIndex = (a) => {
 		return parseInt(a, 2);
-		const index = (a && a.length === 5) ? parseInt(a, 2) : null
-        if (index === null) {
-			console.warn('index is null in process State');
-            return null;
-        } 
-		if (index === 31) return 'XZR';
-        if (index >= 0 && index < 31) return 'X' + String(index).padStart(2, '0');
-		console.warn(`Formatting invalid register index: ${index}`);
-		return null;
     };
 
     const readIndex1 = parseInt(readAddr1Binary, 2);
