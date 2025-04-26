@@ -141,7 +141,6 @@ import { Connections } from "../Compile/Define/Connections.js"
 import {createNodeWithAnimation} from "./animation.js"
 import { computeOutputs } from "./computationOutputs.js";
 import { encodeLegv8Instruction } from "../Compile/parser.js";
-import { getResult } from "../Compile/formatCode.js";
 
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -257,7 +256,7 @@ export function initialize(code) {
 	}
 
 	signalCallbackTable[`PC.value`] = [
-		() => {document.getElementById(`pc-value-text`).textContent = Components.PC.value;}
+		() => {document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;}
 	];
 
 	Components.PC.value = 0;
