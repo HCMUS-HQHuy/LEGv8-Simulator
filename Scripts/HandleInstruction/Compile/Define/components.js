@@ -132,7 +132,7 @@ export const Components = {
 		X17: 0,
 		X18: 0,
 		X19: 0,
-		X20: 0,
+		X20: 100,
 		X21: 0,
 		X22: 0,
 		X23: 0,

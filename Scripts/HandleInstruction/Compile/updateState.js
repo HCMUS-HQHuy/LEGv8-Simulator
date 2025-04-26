@@ -15,6 +15,7 @@ export function udpateComponents(parsedInstruction) {
 	updateRegister(Components);
     updateAdd1(Components);
     updateAdd0(Components);
+    updateALU(Components);
 	return Components;
 }
 
@@ -342,4 +343,91 @@ function updateAdd1(currentState) {
     currentState.Add1.input2 = `0x${hexInputSL2.toString(16).toUpperCase()}`;
     currentState.Add1.output = hexInputPC + hexInputSL2;
     console.log("Add1 Updated:", currentState.Add1);
+}
+
+function updateALU(currentState) {
+
+    const inputVal1 = currentState.Register.ReadData1;
+    const inputVal2 = currentState.Mux2.output;
+    const aluControlCode = currentState.ALUControl.output; // Mã 4-bit
+
+    currentState.ALU.input1 = inputVal1;
+    currentState.ALU.input2 = inputVal2;
+    currentState.ALU.option = aluControlCode;
+
+    let resultBigInt = 0n; // Default result as BigInt 0
+    let zeroFlag = 0;   // Default zero flag
+
+    const operand1 = BigInt(inputVal1);
+    const operand2 = BigInt(inputVal2);
+
+    try {
+        switch (aluControlCode) {
+            case '0010': // ADD
+                resultBigInt = operand1 + operand2;
+                break;
+            case '0110': // SUB (used for SUB, SUBI, and comparisons for branches)
+                resultBigInt = operand1 - operand2;
+                break;
+            case '0000': // AND
+                resultBigInt = operand1 & operand2;
+                break;
+            case '0001': // ORR
+                resultBigInt = operand1 | operand2;
+                break;
+            case '1000': // EOR (XOR)
+                resultBigInt = operand1 ^ operand2;
+                break;
+            case '1001': // LSR (Logical Shift Right)
+                // !! Quan trọng: Phép dịch trong JS/BigInt cần xử lý số âm đặc biệt
+                // !! để mô phỏng đúng LSR (điền 0). Cách dễ nhất là dùng mask.
+                // !! Lượng dịch (shamt) thường đến từ instruction bits, không phải operand2.
+                // !! -> Cần lấy shamt từ InstructionMemory.Shamt_15_10
+                const shamtLSR = currentState.InstructionMemory?.Shamt_15_10 ? parseInt(currentState.InstructionMemory.Shamt_15_10, 2) : 0;
+                const sixtyFourBitMaskLSR = (1n << 64n) - 1n;
+                // Chuyển operand1 thành số không dấu 64bit trước khi dịch
+                const unsignedOperand1LSR = operand1 & sixtyFourBitMaskLSR;
+                resultBigInt = unsignedOperand1LSR >> BigInt(shamtLSR);
+                break;
+            case '1010': // LSL (Logical Shift Left)
+                // Lượng dịch (shamt) từ instruction bits.
+                const shamtLSL = currentState.InstructionMemory?.Shamt_15_10 ? parseInt(currentState.InstructionMemory.Shamt_15_10, 2) : 0;
+                 // Dịch trái có thể tự nhiên hoạt động đúng với BigInt
+                 // Nhưng vẫn nên mask kết quả để đảm bảo 64-bit
+                resultBigInt = operand1 << BigInt(shamtLSL);
+                break;
+            case '1100': // Pass Input B (operand2)
+                resultBigInt = operand2;
+                break;
+            case '1101': // Pass Input A (operand1)
+                resultBigInt = operand1;
+                break;
+            // Thêm các mã khác nếu cần (SLT, MUL, DIV...)
+            // case '0111': // SLT (Set on Less Than) - Ví dụ
+            //     resultBigInt = (operand1 < operand2) ? 1n : 0n;
+            //     break;
+            case '1111': // Error code from ALUControl
+            default:
+                console.warn(`ALU Warning: Received unknown or error ALU control code '${aluControlCode}'. Outputting 0.`);
+                resultBigInt = 0n; // Default to 0 on unknown operation
+                break;
+        }
+
+        // 5. Ensure result is within 64-bit range (Apply mask)
+        const sixtyFourBitMask = (1n << 64n) - 1n;
+        const resultIn64Bit = resultBigInt & sixtyFourBitMask;
+
+        // 6. Update Output
+        currentState.ALU.output = resultIn64Bit;
+
+        // 7. Update Zero Flag
+        // Cờ zero được set nếu kết quả *sau khi mask 64-bit* là 0
+        zeroFlag = (resultIn64Bit === 0n) ? 1 : 0;
+        currentState.ALU.zero = zeroFlag;
+
+    } catch (e) {
+        console.error(`ALU Error during operation '${aluControlCode}': ${e.message}`);
+        currentState.ALU.output = null; // Indicate error
+        currentState.ALU.zero = 0;      // Default zero flag on error
+    }
 }

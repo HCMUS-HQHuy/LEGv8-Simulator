@@ -92,7 +92,7 @@ const requiredTriggers = {
 	Const4: 0,
 	InstructionMemory: 1,
 	Register: 4,
-	DataMemory: 3,
+	DataMemory: 4,
 	Add0: 2,
 	Add1: 2,
 	ALU: 3,
