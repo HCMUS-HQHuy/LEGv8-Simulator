@@ -22,13 +22,11 @@ async function playAnimationsSequentially() {
 	for (let i = 0; i < dataSignalNodesGroup.length; i++) {
 		const success = animate.startSignalAnimation(dataSignalNodesGroup[i]);
 		if (success === false) break;
-		await new Promise(resolve => setTimeout(resolve, 2000)); // chờ 2 giây
-		console.log("HELLO!\n");
+		await new Promise(resolve => setTimeout(resolve, 2000));
 	}
-	console.log("HERE!\n");
 }
 
-async function processCode() {
+function processCode() {
 	const results = formatCode.getResult();
 	if (results == null) {
 		console.error("formatcode: Have some problem!");
@@ -44,13 +42,13 @@ async function processCode() {
 	console.log(`results: ${results[0].assemblyInstruction}`);
 	const Components = generateSignal.initialize(results);
 
+	console.log("---------------START----------------");
 	while (true) {
-		console.log("---------------START----------------");
 		const index = generateSignal.start(Components);
 		if (index == -1) break;
-		await new Promise(playAnimationsSequentially);
-		console.log("---------------END----------------");
+		playAnimationsSequentially();
 	}
+	console.log("---------------END----------------");
 }
 
 export function trigger() {

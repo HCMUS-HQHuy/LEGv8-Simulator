@@ -141,6 +141,7 @@ import { Connections } from "../Compile/Define/Connections.js"
 import {createNodeWithAnimation} from "./animation.js"
 import { computeOutputs } from "./computationOutputs.js";
 import { encodeLegv8Instruction } from "../Compile/parser.js";
+import { getResult } from "../Compile/formatCode.js";
 
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -270,8 +271,9 @@ export function initialize(code) {
 }
 
 export function start(Components) {
-	if (Components.InstructionMemory.ReadAddress >= Components.InstructionMemory.instruction.length)
+	if (Components.PC.value >= Components.InstructionMemory.instruction.length) {
 		return -1;
+	}
 	traverseAndAnimateBFS("PC", Components);
 	return Components.InstructionMemory.ReadAddress;
 }
