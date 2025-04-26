@@ -20,7 +20,7 @@ const dataSignalNodesGroup = [
 ];
 
 async function playAnimationsSequentially(promise) {
-	for (let i = 0; i < dataSignalNodesGroup.length; i++) {
+	for (let i = 0; i < dataSignalNodesGroup.length && state.executing; i++) {
 		const success = animate.startSignalAnimation(dataSignalNodesGroup[i]);
 		if (success === false) break;
 		await new Promise(resolve => setTimeout(resolve, SPEED_ANIMATION));
@@ -28,20 +28,28 @@ async function playAnimationsSequentially(promise) {
 	promise();
 }
 
-async function processCode() {
+function compileCode() {
 	const results = formatCode.getResult();
 	if (results == null) {
 		console.error("formatcode: Have some problem!");
 		return;
 	}
 	parsedOutputTable.update(results);
+	return results;
+}
+
+async function execute(results) {
+	if (results == null) {
+		console.warn("formatcode: Have some problem!");
+		return;
+	}
 	currentInstruction.update(results[0]);
 	console.log(`results: ${results.length}`);
 	const Components = generateSignal.initialize(results);
 
 	console.log("---------------START----------------");
 	state.executing = true;
-	while (true) {
+	while (state.executing) {
 		const index = generateSignal.start(Components);
 		console.log(`index: ${index}`);
 		if (index == -1) break;
@@ -54,15 +62,24 @@ async function processCode() {
 }
 
 export function trigger() {
-	codeForm.addEventListener('submit', function(event) {
+	let results = null;
+	document.getElementById('parseInstructions').addEventListener('click', function(event) {
         event.preventDefault();
-		processCode();
+		// processCode();
+		results = compileCode();
 	});
 
-	const restartButton = document.getElementById('start-animation');
-	restartButton.addEventListener('click', function(event) {
+	document.getElementById('start-animation').addEventListener('click', function(event) {
 		event.preventDefault();
-		processCode();	
+		execute(results);
+	});
+	document.getElementById('execute').addEventListener('click', function(event) {
+		event.preventDefault();
+		execute(results);
+	});
+
+	document.getElementById('stop-animation').addEventListener('click',function(event) {
+		event.preventDefault();
+		state.executing = false;
 	});
 }
-
