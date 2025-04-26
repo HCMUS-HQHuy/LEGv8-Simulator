@@ -1,4 +1,4 @@
-import { R_TYPE_OPCODES } from "../Compile/Define/Opcode.js";
+import { R_TYPE_OPCODES, D_TYPE_OPCODES } from "../Compile/Define/Opcode.js";
 
 export function computeOutputs(componentName, components) {
 	switch (componentName) {
@@ -115,10 +115,7 @@ function doALUOperation(aluControlCode, operand1, operand2) {
 function updateControlUnit(currentState) {
     const opcode = currentState.InstructionMemory.Opcode_31_21; // Lấy chuỗi 11 bit opcode
 
-    const brOpcode = '11010110000'; // BR
-
     if (Object.values(R_TYPE_OPCODES).includes(opcode)) {
-        // --- Lệnh R-Format thông thường (ADD, SUB, AND, ORR, ...) ---
         currentState.Control.Reg2Loc = 0;       // Theo yêu cầu X -> 0
         currentState.Control.ALUSrc = 0;        // ALU dùng [Rm]
         currentState.Control.MemtoReg = 0;      // Kết quả từ ALU ghi vào Reg
@@ -130,29 +127,35 @@ function updateControlUnit(currentState) {
         currentState.Control.ALUOp = '10';      // ALU Control sẽ dựa vào funct bits
         console.log(`Control set for R-format instruction (Opcode: ${opcode})`);
 
-    } else if (opcode === brOpcode) {
-        // --- Lệnh BR (Định dạng R nhưng tín hiệu khác) ---
-        currentState.Control.Reg2Loc = 0;       // Theo yêu cầu X -> 0
-        currentState.Control.ALUSrc = 0;        // Không quan trọng lắm (đầu vào 2 ALU)
-        currentState.Control.MemtoReg = 0;      // Không ghi Reg -> Don't Care (X -> 0)
-        currentState.Control.RegWrite = 0;      // Không ghi thanh ghi
-        currentState.Control.MemRead = 0;
-        currentState.Control.MemWrite = 0;
-        currentState.Control.Branch = 0;        // updatePC xử lý BR, không cần tín hiệu này
-        currentState.Control.UncondBranch = 0;  // updatePC xử lý BR, không cần tín hiệu này
-        currentState.Control.ALUOp = 'XX';      // ALU không thực hiện phép toán chính (hoặc '00'/'01')
-        console.log(`Control set for BR instruction (Opcode: ${opcode})`);
+    } else if (Object.values(D_TYPE_OPCODES).includes(opcode)) {
+        switch (opcode) {
+            case '11111000010':
+                currentState.Control.Reg2Loc      = 0;
+                currentState.Control.ALUSrc       = 1;
+                currentState.Control.MemtoReg     = 1;
+                currentState.Control.RegWrite     = 1;
+                currentState.Control.MemRead      = 1;
+                currentState.Control.MemWrite     = 0;
+                currentState.Control.Branch       = 0;
+                currentState.Control.UncondBranch = 0;
+                currentState.Control.ALUOp        = '00';
+            break;
+            case '11111000000':
+                currentState.Control.Reg2Loc      = 1;
+                currentState.Control.ALUSrc       = 1;
+                currentState.Control.MemtoReg     = 0;
+                currentState.Control.RegWrite     = 0;
+                currentState.Control.MemRead      = 0;
+                currentState.Control.MemWrite     = 1;
+                currentState.Control.Branch       = 0;
+                currentState.Control.UncondBranch = 0;
+                currentState.Control.ALUOp        = '00';
+            break;
+            default:
+                console.error('opcode is not supported in D_TYPE_OPCODES');
+        }
     } else {
-        console.warn(`Opcode ${opcode} is not R-format. Resetting control signals.`);
-        currentState.Control.Reg2Loc = 0;
-        currentState.Control.ALUSrc = 0;
-        currentState.Control.MemtoReg = 0;
-        currentState.Control.RegWrite = 0;
-        currentState.Control.MemRead = 0;
-        currentState.Control.MemWrite = 0;
-        currentState.Control.Branch = 0;
-        currentState.Control.UncondBranch = 0;
-        currentState.Control.ALUOp = 'XX'; // Không xác định
+        console.error(`Opcode ${opcode} is not R-format. Resetting control signals.`);
     }
 }
 

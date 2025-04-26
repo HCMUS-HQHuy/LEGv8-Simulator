@@ -71,7 +71,6 @@ export function trigger() {
 	let results = null;
 	document.getElementById('parseInstructions').addEventListener('click', function(event) {
         event.preventDefault();
-		// processCode();
 		results = compileCode();
 	});
 

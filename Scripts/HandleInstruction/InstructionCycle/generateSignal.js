@@ -265,6 +265,7 @@ export function initialize(code) {
 	code.forEach(key => {
 		const encodedInstruction = encodeLegv8Instruction(key.parsed);
 		Components.InstructionMemory.instruction.push(encodedInstruction);
+		console.log(encodedInstruction);
 	});
 	
 	return Components;

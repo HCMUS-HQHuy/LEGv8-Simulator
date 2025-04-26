@@ -1,12 +1,6 @@
-import { R_TYPE_OPCODES }  from "./Define/Opcode.js"
+import { R_TYPE_OPCODES, D_TYPE_OPCODES }  from "./Define/Opcode.js"
 
-/**
- * Parses a single line of LEGv8 assembly code.
- * Handles common formats (R, I, D, B, CB, IW, System).
- * Removes comments starting with // or ;
- * @param {string} line - The assembly code line to parse.
- * @returns {ParsedInstruction | null} An object with parsed components, or null for empty/comment-only lines.
- */
+
 export function parseLegv8Instruction(line) {
     if (!line) {
         return null; // Ignore empty lines
@@ -69,11 +63,11 @@ export function parseLegv8Instruction(line) {
                 result.type = 'D';
                 const memMatch = ops[1].match(/^\[(X[0-9]+|XSP|XZR)\s*(?:,\s*(#-?\d+))?\s*\]$/i);
                 if (memMatch) {
-                     result.structuredOperands = {
+                    result.structuredOperands = {
                         Rt: ops[0], // Destination/Source register
                         Rn: memMatch[1].toUpperCase(), // Base register
                         address_imm: memMatch[2] || '#0' // Optional immediate offset, default to 0
-                     };
+                    };
                 } else {
                     throw new Error(`Could not parse memory operand for ${mnemonic}: ${ops[1]}`);
                 }
@@ -145,12 +139,7 @@ export function parseLegv8Instruction(line) {
     return result;
 }
 
-/**
- * Chuyển đổi số hiệu thanh ghi LEGv8 (X0-X30, XZR, SP) thành số nguyên.
- * @param {string} regString - Chuỗi tên thanh ghi (e.g., "X9", "XZR", "SP").
- * @returns {number} Số hiệu thanh ghi (0-31).
- * @throws {Error} Nếu định dạng thanh ghi không hợp lệ.
- */
+
 function parseRegisterNumber(regString) {
     if (!regString) throw new Error("Register string cannot be empty.");
     const upperReg = regString.toUpperCase();
@@ -170,24 +159,13 @@ function parseRegisterNumber(regString) {
     throw new Error(`Invalid register format: ${regString}`);
 }
 
-/**
- * Chuyển đổi một số nguyên thành chuỗi nhị phân với độ dài cố định (padding 0).
- * @param {number} number - Số nguyên cần chuyển đổi.
- * @param {number} bits - Số bit mong muốn cho chuỗi nhị phân.
- * @returns {string} Chuỗi nhị phân được padding.
- * @throws {Error} Nếu số không vừa với số bit yêu cầu hoặc không phải là số.
- */
 function toBinary(number, bits) {
     if (typeof number !== 'number' || !Number.isInteger(number)) {
         throw new Error(`Invalid input: "${number}" is not an integer.`);
     }
     if (number < 0) {
-       // Basic LEGv8 encoding often doesn't handle negative field values directly
-       // except for immediates, which are handled differently.
-       // Register numbers and shamt should be non-negative.
        throw new Error(`Negative numbers (${number}) not directly supported for this field type.`);
     }
-     // Check if number fits within the specified bits (unsigned)
     if (number >= (1 << bits)) {
          throw new Error(`Number ${number} is too large for ${bits} bits.`);
     }
@@ -196,12 +174,6 @@ function toBinary(number, bits) {
     return binaryString.padStart(bits, '0');
 }
 
-/**
- * Mã hóa một đối tượng lệnh LEGv8 đã được parse thành chuỗi mã máy 32-bit.
- * Hiện tại chỉ hỗ trợ R-type ADD (và các lệnh trong R_TYPE_OPCODES).
- * @param {ParsedInstruction} parsedInstruction - Đối tượng lệnh đã parse.
- * @returns {string | {error: string}} Chuỗi nhị phân 32-bit hoặc đối tượng lỗi.
- */
 export function encodeLegv8Instruction(parsedInstruction) {
     if (!parsedInstruction || parsedInstruction.error) {
         return { error: "Invalid or errored parsed instruction provided." };
@@ -267,9 +239,28 @@ export function encodeLegv8Instruction(parsedInstruction) {
             // Format: Opcode(10 bits), Immediate(12 bits), Rn(5 bits), Rd(5 bits)
             return { error: `Encoding for I-type (${mnemonic}) not yet implemented.` };
         } else if (type === 'D') {
-            // TODO: Implement D-type encoding (LDUR, STUR...)
-            // Format: Opcode(11 bits), Immediate(9 bits), op2(2 bits), Rn(5 bits), Rt(5 bits)
-            return { error: `Encoding for D-type (${mnemonic}) not yet implemented.` };
+            // Xử lý D-type
+            const opcode = D_TYPE_OPCODES[mnemonic];
+            if (!opcode) {
+                return { error: `Unsupported D-type mnemonic: ${mnemonic}` };
+            }
+            const rtNum = parseRegisterNumber(structuredOperands.Rt);
+            const rnNum = parseRegisterNumber(structuredOperands.Rn);
+            let immediate = structuredOperands.address_imm;
+            
+            if (immediate.startsWith('#')) {
+                immediate = parseInt(immediate.slice(1), 10); // Loại bỏ ký tự '#'
+            } else console.error(`immediate is not #... ${immediate}`);
+
+            const rtBin = toBinary(rtNum, 5);
+            const rnBin = toBinary(rnNum, 5);
+            const immediateBin = toBinary(immediate, 9);
+            const machineCode = `${opcode}${rnBin}${rtBin}00${immediateBin}`;
+        
+            if (machineCode.length !== 32) {
+                return { error: `Internal error: Generated code length is not 32 bits (${machineCode.length})` };
+            }
+            return machineCode;
         } else if (type === 'B') {
             // TODO: Implement B-type encoding (B, BL...)
             // Format: Opcode(6 bits), Immediate(26 bits) - Requires calculating offset!

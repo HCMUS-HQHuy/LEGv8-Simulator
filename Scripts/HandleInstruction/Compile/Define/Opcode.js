@@ -7,3 +7,8 @@ export const R_TYPE_OPCODES = {
     'LSL':  '11010011011',
     'LSR':  '11010011010',
 };
+
+export const D_TYPE_OPCODES = {
+    'LDUR': '11111000010',
+    'STUR': '11111000000'
+}
