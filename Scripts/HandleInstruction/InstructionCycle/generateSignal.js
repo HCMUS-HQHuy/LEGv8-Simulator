@@ -220,9 +220,9 @@ export function initialize(code) {
 	for (let i = 0; i <= 3; i++) {
 		signalCallbackTable[`Mux${i}.option`] = [
 			() => {
-				document.getElementById(`mux-${i}-${Components.Mux1.option}-selected`).style.visibility = "visible";
-				document.getElementById(`mux-${i}-${Components.Mux1.option ^ 1}-selected`).style.visibility = "hidden";
-				document.getElementById(`mux-${i}-value`).textContent = Components.Mux1.option;
+				document.getElementById(`mux-${i}-${Components[`Mux${i}`].option}-selected`).style.visibility = "visible";
+				document.getElementById(`mux-${i}-${Components[`Mux${i}`].option ^ 1}-selected`).style.visibility = "hidden";
+				document.getElementById(`mux-${i}-value`).textContent = Components[`Mux${i}`].option;
 			}
 		];
 	}
