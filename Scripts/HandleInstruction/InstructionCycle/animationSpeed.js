@@ -28,7 +28,7 @@ export function trigger() {
 			return;
 		}
 		currentPercentage = rangeSlider.value;
-		rangeValue.textContent = currentPercentage;
+		rangeValue.textContent = `Speed: ${currentPercentage}%`;
 		DURATION_ANIMATION = MAXIMUM_DURATION - currentPercentage * (MAXIMUM_DURATION - MININUM_DURATION) / 100;
 		enable();
 	});
