@@ -49,36 +49,36 @@ export const shapes = {
 		shapeType: 'rect'
 	},
 	"Mux1.option": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"OrGate.input1": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"AndGate.input1": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"DataMemory.readEnable": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"Mux3.option": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"ALUControl.ALUOp": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"DataMemory.writeEnable": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"Mux2.option": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"Register.option": {
 		className: 'signal-control-unit',
@@ -97,8 +97,8 @@ export const shapes = {
 		shapeType: 'rect'
 	},
 	"ALU.option": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"Add1.input2": {
 		className: 'data-node',
@@ -121,8 +121,8 @@ export const shapes = {
 		shapeType: 'rect'
 	},
 	"Mux0.option": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"ALU.input1": {
 		className: 'data-node',
@@ -141,16 +141,16 @@ export const shapes = {
 		shapeType: 'rect'
 	},
 	"AndGate.input2": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"Register.WriteData": {
 		className: 'data-node',
 		shapeType: 'rect'
 	},
 	"OrGate.input2": {
-		className: 'data-node',
-		shapeType: 'rect'
+		className: 'signal-control-unit',
+		shapeType: 'circle'
 	},
 	"PC.value": {
 		className: 'data-node',
