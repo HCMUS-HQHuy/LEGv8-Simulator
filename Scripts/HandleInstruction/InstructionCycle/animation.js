@@ -71,7 +71,7 @@ export function createNodeWithAnimation({
     // Tạo hiệu ứng chuyển động cho node
     const animateMotion = document.createElementNS(svgNS, 'animateMotion');
     animateMotion.setAttribute('id', animationId);
-    animateMotion.setAttribute('dur', `${duration}s`); // Thời gian fetch
+    animateMotion.setAttribute('dur', `${duration}ms`);
     animateMotion.setAttribute('begin', 'indefinite');
     animateMotion.setAttribute('fill', 'freeze');
 

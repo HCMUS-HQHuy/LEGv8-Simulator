@@ -136,7 +136,7 @@ function traverseAndAnimateBFS(startNode, components) {
 				fieldName: `${target}`,
 				onEndCallback: signalCallbackTable[`${target}`],
 				pathId: pathId,
-				duration: SPEED_ANIMATION / 1000,
+				duration: SPEED_ANIMATION,
 				className: shapes[target].className,
 				shapeType: shapes[target].shapeType
 			}));
@@ -163,6 +163,21 @@ export function initialize(code) {
 			}
 		];
 	})
+
+	signalCallbackTable[`DataMemory.address`] = [
+		() => {
+			const index = Components.DataMemory.address;
+			const indexHex = `0x${(index*8).toString(16).toUpperCase().padStart(4, '0')}`;
+			console.warn(`indexHex: ${indexHex}`);
+			document.getElementById(indexHex).innerText = `0x${Components.DataMemory.Values[index].toString(16).toUpperCase().padStart(4, '0')}`;
+			document.getElementById(`row-${indexHex}`).style.backgroundColor = "yellow";
+			document.getElementById(`row-${indexHex}`).style.color = "red";
+			setTimeout(() => {
+				document.getElementById(`row-${indexHex}`).style.backgroundColor = "";
+				document.getElementById(`row-${indexHex}`).style.color = "";
+			}, SPEED_ANIMATION);
+		}
+	]
 
 	signalCallbackTable[`ALUControl.ALUOp`] = [
 		() => {document.getElementById(`alu-control-aluop-value`).textContent = Components.ALUControl.ALUOp;}

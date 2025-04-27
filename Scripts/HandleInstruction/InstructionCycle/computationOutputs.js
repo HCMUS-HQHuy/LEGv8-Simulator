@@ -347,7 +347,7 @@ function updateDataMemory(currentState) {
 	}
     if (currentState.DataMemory.writeEnable === 1) {
         currentState.DataMemory.Values[address] = writeData;
-        currentState.DataMemory.ReadData = -1;
+        currentState.DataMemory.ReadData = writeData;
     }
     if (currentState.DataMemory.readEnable === 1) {
         currentState.DataMemory.ReadData = currentState.DataMemory.Values[address];
