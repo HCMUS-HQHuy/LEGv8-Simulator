@@ -18,8 +18,8 @@
   <div class = "frameBox">
     <h2>Frame</h2>
 
-    <div class = "frame" id = "zoomFrame">
-      <svg viewBox = "0 0 1800 1050">
+    <div class = "frame">
+      <svg viewBox = "0 0 1800 1050" id = "zoomFrame">
       <g class = "content" id = "zoomContent">
         <!-- Signal Lines Layer -->
         <g id = "signal-lines">
@@ -271,17 +271,6 @@
           <path id         = "OR-gate-to-mux-0-1-path"
                 d          = "M1550,280 1600,280 1600,220"
                 class      = "control-signal-line" />
-          
-          <g id="data-signal-nodes">
-            <!-- Các node 0/1 sẽ được thêm vào đây bằng JavaScript -->
-          </g>          
-
-          <!-- Chấm tròn di chuyển theo đường path -->
-          <circle id = "point" r="5" fill="red" visibility="hidden">
-            <animateMotion id = "animationDot" dur="2s" rotate="auto" fill="freeze" begin="indefinite">
-              <mpath href="#pc-to-ALU-add-0-path" />
-            </animateMotion>
-          </circle>
         </g>
 
         <!-- Components Layer (Drawn AFTER lines = On Top) -->
@@ -348,37 +337,6 @@
 
             <text id = "register-option-value" x = "95" y = "-5" class = "mem-control-label"></text>
           </g>
-
-          <!-- <g id="clone-register" transform = "translate(1400, 600) scale(2)">
-            <rect width = "170" height = "220" class = "component" />
-
-            <text x = "115" y = "205" class = "label"> Registers </text>
-
-            <text x = "5"   y = "20"  class = "mem-label"> Read </text>
-            <text x = "5"   y = "40"  class = "mem-label"> register 1 </text>
-              
-            <text x = "5"   y = "75"  class = "mem-label"> Read </text>
-            <text x = "5"   y = "95"  class = "mem-label"> register 2 </text>
-      
-            <text x = "5"   y = "145" class = "mem-label"> Write </text>
-            <text x = "5"   y = "165" class = "mem-label"> register </text>
-              
-            <text x = "5"   y = "190" class = "mem-label"> Write </text>
-            <text x = "5"   y = "210" class = "mem-label"> data </text>
-
-            <text x = "115" y = "40"  class = "mem-label"> Read </text>
-            <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
-
-            <text x = "115" y = "130" class = "mem-label"> Read </text>
-            <text x = "110" y = "150" class = "mem-label"> data 2 </text>
-
-            <text id = "regwrite-to-register-value" x = "95" y = "-5" class = "mem-control-label">0</text>
-            
-            <text id="read1" x = "5" y = "60" class = "instruction">  </text>
-            <text id="read2" x = "5" y = "90" class = "instruction">  </text>
-            <text id="write-reg" x = "5" y = "130" class = "instruction">  </text>
-            <text id="write-data" x = "5" y = "160" class = "instruction">  </text>
-          </g> -->
 
           <!-- data-memory  -->
           <g id="data-memory" transform = "translate(1450, 610)">
@@ -580,16 +538,20 @@
             <text id = "or-gate-input2-value" x = "-5" y = "80" class = "mem-control-label"></text>
           </g>  
         </g> <!-- End Components Layer -->
-        <g id="data-signal-nodes0"></g>
-        <g id="data-signal-nodes1"></g>
-        <g id="data-signal-nodes2"></g>
-        <g id="data-signal-nodes3"></g>
-        <g id="data-signal-nodes4"></g>
-        <g id="data-signal-nodes5"></g>
-        <g id="data-signal-nodes6"></g>
-        <g id="data-signal-nodes7"></g>
-        <g id="data-signal-nodes8"></g>
-        <g id="data-signal-nodes9"></g>
+
+        <g id="data-signal-nodes">
+          <g id="data-signal-nodes0"></g>
+          <g id="data-signal-nodes1"></g>
+          <g id="data-signal-nodes2"></g>
+          <g id="data-signal-nodes3"></g>
+          <g id="data-signal-nodes4"></g>
+          <g id="data-signal-nodes5"></g>
+          <g id="data-signal-nodes6"></g>
+          <g id="data-signal-nodes7"></g>
+          <g id="data-signal-nodes8"></g>
+          <g id="data-signal-nodes9"></g>
+        </g>
+
       </g>
 
       <g id = "selected-component">
@@ -728,6 +690,7 @@
           <text x = "80"   y = "0"   class = "label"> ╲ </text>
         </g>
       </g>
+
       </svg>
 
       <button class = "frame-button" id = "fullscreen-btn" title = "Toggle fullscreen"></button>
@@ -741,9 +704,9 @@
       </div>
 
       <div class="range-container">
-        <input type="range" id="range-slider" class="range-slider" min="500" max="5000" value="2000">
+        <input type="range" id="range-slider" class="range-slider" min="0" max="100" value="75">
         <label for="range-slider" class="range-label">
-          Speed: <span id="range-value" class="range-value">2000</span>ms
+          <span id="range-value" class="range-value">Speed: 75%</span>
         </label>
       </div>
     </div>
@@ -891,14 +854,14 @@
       </thead>
       <tbody>
         <tr>
-          <th id = "X16">0x00000000</th>
-          <th id = "X17">0x00000000</th>
-          <th id = "X18">0x00000000</th>
-          <th id = "X19">0x00000000</th>
-          <th id = "X20">0x00000000</th>
-          <th id = "X21">0x00000000</th>
-          <th id = "X22">0x00000000</th>
-          <th id = "X23">0x00000000</th>
+          <th id="X16">0x00000000</th>
+          <th id="X17">0x00000000</th>
+          <th id="X18">0x00000000</th>
+          <th id="X19">0x00000000</th>
+          <th id="X20">0x00000000</th>
+          <th id="X21">0x00000000</th>
+          <th id="X22">0x00000000</th>
+          <th id="X23">0x00000000</th>
         </tr>
       </tbody>
     </table>
@@ -909,22 +872,22 @@
           <th>X25</th>
           <th>X26</th>
           <th>X27</th>
-          <th>SP</th>
-          <th>FP</th>
-          <th>LR</th>
+          <th>X28</th>
+          <th>X29</th>
+          <th>X30</th>
           <th>XZR</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <th id = "X24">0x00000000</th>
-          <th id = "X25">0x00000000</th>
-          <th id = "X26">0x00000000</th>
-          <th id = "X27">0x00000000</th>
-          <th id = "SP">0x00000000</th>
-          <th id = "FP">0x00000000</th>
-          <th id = "LR">0x00000000</th>
-          <th id = "XZR">0x00000000</th>
+          <th id="X24">0x00000000</th>
+          <th id="X25">0x00000000</th>
+          <th id="X26">0x00000000</th>
+          <th id="X27">0x00000000</th>
+          <th id="X28">0x00000000</th>
+          <th id="X29">0x00000000</th>
+          <th id="X30">0x00000000</th>
+          <th id="XZR">0x00000000</th>
         </tr>
       </tbody>
     </table>
@@ -1003,9 +966,9 @@
           <tr id = "row-0x01D0"><th>0x01D0</th><th id = "0x01D0">0x0000</th></tr>
           <tr id = "row-0x01D8"><th>0x01D8</th><th id = "0x01D8">0x0000</th></tr>
           <tr id = "row-0x01E0"><th>0x01E0</th><th id = "0x01E0">0x0000</th></tr>
-          <tr id = "row-0x01E8"><th>0x01E8</th><th id = "0x01E8">0x0000</th></tr>
+          <tr id = "row-0x01F8"><th>0x01F8</th><th id = "0x01F8">0x0000</th></tr>          
           <tr id = "row-0x01F0"><th>0x01F0</th><th id = "0x01F0">0x0000</th></tr>
-          <tr id = "row-0x01F8"><th>0x01F8</th><th id = "0x01F8">0x0000</th></tr>
+          <tr id = "row-0x01E8"><th>0x01E8</th><th id = "0x01E8">0x0000</th></tr>
         </tbody>
       </table>
     </div>

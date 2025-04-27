@@ -17,7 +17,14 @@ export function watchDataMemory(DataMemory) {
 	DataMemory.Values = valuesProxy;
 }
 
-export function watchRegisters(Register) {    
+export function watchRegisters(Register) {
+    
+    for (let i = 0; i < 64; i++) {
+        const indexElement = `0x${(i*8).toString(16).toUpperCase().padStart(4, '0')}`;
+        document.getElementById(indexElement).innerText = `0x${DataMemory.Values[i].toString(16).toUpperCase().padStart(4, '0')}`;
+        // console.log(`indexElement ${indexElement}`);
+    }
+
     const valuesProxy = new Proxy(Register.registerValues, {
         set: function(target, prop, value) {
             return updateValue(target, prop, value);

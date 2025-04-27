@@ -67,7 +67,7 @@ import { Connections } from "../Compile/Define/Connections.js"
 import {createNodeWithAnimation} from "./animation.js"
 import { computeOutputs } from "./computationOutputs.js";
 import { encodeLegv8Instruction } from "../Compile/parser.js";
-import { SPEED_ANIMATION } from "./animationSpeed.js";
+import { DURATION_ANIMATION } from "./animationSpeed.js";
 import { watchDataMemory } from "../Compile/memoryState.js";
 import { watchRegisters } from "../Compile/memoryState.js";
 import { shapes } from "./shape.js";
@@ -136,7 +136,7 @@ function traverseAndAnimateBFS(startNode, components) {
 				fieldName: `${target}`,
 				onEndCallback: signalCallbackTable[`${target}`],
 				pathId: pathId,
-				duration: SPEED_ANIMATION,
+				duration: DURATION_ANIMATION,
 				className: shapes[target].className,
 				shapeType: shapes[target].shapeType
 			}));
@@ -175,7 +175,7 @@ export function initialize(code) {
 			setTimeout(() => {
 				document.getElementById(`row-${indexHex}`).style.backgroundColor = "";
 				document.getElementById(`row-${indexHex}`).style.color = "";
-			}, SPEED_ANIMATION);
+			}, DURATION_ANIMATION);
 		}
 	]
 

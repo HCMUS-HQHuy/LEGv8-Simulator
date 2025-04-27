@@ -605,7 +605,7 @@ body {
   width: 20%;
   height: 8px;
   border-radius: 5px;
-  background: linear-gradient(to right, rgb(67, 161, 70) 38%, #ddd 38%);
+  background: linear-gradient(to right, rgb(67, 161, 70) 75%, #ddd 75%);
   outline: none;
   transition: background 0.3s;
   margin: 10px 0;

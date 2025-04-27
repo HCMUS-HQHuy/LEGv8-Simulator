@@ -1,5 +1,7 @@
+const MAXIMUM_DURATION = 5000
+const MININUM_DURATION = 500
 
-export let SPEED_ANIMATION = 2000;
+export let DURATION_ANIMATION = 2000;
 export const state = {
 	executing: false
 };
@@ -18,15 +20,16 @@ export function trigger() {
 		  return this._executing;
 		}
 	});
-	
+
+	let currentPercentage = 75;
 	rangeSlider.addEventListener('input', () => {
 		if (state.executing) {
-			rangeSlider.value = SPEED_ANIMATION;
+			rangeSlider.value = currentPercentage;
 			return;
 		}
-
-		rangeValue.textContent = rangeSlider.value;
-		SPEED_ANIMATION = rangeSlider.value;
+		currentPercentage = rangeSlider.value;
+		rangeValue.textContent = `Speed: ${currentPercentage}%`;
+		DURATION_ANIMATION = MAXIMUM_DURATION - currentPercentage * (MAXIMUM_DURATION - MININUM_DURATION) / 100;
 		enable();
 	});
 }
