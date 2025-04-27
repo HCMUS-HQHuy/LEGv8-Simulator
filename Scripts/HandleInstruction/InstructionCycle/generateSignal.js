@@ -167,20 +167,44 @@ export function initialize(code) {
 	signalCallbackTable[`DataMemory.address`] = [
 		() => {
 			if (Components.DataMemory.writeEnable === 0) return;
-			else {
-				const index = Components.DataMemory.address;
-				const indexHex = `0x${(index*8).toString(16).toUpperCase().padStart(4, '0')}`;
-				console.warn(`indexHex: ${indexHex}`);
-				document.getElementById(indexHex).innerText = `0x${Components.DataMemory.Values[index].toString(16).toUpperCase().padStart(4, '0')}`;
-				document.getElementById(`row-${indexHex}`).style.backgroundColor = "yellow";
-				document.getElementById(`row-${indexHex}`).style.color = "red";
-				setTimeout(() => {
-					document.getElementById(`row-${indexHex}`).style.backgroundColor = "";
-					document.getElementById(`row-${indexHex}`).style.color = "";
-				}, DURATION_ANIMATION);
-			}
+			const index = Components.DataMemory.address;
+			const indexHex = `0x${(index*8).toString(16).toUpperCase().padStart(4, '0')}`;
+			console.warn(`indexHex: ${indexHex}`);
+			document.getElementById(indexHex).innerText = `0x${Components.DataMemory.Values[index].toString(16).toUpperCase().padStart(4, '0')}`;
+			document.getElementById(`row-${indexHex}`).style.backgroundColor = "yellow";
+			document.getElementById(`row-${indexHex}`).style.color = "red";
+			setTimeout(() => {
+				document.getElementById(`row-${indexHex}`).style.backgroundColor = "";
+				document.getElementById(`row-${indexHex}`).style.color = "";
+			}, DURATION_ANIMATION);
 		}
 	]
+
+	signalCallbackTable[`Register.WriteData`] = [
+		() => {
+			const index = Components.Register.WriteReg;
+			if (index == 31) {
+				console.warn(`Modify XZR register`);
+				return;
+			}
+			if (Components.Register.option === 0) return;
+			console.warn(`index: ${index}`);
+			const indexHex = `X${index.toString().padStart(2, '0')}`;
+
+			const value = Components.Mux3.output;
+			Components.Register.registerValues[index] = value;
+			console.warn(`indexHex: ${indexHex}`);
+			document.getElementById(indexHex).innerText = `0x${value.toString(16).toUpperCase().padStart(8, '0')}`;
+			
+			document.getElementById(`${indexHex}`).style.backgroundColor = "yellow";
+			document.getElementById(`${indexHex}`).style.color = "red";
+			setTimeout(() => {
+				document.getElementById(`${indexHex}`).style.backgroundColor = "";
+				document.getElementById(`${indexHex}`).style.color = "";
+			}, DURATION_ANIMATION);
+		}
+	]
+
 
 	signalCallbackTable[`ALUControl.ALUOp`] = [
 		() => {document.getElementById(`alu-control-aluop-value`).textContent = Components.ALUControl.ALUOp;}

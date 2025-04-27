@@ -331,6 +331,9 @@ function updateRegister(currentState) {
 		console.warn(`${formatRegIndex(currentState.Register.WriteReg)} -> ${writeIndex}`);
 		console.warn("have some problems in register update value");
 	}
+    currentState.Register.Read1 = readIndex1;
+    currentState.Register.Read2 = readIndex2;
+    currentState.Register.WriteReg = writeIndex;
     currentState.Register.ReadData1 = readData1Output;
     currentState.Register.ReadData2 = readData2Output;
 }
