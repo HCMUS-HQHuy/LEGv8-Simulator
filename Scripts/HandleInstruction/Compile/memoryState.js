@@ -19,11 +19,11 @@ export function watchDataMemory(DataMemory) {
 
 export function watchRegisters(Register) {
     
-    for (let i = 0; i < 64; i++) {
-        const indexElement = `0x${(i*8).toString(16).toUpperCase().padStart(4, '0')}`;
-        document.getElementById(indexElement).innerText = `0x${DataMemory.Values[i].toString(16).toUpperCase().padStart(4, '0')}`;
-        // console.log(`indexElement ${indexElement}`);
-    }
+    // for (let i = 0; i < 31; i++) {
+    //     const indexElement = `X${i.padStart(2, '0')}`;
+    //     document.getElementById(indexElement).innerText = `0x${Register.registerValues[i].toString(16).toUpperCase().padStart(8, '0')}`;
+    // }
+    // document.getElementById(`XZR`).innerText = `0x${Register.registerValues[i].toString(16).toUpperCase().padStart(8, '0')}`;
 
     const valuesProxy = new Proxy(Register.registerValues, {
         set: function(target, prop, value) {
