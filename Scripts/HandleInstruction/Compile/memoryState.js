@@ -3,7 +3,7 @@ export function watchDataMemory(DataMemory) {
     for (let i = 0; i < 64; i++) {
         const indexElement = `0x${(i*8).toString(16).toUpperCase().padStart(4, '0')}`;
         document.getElementById(indexElement).innerText = `0x${DataMemory.Values[i].toString(16).toUpperCase().padStart(4, '0')}`;
-        console.log(`indexElement ${indexElement}`);
+        // console.log(`indexElement ${indexElement}`);
     }
 
     const valuesProxy = new Proxy(DataMemory.Values, {
