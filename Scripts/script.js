@@ -63,17 +63,6 @@ function updateButtonState() {
     }
 }
 
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'f' || event.key === 'F') { // Kiểm tra xem người dùng có nhấn phím 'F'
-        if (!isFullscreen()) {
-            enterFullscreen(); // Vào fullscreen
-        } else {
-            exitFullscreen();  // Thoát fullscreen
-        }
-        updateButtonState(); // Cập nhật trạng thái nút
-    }
-});
-
 // Xử lý sự kiện click vào nút
 fullscreenBtn.addEventListener('click', () => {
     if (!isFullscreen()) {
