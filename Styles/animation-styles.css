@@ -5,18 +5,11 @@
 .data-node circle, */
 
 .data-node rect {
-  stroke: black;
   fill: #FFC107;
-  stroke-width: 1px;
-  rx: 3;
-  ry: 3;
 }
 
 .parsed-node rect {
   fill: rgb(31, 110, 0);
-  stroke-width: 1px;
-  rx: 3;
-  ry: 3;
 }
 
 .signal-control-unit.value-0 {
