@@ -101,12 +101,12 @@ export function createNodeWithAnimation({
     // Delay 1 frame để text được render, rồi đo
     requestAnimationFrame(() => {
         const bbox = text.getBBox();
-        const paddingX = 10;
+        const paddingX = 5;
         const paddingY = 5;
 
         if (shapeType === 'circle') {
             const radius = Math.max(bbox.width, bbox.height) / 2;
-            shape.setAttribute('r', radius);   // Cập nhật bán kính
+            shape.setAttribute('r', radius + paddingX);   // Cập nhật bán kính
             shape.setAttribute('cx', 0);        // Tọa độ tâm theo trục x
             shape.setAttribute('cy', 0);        // Tọa độ tâm theo trục y
         }

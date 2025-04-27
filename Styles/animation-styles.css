@@ -24,11 +24,15 @@
   fill: #FF851B;
 }
 
+.signal-control-unit.ALU\.option {
+  fill: #FF851B;
+}
+
 .parsed-node text,
 .signal-control-unit text,
 .data-node text {
   font-weight: bolder;
-  fill: white; /* Default text color */
+  fill: rgb(0, 0, 0); /* Default text color */
   text-anchor: middle; /* Center text horizontally */
   dominant-baseline: central; /* Center text vertically */
   /* Default font size - can be overridden */
