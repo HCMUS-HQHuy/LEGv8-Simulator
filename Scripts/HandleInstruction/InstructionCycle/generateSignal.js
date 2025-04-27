@@ -166,10 +166,12 @@ export function initialize(code) {
 
 	signalCallbackTable[`DataMemory.address`] = [
 		() => {
-			if (Components.DataMemory.writeEnable === 0) return;
 			const index = Components.DataMemory.address;
 			const indexHex = `0x${(index*8).toString(16).toUpperCase().padStart(4, '0')}`;
 			console.warn(`indexHex: ${indexHex}`);
+			document.getElementById('data-memory-address-value').textContent = indexHex;
+			document.getElementById('data-read-data-value').textContent = Components.DataMemory.Values[index];
+			if (Components.DataMemory.writeEnable === 0) return;
 			document.getElementById(indexHex).innerText = `0x${Components.DataMemory.Values[index].toString(16).toUpperCase().padStart(4, '0')}`;
 			document.getElementById(`row-${indexHex}`).style.backgroundColor = "yellow";
 			document.getElementById(`row-${indexHex}`).style.color = "red";
@@ -177,6 +179,34 @@ export function initialize(code) {
 				document.getElementById(`row-${indexHex}`).style.backgroundColor = "";
 				document.getElementById(`row-${indexHex}`).style.color = "";
 			}, DURATION_ANIMATION);
+		}
+	]
+
+	signalCallbackTable[`DataMemory.WriteData`] = [
+		() => { document.getElementById('data-memory-write-data-value').textContent = Components.DataMemory.WriteData}
+	]
+
+	signalCallbackTable[`ALU.input2`] = [
+		() => { document.getElementById('add-2-input-2-value').textContent = Components.ALU.input1; }
+	]
+	signalCallbackTable[`ALU.input1`] = [
+		() => {
+			document.getElementById('add-2-input-1-value').textContent = Components.ALU.input1; 
+			document.getElementById('add-2-output-value').textContent = Components.ALU.output; 
+		}
+	]
+
+	signalCallbackTable[`SignExtend.input`] = [
+		() => {
+			document.getElementById('sign-extend-input-value').textContent = `0x${parseInt(Components.SignExtend.input, 2).toString(16).toUpperCase().padStart(8, '0')}`;
+			document.getElementById('sign-extend-output-value').textContent = Components.SignExtend.output; 
+		}
+	]
+	
+	signalCallbackTable['ShiftLeft2.input'] = [
+		() => {
+			document.getElementById('shift-left-2-input-value').textContent = Components.ShiftLeft2.input; 
+			document.getElementById('shift-left-2-output-value').textContent = Components.ShiftLeft2.output; 
 		}
 	]
 
@@ -202,8 +232,25 @@ export function initialize(code) {
 				document.getElementById(`${indexHex}`).style.backgroundColor = "";
 				document.getElementById(`${indexHex}`).style.color = "";
 			}, DURATION_ANIMATION);
+			document.getElementById(`register-write-data-value`).textContent = `0x${value.toString(16).toUpperCase().padStart(2, '0')}`;
 		}
 	]
+
+	new Set(['Read1', 'Read2', 'WriteReg', 'WriteData']).forEach(val => {
+		signalCallbackTable[`Register.${val}`] = [
+			() => {
+				document.getElementById(`register-${val}-value`).textContent = `${Components.Register[`${val}`]}`;
+				if (val === 'Read2') {
+					document.getElementById(`register-ReadData1-value`).textContent = `${Components.Register[`ReadData1`]}`;
+					document.getElementById(`register-ReadData2-value`).textContent = `${Components.Register[`ReadData2`]}`;
+				}
+			}
+		];
+	})
+
+	// signalCallbackTable[`Register.Read1`] = [
+	// 	() => {document.getElementById(`alu-control-aluop-value`).textContent = Components.ALUControl.ALUOp;}
+	// ]
 
 
 	signalCallbackTable[`ALUControl.ALUOp`] = [
@@ -229,6 +276,13 @@ export function initialize(code) {
 
 	signalCallbackTable[`PC.value`] = [
 		() => {document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;}
+	];
+
+	signalCallbackTable[`InstructionMemory.ReadAddress`] = [
+		() => {
+			document.getElementById(`instruction-memory-read-address-value`).textContent = `0x${(Components.InstructionMemory.ReadAddress).toString(16).padStart(2, '0').toUpperCase()}`;
+			document.getElementById(`instruction-memory-instruction-[31-0]-value`).textContent = `0x${parseInt(Components.InstructionMemory.Instruction31_00, 2).toString(16).padStart(8, '0').toUpperCase()}`;
+		}
 	];
 
 	watchDataMemory(Components.DataMemory);
