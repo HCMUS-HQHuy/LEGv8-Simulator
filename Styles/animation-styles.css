@@ -5,34 +5,38 @@
 .data-node circle, */
 
 .data-node rect {
-  fill: #FFC107;
+  fill: #008006;
 }
 
-.parsed-node rect {
-  fill: rgb(31, 110, 0);
+.signal-control-unit.value-0 circle {
+  fill: #0088ff;
+  stroke: black;
+  stroke-width: 2px;
 }
 
-.signal-control-unit.value-0 {
-  fill: #0074D9;
+.signal-control-unit.value-1 circle {
+  fill: #ff0d00;
+  stroke: black;
+  stroke-width: 2px;
 }
 
-.signal-control-unit.value-1 {
-  fill: #FF4136;
+.signal-control-unit.ALUControl\.ALUOp circle {
+  fill: #ff7700;
+  stroke: black;
+  stroke-width: 2px;
 }
 
-.signal-control-unit.ALUControl\.ALUOp {
+.signal-control-unit.ALU\.option circle {
   fill: #FF851B;
-}
-
-.signal-control-unit.ALU\.option {
-  fill: #FF851B;
+  stroke: black;
+  stroke-width: 2px;
 }
 
 .parsed-node text,
 .signal-control-unit text,
 .data-node text {
   font-weight: bolder;
-  fill: rgb(0, 0, 0); /* Default text color */
+  fill: rgb(255, 255, 255); /* Default text color */
   text-anchor: middle; /* Center text horizontally */
   dominant-baseline: central; /* Center text vertically */
   /* Default font size - can be overridden */
