@@ -142,6 +142,8 @@ import {createNodeWithAnimation} from "./animation.js"
 import { computeOutputs } from "./computationOutputs.js";
 import { encodeLegv8Instruction } from "../Compile/parser.js";
 import { SPEED_ANIMATION } from "./animationSpeed.js";
+import { watchDataMemory } from "../Compile/memoryState.js";
+import { watchRegisters } from "../Compile/memoryState.js";
 
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -220,9 +222,9 @@ export function initialize(code) {
 	for (let i = 0; i <= 3; i++) {
 		signalCallbackTable[`Mux${i}.option`] = [
 			() => {
-				document.getElementById(`mux-${i}-${Components.Mux1.option}-selected`).style.visibility = "visible";
-				document.getElementById(`mux-${i}-${Components.Mux1.option ^ 1}-selected`).style.visibility = "hidden";
-				document.getElementById(`mux-${i}-value`).textContent = Components.Mux1.option;
+				document.getElementById(`mux-${i}-${Components[`Mux${i}`].option}-selected`).style.visibility = "visible";
+				document.getElementById(`mux-${i}-${Components[`Mux${i}`].option ^ 1}-selected`).style.visibility = "hidden";
+				document.getElementById(`mux-${i}-value`).textContent = Components[`Mux${i}`].option;
 			}
 		];
 	}
@@ -260,6 +262,8 @@ export function initialize(code) {
 		() => {document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;}
 	];
 
+	watchDataMemory(Components.DataMemory);
+	watchRegisters(Components.Register);
 	Components.PC.value = 0;
 	
 	code.forEach(key => {
