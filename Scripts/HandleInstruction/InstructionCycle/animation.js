@@ -104,13 +104,21 @@ export function createNodeWithAnimation({
         const paddingX = 10;
         const paddingY = 5;
 
-        const width = bbox.width + paddingX * 2;
-        const height = bbox.height + paddingY * 2;
-
-        shape.setAttribute('width', width);
-        shape.setAttribute('height', height);
-        shape.setAttribute('x', -width / 2);
-        shape.setAttribute('y', -height / 2);
+        if (shapeType === 'circle') {
+            const radius = Math.max(bbox.width, bbox.height) / 2;
+            shape.setAttribute('r', radius);   // Cập nhật bán kính
+            shape.setAttribute('cx', 0);        // Tọa độ tâm theo trục x
+            shape.setAttribute('cy', 0);        // Tọa độ tâm theo trục y
+        }
+        else if (shapeType === 'rect') {
+            const width = bbox.width + paddingX * 2;
+            const height = bbox.height + paddingY * 2;
+            shape.setAttribute('width', width);
+            shape.setAttribute('height', height);
+            shape.setAttribute('x', -width / 2);
+            shape.setAttribute('y', -height / 2);
+        }
+        else console.error(`shape ${shapeType} is not supported`);
     });
 
     nodeGroup.appendChild(shape);

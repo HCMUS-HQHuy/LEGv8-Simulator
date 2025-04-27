@@ -19,25 +19,16 @@
   ry: 3;
 }
 
-.signal-control-unit.value-0 circle {
-  r: 8px;
+.signal-control-unit.value-0 {
   fill: #0074D9;
-  stroke: black;
-  /* stroke-width: 1px; */
 }
 
-.signal-control-unit.value-1 circle {
-  r: 10px;
+.signal-control-unit.value-1 {
   fill: #FF4136;
-  stroke: black;
-  stroke-width: 1px;
 }
 
-.signal-control-unit.ALUControl\.ALUOp circle {
-  r: 10px;
+.signal-control-unit.ALUControl\.ALUOp {
   fill: #FF851B;
-  stroke: black;
-  stroke-width: 1px;
 }
 
 .parsed-node text,
