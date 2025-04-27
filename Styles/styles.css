@@ -279,7 +279,7 @@ body {
   overflow-x: auto; 
   overflow-y: hidden; 
 
-  height: 50%;
+  height: 400px;
   width: 100%;
   
   font-size: 130%;
@@ -367,9 +367,26 @@ body {
 .log-box {
   border: 2px solid var(--border-color);
   background-color: var(--frame-bg-color); /* Use variable */
-  padding: 1% 1%;
+  padding: 5% 5%;
+  font-family: monospace;
+  font-size: 130%;
   overflow: auto;
   height: 50%;
+}
+/* Tùy chỉnh thanh cuộn ngang */
+.log-box::-webkit-scrollbar {
+  width: 10px; /* Đặt chiều cao cho thanh cuộn ngang */
+  height: 10px;
+}
+
+.log-box::-webkit-scrollbar-thumb {
+  background-color: #4CAF50; /* Màu xanh lá cho thanh cuộn */
+  border-radius: 10px; /* Bo góc cho thanh cuộn */
+  cursor: pointer;
+}
+
+.log-box::-webkit-scrollbar-track {
+  background-color: transparent; /* Màu nền cho track của thanh cuộn */
 }
 /* frameBox */
 .frameBox {
