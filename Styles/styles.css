@@ -127,12 +127,13 @@ body {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
-  padding: 0.5% 0.5%;
+  padding: 0.7% 0.7%;
   margin-left: 20px;
   font-size: px;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
+  font-size: 60%;
 }
 
 #themeToggle:hover {
@@ -418,12 +419,30 @@ body {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
   color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }
-.start-button {
+.compile-button {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 8px 16px;
   top: 60px;
+  right: 10px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+}
+.compile-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
+.start-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 110px;
   right: 10px;
   font-size: 100%;
   cursor: pointer;
@@ -441,7 +460,7 @@ body {
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 8px 16px;
-  top: 110px;
+  top: 160px;
   right: 10px;
   font-size: 100%;
   cursor: pointer;
@@ -496,7 +515,7 @@ body {
   color: var(--emphasis-color); /* Use variable */
 }
 .table-scroll-wrapper {
-  max-height: 12.7%; /* hoặc ví dụ: 256px */
+  max-height: 319px; /* hoặc ví dụ: 256px */
   overflow-x: hidden;
   overflow-y: auto;
   margin-top: 5px;
@@ -548,7 +567,6 @@ body {
 .dataMemoryTable td:last-child {
   color: var(--emphasis-color); /* Use variable */
 }
-
 .flagsBox {
   padding: 0 1%; /* Padding ngang (trái và phải) */
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
