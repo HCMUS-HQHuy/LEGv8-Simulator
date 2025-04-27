@@ -8,20 +8,21 @@ export function getComponents() {
 		},
 		InstructionMemory: {
 			instruction: [],
+			instructionType: [],
 			ReadAddress: -1,
-		
-			Instruction31_00: null,
 		
 			Opcode_31_21:  null,
 			Rm_20_16:      null,
 			Shamt_15_10:   null,
 			Rn_09_05:      null,
 			RdRt_04_00:    null,
+
+			SignExtend: null,
 		
-			Imm12_21_10:   "111111111100",
-			Imm9_20_12:    "000001100",
-			Imm19_23_5:    "0000000000000000000",
-			Imm26_25_0:    "00000000000000000000000000",
+			Imm12_21_10:   null,
+			Imm9_20_12:    null,
+			Imm19_23_5:    null,
+			Imm26_25_0:    null,
 		},
 		Register: {
 			registerValues: [

@@ -5,11 +5,15 @@ export function computeOutputs(componentName, components) {
 		case 'InstructionMemory':
 			const InstructionMemory = components[componentName];
 			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2];
-			InstructionMemory.Instruction31_00 = encodedInstruction;
 			InstructionMemory.Opcode_31_21 = encodedInstruction.substring(0, 11);
 			InstructionMemory.Rm_20_16 = encodedInstruction.substring(11, 16);
 			InstructionMemory.Rn_09_05 = encodedInstruction.substring(22, 27);
 			InstructionMemory.RdRt_04_00 = encodedInstruction.substring(27, 32);
+
+            InstructionMemory.Imm12_21_10 = encodedInstruction.substring(10, 22); // For I-type ALU
+            InstructionMemory.Imm9_20_12 = encodedInstruction.substring(11, 20);  // For D-type offset
+            InstructionMemory.Imm19_23_5 = encodedInstruction.substring(8, 27);   // For CB-type offset
+            InstructionMemory.Imm26_25_0 = encodedInstruction.substring(6, 32);   // For B-type 
 			break;
 		case 'Control':
 			updateControlUnit(components);
@@ -231,73 +235,72 @@ function updateALUControl(currentState) {
 }
 
 function updateSignExtend(currentState) {
-
     const signExtend = (binaryString, originalBitLength, targetBitLength = 64) => {
-        return  binaryString[0].repeat(targetBitLength - originalBitLength) + binaryString;
+        return binaryString[0].repeat(targetBitLength - originalBitLength) + binaryString;
     }
-
-	const control = currentState.Control;
-    const fullInstruction = currentState.InstructionMemory.Instruction31_00;
+    
+    const control = currentState.Control;
     const opcode = currentState.InstructionMemory.Opcode_31_21;
-
+    
     let inputBinary = null;
     let originalBits = 0;
     const targetBits = 64;
-
+    
     if (control.ALUSrc === 1) {
         // D-type (LDUR/STUR): Offset 9 bit (DT-address)
         if (opcode === '11111000010' || opcode === '11111000000') {
-            console.warn(`SignExtend: ${fullInstruction}`);
-            inputBinary = fullInstruction.substring(11, 20); // Bits 20-12 (9 bits)
-            console.warn(`SignExtendL ${parseInt(inputBinary, 2)} - ${inputBinary} `);
+            console.warn(`SignExtend: Using Imm9_20_12 for sign extension.`);
+            inputBinary = currentState.InstructionMemory.Imm9_20_12; // 9 bits
             originalBits = 9;
+            console.warn(`SignExtendL ${parseInt(inputBinary, 2)} - ${inputBinary}`);
         }
         // I-type (ADDI/SUBI): Immediate 12 bit
         else if (opcode?.startsWith('1001000100') || opcode?.startsWith('1101000100')) {
-            inputBinary = fullInstruction.substring(10, 22); // Bits 21-10 (12 bits)
+            inputBinary = currentState.InstructionMemory.Imm12_21_10; // 12 bits
             originalBits = 12;
         }
+        // Kiểu MOVZ (16 bit immediate)
         else if (opcode?.startsWith('110100101')) {
-             inputBinary = fullInstruction.substring(11, 27); // Bits 20-5 (16 bits) --> Kiểm tra lại spec! spec nói bit 20-5
-             originalBits = 16;
-             // Lưu ý quan trọng: MOVZ thường là *ZERO* extend. Nếu cần chính xác,
-             // bạn nên có một khối ZeroExtend riêng hoặc logic đặc biệt ở đây.
-             // Tạm thời vẫn dùng SignExtend theo yêu cầu chung.
+            inputBinary = currentState.InstructionMemory.Imm16_20_5; // 16 bits
+            originalBits = 16;
+            // MOVZ là zero-extend, nhưng hiện tại xử lý như sign-extend theo yêu cầu chung
         }
-        // Thêm các trường hợp khác nếu có (ví dụ: ANDI, ORRI - cũng là I-type 12 bit)
-         else if (opcode?.startsWith('1001001000') || // ANDI
-                  opcode?.startsWith('1011001000') || // ORRI
-                  opcode?.startsWith('1101001000'))   // EORI
-         {
-             inputBinary = fullInstruction.substring(10, 22); // Bits 21-10 (12 bits)
-             originalBits = 12;
-         }
-         else {
-            // ALUSrc=1 nhưng không khớp loại lệnh nào ở trên? Có thể là lỗi logic Control Unit.
+        // Các lệnh khác như ANDI, ORRI - cũng là I-type 12 bit
+        else if (opcode?.startsWith('1001001000') || // ANDI
+                 opcode?.startsWith('1011001000') || // ORRI
+                 opcode?.startsWith('1101001000'))   // EORI
+        {
+            inputBinary = currentState.InstructionMemory.Imm12_21_10; // 12 bits
+            originalBits = 12;
+        }
+        else {
+            // ALUSrc=1 nhưng không khớp loại lệnh nào ở trên? Cảnh báo
             console.warn(`Warning: ALUSrc is 1, but opcode ${opcode} doesn't match expected I/D/IW types needing immediate for ALU.`);
-         }
-
+        }
+    
     } else if (control.UncondBranch === 1) {
-        // --- UncondBranch = 1: Lệnh B ---
-        // Offset 26 bit
-        inputBinary = fullInstruction.substring(6, 32); // Bits 25-0 (26 bits)
+        // Lệnh B (Unconditional Branch)
+        inputBinary = currentState.InstructionMemory.Imm26_25_0; // 26 bits
         originalBits = 26;
-
     } else if (control.Branch === 1) {
-        inputBinary = fullInstruction.substring(8, 27); // Bits 23-5 (19 bits)
+        // Lệnh Branch (Branch Instruction)
+        inputBinary = currentState.InstructionMemory.Imm19_23_5; // 19 bits
         originalBits = 19;
     } else {
-		const inputHex = parseInt(fullInstruction, 2).toString(16).toUpperCase();
-		currentState.SignExtend.input = `0x${inputHex}`;
-		const outputValue = signExtend(fullInstruction, 32, targetBits);
-		currentState.SignExtend.output = parseInt(outputValue, 2);
-		return;
-	}
+        // Khi không thuộc các trường hợp trên, chuyển đổi lệnh sang hex và thực hiện signExtend
+        const inputHex = parseInt(currentState.InstructionMemory.Instruction, 2).toString(16).toUpperCase();
+        currentState.SignExtend.input = `0x${inputHex}`;
+        const outputValue = signExtend(currentState.InstructionMemory.Instruction, 32, targetBits);
+        currentState.SignExtend.output = parseInt(outputValue, 2);
+        return;
+    }
     let outputValue = null;
     if (inputBinary !== null && originalBits > 0) {
         outputValue = signExtend(inputBinary, originalBits, targetBits);
     }
-    currentState.SignExtend.input = inputBinary;
+
+    currentState.SignExtend.input = parseInt(inputBinary, 2);
+    console.log(`inputBinary: ${inputBinary} -> ${currentState.SignExtend.input}`);
     currentState.SignExtend.output = parseInt(outputValue, 2);
 
     console.log("Sign Extend Updated:", currentState.SignExtend);

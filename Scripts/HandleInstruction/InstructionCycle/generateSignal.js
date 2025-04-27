@@ -111,6 +111,13 @@ function traverseAndAnimateBFS(startNode, components) {
 		connections.forEach(conn => {
 			const { source, target, pathId } = conn;
 
+			if (target === 'SignExtend.input') {
+				const index = (components.InstructionMemory.ReadAddress >> 2);
+				console.log(`condition: ${conn.condition} -> ${components.InstructionMemory.instructionType[index]}`)
+				if (conn.condition != components.InstructionMemory.instructionType[index])
+					return;
+			}
+
 			const value = getValueFromComponents(source, components);
 
 			console.log(`source: ${source} -> ${target} value: ${value}`);
@@ -198,7 +205,7 @@ export function initialize(code) {
 
 	signalCallbackTable[`SignExtend.input`] = [
 		() => {
-			document.getElementById('sign-extend-input-value').textContent = `0x${parseInt(Components.SignExtend.input, 2).toString(16).toUpperCase().padStart(8, '0')}`;
+			document.getElementById('sign-extend-input-value').textContent = Components.SignExtend.input.toString(2).padStart(8, '0');
 			document.getElementById('sign-extend-output-value').textContent = Components.SignExtend.output; 
 		}
 	]
@@ -281,7 +288,9 @@ export function initialize(code) {
 	signalCallbackTable[`InstructionMemory.ReadAddress`] = [
 		() => {
 			document.getElementById(`instruction-memory-read-address-value`).textContent = `0x${(Components.InstructionMemory.ReadAddress).toString(16).padStart(2, '0').toUpperCase()}`;
-			document.getElementById(`instruction-memory-instruction-[31-0]-value`).textContent = `0x${parseInt(Components.InstructionMemory.Instruction31_00, 2).toString(16).padStart(8, '0').toUpperCase()}`;
+			const InstructionMemory = Components.InstructionMemory;
+			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2];
+			document.getElementById(`instruction-memory-instruction-[31-0]-value`).textContent = `0x${parseInt(encodedInstruction, 2).toString(16).padStart(8, '0').toUpperCase()}`;
 		}
 	];
 
@@ -292,7 +301,8 @@ export function initialize(code) {
 	code.forEach(key => {
 		const encodedInstruction = encodeLegv8Instruction(key.parsed);
 		Components.InstructionMemory.instruction.push(encodedInstruction);
-		console.log(encodedInstruction);
+		Components.InstructionMemory.instructionType.push(`${key.parsed.type}-type`);
+		console.log(key.parsed.type);
 	});
 	
 	return Components;
