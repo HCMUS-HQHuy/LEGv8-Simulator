@@ -87,7 +87,22 @@ body.dark {
   --button-hover-bg-color: var(--border-color);
 }
 
+h1 {
+  font-size: 40px; /* Đặt kích thước chữ của h2 là 24px */
+  margin-top: 0px; /* Khoảng cách từ thẻ h2 đến phần tử phía trên */
+  margin-bottom: 10px; /* Khoảng cách từ thẻ h2 đến phần tử phía dưới */
+  margin-left: 0.1%;
+}
+
+h2 {
+  font-size: 30px; /* Đặt kích thước chữ của h2 là 24px */
+  margin-top: 10px; /* Khoảng cách từ thẻ h2 đến phần tử phía trên */
+  margin-bottom: 10px; /* Khoảng cách từ thẻ h2 đến phần tử phía dưới */
+  margin-left: 0.1%;
+}
+
 body {
+  margin: 0;
   font-family: 'Segoe UI', sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
@@ -99,24 +114,22 @@ body {
   background-color: var(--header-bg-color); 
   color: var(--text-color);                 
   font-size: 28px;
-  font-weight: bold;
-  padding: 20px 40px;
   display: flex;
   align-items: center;
   justify-content: space-between; /* hoặc dùng margin-left: auto cho button */
   padding: 10px;
   letter-spacing: 1.5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow might need theme adjustment too */
-  border-bottom: 4px solid var(--header-border-color); 
+  border-bottom: 6px solid var(--header-border-color); 
 }
 
 #themeToggle {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
-  padding: 8px 16px;
+  padding: 8px 8px;
   margin-left: 20px;
-  font-size: 16px;
+  font-size: px;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
@@ -136,7 +149,7 @@ body {
   font-size: 14px;
   position: relative;
   margin-top: 40px;
-  border-top: 4px solid var(--header-border-color); 
+  border-top: 6px solid var(--header-border-color); 
   font-family: 'Segoe UI', sans-serif;
 }
 
@@ -191,7 +204,6 @@ body {
   text-anchor: middle;
   dominant-baseline: middle;
   fill: rgb(255, 44, 44); 
-  font-weight: bold;
 }
 .mem-label {
   font-family: sans-serif;
@@ -215,7 +227,7 @@ body {
   font-family: monospace;
   font-size: 15px;
   fill: var(--control-color); 
-  font-weight: bold;
+  
 }
 .label-start {
   font-family: sans-serif;
@@ -250,8 +262,8 @@ body {
 }
 /* codeBox */
 .codeBox {
-  flex: 0 0 20%; /* Không co giãn, chiếm 30% */
-  padding: 0 20px; /* Padding ngang (trái và phải) */
+  flex: 0 0 21%; /* Không co giãn, chiếm 30% */
+  padding: 0 1%; /* Padding ngang (trái và phải) */
   margin-left: auto;
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
@@ -262,7 +274,21 @@ body {
   border: 2px solid var(--border-color); 
   background-color: var(--bg-color); 
   font-family: monospace;
-  overflow: hidden; 
+
+  overflow-x: auto; 
+  overflow-y: hidden; 
+
+  font-size: 15px;
+  width: 100%;
+  height: 50%;
+}
+
+/* Thanh cuộn chung cho line-numbers và instructionCode */
+.code-editor-wrapper {
+  display: flex;
+  width: 100%; /* Chiếm hết chiều rộng */
+  overflow-x: auto; /* Thanh cuộn ngang cho cả hai phần tử */
+  position: relative;
 }
 .line-numbers {
   padding: 10px 10px;
@@ -270,7 +296,8 @@ body {
   background-color: var(--line-number-bg); /* Use variable */
   color: var(--line-number-color); /* Use variable */
   user-select: none;
-  overflow: hidden; 
+  overflow-y: hidden; /* Không hiển thị thanh cuộn dọc */
+  flex-shrink: 0; /* Đảm bảo line-numbers không bị co lại */
 }
 .instructionCode {
   flex-grow: 1;  /* Cho phép textarea mở rộng để lấp đầy không gian còn lại */
@@ -278,11 +305,16 @@ body {
   color: var(--text-color); /* Use variable */
   font-family: monospace;
   border: none; /* Remove border potentially set by var */
-  padding: 10px;
+  padding: 1%;
   resize: none; /* Ngăn người dùng thay đổi kích thước textarea (tùy chọn) */
   /* Đảm bảo các thuộc tính này không bị ghi đè */
   box-shadow: none; 
   outline: none;
+  overflow-x: auto;
+
+  font-size: 15px;
+  white-space: nowrap; /* Ngăn xuống dòng nội dung, giữ mọi chữ trong một hàng ngang */
+  flex-grow: 1; /* Đảm bảo instructionCode chiếm phần không gian còn lại */
 }
 /* **Quan trọng: Loại bỏ viền (outline) khi textarea được focus (nhấp vào)** */
 .instructionCode:focus {
@@ -293,6 +325,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center; /* nếu muốn căn giữa theo chiều dọc */
+  gap: 10px; /* Khoảng cách giữa các nút */
+  font-family: sans-serif;
 }
 .button {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
@@ -300,27 +334,33 @@ body {
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 8px 16px;
   margin-top: 10px;
-  margin-right: 0px;
   font-size: 16px;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
+  flex: 1;
 }
 .button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
   color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }
-
+.log-box {
+  border: 2px solid var(--border-color);
+  padding: 1% 1%;
+  overflow: auto;
+  height: 50%;
+}
 /* frameBox */
 .frameBox {
-  flex: 0  70%; /* Không co giãn, chiếm 70% */
-  padding: 0 20px; /* Padding ngang (trái và phải) */
+  flex: 0 0 75%; /* Không co giãn, chiếm 70% */
+  padding: 0 1%; /* Padding ngang (trái và phải) */
   overflow: auto;
 }
 .frame {
-  flex: 0 0 70%; /* Không co giãn, chiếm 70% */
+  flex: 0 0 75%; /* Không co giãn, chiếm 70% */
 	background-color: var(--frame-bg-color); /* Use variable */
-	border: 2px solid var(--border-color); /* Use variable */
+  border: 2px solid var(--border-color); /* Use variable */
+  padding: 0 0;
 	overflow: hidden;
 	position: relative;
   font-family: monospace;
@@ -401,25 +441,25 @@ body {
   align-items: flex-start; /* Đảm bảo các phần tử con bắt đầu từ đầu */
   justify-content: space-between; /* Đẩy box đầu tiên sang trái, box cuối sang phải */
 }
-/* parsedOutputBox */
-.parsedOutputBox {
+/* dataMemoryBox */
+.dataMemoryBox {
   padding: 0 20px; /* Padding ngang (trái và phải) */
   margin-left: 0px;
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
+  flex: 0.3;
 }
 .parsedOutputTable {
   width: 100%;
   border-collapse: collapse;
   margin-top: 5px;
   font-family: monospace;
-  font-size: 14px;
+  font-size: 18px;
   border: 2px solid var(--border-color); /* Use variable */
   color: var(--text-color); /* Set base text color for table */
   background-color: var(--table-row-odd-bg); /* Set base background */
 }
 .parsedOutputTable thead {
-  font-weight: bold;
   background-color: var(--table-header-bg); /* Use variable */
   color: var(--text-color); /* Use variable (or a specific --table-header-text-color if needed) */
 }
@@ -443,9 +483,10 @@ body {
   color: var(--emphasis-color); /* Use variable */
 }
 .table-scroll-wrapper {
-  max-height: calc(9 * 33px); /* hoặc ví dụ: 256px */
+  max-height: calc(9 * 37px); /* hoặc ví dụ: 256px */
   overflow-x: hidden;
   overflow-y: auto;
+  margin-top: 5px;
   position: relative;
   border: 2px solid var(--border-color); /* Use variable */
 }
@@ -470,7 +511,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   font-family: monospace;
-  font-size: 14px;
+  font-size: 18px;
   color: var(--text-color); /* Set base text color for table */
   background-color: var(--table-row-odd-bg); /* Set base background */
 }
@@ -478,7 +519,6 @@ body {
   position: sticky;
   top: 0;
   z-index: 2;
-  font-weight: bold;
   background-color: var(--table-header-bg); /* Use variable */
   color: var(--text-color); /* Use variable (or a specific --table-header-text-color if needed) */
 }
@@ -500,29 +540,40 @@ body {
 .dataMemoryTable td:last-child {
   color: var(--emphasis-color); /* Use variable */
 }
+
+.flagsBox {
+  padding: 0 20px; /* Padding ngang (trái và phải) */
+  margin-left: 0px;
+  display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
+  flex-direction: column; /* Sắp xếp h2 và form theo cột */
+  align-items: flex-start;
+}
+
 /* Registers */
 .registersBox {
   padding: 0 20px; /* Padding ngang (trái và phải) */
   margin-left: 0px;
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
-}
-.registersBox {
   align-items: flex-start;
+  flex: 1;
 }
 
 .range-container {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 12px 0;
+  bottom: 1px;
+  left: 10px;
+  position: absolute;
+  width: 70%;
 }
 .range-slider {
   -webkit-appearance: none; /* Xóa kiểu mặc định (Chrome, Safari) */
   width: 20%;
   height: 8px;
   border-radius: 5px;
-  background: linear-gradient(to right, rgb(67, 161, 70) 40%, #ddd 40%);
+  background: linear-gradient(to right, rgb(67, 161, 70) 38%, #ddd 38%);
   outline: none;
   transition: background 0.3s;
   margin: 10px 0;
@@ -579,7 +630,7 @@ body {
   font-family: monospace;
   font-weight: bold;
   font-size: 17px;
-  bottom: -2px;
+  bottom: 15px;
   left: -2px;
   padding: 10px; /* Thêm khoảng cách giữa nội dung và border */
   position: absolute;

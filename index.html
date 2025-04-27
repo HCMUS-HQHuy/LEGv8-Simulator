@@ -9,7 +9,7 @@
 <body>
 
 <div class="header">
-  <h2>LEGv8 Visual Simulator</h2>
+  <h1>LEGv8 Visual Simulator</h1>
 
   <button id = "themeToggle">🔆 Light Mode</button>
 </div>
@@ -292,7 +292,7 @@
 
             <text x = "25" y = "50" class = "label"> PC </text>
             
-            <text id = "pc-value-text" x = "4" y = "120" class = "mem-control-label" font-weight = "bold"> 0x00 </text>
+            <text id = "pc-value-text" x = "4" y = "120" class = "mem-control-label"> 0x0 </text>
           </g>
 
           <!-- instruction-memory -->
@@ -738,13 +738,13 @@
         <p id = "assembly-instruction"> </p>
         <p id = "machine-language-instruction"></p>
       </div>
-    </div>
 
-    <div class="range-container">
-      <input type="range" id="range-slider" class="range-slider" min="500" max="5000" value="2000">
-      <label for="range-slider" class="range-label">
-        Speed: <span id="range-value" class="range-value">2000</span>ms
-      </label>
+      <div class="range-container">
+        <input type="range" id="range-slider" class="range-slider" min="500" max="5000" value="2000">
+        <label for="range-slider" class="range-label">
+          Speed: <span id="range-value" class="range-value">2000</span>ms
+        </label>
+      </div>
     </div>
   </div>
   
@@ -754,17 +754,20 @@
     <!-- Add id="instructionCode" to the textarea -->
     <div class = "code-editor">
       <div class = "line-numbers" id = "lineNumbers"> 1 </div>
-      <textarea class = "instructionCode" id = "instructionCode" name="message" rows="35" cols="30" placeholder="Enter LEGv8 code here, one instruction per line...">STUR X9, [X22, #4]</textarea>
+      <textarea class = "instructionCode" id = "instructionCode" name = "message" placeholder="Enter LEGv8 code here, one instruction per line...">LDUR X9, [X22, #4]</textarea>
     </div>
     <div class = "button-group">
-      <button class = "button" id = "parseInstructions">Parse Instructions</button>
-      <button class = "button" id = "execute">Execute</button>
+      <button class = "button" id = "parseInstructions">⚙ Compile</button>
+      <button class = "button" id = "execute">▶ Execute</button>
     </div>
+
+    <h2>Log</h2>
+    <text class = "log-box" id = "log-box"></text>
   </div>
 </div>
 
 <div class = "outputContainer">
-  <div class = "registersBox">
+  <div class = "flagsBox">
     <h2>Flags</h2>
     
     <table class = "parsedOutputTable">
@@ -926,7 +929,7 @@
     </table>
   </div>
 
-  <div class = "parsedOutputBox">
+  <div class = "dataMemoryBox">
     <h2>Data memory</h2>
     
     <div class = "table-scroll-wrapper">
