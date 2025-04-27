@@ -187,7 +187,7 @@ export function initialize(code) {
 	]
 
 	signalCallbackTable[`ALU.input2`] = [
-		() => { document.getElementById('add-2-input-2-value').textContent = Components.ALU.input1; }
+		() => { document.getElementById('add-2-input-2-value').textContent = Components.ALU.input2; }
 	]
 	signalCallbackTable[`ALU.input1`] = [
 		() => {
