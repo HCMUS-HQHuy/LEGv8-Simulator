@@ -31,7 +31,7 @@
 /* --- Light Mode Overrides --- */
 body.light {
   --bg-color: #ffffff;
-  --frame-bg-color: #faf9ea;
+  --frame-bg-color: #fdfced;
   --text-color: #000000;
   --border-color: #000000;
   --header-bg-color: #eeeeee;
@@ -117,7 +117,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between; /* hoặc dùng margin-left: auto cho button */
-  padding: 10px;
+  padding: 1%;
   letter-spacing: 1.5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow might need theme adjustment too */
   border-bottom: 6px solid var(--header-border-color); 
@@ -127,7 +127,7 @@ body {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
-  padding: 8px 8px;
+  padding: 0.5% 0.5%;
   margin-left: 20px;
   font-size: px;
   cursor: pointer;
@@ -145,7 +145,7 @@ body {
   background-color: var(--header-bg-color); 
   color: var(--text-color);                 
   text-align: center;
-  padding: 15px 20px;
+  padding: 1% 1%;
   font-size: 14px;
   position: relative;
   margin-top: 40px;
@@ -278,9 +278,10 @@ body {
   overflow-x: auto; 
   overflow-y: hidden; 
 
-  font-size: 15px;
-  width: 100%;
   height: 50%;
+  width: 100%;
+  
+  font-size: 130%;
 }
 
 /* Thanh cuộn chung cho line-numbers và instructionCode */
@@ -298,21 +299,24 @@ body {
   user-select: none;
   overflow-y: hidden; /* Không hiển thị thanh cuộn dọc */
   flex-shrink: 0; /* Đảm bảo line-numbers không bị co lại */
+
+  font-size: 100%;
 }
+
 .instructionCode {
   flex-grow: 1;  /* Cho phép textarea mở rộng để lấp đầy không gian còn lại */
-  background-color: var(--bg-color); /* Use variable */
+  background-color: var(--frame-bg-color); /* Use variable */
   color: var(--text-color); /* Use variable */
   font-family: monospace;
   border: none; /* Remove border potentially set by var */
-  padding: 1%;
+  padding: 10px 10px;
   resize: none; /* Ngăn người dùng thay đổi kích thước textarea (tùy chọn) */
   /* Đảm bảo các thuộc tính này không bị ghi đè */
   box-shadow: none; 
   outline: none;
   overflow-x: auto;
 
-  font-size: 15px;
+  font-size: 100%;
   white-space: nowrap; /* Ngăn xuống dòng nội dung, giữ mọi chữ trong một hàng ngang */
   flex-grow: 1; /* Đảm bảo instructionCode chiếm phần không gian còn lại */
 }
@@ -320,6 +324,21 @@ body {
 .instructionCode:focus {
   outline: none; /* Loại bỏ viền xanh/cam mặc định của trình duyệt khi focus */
   box-shadow: none; /* Đảm bảo không có bóng đổ nào khác xuất hiện khi focus */
+}
+/* Tùy chỉnh thanh cuộn ngang */
+.instructionCode::-webkit-scrollbar {
+  width: 10px; /* Đặt chiều cao cho thanh cuộn ngang */
+  height: 10px;
+}
+
+.instructionCode::-webkit-scrollbar-thumb {
+  background-color: #4CAF50; /* Màu xanh lá cho thanh cuộn */
+  border-radius: 10px; /* Bo góc cho thanh cuộn */
+  cursor: pointer;
+}
+
+.instructionCode::-webkit-scrollbar-track {
+  background-color: transparent; /* Màu nền cho track của thanh cuộn */
 }
 .button-group {
   display: flex;
@@ -334,7 +353,7 @@ body {
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 8px 16px;
   margin-top: 10px;
-  font-size: 16px;
+  font-size: 100%;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
@@ -346,6 +365,7 @@ body {
 }
 .log-box {
   border: 2px solid var(--border-color);
+  background-color: var(--frame-bg-color); /* Use variable */
   padding: 1% 1%;
   overflow: auto;
   height: 50%;
@@ -387,7 +407,7 @@ body {
   padding: 8px 16px;
   top: 10px;
   right: 10px;
-  font-size: 16px;
+  font-size: 100%;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
@@ -405,7 +425,7 @@ body {
   padding: 8px 16px;
   top: 60px;
   right: 10px;
-  font-size: 16px;
+  font-size: 100%;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
@@ -423,7 +443,7 @@ body {
   padding: 8px 16px;
   top: 110px;
   right: 10px;
-  font-size: 16px;
+  font-size: 100%;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
@@ -438,23 +458,16 @@ body {
 .outputContainer {
   display: flex;
   width: 100%; /* Toàn bộ chiều rộng của container */
-  align-items: flex-start; /* Đảm bảo các phần tử con bắt đầu từ đầu */
+  align-items: stretch; /* Đảm bảo các phần tử con bắt đầu từ đầu */
   justify-content: space-between; /* Đẩy box đầu tiên sang trái, box cuối sang phải */
-}
-/* dataMemoryBox */
-.dataMemoryBox {
-  padding: 0 20px; /* Padding ngang (trái và phải) */
-  margin-left: 0px;
-  display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
-  flex-direction: column; /* Sắp xếp h2 và form theo cột */
-  flex: 0.3;
+  font-size: 130%;
 }
 .parsedOutputTable {
   width: 100%;
   border-collapse: collapse;
   margin-top: 5px;
   font-family: monospace;
-  font-size: 18px;
+  font-size: 100%;
   border: 2px solid var(--border-color); /* Use variable */
   color: var(--text-color); /* Set base text color for table */
   background-color: var(--table-row-odd-bg); /* Set base background */
@@ -483,7 +496,7 @@ body {
   color: var(--emphasis-color); /* Use variable */
 }
 .table-scroll-wrapper {
-  max-height: calc(9 * 37px); /* hoặc ví dụ: 256px */
+  max-height: 12.7%; /* hoặc ví dụ: 256px */
   overflow-x: hidden;
   overflow-y: auto;
   margin-top: 5px;
@@ -492,17 +505,12 @@ body {
 }
 /* Scrollbar: thanh cuộn màu xanh lá, bắt đầu từ thead */
 .table-scroll-wrapper::-webkit-scrollbar {
-  width: 5px; /* Độ rộng thanh cuộn */
+  width:10px; /* Độ rộng thanh cuộn */
 }
 .table-scroll-wrapper::-webkit-scrollbar-thumb {
-  background-color: limegreen;
-  border-radius: 4px;
-  height: 20px; /* Chiều cao tối thiểu */
-}
-/* Cái này cần thêm để giới hạn chiều dài thumb */
-.table-scroll-wrapper::-webkit-scrollbar-thumb:vertical {
-  min-height: 20px;
-  max-height: 20px;
+  background-color: #4CAF50;
+  border-radius: 10px;
+  cursor: pointer;
 }
 .table-scroll-wrapper::-webkit-scrollbar-track {
   background-color: transparent;
@@ -511,7 +519,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   font-family: monospace;
-  font-size: 18px;
+  font-size: 100%;
   color: var(--text-color); /* Set base text color for table */
   background-color: var(--table-row-odd-bg); /* Set base background */
 }
@@ -542,21 +550,27 @@ body {
 }
 
 .flagsBox {
-  padding: 0 20px; /* Padding ngang (trái và phải) */
-  margin-left: 0px;
+  padding: 0 1%; /* Padding ngang (trái và phải) */
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
-  align-items: flex-start;
+  flex: 0 0 6%;
 }
 
 /* Registers */
 .registersBox {
-  padding: 0 20px; /* Padding ngang (trái và phải) */
-  margin-left: 0px;
+  padding: 0 1%; /* Padding ngang (trái và phải) */
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
   align-items: flex-start;
-  flex: 1;
+  flex: 0 0 67%; /* Không co giãn, chiếm 30% */
+}
+
+/* dataMemoryBox */
+.dataMemoryBox {
+  padding: 0 1%; /* Padding ngang (trái và phải) */
+  display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
+  flex-direction: column; /* Sắp xếp h2 và form theo cột */
+  flex: 0 0 21%; /* Không co giãn, chiếm 30% */
 }
 
 .range-container {
