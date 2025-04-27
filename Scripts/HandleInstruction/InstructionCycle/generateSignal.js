@@ -19,80 +19,6 @@ const requiredTriggers = {
 	OrGate: 2
 };
 
-const shapes = {
-	PC: {
-		className: 'data-node',
-		shapeType: 'rect'
-	},
-	Const4: {
-		className: 'data-node',
-		shapeType: 'rect'
-	},
-	InstructionMemory: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Register: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	DataMemory: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Add0: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Add1: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	ALU: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Control: {
-		className: 'signal-control-unit',
-		shapeType: 'circle'
-	},
-	ShiftLeft2: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	SignExtend: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	ALUControl: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Mux0: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Mux1: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Mux2: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	Mux3: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	AndGate: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	},
-	OrGate: {
-		className: 'parsed-node',
-		shapeType: 'rect'
-	}
-};
 
 const signalCallbackTable = {
 	"InstructionMemory.ReadAddress": null,
@@ -144,6 +70,7 @@ import { encodeLegv8Instruction } from "../Compile/parser.js";
 import { SPEED_ANIMATION } from "./animationSpeed.js";
 import { watchDataMemory } from "../Compile/memoryState.js";
 import { watchRegisters } from "../Compile/memoryState.js";
+import { shapes } from "./shape.js";
 
 const dataSignalNodesGroup = [
 	document.getElementById('data-signal-nodes0'),
@@ -210,8 +137,8 @@ function traverseAndAnimateBFS(startNode, components) {
 				onEndCallback: signalCallbackTable[`${target}`],
 				pathId: pathId,
 				duration: SPEED_ANIMATION / 1000,
-				className: shapes[currentNode].className,
-				shapeType: shapes[currentNode].shapeType
+				className: shapes[target].className,
+				shapeType: shapes[target].shapeType
 			}));
 		});
 	}
