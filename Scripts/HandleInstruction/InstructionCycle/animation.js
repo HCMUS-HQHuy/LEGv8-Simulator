@@ -1,6 +1,5 @@
-const base = document.getElementById('data-signal-nodes');
 
-export function startSignalAnimation(dataSignalNodesGroup = base) {
+export function startSignalAnimation(dataSignalNodesGroup = null) {
     if (dataSignalNodesGroup == null) {
         console.error("dataSignalNodesGroup is null");
         return false;
