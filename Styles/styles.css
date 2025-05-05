@@ -286,7 +286,7 @@ body {
 }
 
 /* Thanh cuộn chung cho line-numbers và instructionCode */
-.code-editor-wrapper {
+.code-editor {
   display: flex;
   width: 100%; /* Chiếm hết chiều rộng */
   overflow-x: auto; /* Thanh cuộn ngang cho cả hai phần tử */
@@ -300,7 +300,6 @@ body {
   user-select: none;
   overflow-y: hidden; /* Không hiển thị thanh cuộn dọc */
   flex-shrink: 0; /* Đảm bảo line-numbers không bị co lại */
-
   font-size: 100%;
 }
 
@@ -316,7 +315,6 @@ body {
   box-shadow: none; 
   outline: none;
   overflow-x: auto;
-
   font-size: 100%;
   white-space: nowrap; /* Ngăn xuống dòng nội dung, giữ mọi chữ trong một hàng ngang */
   flex-grow: 1; /* Đảm bảo instructionCode chiếm phần không gian còn lại */
@@ -340,6 +338,20 @@ body {
 
 .instructionCode::-webkit-scrollbar-track {
   background-color: transparent; /* Màu nền cho track của thanh cuộn */
+}
+/* -- Highlight CSS -- */
+.highlight-overlay {
+  position: absolute;
+  top: 0; /* Will be set by JS */
+  left: 0;
+  width: 100%;
+  height: 0; /* Will be set by JS (initially hidden) */
+  background-color: rgba(250, 248, 116, 0.5);
+   /* border-left: 3px solid var(--highlight-border); Optional: add a stronger edge */
+  z-index: 1; /* Place it behind line numbers and textarea (which are z-index 2) */
+  pointer-events: none; /* Important: Allows clicks/selection to pass through */
+  transition: top 0.05s linear, height 0.05s linear; /* Smoother transitions */
+  box-sizing: border-box;
 }
 .button-group {
   display: flex;

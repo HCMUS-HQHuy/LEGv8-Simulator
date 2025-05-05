@@ -71,11 +71,17 @@ export function trigger() {
         event.preventDefault();
 		results = compileCode();
 	});
+	
+	document.getElementById('compile-btn').addEventListener('click', function(event) {
+        event.preventDefault();
+		results = compileCode();
+	});
 
 	document.getElementById('start-animation').addEventListener('click', function(event) {
 		event.preventDefault();
 		execute(results);
 	});
+	
 	document.getElementById('execute').addEventListener('click', function(event) {
 		event.preventDefault();
 		execute(results);
