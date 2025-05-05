@@ -3,6 +3,7 @@ import * as SwitchThemes from "./HandleOutLook/themes.js"
 import * as instructionLine from "./HandleOutLook/instructionCode.js"
 import * as handleReceivInstruction from "./HandleInstruction/ProcessCode.js"
 import * as animationSpeed from "./HandleInstruction/InstructionCycle/animationSpeed.js"
+
 document.addEventListener('DOMContentLoaded', function() {
 	SwitchThemes.trigger();
 	ZoomDragAndDrop.trigger();
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	// END LOGIC
 });
 
+/* Fullscreen mode ở đây */
 const frameBox = document.querySelector('.frame');
 const fullscreenBtn = frameBox.querySelector('#fullscreen-btn');
 
@@ -84,6 +86,8 @@ document.addEventListener('MSFullscreenChange', updateButtonState);     // IE/Ed
 // Cập nhật trạng thái nút khi tải trang lần đầu (phòng trường hợp đặc biệt)
 updateButtonState();
 
+
+/* Xử lý nhấn vào component để xem thông tin */
 const instructionMemoryGroup = document.getElementById('instruction-memory');
 const registerGroup = document.getElementById('register');
 const signExtendGroup = document.getElementById('sign-extend');
@@ -125,6 +129,8 @@ component_selected(ALUGroup, "add-2-selected", 10, 85, 1.5)
 component_selected(shiftLeft2Group, "shift-left-2-selected", 295, 70, 1.5)
 component_selected(dataMemoryGroup, "data-memory-selected", 10, 10, 1.5)
 
+
+/* Adding highlight on each row */
 document.addEventListener('DOMContentLoaded', () => {
     const instructionCode = document.getElementById('instructionCode');
     const lineNumbersDiv = document.getElementById('lineNumbers');
@@ -335,4 +341,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ensure initial scroll is synced (usually 0)
     lineNumbersDiv.scrollTop = instructionCode.scrollTop;
 
+});
+
+
+/* Stop animation here */
+document.addEventListener('DOMContentLoaded', () => {
+    const stopButton = document.getElementById('stop-animation');
+    // Select the main SVG element reliably
+    const svgCanvas = document.getElementById('zoomFrame');
+    // Or, if it's the only SVG or the most relevant one:
+    // const svgCanvas = document.querySelector('svg');
+
+    let isPaused = false; // Track the current state
+
+    stopButton.addEventListener('click', () => {
+        if (isPaused) {
+            // --- RESUME ---
+            try {
+                svgCanvas.unpauseAnimations(); // Resume all animations within the SVG
+                isPaused = false;
+                console.log('SVG Animations Resumed');
+            } catch (e) {
+                // Error handling (older browsers might not support it fully)
+                console.error("Error unpausing animations:", e);
+            }
+        } else {
+            // --- PAUSE ---
+            try {
+                svgCanvas.pauseAnimations(); // Pause all animations within the SVG
+                isPaused = true;
+                console.log('SVG Animations Paused');
+            } catch (e) {
+                // Error handling
+                console.error("Error pausing animations:", e);
+            }
+        }
+    });
 });
