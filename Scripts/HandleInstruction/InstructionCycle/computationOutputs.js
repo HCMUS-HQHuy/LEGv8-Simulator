@@ -10,10 +10,7 @@ export function computeOutputs(componentName, components) {
 			InstructionMemory.Rn_09_05 = encodedInstruction.substring(22, 27);
 			InstructionMemory.RdRt_04_00 = encodedInstruction.substring(27, 32);
 
-            InstructionMemory.Imm12_21_10 = encodedInstruction.substring(10, 22); // For I-type ALU
-            InstructionMemory.Imm9_20_12 = encodedInstruction.substring(11, 20);  // For D-type offset
-            InstructionMemory.Imm19_23_5 = encodedInstruction.substring(8, 27);   // For CB-type offset
-            InstructionMemory.Imm26_25_0 = encodedInstruction.substring(6, 32);   // For B-type 
+            InstructionMemory.SignExtend = encodedInstruction;
 			break;
 		case 'Control':
 			updateControlUnit(components);
@@ -241,36 +238,41 @@ function updateSignExtend(currentState) {
     
     const control = currentState.Control;
     const opcode = currentState.InstructionMemory.Opcode_31_21;
-    
+    const SignExtend = currentState.InstructionMemory.SignExtend;
     let inputBinary = null;
     let originalBits = 0;
     const targetBits = 64;
     
+
+    // InstructionMemory.Imm12_21_10 = encodedInstruction.substring(10, 22); // For I-type ALU
+    // InstructionMemory.Imm9_20_12 = encodedInstruction;  // For D-type offset
+    // InstructionMemory.Imm19_23_5 = encodedInstruction;   // For CB-type offset
+    // InstructionMemory.Imm26_25_0 = encodedInstruction.;   // For B-type 
+
+
     if (control.ALUSrc === 1) {
         // D-type (LDUR/STUR): Offset 9 bit (DT-address)
         if (opcode === '11111000010' || opcode === '11111000000') {
             console.warn(`SignExtend: Using Imm9_20_12 for sign extension.`);
-            inputBinary = currentState.InstructionMemory.Imm9_20_12; // 9 bits
+            inputBinary = SignExtend.substring(11, 20);
             originalBits = 9;
-            console.warn(`SignExtendL ${parseInt(inputBinary, 2)} - ${inputBinary}`);
         }
         // I-type (ADDI/SUBI): Immediate 12 bit
         else if (opcode?.startsWith('1001000100') || opcode?.startsWith('1101000100')) {
-            inputBinary = currentState.InstructionMemory.Imm12_21_10; // 12 bits
+            inputBinary = SignExtend.substring(10, 22); // 12 bits
             originalBits = 12;
         }
         // Kiểu MOVZ (16 bit immediate)
         else if (opcode?.startsWith('110100101')) {
-            inputBinary = currentState.InstructionMemory.Imm16_20_5; // 16 bits
+            inputBinary = SignExtend.Imm16_20_5; // 16 bits
             originalBits = 16;
-            // MOVZ là zero-extend, nhưng hiện tại xử lý như sign-extend theo yêu cầu chung
         }
         // Các lệnh khác như ANDI, ORRI - cũng là I-type 12 bit
         else if (opcode?.startsWith('1001001000') || // ANDI
                  opcode?.startsWith('1011001000') || // ORRI
                  opcode?.startsWith('1101001000'))   // EORI
         {
-            inputBinary = currentState.InstructionMemory.Imm12_21_10; // 12 bits
+            inputBinary = SignExtend.substring(10, 22); // 12 bits
             originalBits = 12;
         }
         else {
@@ -280,17 +282,17 @@ function updateSignExtend(currentState) {
     
     } else if (control.UncondBranch === 1) {
         // Lệnh B (Unconditional Branch)
-        inputBinary = currentState.InstructionMemory.Imm26_25_0; // 26 bits
+        inputBinary = SignExtend.substring(6, 32);
         originalBits = 26;
     } else if (control.Branch === 1) {
         // Lệnh Branch (Branch Instruction)
-        inputBinary = currentState.InstructionMemory.Imm19_23_5; // 19 bits
+        inputBinary = SignExtend.substring(8, 27);
         originalBits = 19;
     } else {
         // Khi không thuộc các trường hợp trên, chuyển đổi lệnh sang hex và thực hiện signExtend
-        const inputHex = parseInt(currentState.InstructionMemory.Instruction, 2).toString(16).toUpperCase();
+        const inputHex = parseInt(SignExtend, 2).toString(16).toUpperCase();
         currentState.SignExtend.input = `0x${inputHex}`;
-        const outputValue = signExtend(currentState.InstructionMemory.Instruction, 32, targetBits);
+        const outputValue = signExtend(SignExtend, 32, targetBits);
         currentState.SignExtend.output = parseInt(outputValue, 2);
         return;
     }

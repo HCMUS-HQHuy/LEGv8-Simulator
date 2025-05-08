@@ -104,14 +104,15 @@ function traverseAndAnimateBFS(components) {
 		connections.forEach(conn => {
 			const { source, target, pathId } = conn;
 
-			if (target === 'SignExtend.input') {
-				const index = (components.InstructionMemory.ReadAddress >> 2);
-				console.log(`Condition check for ${source} -> ${target}: instructionType is ${components.InstructionMemory.instructionType[index]}, conn.condition is ${conn.condition}`);
-				if (conn.condition != components.InstructionMemory.instructionType[index]) {
-					console.log(`Skipping ${source} -> ${target} due to condition mismatch.`);
-					return; // Skip processing this connection
-				}
-			}
+			// if (target === 'SignExtend.input') {
+			// 	const index = (components.InstructionMemory.ReadAddress >> 2);
+			// 	console.log(`Condition check for ${source} -> ${target}: instructionType is ${components.InstructionMemory.instructionType[index]}, conn.condition is ${conn.condition}`);
+			// 	if (conn.condition != components.InstructionMemory.instructionType[index]) {
+			// 		console.warn(`Skipping ${source} -> ${target} due to condition mismatch.`);
+			// 		return; // Skip processing this connection
+			// 	}
+			// 	else console.warn("HAVE SUCCESS");
+			// }
 
 			const value = getValueFromComponents(source, components);
 			console.log(`Signal: ${source} -> ${target}, Value: ${value}`);
@@ -133,17 +134,17 @@ function traverseAndAnimateBFS(components) {
                     if (outgoingFromFiredComponent) {
                         outgoingFromFiredComponent.forEach(outConn => {
                             let willPropagateNext = true;
-                            if (outConn.target === 'SignExtend.input') {
-                                const index = (components.InstructionMemory.ReadAddress >> 2);
-                                if (outConn.condition && components.InstructionMemory && typeof components.InstructionMemory.instructionType !== 'undefined') {
-                                    if (outConn.condition !== components.InstructionMemory.instructionType[index]) {
-                                        console.log(`[Callback] Priming SKIPPED for ${targetComponent} -> ${outConn.target}: condition ${outConn.condition} vs ${components.InstructionMemory.instructionType[index]}`);
-                                        willPropagateNext = false;
-                                    }
-                                } else {
-                                     console.warn(`[Callback] Missing data for SignExtend condition check for ${targetComponent} -> ${outConn.target}`);
-                                }
-                            }
+                            // if (outConn.target === 'SignExtend.input') {
+                            //     const index = (components.InstructionMemory.ReadAddress >> 2);
+                            //     if (outConn.condition && components.InstructionMemory && typeof components.InstructionMemory.instructionType !== 'undefined') {
+                            //         if (outConn.condition !== components.InstructionMemory.instructionType[index]) {
+                            //             console.log(`[Callback] Priming SKIPPED for ${targetComponent} -> ${outConn.target}: condition ${outConn.condition} vs ${components.InstructionMemory.instructionType[index]}`);
+                            //             willPropagateNext = false;
+                            //         }
+                            //     } else {
+                            //          console.warn(`[Callback] Missing data for SignExtend condition check for ${targetComponent} -> ${outConn.target}`);
+                            //     }
+                            // }
                             if (willPropagateNext) {
                                 console.log(`[Callback] Priming signal animation for next step: ${targetComponent} -> ${outConn.target} (pathId: ${outConn.pathId || 'N/A'})`);
                                 startSignalAnimation(outConn.target); 

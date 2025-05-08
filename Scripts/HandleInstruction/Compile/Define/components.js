@@ -19,10 +19,10 @@ export function getComponents() {
 
 			SignExtend: null,
 		
-			Imm12_21_10:   null,
-			Imm9_20_12:    null,
-			Imm19_23_5:    null,
-			Imm26_25_0:    null,
+			// Imm12_21_10:   null,
+			// Imm9_20_12:    null,
+			// Imm19_23_5:    null,
+			// Imm26_25_0:    null,
 		},
 		Register: {
 			registerValues: [
