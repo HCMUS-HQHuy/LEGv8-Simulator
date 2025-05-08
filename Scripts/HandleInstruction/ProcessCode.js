@@ -5,27 +5,18 @@ import * as formatCode from "./Compile/formatCode.js"
 import * as generateSignal from "./InstructionCycle/generateSignal.js"
 import {DURATION_ANIMATION, state} from "./InstructionCycle/animationSpeed.js"
 
-const dataSignalNodesGroup = [
-	document.getElementById('data-signal-nodes0'),
-	document.getElementById('data-signal-nodes1'),
-	document.getElementById('data-signal-nodes2'),
-	document.getElementById('data-signal-nodes3'),
-	document.getElementById('data-signal-nodes4'),
-	document.getElementById('data-signal-nodes5'),
-	document.getElementById('data-signal-nodes6'),
-	document.getElementById('data-signal-nodes7'),
-	document.getElementById('data-signal-nodes8'),
-	document.getElementById('data-signal-nodes9')
-];
-
-async function playAnimationsSequentially(promise) {
-	for (let i = 0; i < dataSignalNodesGroup.length && state.executing; i++) {
-		const success = animate.startSignalAnimation(dataSignalNodesGroup[i]);
-		if (success === false) break;
-		await new Promise(resolve => setTimeout(resolve, DURATION_ANIMATION));
-	}
-	promise();
-}
+// const dataSignalNodesGroup = [
+// 	document.getElementById('data-signal-nodes0'),
+// 	document.getElementById('data-signal-nodes1'),
+// 	document.getElementById('data-signal-nodes2'),
+// 	document.getElementById('data-signal-nodes3'),
+// 	document.getElementById('data-signal-nodes4'),
+// 	document.getElementById('data-signal-nodes5'),
+// 	document.getElementById('data-signal-nodes6'),
+// 	document.getElementById('data-signal-nodes7'),
+// 	document.getElementById('data-signal-nodes8'),
+// 	document.getElementById('data-signal-nodes9')
+// ];
 
 function compileCode() {
 	const results = formatCode.getResult();
@@ -37,12 +28,6 @@ function compileCode() {
 }
 
 async function execute(results) {
-	dataSignalNodesGroup.forEach(group => {
-		if (group) {
-		  group.innerHTML = '';  // Xóa tất cả các phần tử con trong <g>
-		}
-	  });
-
 	if (results == null) {
 		console.warn("formatcode: Have some problem!");
 		return;
@@ -54,12 +39,10 @@ async function execute(results) {
 	console.log("---------------START----------------");
 	state.executing = true;
 	while (state.executing) {
-		const index = generateSignal.start(Components);
-		console.log(`index: ${index}`);
-		if (index == -1) break;
 		await new Promise((promise) => {
-			playAnimationsSequentially(promise);
+			generateSignal.start(Components, promise); // This triggers the signal generation
 		});
+		console.warn("FINISH AN INSTRUCTION");
 	}
 	state.executing = false;
 	console.log("---------------END----------------");

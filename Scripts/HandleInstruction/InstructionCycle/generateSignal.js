@@ -21,69 +21,58 @@ const requiredTriggers = {
 
 
 const signalCallbackTable = {
-	"InstructionMemory.ReadAddress": null,
-	"Add0.input1": null,
-	"Add1.input1": null,
-	"Add0.input2": null,
-	"Control.Input": null,
-	"ALUControl.Opcode": null,
-	"Register.Read1": null,
-	"Register.WriteReg": null,
-	"Mux1.input0": null,
-	"Mux1.input1": null,
-	"SignExtend.input": null,
-	"Mux0.input0": null,
-	"Mux1.option": null,
-	"OrGate.input1": null,
-	"AndGate.input1": null,
-	"DataMemory.readEnable": null,
-	"Mux3.option": null,
-	"ALUControl.ALUOp": null,
-	"DataMemory.writeEnable": null,
-	"Mux2.option": null,
-	"Register.option": null,
-	"ShiftLeft2.input": null,
-	"Mux2.input1": null,
-	"Register.Read2": null,
-	"ALU.option": null,
-	"Add1.input2": null,
-	"Mux2.input0": null,
-	"ALU.input2": null,
-	"DataMemory.WriteData": null,
-	"Mux0.input1": null,
-	"Mux0.option": null,
-	"ALU.input1": null,
-	"Mux3.input1": null,
-	"DataMemory.address": null,
-	"Mux3.input0": null,
-	"AndGate.input2": null,
-	"Register.WriteData": null,
-	"OrGate.input2": null,
-	"PC.value": null
+	"InstructionMemory.ReadAddress": [],
+	"Add0.input1": [],
+	"Add1.input1": [],
+	"Add0.input2": [],
+	"Control.Input": [],
+	"ALUControl.Opcode": [],
+	"Register.Read1": [],
+	"Register.WriteReg": [],
+	"Mux1.input0": [],
+	"Mux1.input1": [],
+	"SignExtend.input": [],
+	"Mux0.input0": [],
+	"Mux1.option": [],
+	"OrGate.input1": [],
+	"AndGate.input1": [],
+	"DataMemory.readEnable": [],
+	"Mux3.option": [],
+	"ALUControl.ALUOp": [],
+	"DataMemory.writeEnable": [],
+	"Mux2.option": [],
+	"Register.option": [],
+	"ShiftLeft2.input": [],
+	"Mux2.input1": [],
+	"Register.Read2": [],
+	"ALU.option": [],
+	"Add1.input2": [],
+	"Mux2.input0": [],
+	"ALU.input2": [],
+	"DataMemory.WriteData": [],
+	"Mux0.input1": [],
+	"Mux0.option": [],
+	"ALU.input1": [],
+	"Mux3.input1": [],
+	"DataMemory.address": [],
+	"Mux3.input0": [],
+	"AndGate.input2": [],
+	"Register.WriteData": [],
+	"OrGate.input2": [],
+	"PC.value": []
 };
+
 
 import { getComponents } from "../Compile/Define/components.js";
 import { Connections } from "../Compile/Define/Connections.js"
 import {createNodeWithAnimation} from "./animation.js"
+import {startSignalAnimation} from "./animation.js"
 import { computeOutputs } from "./computationOutputs.js";
 import { encodeLegv8Instruction } from "../Compile/parser.js";
 import { DURATION_ANIMATION } from "./animationSpeed.js";
 import { watchDataMemory } from "../Compile/memoryState.js";
 import { watchRegisters } from "../Compile/memoryState.js";
 import { shapes } from "./shape.js";
-
-const dataSignalNodesGroup = [
-	document.getElementById('data-signal-nodes0'),
-	document.getElementById('data-signal-nodes1'),
-	document.getElementById('data-signal-nodes2'),
-	document.getElementById('data-signal-nodes3'),
-	document.getElementById('data-signal-nodes4'),
-	document.getElementById('data-signal-nodes5'),
-	document.getElementById('data-signal-nodes6'),
-	document.getElementById('data-signal-nodes7'),
-	document.getElementById('data-signal-nodes8'),
-	document.getElementById('data-signal-nodes9')
-];
 
 function getValueFromComponents(source, components) {
 	const [comp, field] = source.split('.');
@@ -95,8 +84,11 @@ function setValueInComponents(target, value, components) {
 	if (components[comp]) components[comp][field] = value;
 }
 
-function traverseAndAnimateBFS(startNode, components) {
-	const queue = [{ node: startNode, depth: 0 }, {node: "Const4", depth: 0}];
+function traverseAndAnimateBFS(components) {
+	// Initial queue setup as in the example
+	const queue = [{ node: "PC", depth: 0 }];
+	queue.push({node: "Const4", depth: 0});
+	
 	const triggerCount = {};
 	Object.keys(requiredTriggers).forEach(key => {
 		triggerCount[key] = 0;
@@ -113,43 +105,68 @@ function traverseAndAnimateBFS(startNode, components) {
 
 			if (target === 'SignExtend.input') {
 				const index = (components.InstructionMemory.ReadAddress >> 2);
-				console.log(`condition: ${conn.condition} -> ${components.InstructionMemory.instructionType[index]}`)
-				if (conn.condition != components.InstructionMemory.instructionType[index])
-					return;
+				console.log(`Condition check for ${source} -> ${target}: instructionType is ${components.InstructionMemory.instructionType[index]}, conn.condition is ${conn.condition}`);
+				if (conn.condition != components.InstructionMemory.instructionType[index]) {
+					console.log(`Skipping ${source} -> ${target} due to condition mismatch.`);
+					return; // Skip processing this connection
+				}
 			}
 
 			const value = getValueFromComponents(source, components);
-
-			console.log(`source: ${source} -> ${target} value: ${value}`);
-
+			console.log(`Signal: ${source} -> ${target}, Value: ${value}`);
 			setValueInComponents(target, value, components);
 
 			const targetComponent = target.split('.')[0];
-			triggerCount[targetComponent]++;
+			triggerCount[targetComponent]++;			
+			
+            // These callbacks will be executed when the animation for the current `conn` (source -> target) ends.
+			const originalCallbacks = signalCallbackTable[target] ? [...signalCallbackTable[target]] : [];
+
 			if (triggerCount[targetComponent] === requiredTriggers[targetComponent]) {
+				console.log(`Component ${targetComponent} has all required inputs. Computing outputs.`);
 				computeOutputs(targetComponent, components);
 				queue.push({ node: targetComponent, depth: depth + 1 });
+				originalCallbacks.push(() => {
+					console.warn(`[Callback] Component ${targetComponent} fired. Signal arrived at ${target}.`);
+                    const outgoingFromFiredComponent = Connections[targetComponent];
+                    if (outgoingFromFiredComponent) {
+                        outgoingFromFiredComponent.forEach(outConn => {
+                            let willPropagateNext = true;
+                            if (outConn.target === 'SignExtend.input') {
+                                const index = (components.InstructionMemory.ReadAddress >> 2);
+                                if (outConn.condition && components.InstructionMemory && typeof components.InstructionMemory.instructionType !== 'undefined') {
+                                    if (outConn.condition !== components.InstructionMemory.instructionType[index]) {
+                                        console.log(`[Callback] Priming SKIPPED for ${targetComponent} -> ${outConn.target}: condition ${outConn.condition} vs ${components.InstructionMemory.instructionType[index]}`);
+                                        willPropagateNext = false;
+                                    }
+                                } else {
+                                     console.warn(`[Callback] Missing data for SignExtend condition check for ${targetComponent} -> ${outConn.target}`);
+                                }
+                            }
+                            if (willPropagateNext) {
+                                console.log(`[Callback] Priming signal animation for next step: ${targetComponent} -> ${outConn.target} (pathId: ${outConn.pathId || 'N/A'})`);
+                                startSignalAnimation(outConn.target); 
+                            }
+                        });
+                    }
+				});
 			}
 
-			// console.log(`from: ${source} to : ${target}`);
-			// console.log(`target : ${targetComponent} -> cnt: ${triggerCount[targetComponent]}`);
-			console.log(`target : ${target}`);
-			// if (signalCallbackTable[`${target}`])
-			// 	console.warn(`onEndCallBack: ${signalCallbackTable[`${target}`]}`);
-
-			dataSignalNodesGroup[depth].appendChild(createNodeWithAnimation({
+			console.log(`Creating animation for: ${source} -> ${target} (pathId: ${pathId})`);
+			createNodeWithAnimation({
 				value: value,
-				// fieldName: `${source}-to-${target}`,
 				fieldName: `${target}`,
-				onEndCallback: signalCallbackTable[`${target}`],
+				onEndCallback: originalCallbacks,
 				pathId: pathId,
 				duration: DURATION_ANIMATION,
 				className: shapes[target].className,
 				shapeType: shapes[target].shapeType
-			}));
+			});
 		});
 	}
 }
+
+let pcSignalPromiseResolve = null
 
 export function initialize(code) {
 	const Components = getComponents();
@@ -282,7 +299,10 @@ export function initialize(code) {
 	}
 
 	signalCallbackTable[`PC.value`] = [
-		() => {document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;}
+		async () => {
+			document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;
+			pcSignalPromiseResolve();
+		}
 	];
 
 	signalCallbackTable[`InstructionMemory.ReadAddress`] = [
@@ -308,10 +328,15 @@ export function initialize(code) {
 	return Components;
 }
 
-export function start(Components) {
+export function start(Components, promise) {
 	if (Components.PC.value >= Components.InstructionMemory.instruction.length * 4) {
 		return -1;
 	}
-	traverseAndAnimateBFS("PC", Components);
+	pcSignalPromiseResolve = promise;
+	traverseAndAnimateBFS(Components);
+	startSignalAnimation("InstructionMemory.ReadAddress")
+	startSignalAnimation("Add0.input1")
+	startSignalAnimation("Add1.input1")
+	startSignalAnimation("Add0.input2")
 	return Components.InstructionMemory.ReadAddress;
 }

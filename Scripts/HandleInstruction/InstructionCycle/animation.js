@@ -1,24 +1,15 @@
+const parentGroup = document.getElementById("data-signal-nodes");
 
-export function startSignalAnimation(dataSignalNodesGroup = null) {
-    if (dataSignalNodesGroup == null) {
-        console.error("dataSignalNodesGroup is null");
-        return false;
-    }
-
-	const animations = dataSignalNodesGroup.querySelectorAll('animateMotion');
-	if (animations.length === 0) {
-		console.log("No data signal nodes found to animate.");
+export function startSignalAnimation(id) {
+	const animation = document.getElementById(`data-anim-${id}`);
+	const signalNode = document.getElementById(`data-node-${id}`);
+	if (animation == null || signalNode == null) {
+		console.warn(`No id:${id} data signal nodes found to animate.`);
 		return false;
 	}
-	animations.forEach(anim => {
-		const parentGroup = anim.closest('g');
-		if (parentGroup) {
-			parentGroup.setAttribute('visibility', 'visible');
-			anim.beginElement();
-		} else {
-			console.warn(`Could not find parent group for data animation element:`, anim);
-		}
-	});
+    console.log(`RUN: ${id}`);
+    signalNode.setAttribute('visibility', 'visible');
+    animation.beginElement();
     return true;
 }
 
@@ -46,8 +37,9 @@ export function createNodeWithAnimation({
         return null;
     }
 
-	const nodeGroupId = `data-node-${fieldName.replace(/\[|\]|-/g, '_')}`;
-    const animationId = `data-anim-${fieldName.replace(/\[|\]|-/g, '_')}`;
+	const nodeGroupId = `data-node-${fieldName}`;
+    const animationId = `data-anim-${fieldName}`;
+    
     const existingNode = document.getElementById(nodeGroupId);
     if (existingNode) existingNode.remove();
 
@@ -124,6 +116,7 @@ export function createNodeWithAnimation({
     nodeGroup.appendChild(text);
     nodeGroup.appendChild(animateMotion);
 
-    return nodeGroup;
+    // return nodeGroup;
+    parentGroup.appendChild(nodeGroup);
 }
 
