@@ -21,47 +21,46 @@ const requiredTriggers = {
 
 
 const signalCallbackTable = {
-	"InstructionMemory.ReadAddress": [],
-	"Add0.input1": [],
-	"Add1.input1": [],
-	"Add0.input2": [],
-	"Control.Input": [],
-	"ALUControl.Opcode": [],
-	"Register.Read1": [],
-	"Register.WriteReg": [],
-	"Mux1.input0": [],
-	"Mux1.input1": [],
-	"SignExtend.input": [],
-	"Mux0.input0": [],
-	"Mux1.option": [],
-	"OrGate.input1": [],
-	"AndGate.input1": [],
-	"DataMemory.readEnable": [],
-	"Mux3.option": [],
-	"ALUControl.ALUOp": [],
-	"DataMemory.writeEnable": [],
-	"Mux2.option": [],
-	"Register.option": [],
-	"ShiftLeft2.input": [],
-	"Mux2.input1": [],
-	"Register.Read2": [],
-	"ALU.option": [],
-	"Add1.input2": [],
-	"Mux2.input0": [],
-	"ALU.input2": [],
-	"DataMemory.WriteData": [],
-	"Mux0.input1": [],
-	"Mux0.option": [],
-	"ALU.input1": [],
-	"Mux3.input1": [],
-	"DataMemory.address": [],
-	"Mux3.input0": [],
-	"AndGate.input2": [],
-	"Register.WriteData": [],
-	"OrGate.input2": [],
-	"PC.value": []
+	"InstructionMemory.ReadAddress": null,
+	"Add0.input1": null,
+	"Add1.input1": null,
+	"Add0.input2": null,
+	"Control.Input": null,
+	"ALUControl.Opcode": null,
+	"Register.Read1": null,
+	"Register.WriteReg": null,
+	"Mux1.input0": null,
+	"Mux1.input1": null,
+	"SignExtend.input": null,
+	"Mux0.input0": null,
+	"Mux1.option": null,
+	"OrGate.input1": null,
+	"AndGate.input1": null,
+	"DataMemory.readEnable": null,
+	"Mux3.option": null,
+	"ALUControl.ALUOp": null,
+	"DataMemory.writeEnable": null,
+	"Mux2.option": null,
+	"Register.option": null,
+	"ShiftLeft2.input": null,
+	"Mux2.input1": null,
+	"Register.Read2": null,
+	"ALU.option": null,
+	"Add1.input2": null,
+	"Mux2.input0": null,
+	"ALU.input2": null,
+	"DataMemory.WriteData": null,
+	"Mux0.input1": null,
+	"Mux0.option": null,
+	"ALU.input1": null,
+	"Mux3.input1": null,
+	"DataMemory.address": null,
+	"Mux3.input0": null,
+	"AndGate.input2": null,
+	"Register.WriteData": null,
+	"OrGate.input2": null,
+	"PC.value": null
 };
-
 
 import { getComponents } from "../Compile/Define/components.js";
 import { Connections } from "../Compile/Define/Connections.js"
@@ -83,6 +82,8 @@ function setValueInComponents(target, value, components) {
 	const [comp, field] = target.split('.');
 	if (components[comp]) components[comp][field] = value;
 }
+
+let pcSignalPromiseResolve = null
 
 function traverseAndAnimateBFS(components) {
 	// Initial queue setup as in the example
@@ -127,7 +128,7 @@ function traverseAndAnimateBFS(components) {
 				computeOutputs(targetComponent, components);
 				queue.push({ node: targetComponent, depth: depth + 1 });
 				originalCallbacks.push(() => {
-					console.warn(`[Callback] Component ${targetComponent} fired. Signal arrived at ${target}.`);
+					// console.warn(`[Callback] Component ${targetComponent} fired. Signal arrived at ${target}.`);
                     const outgoingFromFiredComponent = Connections[targetComponent];
                     if (outgoingFromFiredComponent) {
                         outgoingFromFiredComponent.forEach(outConn => {
@@ -166,10 +167,12 @@ function traverseAndAnimateBFS(components) {
 	}
 }
 
-let pcSignalPromiseResolve = null
-
-export function initialize(code) {
-	const Components = getComponents();
+function resetComponents(Components) {
+	for (const key in signalCallbackTable)
+		if (signalCallbackTable.hasOwnProperty(key))
+			signalCallbackTable[key] = null;
+	
+	
 	for (let i = 0; i <= 3; i++) {
 		signalCallbackTable[`Mux${i}.option`] = [
 			() => {
@@ -179,7 +182,7 @@ export function initialize(code) {
 			}
 		];
 	}
-
+	
 	new Set(['write', 'read']).forEach(val => {
 		signalCallbackTable[`DataMemory.${val}Enable`] = [
 			() => {
@@ -187,12 +190,11 @@ export function initialize(code) {
 			}
 		];
 	})
-
+	
 	signalCallbackTable[`DataMemory.address`] = [
 		() => {
 			const index = Components.DataMemory.address;
 			const indexHex = `0x${(index*8).toString(16).toUpperCase().padStart(4, '0')}`;
-			console.warn(`indexHex: ${indexHex}`);
 			document.getElementById('data-memory-address-value').textContent = indexHex;
 			document.getElementById('data-read-data-value').textContent = Components.DataMemory.Values[index];
 			if (Components.DataMemory.writeEnable === 0) return;
@@ -205,11 +207,11 @@ export function initialize(code) {
 			}, DURATION_ANIMATION);
 		}
 	]
-
+	
 	signalCallbackTable[`DataMemory.WriteData`] = [
 		() => { document.getElementById('data-memory-write-data-value').textContent = Components.DataMemory.WriteData}
 	]
-
+	
 	signalCallbackTable[`ALU.input2`] = [
 		() => { document.getElementById('add-2-input-2-value').textContent = Components.ALU.input2; }
 	]
@@ -219,7 +221,7 @@ export function initialize(code) {
 			document.getElementById('add-2-output-value').textContent = Components.ALU.output; 
 		}
 	]
-
+	
 	signalCallbackTable[`SignExtend.input`] = [
 		() => {
 			document.getElementById('sign-extend-input-value').textContent = Components.SignExtend.input.toString(2).padStart(8, '0');
@@ -233,7 +235,7 @@ export function initialize(code) {
 			document.getElementById('shift-left-2-output-value').textContent = Components.ShiftLeft2.output; 
 		}
 	]
-
+	
 	signalCallbackTable[`Register.WriteData`] = [
 		() => {
 			const index = Components.Register.WriteReg;
@@ -244,7 +246,7 @@ export function initialize(code) {
 			if (Components.Register.option === 0) return;
 			console.warn(`index: ${index}`);
 			const indexHex = `X${index.toString().padStart(2, '0')}`;
-
+	
 			const value = Components.Mux3.output;
 			Components.Register.registerValues[index] = value;
 			console.warn(`indexHex: ${indexHex}`);
@@ -259,7 +261,7 @@ export function initialize(code) {
 			document.getElementById(`register-write-data-value`).textContent = `0x${value.toString(16).toUpperCase().padStart(2, '0')}`;
 		}
 	]
-
+	
 	new Set(['Read1', 'Read2', 'WriteReg', 'WriteData']).forEach(val => {
 		signalCallbackTable[`Register.${val}`] = [
 			() => {
@@ -271,24 +273,24 @@ export function initialize(code) {
 			}
 		];
 	})
-
+	
 	// signalCallbackTable[`Register.Read1`] = [
 	// 	() => {document.getElementById(`alu-control-aluop-value`).textContent = Components.ALUControl.ALUOp;}
 	// ]
-
-
+	
+	
 	signalCallbackTable[`ALUControl.ALUOp`] = [
 		() => {document.getElementById(`alu-control-aluop-value`).textContent = Components.ALUControl.ALUOp;}
 	];
-
+	
 	signalCallbackTable[`ALU.option`] = [
 		() => {document.getElementById(`alu-option-value`).textContent = Components.ALU.option;}
 	];
-
+	
 	signalCallbackTable[`Register.option`] = [
 		() => {document.getElementById(`register-option-value`).textContent = Components.Register.option;}
 	];
-
+	
 	for (let i = 1; i <= 2; i++) {
 		signalCallbackTable[`AndGate.input${i}`] = [
 			() => {document.getElementById(`and-gate-input${i}-value`).textContent = Components.AndGate[`input${i}`];}
@@ -297,14 +299,14 @@ export function initialize(code) {
 			() => {document.getElementById(`or-gate-input${i}-value`).textContent = Components.OrGate[`input${i}`];}
 		];
 	}
-
+	
 	signalCallbackTable[`PC.value`] = [
 		async () => {
 			document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;
 			pcSignalPromiseResolve();
 		}
 	];
-
+	
 	signalCallbackTable[`InstructionMemory.ReadAddress`] = [
 		() => {
 			document.getElementById(`instruction-memory-read-address-value`).textContent = `0x${(Components.InstructionMemory.ReadAddress).toString(16).padStart(2, '0').toUpperCase()}`;
@@ -313,7 +315,11 @@ export function initialize(code) {
 			document.getElementById(`instruction-memory-instruction-[31-0]-value`).textContent = `0x${parseInt(encodedInstruction, 2).toString(16).padStart(8, '0').toUpperCase()}`;
 		}
 	];
+}
 
+export function initialize(code) {
+	const Components = getComponents();
+	resetComponents(Components)
 	watchDataMemory(Components.DataMemory);
 	watchRegisters(Components.Register);
 	Components.PC.value = 0;
@@ -333,6 +339,7 @@ export function start(Components, promise) {
 		return -1;
 	}
 	pcSignalPromiseResolve = promise;
+	resetComponents(Components);
 	traverseAndAnimateBFS(Components);
 	startSignalAnimation("InstructionMemory.ReadAddress")
 	startSignalAnimation("Add0.input1")
