@@ -340,7 +340,6 @@ export async function start(Components, promise) {
 		promise(-1);
 		return -1;
 	}
-
 	resetComponents(Components);
 	traverseAndAnimateBFS(Components);
 	startSignalAnimation("InstructionMemory.ReadAddress")
