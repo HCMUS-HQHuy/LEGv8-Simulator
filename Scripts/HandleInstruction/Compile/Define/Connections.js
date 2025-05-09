@@ -25,12 +25,6 @@ export const Connections = {
 		{ source: 'InstructionMemory.Rm_20_16',   target: 'Mux1.input1', pathId: 'instruction-memory-to-mux-1-1-path' },
 		
 		{ source: 'InstructionMemory.SignExtend', target: 'SignExtend.input', pathId: 'instruction-memory-to-sign-extend-path', condition: 'I-type' },
-		
-		// Immediate types
-		// { source: 'InstructionMemory.Imm12_21_10', target: 'SignExtend.input', pathId: 'instruction-memory-to-sign-extend-path', condition: 'I-type' },
-		// { source: 'InstructionMemory.Imm9_20_12',  target: 'SignExtend.input', pathId: 'instruction-memory-to-sign-extend-path', condition: 'D-type' },
-		// { source: 'InstructionMemory.Imm19_23_5',  target: 'SignExtend.input', pathId: 'instruction-memory-to-sign-extend-path', condition: 'CB-type' },
-		// { source: 'InstructionMemory.Imm26_25_0',  target: 'SignExtend.input', pathId: 'instruction-memory-to-sign-extend-path', condition: 'B-type' }
 	],
 	SignExtend: [
 		{ source: 'SignExtend.output', target: 'ShiftLeft2.input', pathId: 'sign-extend-to-shift-left-2-path' },

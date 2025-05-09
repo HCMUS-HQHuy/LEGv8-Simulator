@@ -1,22 +1,8 @@
 import * as currentInstruction from "./Compile/currentInstruction.js"
-import * as animate from "./InstructionCycle/animation.js"
 import * as formatCode from "./Compile/formatCode.js"
 
 import * as generateSignal from "./InstructionCycle/generateSignal.js"
-import {DURATION_ANIMATION, state} from "./InstructionCycle/animationSpeed.js"
-
-// const dataSignalNodesGroup = [
-// 	document.getElementById('data-signal-nodes0'),
-// 	document.getElementById('data-signal-nodes1'),
-// 	document.getElementById('data-signal-nodes2'),
-// 	document.getElementById('data-signal-nodes3'),
-// 	document.getElementById('data-signal-nodes4'),
-// 	document.getElementById('data-signal-nodes5'),
-// 	document.getElementById('data-signal-nodes6'),
-// 	document.getElementById('data-signal-nodes7'),
-// 	document.getElementById('data-signal-nodes8'),
-// 	document.getElementById('data-signal-nodes9')
-// ];
+import {state} from "./InstructionCycle/animationSpeed.js"
 
 function compileCode() {
 	const results = formatCode.getResult();
@@ -32,19 +18,20 @@ async function execute(results) {
 		console.warn("formatcode: Have some problem!");
 		return;
 	}
-	currentInstruction.update(results[0]);
-	console.log(`results: ${results.length}`);
 	const Components = generateSignal.initialize(results);
-
 	console.log("---------------START----------------");
 	state.executing = true;
+	let instructionPos = 0;
 	while (state.executing) {
-		await new Promise((promise) => {
+		currentInstruction.update(results[instructionPos]);
+		instructionPos = await new Promise((promise) => {
 			generateSignal.start(Components, promise); // This triggers the signal generation
 		});
+		if (instructionPos === -1)
+			state.executing = false;
+		console.warn(`Insstruction: ${instructionPos}`);
 		console.warn("FINISH AN INSTRUCTION");
 	}
-	state.executing = false;
 	console.log("---------------END----------------");
 }
 

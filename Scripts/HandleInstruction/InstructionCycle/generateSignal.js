@@ -335,16 +335,21 @@ export function initialize(code) {
 	return Components;
 }
 
-export function start(Components, promise) {
-	if (Components.PC.value >= Components.InstructionMemory.instruction.length * 4) {
+export async function start(Components, promise) {
+	if ((Components.PC.value >> 2) >= Components.InstructionMemory.instruction.length) {
+		promise(-1);
 		return -1;
 	}
-	pcSignalPromiseResolve = promise;
+
 	resetComponents(Components);
 	traverseAndAnimateBFS(Components);
 	startSignalAnimation("InstructionMemory.ReadAddress")
 	startSignalAnimation("Add0.input1")
 	startSignalAnimation("Add1.input1")
 	startSignalAnimation("Add0.input2")
-	return Components.InstructionMemory.ReadAddress;
+	
+	await new Promise((promise) => {
+		pcSignalPromiseResolve = promise;
+	});
+	promise(Components.PC.value >> 2);
 }

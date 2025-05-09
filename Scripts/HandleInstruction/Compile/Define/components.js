@@ -18,11 +18,6 @@ export function getComponents() {
 			RdRt_04_00:    null,
 
 			SignExtend: null,
-		
-			// Imm12_21_10:   null,
-			// Imm9_20_12:    null,
-			// Imm19_23_5:    null,
-			// Imm26_25_0:    null,
 		},
 		Register: {
 			registerValues: [
