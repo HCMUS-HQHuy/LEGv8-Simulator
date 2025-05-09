@@ -1,38 +1,50 @@
-import {parseLegv8Instruction} from "./parser.js"
+import {parseLegv8Instruction, buildLabelTable} from "./parser.js"
 
 
 export function getResult() {
 	const instructionTextarea = document.getElementById('instructionCode');
-	const allCode = instructionTextarea.value;
-	const codeLines = allCode.split(/\r?\n/);
-	let results = [], i = -1;
-	while (i + 1 < codeLines.length) {
-		i++;
-		
-		let firstLineIndex = -1;
-		let firstInstructionLine = null;
-		// --- Tìm dòng lệnh đầu tiên hợp lệ ---
-		for (; i < codeLines.length; i++) {
-			const trimmedLine = codeLines[i].trim();
-			if (trimmedLine && !trimmedLine.startsWith('//') && !trimmedLine.startsWith(';')) {
-				firstInstructionLine = trimmedLine;
-				firstLineIndex = i;
-				break;
-			}
+	const codeLines = instructionTextarea.value.split(/\r?\n/);
+
+	const labelTable = buildLabelTable(codeLines);
+	const results = [];
+
+	for (let i = 0; i < codeLines.length; i++) {
+		const trimmedLine = codeLines[i].replace(/(\/\/|;).*/, '').trim();
+
+		// Bỏ qua dòng trống hoặc comment
+		if (!trimmedLine || trimmedLine.startsWith('//') || trimmedLine.startsWith(';')) {
+			continue;
 		}
 
-		if (firstInstructionLine === null) { 
-			break;
-		}
-		console.log(`Line ${firstLineIndex + 1}: "${firstInstructionLine}"`);
+		// Kiểm tra xem dòng này có định nghĩa nhãn và lệnh trên cùng dòng không
+		const labelMatch = trimmedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
+		let instructionPart = trimmedLine;
 	
-		const parsedInstruction = parseLegv8Instruction(firstInstructionLine);
+		if (labelMatch) {
+			instructionPart = labelMatch[2].trim(); // Lấy phần lệnh sau nhãn
+			if (!instructionPart) { // Nếu chỉ có nhãn trên dòng này
+				// console.log(`Line ${i+1} is label only: ${labelMatch[1]}`);
+				continue; // Bỏ qua, nhãn đã được xử lý
+			}
+		}
+		
+
+		const parsedInstruction = parseLegv8Instruction(instructionPart, labelTable);
+
 		if (!parsedInstruction || parsedInstruction.error) {
-			console.error(`Error parsing line ${firstLineIndex + 1}: ${parsedInstruction?.error || 'Parser returned null'}`);
+			console.error(`Error parsing line ${i + 1}: ${parsedInstruction?.error || 'Parser returned null'}`);
 			return null;
 		}
-		results.push({ lineNumber: firstLineIndex + 1, assemblyInstruction: firstInstructionLine, parsed: parsedInstruction });
-		console.log(`Parsed Line ${firstLineIndex + 1}:`, parsedInstruction);
+
+		results.push({
+			lineNumber: i + 1,
+			assemblyInstruction: instructionPart,
+			parsed: parsedInstruction
+		});
+
+		console.log(`Line ${i + 1}: "${instructionPart}"`);
+		console.log(`Parsed Line ${i + 1}:`, parsedInstruction);
 	}
+
 	return results;
 }

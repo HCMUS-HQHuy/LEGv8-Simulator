@@ -709,8 +709,12 @@
     <div class = "code-editor">
       <div class = "line-numbers" id = "lineNumbers"> 1 </div>
       <textarea class = "instructionCode" id = "instructionCode" name = "message" placeholder="Enter LEGv8 code here, one instruction per line...">
-ADD X21, X20, X19
-LDUR X9, [X22, #4]
+CBNZ X20, Else
+ADDI X19, X19, #1
+B End_If
+Else:
+ADDI X19, X19, #2
+End_If:
       </textarea>
       <div class="highlight-overlay" id="highlightOverlay"></div>
     </div>

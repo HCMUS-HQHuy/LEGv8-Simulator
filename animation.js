@@ -1,193 +1,312 @@
-// --- animation.js ---
 
-const canvas = document.getElementById('flowCanvas');
-const ctx = canvas.getContext('2d');
 
-// --- 1. Định nghĩa cấu trúc đồ thị ---
-// nodes: key là ID nút, value là object chứa tọa độ (x, y) và danh sách các nút đầu ra (outputs)
-const graph = {
-  'A': { x: 100, y: 300, outputs: ['B', 'C', 'D'], color: 'red' },
-  'B': { x: 350, y: 100, outputs: ['E'], color: 'blue' },
-  'C': { x: 350, y: 300, outputs: ['E', 'F'], color: 'green' },
-  'D': { x: 350, y: 500, outputs: ['F'], color: 'purple' },
-  'E': { x: 600, y: 200, outputs: ['G'], color: 'orange' },
-  'F': { x: 600, y: 400, outputs: ['G'], color: 'teal' },
-  'G': { x: 700, y: 300, outputs: ['A'], color: 'magenta' } // Nút cuối cùng trỏ về A
-};
+/**
+ * Quét qua tất cả các dòng code để xây dựng một bảng ánh xạ từ nhãn sang địa chỉ.
+ * @param {string[]} codeLines - Mảng các dòng code assembly.
+ * @param {number} startAddress - Địa chỉ bắt đầu của lệnh đầu tiên (thường là 0).
+ * @param {number} instructionSize - Kích thước của mỗi lệnh (thường là 4 byte).
+ * @returns {object} - Một đối tượng (bảng băm) với key là tên nhãn và value là địa chỉ.
+ */
+function buildLabelTable(codeLines, startAddress = 0, instructionSize = 4) {
+  const labelTable = {};
+  let currentAddress = startAddress;
+  let actualInstructionCount = 0; // Đếm số lệnh thực tế để tính địa chỉ
 
-const nodeRadius = 20;
-const signalRadius = 5;
-const signalSpeed = 0.01; // Tốc độ di chuyển (tỉ lệ % của đường đi mỗi frame)
+  for (let i = 0; i < codeLines.length; i++) {
+      let line = codeLines[i].replace(/(\/\/|;).*/, '').trim(); // Xóa comment, trim
 
-// Mảng lưu trữ các tín hiệu đang hoạt động
-let activeSignals = []; // Mỗi phần tử: { startNodeId, targetNodeId, progress, color }
+      if (!line) {
+          continue; // Bỏ qua dòng trống
+      }
 
-// Hàm tiện ích: Tính toán nội suy tuyến tính (Linear Interpolation)
-function lerp(start, end, t) {
-  return start + (end - start) * t;
+      // Kiểm tra xem dòng có chứa định nghĩa nhãn không (ví dụ: "MyLabel:")
+      const labelMatch = line.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
+
+      if (labelMatch) {
+          const labelName = labelMatch[1];
+          const restOfLine = labelMatch[2].trim();
+
+          if (labelTable.hasOwnProperty(labelName)) {
+              // Có thể cảnh báo hoặc báo lỗi nếu nhãn bị định nghĩa lại
+              console.warn(`Warning: Label "${labelName}" redefined at line ${i + 1}.`);
+          }
+          // Nhãn trỏ đến địa chỉ của lệnh *tiếp theo* (nếu có) hoặc lệnh trên cùng dòng
+          labelTable[labelName] = currentAddress;
+
+          if (restOfLine) { // Nếu có lệnh trên cùng dòng với nhãn
+              line = restOfLine; // Xử lý phần còn lại như một lệnh
+          } else {
+              continue; // Nếu chỉ có nhãn, chuyển sang dòng tiếp theo
+          }
+      }
+
+      // Nếu dòng (hoặc phần còn lại của dòng sau nhãn) không trống,
+      // thì nó được coi là một lệnh và tăng địa chỉ.
+      // Chúng ta cần một cách sơ bộ để biết nó có phải là lệnh không,
+      // có thể dựa vào việc nó không phải là một định nghĩa nhãn khác.
+      // Hoặc, tốt hơn là, chỉ tăng currentAddress nếu dòng đó thực sự là một lệnh.
+      // Điều này hơi khó nếu không parse sâu, tạm thời giả định dòng không rỗng sau khi xử lý nhãn là lệnh.
+      if (line) {
+          currentAddress += instructionSize;
+          actualInstructionCount++;
+      }
+  }
+  // console.log("Label Table:", labelTable);
+  return labelTable;
 }
 
-// Hàm tiện ích: Lấy tọa độ nút từ ID
-function getNodeCoords(nodeId) {
-  return graph[nodeId] ? { x: graph[nodeId].x, y: graph[nodeId].y } : null;
-}
 
-// --- 3. Vẽ nền tĩnh ---
-function drawStaticGraph() {
-  // Vẽ các đường nối (Edges)
-  ctx.strokeStyle = '#ccc';
-  ctx.lineWidth = 2;
-  for (const nodeId in graph) {
-    const startNode = graph[nodeId];
-    if (startNode.outputs) {
-      startNode.outputs.forEach(targetId => {
-        const endNode = graph[targetId];
-        if (endNode) {
-          ctx.beginPath();
-          ctx.moveTo(startNode.x, startNode.y);
-          ctx.lineTo(endNode.x, endNode.y);
-          ctx.stroke();
-        }
-      });
-    }
+
+function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTable làm tham số tùy chọn
+  if (!line) {
+      return null;
   }
 
-  // Vẽ các nút (Nodes)
-  ctx.lineWidth = 1;
-  ctx.font = '14px Arial';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  for (const nodeId in graph) {
-    const node = graph[nodeId];
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, nodeRadius, 0, Math.PI * 2);
-    ctx.fillStyle = node.color || 'grey';
-    ctx.fill();
-    ctx.strokeStyle = 'black';
-    ctx.stroke();
-    // Vẽ ID nút
-    ctx.fillStyle = 'white';
-    ctx.fillText(nodeId, node.x, node.y);
+  // 1. Remove comments and trim whitespace
+  let cleanedLine = line.replace(/(\/\/|;).*/, '').trim();
+
+  // --- BỎ QUA NẾU DÒNG LÀ ĐỊNH NGHĨA NHÃN ---
+  // Nếu một dòng chứa nhãn VÀ lệnh, hàm buildLabelTable đã xử lý phần nhãn
+  // và cleanedLine ở đây sẽ là phần lệnh còn lại.
+  // Nếu dòng CHỈ là nhãn, buildLabelTable đã continue, hoặc dòng này sẽ trông như "LabelName:"
+  // Ta cần đảm bảo không parse "LabelName:" như một mnemonic.
+  // Một cách đơn giản là nếu cleanedLine kết thúc bằng ':' và không có gì khác, coi như chỉ là nhãn.
+  // Tuy nhiên, việc tiền xử lý loại bỏ dòng chỉ chứa nhãn sẽ tốt hơn.
+  // Giả định rằng dòng truyền vào đây ĐÃ được xác định là một lệnh tiềm năng.
+  const labelDefinitionMatch = cleanedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):$/);
+  if (labelDefinitionMatch && cleanedLine.endsWith(':') && cleanedLine.indexOf(' ') === -1) {
+      // console.log(`Skipping label-only line: ${cleanedLine}`);
+      return { type: 'LABEL_DEF', label: labelDefinitionMatch[1], error: null }; // Trả về thông tin nhãn nếu muốn
+  }
+  // Hoặc nếu dòng đã được tiền xử lý, cleanedLine sẽ không còn nhãn đứng một mình.
+  // Nếu có lệnh trên cùng dòng với nhãn, cleanedLine sẽ là phần lệnh đó.
+
+  if (!cleanedLine) {
+      return null;
+  }
+
+  // 2. Split into mnemonic and the rest
+  const parts = cleanedLine.split(/\s+/);
+  let mnemonic = parts[0].toUpperCase();
+  const operandString = parts.slice(1).join(' ');
+
+  // Xử lý trường hợp nhãn đứng trước lệnh trên cùng dòng, ví dụ "Else: ADDI..."
+  // Hàm buildLabelTable đã lấy nhãn, ở đây ta cần đảm bảo mnemonic là "ADDI" chứ không phải "Else:".
+  if (mnemonic.includes(':')) {
+      const splitByColon = mnemonic.split(':');
+      // labelName = splitByColon[0]; // Nhãn này đã được xử lý ở buildLabelTable
+      mnemonic = splitByColon[1]?.toUpperCase(); // Lấy mnemonic sau dấu :
+      if (!mnemonic) { // Nếu chỉ có "Label:" và không có lệnh theo sau trên dòng
+          return { type: 'LABEL_DEF', label: splitByColon[0], error: null };
+      }
+  }
+
+
+  const result = {
+      instruction: cleanedLine, // Lưu lại dòng lệnh gốc đã clean
+      mnemonic: mnemonic,
+      operands: [],
+      type: 'UNKNOWN',
+      structuredOperands: null,
+      error: null,
+      targetAddress: null // Thêm trường này để lưu địa chỉ đích nếu là branch/jump
+  };
+
+  try {
+      const rawOperands = operandString.match(/[^,\s\[\]]+|\[[^\]]*\]/g) || [];
+      result.operands = rawOperands.map(op => op.trim()).filter(op => op !== '');
+
+      const opCount = result.operands.length;
+      const ops = result.operands;
+
+      // --- Sửa các phần parse lệnh B và CBZ/CBNZ ---
+      if (['B', 'BL'].includes(mnemonic)) {
+          if (opCount === 1) {
+              result.type = 'B';
+              const labelName = ops[0];
+              result.structuredOperands = { label: labelName };
+              if (labelTable && labelTable.hasOwnProperty(labelName)) {
+                  result.targetAddress = labelTable[labelName];
+              } else if (labelTable) { // Chỉ báo lỗi nếu labelTable được cung cấp nhưng không tìm thấy
+                  // Nếu không có labelTable, có thể đang parse ở bước 1
+                  throw new Error(`Label "${labelName}" not found for B instruction.`);
+              }
+          } else {
+              throw new Error(`Invalid operands for B-type instruction ${mnemonic}`);
+          }
+      } else if (['CBZ', 'CBNZ'].includes(mnemonic)) {
+          if (opCount === 2 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i)) {
+              result.type = 'CB';
+              const labelName = ops[1];
+              result.structuredOperands = { Rt: ops[0], label: labelName };
+               if (labelTable && labelTable.hasOwnProperty(labelName)) {
+                  result.targetAddress = labelTable[labelName];
+              } else if (labelTable) {
+                  throw new Error(`Label "${labelName}" not found for ${mnemonic} instruction.`);
+              }
+          } else {
+              throw new Error(`Invalid operands for CB-type instruction ${mnemonic}`);
+          }
+      }
+      // --- GIỮ NGUYÊN CÁC PHẦN PARSE KHÁC (R, D, I, IW, SYS, NOP) ---
+      else if (['ADD', 'SUB', 'AND', 'ORR', 'EOR', 'LSL', 'LSR', 'ASR', 'MUL', 'SDIV', 'UDIV', 'SUBS'].includes(mnemonic)) {
+           if (opCount === 3 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[1].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[2].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i)) {
+              result.type = 'R';
+              result.structuredOperands = { Rd: ops[0], Rn: ops[1], Rm: ops[2] };
+          } else if (opCount === 3 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[1].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[2].match(/^#\d+$/)) {
+               result.type = 'R_Shift';
+               result.structuredOperands = { Rd: ops[0], Rn: ops[1], shift_imm: ops[2] };
+          } else {
+               throw new Error(`Invalid operands for R-type instruction ${mnemonic}`);
+          }
+      } else if (['ADDI', 'SUBI', 'ANDI', 'ORRI', 'EORI', 'SUBIS'].includes(mnemonic)) {
+           if (opCount === 3 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[1].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[2].match(/^#-?\d+$/)) {
+              result.type = 'I';
+              result.structuredOperands = { Rd: ops[0], Rn: ops[1], immediate: ops[2] };
+          } else {
+              throw new Error(`Invalid operands for I-type instruction ${mnemonic}`);
+          }
+      } else if (['LDUR', 'STUR', 'LDURSW', 'LDURH', 'STURH', 'LDURB', 'STURB'].includes(mnemonic)) {
+          if (opCount === 2 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[1].match(/^\[X([0-9]|1[0-9]|2[0-7]|SP|ZR)\s*(,\s*#-?\d+)?\s*\]$/i)) {
+              result.type = 'D';
+              const memMatch = ops[1].match(/^\[(X[0-9]+|XSP|XZR)\s*(?:,\s*(#-?\d+))?\s*\]$/i);
+              if (memMatch) {
+                  result.structuredOperands = {
+                      Rt: ops[0],
+                      Rn: memMatch[1].toUpperCase(),
+                      address_imm: memMatch[2] || '#0'
+                  };
+              } else {
+                  throw new Error(`Could not parse memory operand for ${mnemonic}: ${ops[1]}`);
+              }
+          } else {
+              throw new Error(`Invalid operands for D-type instruction ${mnemonic}`);
+          }
+      } else if (['MOVZ', 'MOVK'].includes(mnemonic)) {
+           if (opCount >= 2 && opCount <= 4 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[1].match(/^#-?\d+$/)) {
+               result.type = 'IW';
+               result.structuredOperands = { Rd: ops[0], immediate: ops[1], shift: null };
+               if (opCount > 2) {
+                   if (ops[2].toUpperCase() === 'LSL' && opCount === 4 && ops[3].match(/^#(0|16|32|48)$/)) {
+                        result.structuredOperands.shift = { type: 'LSL', amount: ops[3] };
+                   } else {
+                        throw new Error(`Invalid shift operand for ${mnemonic}`);
+                   }
+               }
+           } else {
+               throw new Error(`Invalid operands for IW-type instruction ${mnemonic}`);
+           }
+      } else if (['BRK', 'SVC', 'HLT'].includes(mnemonic)) {
+          if (opCount === 1 && ops[0].match(/^#\d+$/)) {
+              result.type = 'SYS';
+              result.structuredOperands = { immediate: ops[0] };
+          } else {
+               throw new Error(`Invalid operands for System instruction ${mnemonic}`);
+          }
+      } else if (mnemonic === 'NOP') {
+           if (opCount === 0) {
+                result.type = 'NOP';
+                result.structuredOperands = {};
+           } else {
+                throw new Error('NOP instruction takes no operands');
+           }
+      } else {
+           // Kiểm tra xem có phải là định nghĩa nhãn không (trường hợp "LABEL:" rồi hết)
+           // Phần này có thể không cần nếu việc lọc dòng chỉ chứa nhãn đã tốt
+           if (opCount === 0 && mnemonic.endsWith(':')) {
+                result.type = 'LABEL_DEF';
+                result.label = mnemonic.slice(0, -1);
+                result.mnemonic = null; // Không phải lệnh
+           } else if (result.type === 'UNKNOWN') { // Nếu không khớp lệnh nào ở trên
+               result.error = `Unknown mnemonic or invalid operands: ${mnemonic}`;
+               // result.structuredOperands = { raw: result.operands }; // Có thể bỏ
+           }
+      }
+
+
+  } catch (e) {
+      result.error = e.message;
+      result.type = null;
+      result.structuredOperands = null;
+  }
+
+  // Nếu không có lỗi và không phải là định nghĩa nhãn, thì nó là một lệnh hợp lệ.
+  // Nếu type vẫn UNKNOWN và không có lỗi, có thể là mnemonic không được hỗ trợ.
+  if (result.type === 'UNKNOWN' && !result.error) {
+      result.error = `Unsupported mnemonic: ${mnemonic}`;
+  }
+
+  // Chỉ trả về kết quả nếu nó là một lệnh thực sự hoặc một định nghĩa nhãn (nếu bạn muốn xử lý)
+  if (result.error || (result.mnemonic && result.type !== 'UNKNOWN' && result.type !== 'LABEL_DEF') || result.type === 'LABEL_DEF') {
+      return result;
+  }
+  return null; // Bỏ qua các dòng không parse được hoàn toàn hoặc không phải lệnh/nhãn
+}
+
+// --- Cách sử dụng đề xuất ---
+const codeString = `
+  CBNZ X20, Else
+  ADDI X19, X19, #1
+  B End_If
+Else:
+  ADDI X19, X19, #2
+End_If:
+  // Dòng comment
+  NOP
+`;
+
+const codeLines = codeString.split(/\r?\n/);
+const instructions = []; // Mảng để lưu các lệnh đã parse
+const instructionAddresses = []; // Địa chỉ của mỗi lệnh
+
+// Pass 1: Xây dựng bảng nhãn
+const labelTable = buildLabelTable(codeLines);
+console.log("Label Table:", labelTable);
+
+// Pass 2: Parse từng lệnh và lưu trữ
+let currentAddress = 0;
+const instructionSize = 4;
+
+for (let i = 0; i < codeLines.length; i++) {
+  const line = codeLines[i];
+  let cleanedLineForParse = line.replace(/(\/\/|;).*/, '').trim();
+
+  // Bỏ qua dòng trống
+  if (!cleanedLineForParse) continue;
+
+  // Kiểm tra xem dòng này có định nghĩa nhãn và lệnh trên cùng dòng không
+  const labelMatch = cleanedLineForParse.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
+  let instructionPart = cleanedLineForParse;
+
+  if (labelMatch) {
+      instructionPart = labelMatch[2].trim(); // Lấy phần lệnh sau nhãn
+      if (!instructionPart) { // Nếu chỉ có nhãn trên dòng này
+          // console.log(`Line ${i+1} is label only: ${labelMatch[1]}`);
+          continue; // Bỏ qua, nhãn đã được xử lý
+      }
+  }
+
+
+  const parsed = parseLegv8Instruction(instructionPart, labelTable);
+
+  if (parsed && !parsed.error && parsed.type !== 'LABEL_DEF') {
+      // Chỉ thêm vào nếu là lệnh hợp lệ và không phải chỉ là định nghĩa nhãn
+      parsed.address = currentAddress; // Gán địa chỉ cho lệnh
+      instructions.push(parsed);
+      instructionAddresses.push(currentAddress);
+      currentAddress += instructionSize;
+  } else if (parsed && parsed.error) {
+      console.error(`Error parsing line ${i + 1} ("${line}"): ${parsed.error}`);
+      // Quyết định có dừng lại hay tiếp tục
+  } else if (parsed && parsed.type === 'LABEL_DEF') {
+      // Đã được xử lý bởi buildLabelTable, không cần làm gì ở đây trừ khi muốn lưu thông tin
+  } else {
+      // Dòng không parse được thành lệnh hợp lệ (ví dụ, chỉ có nhãn và đã continue)
+      // Hoặc dòng trống sau khi clean
   }
 }
 
-// --- 4 & 5. Tạo, quản lý và vẽ tín hiệu ---
-function drawSignals() {
-  activeSignals.forEach(signal => {
-    const startCoords = getNodeCoords(signal.startNodeId);
-    const endCoords = getNodeCoords(signal.targetNodeId);
-
-    if (startCoords && endCoords) {
-      // Tính vị trí hiện tại của tín hiệu bằng lerp
-      const currentX = lerp(startCoords.x, endCoords.x, signal.progress);
-      const currentY = lerp(startCoords.y, endCoords.y, signal.progress);
-
-      // Vẽ tín hiệu
-      ctx.beginPath();
-      ctx.arc(currentX, currentY, signalRadius, 0, Math.PI * 2);
-      ctx.fillStyle = signal.color || 'black';
-      ctx.fill();
-    }
-  });
-}
-
-function updateSignals() {
-  const arrivedSignals = []; // Lưu các tín hiệu vừa đến đích
-
-  for (let i = activeSignals.length - 1; i >= 0; i--) {
-    const signal = activeSignals[i];
-    signal.progress += signalSpeed;
-
-    // Kiểm tra nếu đã đến đích (hoặc vượt qua)
-    if (signal.progress >= 1) {
-      signal.progress = 1; // Đảm bảo nó ở đúng vị trí cuối
-      arrivedSignals.push(signal); // Thêm vào danh sách đã đến
-      activeSignals.splice(i, 1); // Xóa khỏi danh sách đang hoạt động
-    }
-  }
-
-  // --- 6. Xử lý tín hiệu đã đến ---
-  arrivedSignals.forEach(arrivedSignal => {
-    console.log(`Signal from ${arrivedSignal.startNodeId} arrived at ${arrivedSignal.targetNodeId}`);
-    const targetNodeId = arrivedSignal.targetNodeId;
-    const targetNodeData = graph[targetNodeId];
-
-    // Nếu nút đích có các đường ra tiếp theo
-    if (targetNodeData && targetNodeData.outputs && targetNodeData.outputs.length > 0) {
-       // Nếu về A thì dừng hoặc làm gì đó
-       if (targetNodeId === 'A') {
-           console.log("Cycle complete! Animation might stop or reset here.");
-           // Có thể dừng vòng lặp: cancelAnimationFrame(animationFrameId);
-           // Hoặc chỉ đơn giản là không tạo tín hiệu mới từ A nữa nếu không muốn lặp vô hạn
-           // return; // Bỏ qua việc tạo tín hiệu mới từ A nếu muốn dừng ở đây
-       }
-
-      // Tạo các tín hiệu mới bắt đầu từ nút đích này
-      targetNodeData.outputs.forEach(nextTargetId => {
-        if (graph[nextTargetId]) { // Đảm bảo nút đích tiếp theo tồn tại
-           console.log(` -> Triggering new signal from ${targetNodeId} to ${nextTargetId}`);
-           activeSignals.push({
-             startNodeId: targetNodeId,
-             targetNodeId: nextTargetId,
-             progress: 0, // Bắt đầu từ đầu
-             color: targetNodeData.color || 'black' // Lấy màu của nút nguồn
-           });
-        }
-      });
-    } else if (targetNodeId === 'A') {
-         console.log("Cycle complete! Signal arrived back at A.");
-         // Dừng hoặc xử lý kết thúc
-    }
-  });
-}
-
-// --- 7. Vòng lặp hoạt ảnh ---
-let animationFrameId;
-function animationLoop() {
-  // Xóa toàn bộ canvas trước khi vẽ lại
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Vẽ lại nền tĩnh
-  drawStaticGraph();
-
-  // Cập nhật trạng thái các tín hiệu
-  updateSignals();
-
-  // Vẽ các tín hiệu ở vị trí mới
-  drawSignals();
-
-  // Yêu cầu trình duyệt vẽ lại khung hình tiếp theo
-  animationFrameId = requestAnimationFrame(animationLoop);
-}
-
-// --- Khởi động ---
-function startAnimation() {
-    console.log("Starting animation from node A...");
-    activeSignals = []; // Đảm bảo bắt đầu sạch sẽ
-    const startNodeId = 'A';
-    const startNodeData = graph[startNodeId];
-
-    if (startNodeData && startNodeData.outputs) {
-        startNodeData.outputs.forEach(targetId => {
-            if (graph[targetId]) {
-                 activeSignals.push({
-                     startNodeId: startNodeId,
-                     targetNodeId: targetId,
-                     progress: 0,
-                     color: startNodeData.color || 'black'
-                 });
-            }
-        });
-    }
-    // Hủy bỏ frame cũ nếu có và bắt đầu vòng lặp mới
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-    }
-    animationLoop();
-}
-
-// Bắt đầu hoạt ảnh khi script được tải
-startAnimation();
-
-// Optional: Thêm nút để bắt đầu lại hoạt ảnh
-// document.getElementById('startButton').addEventListener('click', startAnimation);
+console.log("\nParsed Instructions:");
+instructions.forEach(instr => {
+  console.log(`Addr: ${instr.address}, Mnemonic: ${instr.mnemonic}, Type: ${instr.type}, Operands:`, instr.structuredOperands, instr.targetAddress ? `TargetAddr: ${instr.targetAddress}` : '');
+});
