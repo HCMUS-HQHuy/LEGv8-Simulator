@@ -530,6 +530,11 @@ body {
   padding: 8px 8px;
   text-align: center;
 }
+
+.parsedOutputTable tbody th {
+  font-weight: normal;
+}
+
 .parsedOutputTable tbody tr {
   background-color: var(--table-row-odd-bg); /* Default odd row color */
   transition: background-color 0.2s ease; /* Add transition for hover */
