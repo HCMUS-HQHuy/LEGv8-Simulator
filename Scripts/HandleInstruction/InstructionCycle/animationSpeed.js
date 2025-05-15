@@ -32,6 +32,7 @@ export function trigger() {
 		DURATION_ANIMATION = MAXIMUM_DURATION - currentPercentage * (MAXIMUM_DURATION - MININUM_DURATION) / 100;
 		enable();
 	});
+	state.executing = false;
 }
 
 function enable() {

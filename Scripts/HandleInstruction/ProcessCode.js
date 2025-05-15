@@ -29,8 +29,6 @@ async function execute(results) {
 		});
 		if (instructionPos === -1)
 			state.executing = false;
-		// console.warn(`Insstruction: ${instructionPos}`);
-		// console.warn("FINISH AN INSTRUCTION");
 	}
 	console.log("---------------END----------------");
 }
@@ -46,19 +44,16 @@ export function trigger() {
         event.preventDefault();
 		results = compileCode();
 	});
-
-	document.getElementById('start-animation').addEventListener('click', function(event) {
+	console.log(state);
+	document.getElementById('start-stop-animation').addEventListener('click', function(event) {
 		event.preventDefault();
-		execute(results);
+		if (state.executing === false)
+			execute(results);
 	});
 	
 	document.getElementById('execute').addEventListener('click', function(event) {
 		event.preventDefault();
-		execute(results);
-	});
-
-	document.getElementById('stop-animation').addEventListener('click',function(event) {
-		event.preventDefault();
-		state.executing = false;
+		if (state.executing === false)
+			execute(results);
 	});
 }

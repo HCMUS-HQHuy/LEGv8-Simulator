@@ -120,3 +120,29 @@ export function createNodeWithAnimation({
     parentGroup.appendChild(nodeGroup);
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const button = document.getElementById('start-stop-animation');
+    const svgCanvas = document.getElementById('zoomFrame');
+    let state = "start"; // Track the current state
+
+    const StateInfor = {
+        start: {
+            icon: "▶",
+            title: "Start animation",
+            call: () => svgCanvas.unpauseAnimations()  // wrapped in arrow function
+        },
+        stop: {
+            icon: "⏹︎",
+            title: "Stop animation",
+            call: () => svgCanvas.pauseAnimations()
+        }
+    };
+
+    button.addEventListener('click', () => {
+        StateInfor[state].call();
+        if (state === "start") state = "stop";
+        else state = "start";
+        button.innerText = StateInfor[state].icon;
+        button.title = StateInfor[state].title;
+    });
+});

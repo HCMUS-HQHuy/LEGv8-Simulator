@@ -138,8 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const parseButton = document.getElementById('parseInstructions');
     // Use optional chaining (?) in case these elements don't exist
     const parseButtonFrame = document.getElementById('compile-btn');
-    const executeButton = document.getElementById('execute');
-    const executeButtonFrame = document.getElementById('start-animation');
+    // const executeButton = document.getElementById('execute');
+    // const executeButtonFrame = document.getElementById('start-animation');
 
     let currentHighlightIndex = -1;
     let lineCount = 0;
@@ -330,8 +330,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Attach handlers to potentially multiple buttons
     if (parseButton) parseButton.addEventListener('click', handleParseClick);
     if (parseButtonFrame) parseButtonFrame.addEventListener('click', handleParseClick); // Handles frame button too
-    if (executeButton) executeButton.addEventListener('click', handleExecuteClick);
-    if (executeButtonFrame) executeButtonFrame.addEventListener('click', handleExecuteClick); // Handles frame button too
+    // if (executeButton) executeButton.addEventListener('click', handleExecuteClick);
+    // if (executeButtonFrame) executeButtonFrame.addEventListener('click', handleExecuteClick); // Handles frame button too
 
 
     // --- Initial setup ---
@@ -341,40 +341,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ensure initial scroll is synced (usually 0)
     lineNumbersDiv.scrollTop = instructionCode.scrollTop;
 
-});
-
-
-/* Stop animation here */
-document.addEventListener('DOMContentLoaded', () => {
-    const stopButton = document.getElementById('stop-animation');
-    // Select the main SVG element reliably
-    const svgCanvas = document.getElementById('zoomFrame');
-    // Or, if it's the only SVG or the most relevant one:
-    // const svgCanvas = document.querySelector('svg');
-
-    let isPaused = false; // Track the current state
-
-    stopButton.addEventListener('click', () => {
-        if (isPaused) {
-            // --- RESUME ---
-            try {
-                svgCanvas.unpauseAnimations(); // Resume all animations within the SVG
-                isPaused = false;
-                console.log('SVG Animations Resumed');
-            } catch (e) {
-                // Error handling (older browsers might not support it fully)
-                console.error("Error unpausing animations:", e);
-            }
-        } else {
-            // --- PAUSE ---
-            try {
-                svgCanvas.pauseAnimations(); // Pause all animations within the SVG
-                isPaused = true;
-                console.log('SVG Animations Paused');
-            } catch (e) {
-                // Error handling
-                console.error("Error pausing animations:", e);
-            }
-        }
-    });
 });
