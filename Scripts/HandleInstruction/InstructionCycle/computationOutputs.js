@@ -1,10 +1,14 @@
 import { R_TYPE_OPCODES, D_TYPE_OPCODES } from "../Compile/Define/Opcode.js";
+import { B_TYPE_OPCODES, CB_TYPE_OPCODES }  from "../Compile/Define/Opcode.js"
+import { I_TYPE_OPCODES }  from "../Compile/Define/Opcode.js"
 
 export function computeOutputs(componentName, components) {
 	switch (componentName) {
 		case 'InstructionMemory':
 			const InstructionMemory = components[componentName];
 			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2];
+            if (encodedInstruction == null) console.error("encodedInstruction is null in computation Ouputs");
+            else console.log("hello: ", encodedInstruction);
 			InstructionMemory.Opcode_31_21 = encodedInstruction.substring(0, 11);
 			InstructionMemory.Rm_20_16 = encodedInstruction.substring(11, 16);
 			InstructionMemory.Rn_09_05 = encodedInstruction.substring(22, 27);
@@ -117,49 +121,105 @@ function doALUOperation(aluControlCode, operand1, operand2) {
 }
 
 function updateControlUnit(currentState) {
-    const opcode = currentState.InstructionMemory.Opcode_31_21; // Lấy chuỗi 11 bit opcode
-
-    if (Object.values(R_TYPE_OPCODES).includes(opcode)) {
-        currentState.Control.Reg2Loc = 0;       // Theo yêu cầu X -> 0
-        currentState.Control.ALUSrc = 0;        // ALU dùng [Rm]
-        currentState.Control.MemtoReg = 0;      // Kết quả từ ALU ghi vào Reg
-        currentState.Control.RegWrite = 1;      // Có ghi thanh ghi Rd
-        currentState.Control.MemRead = 0;       // Không đọc Mem
-        currentState.Control.MemWrite = 0;      // Không ghi Mem
-        currentState.Control.Branch = 0;        // Không phải Branch có điều kiện
-        currentState.Control.UncondBranch = 0;  // Không phải Branch không điều kiện
-        currentState.Control.ALUOp = '10';      // ALU Control sẽ dựa vào funct bits
-        console.log(`Control set for R-format instruction (Opcode: ${opcode})`);
-
-    } else if (Object.values(D_TYPE_OPCODES).includes(opcode)) {
-        switch (opcode) {
-            case '11111000010':
-                currentState.Control.Reg2Loc      = 0;
-                currentState.Control.ALUSrc       = 1;
-                currentState.Control.MemtoReg     = 1;
-                currentState.Control.RegWrite     = 1;
-                currentState.Control.MemRead      = 1;
-                currentState.Control.MemWrite     = 0;
-                currentState.Control.Branch       = 0;
-                currentState.Control.UncondBranch = 0;
-                currentState.Control.ALUOp        = '00';
-            break;
-            case '11111000000':
-                currentState.Control.Reg2Loc      = 1;
-                currentState.Control.ALUSrc       = 1;
-                currentState.Control.MemtoReg     = 0;
-                currentState.Control.RegWrite     = 0;
-                currentState.Control.MemRead      = 0;
-                currentState.Control.MemWrite     = 1;
-                currentState.Control.Branch       = 0;
-                currentState.Control.UncondBranch = 0;
-                currentState.Control.ALUOp        = '00';
-            break;
-            default:
-                console.error('opcode is not supported in D_TYPE_OPCODES');
+    // 1. Input Validation
+    if (!currentState || !currentState.Control || !currentState.InstructionMemory ||
+        !currentState.InstructionMemory.Opcode_31_21)
+    {
+        console.error("ControlUnit Error: Invalid state or missing Opcode_31_21.");
+        // Reset control signals to default/safe state if possible
+        if (currentState && currentState.Control) {
+            Object.assign(currentState.Control, {
+                Reg2Loc: 0, ALUSrc: 0, MemtoReg: 0, RegWrite: 0, MemRead: 0,
+                MemWrite: 0, Branch: 0, UncondBranch: 0, ALUOp: 'XX'
+            });
         }
-    } else {
-        console.error(`Opcode ${opcode} is not R-format. Resetting control signals.`);
+        return;
+    }
+
+    const opcode11bit = currentState.InstructionMemory.Opcode_31_21; // Lấy chuỗi 11 bit opcode
+    const opcode10bit = opcode11bit.substring(0, 10); // Lấy 10 bit đầu cho I-type
+    const opcode8bit  = opcode11bit.substring(0, 8);  // Lấy 8 bit đầu cho CB-type
+    const opcode6bit  = opcode11bit.substring(0, 6);  // Lấy 6 bit đầu cho B-type
+
+    // Reset về trạng thái mặc định trước khi set
+    // Điều này quan trọng để các tín hiệu không được set sẽ có giá trị 0/an toàn
+    currentState.Control.Reg2Loc = 0;
+    currentState.Control.ALUSrc = 0;
+    currentState.Control.MemtoReg = 0;
+    currentState.Control.RegWrite = 0;
+    currentState.Control.MemRead = 0;
+    currentState.Control.MemWrite = 0;
+    currentState.Control.Branch = 0;
+    currentState.Control.UncondBranch = 0;
+    currentState.Control.ALUOp = 'XX'; // Mặc định không xác định/lỗi
+
+    // 2. Xác định tín hiệu dựa trên loại lệnh và opcode
+
+    if (Object.values(R_TYPE_OPCODES).includes(opcode11bit)) {
+        // --- R-Type (ADD, SUB, AND, ORR, EOR, LSL, LSR) ---
+        currentState.Control.RegWrite = 1;
+        currentState.Control.ALUSrc = 0;        // Dùng [Rm]
+        currentState.Control.MemtoReg = 0;      // Kết quả từ ALU
+        currentState.Control.ALUOp = '10';      // ALU Control sẽ dựa vào funct bits
+        // Reg2Loc = 0 (Mux1 chọn Rm)
+        // MemRead, MemWrite, Branch, UncondBranch = 0
+        // console.log(`Control set for R-format (Opcode: ${opcode11bit})`);
+
+    } else if (Object.values(D_TYPE_OPCODES).includes(opcode11bit)) {
+        // --- D-Type (LDUR, STUR) ---
+        currentState.Control.ALUSrc = 1;        // Dùng immediate (offset)
+        currentState.Control.ALUOp = '00';      // ALU cộng địa chỉ (Base + Offset)
+
+        if (opcode11bit === D_TYPE_OPCODES['LDUR']) { // LDUR
+            currentState.Control.RegWrite = 1;
+            currentState.Control.MemRead = 1;
+            currentState.Control.MemtoReg = 1;      // Dữ liệu từ Memory ghi vào Reg
+            // Reg2Loc = 0 (Mux1 chọn Rt làm thanh ghi đích)
+            // MemWrite, Branch, UncondBranch = 0
+        } else if (opcode11bit === D_TYPE_OPCODES['STUR']) { // STUR
+            currentState.Control.MemWrite = 1;
+            // Reg2Loc = 0 (Mux1 chọn Rt làm thanh ghi nguồn để ghi vào memory)
+            // RegWrite, MemRead, MemtoReg, Branch, UncondBranch = 0
+        }
+        // console.log(`Control set for D-format (Opcode: ${opcode11bit})`);
+
+    } else if (Object.values(I_TYPE_OPCODES).includes(opcode10bit)) {
+        // --- I-Type (ADDI, SUBI, ANDI, ORRI, EORI) ---
+        // Opcode của I-type là 10 bit
+        currentState.Control.RegWrite = 1;
+        currentState.Control.ALUSrc = 1;        // Dùng Immediate
+        currentState.Control.MemtoReg = 0;      // Kết quả từ ALU
+        currentState.Control.ALUOp = '11';      // ALU Control sẽ biết là loại I (ADD/SUB/Logic)
+        // Reg2Loc, MemRead, MemWrite, Branch, UncondBranch = 0
+        // console.log(`Control set for I-format (Opcode: ${opcode10bit})`);
+
+    } else if (Object.values(B_TYPE_OPCODES).includes(opcode6bit)) {
+        // --- B-Type (B, BL) ---
+        // Opcode của B-type là 6 bit
+        currentState.Control.UncondBranch = 1;
+        currentState.Control.ALUOp = '01'; // Thường ALU không dùng hoặc dùng cho tính toán branch không quan trọng lắm
+                                         // Đặt '01' (Branch) có thể giúp ALUControl đơn giản hơn
+        // Tất cả các tín hiệu khác (RegWrite, MemRead, etc.) là 0
+        // console.log(`Control set for B-format (Opcode: ${opcode6bit})`);
+
+    } else if (Object.values(CB_TYPE_OPCODES).includes(opcode8bit)) {
+        // --- CB-Type (CBZ, CBNZ) ---
+        // Opcode của CB-type là 8 bit
+        currentState.Control.Branch = 1;
+        currentState.Control.ALUSrc = 0;   // So sánh thanh ghi Rt (đọc qua cổng 1 hoặc 2 tùy Mux1)
+                                           // với 0. Nếu Rt đọc qua cổng 1, input 2 ALU có thể là XZR
+        currentState.Control.ALUOp = '01'; // ALU thực hiện phép trừ (Rt - XZR) để set cờ Zero
+        // Reg2Loc = 0 (Mux1 chọn Rt)
+        // Tất cả các tín hiệu khác (RegWrite, MemRead, etc.) là 0
+        // console.log(`Control set for CB-format (Opcode: ${opcode8bit})`);
+
+    }
+    // --- THÊM CÁC LOẠI LỆNH KHÁC Ở ĐÂY (IW, SYS) ---
+    // else if (/* IW-type opcodes */) { ... }
+    // else if (/* SYS-type opcodes */) { ... }
+    else {
+        // Opcode không được nhận dạng, các tín hiệu đã được reset về mặc định (ALUOp='XX')
+        console.warn(`ControlUnit: Opcode ${opcode11bit} not recognized or supported. Using default signals.`);
     }
 }
 
