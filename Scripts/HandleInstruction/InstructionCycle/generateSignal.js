@@ -104,16 +104,6 @@ function traverseAndAnimateBFS(components) {
 		connections.forEach(conn => {
 			const { source, target, pathId } = conn;
 
-			// if (target === 'SignExtend.input') {
-			// 	const index = (components.InstructionMemory.ReadAddress >> 2);
-			// 	console.log(`Condition check for ${source} -> ${target}: instructionType is ${components.InstructionMemory.instructionType[index]}, conn.condition is ${conn.condition}`);
-			// 	if (conn.condition != components.InstructionMemory.instructionType[index]) {
-			// 		console.warn(`Skipping ${source} -> ${target} due to condition mismatch.`);
-			// 		return; // Skip processing this connection
-			// 	}
-			// 	else console.warn("HAVE SUCCESS");
-			// }
-
 			const value = getValueFromComponents(source, components);
 			console.log(`Signal: ${source} -> ${target}, Value: ${value}`);
 			setValueInComponents(target, value, components);
@@ -129,29 +119,18 @@ function traverseAndAnimateBFS(components) {
 				computeOutputs(targetComponent, components);
 				queue.push({ node: targetComponent, depth: depth + 1 });
 				originalCallbacks.push(() => {
-					// console.warn(`[Callback] Component ${targetComponent} fired. Signal arrived at ${target}.`);
                     const outgoingFromFiredComponent = Connections[targetComponent];
                     if (outgoingFromFiredComponent) {
                         outgoingFromFiredComponent.forEach(outConn => {
-                            let willPropagateNext = true;
-                            // if (outConn.target === 'SignExtend.input') {
-                            //     const index = (components.InstructionMemory.ReadAddress >> 2);
-                            //     if (outConn.condition && components.InstructionMemory && typeof components.InstructionMemory.instructionType !== 'undefined') {
-                            //         if (outConn.condition !== components.InstructionMemory.instructionType[index]) {
-                            //             console.log(`[Callback] Priming SKIPPED for ${targetComponent} -> ${outConn.target}: condition ${outConn.condition} vs ${components.InstructionMemory.instructionType[index]}`);
-                            //             willPropagateNext = false;
-                            //         }
-                            //     } else {
-                            //          console.warn(`[Callback] Missing data for SignExtend condition check for ${targetComponent} -> ${outConn.target}`);
-                            //     }
-                            // }
-                            if (willPropagateNext) {
-                                console.log(`[Callback] Priming signal animation for next step: ${targetComponent} -> ${outConn.target} (pathId: ${outConn.pathId || 'N/A'})`);
-                                startSignalAnimation(outConn.target); 
-                            }
+							console.log(`[Callback] Priming signal animation for next step: ${targetComponent} -> ${outConn.target} (pathId: ${outConn.pathId || 'N/A'})`);
+							startSignalAnimation(outConn.target); 
                         });
                     }
 				});
+			}
+
+			if (target === 'Register.WriteData') {
+				console.log(`tartget: ${target}-> ${originalCallbacks}`)
 			}
 
 			console.log(`Creating animation for: ${source} -> ${target} (pathId: ${pathId})`);
@@ -245,12 +224,10 @@ function resetComponents(Components) {
 				return;
 			}
 			if (Components.Register.option === 0) return;
-			console.warn(`index: ${index}`);
 			const indexHex = `X${index.toString().padStart(2, '0')}`;
 	
 			const value = Components.Mux3.output;
 			Components.Register.registerValues[index] = value;
-			console.warn(`indexHex: ${indexHex}`);
 			document.getElementById(indexHex).innerText = `0x${value.toString(16).toUpperCase().padStart(8, '0')}`;
 			
 			document.getElementById(`${indexHex}`).style.backgroundColor = "yellow";
@@ -259,11 +236,11 @@ function resetComponents(Components) {
 				document.getElementById(`${indexHex}`).style.backgroundColor = "";
 				document.getElementById(`${indexHex}`).style.color = "";
 			}, DURATION_ANIMATION);
-			document.getElementById(`register-write-data-value`).textContent = `0x${value.toString(16).toUpperCase().padStart(2, '0')}`;
+			document.getElementById(`register-WriteData-value`).textContent = `0x${value.toString(16).toUpperCase().padStart(2, '0')}`;
 		}
 	]
 	
-	new Set(['Read1', 'Read2', 'WriteReg', 'WriteData']).forEach(val => {
+	new Set(['Read1', 'Read2', 'WriteReg']).forEach(val => {
 		signalCallbackTable[`Register.${val}`] = [
 			() => {
 				document.getElementById(`register-${val}-value`).textContent = `${Components.Register[`${val}`]}`;
@@ -291,7 +268,7 @@ function resetComponents(Components) {
 	signalCallbackTable[`Register.option`] = [
 		() => {document.getElementById(`register-option-value`).textContent = Components.Register.option;}
 	];
-	
+
 	for (let i = 1; i <= 2; i++) {
 		signalCallbackTable[`AndGate.input${i}`] = [
 			() => {document.getElementById(`and-gate-input${i}-value`).textContent = Components.AndGate[`input${i}`];}

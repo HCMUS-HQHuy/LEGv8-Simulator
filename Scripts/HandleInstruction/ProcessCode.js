@@ -29,8 +29,8 @@ async function execute(results) {
 		});
 		if (instructionPos === -1)
 			state.executing = false;
-		console.warn(`Insstruction: ${instructionPos}`);
-		console.warn("FINISH AN INSTRUCTION");
+		// console.warn(`Insstruction: ${instructionPos}`);
+		// console.warn("FINISH AN INSTRUCTION");
 	}
 	console.log("---------------END----------------");
 }

@@ -73,7 +73,6 @@ export function computeOutputs(componentName, components) {
 }
 
 function doALUOperation(aluControlCode, operand1, operand2) {
-	console.warn(`Option: ${aluControlCode} -> ${operand1} -> ${operand2}`);
 	switch (aluControlCode) {
 		case '0010': // ADD
 			return operand1 + operand2;
