@@ -35,22 +35,11 @@ async function execute(results) {
 
 export function trigger() {
 	let results = null;
-	document.getElementById('parseInstructions').addEventListener('click', function(event) {
-        event.preventDefault();
-		results = compileCode();
-	});
-	
 	document.getElementById('compile-btn').addEventListener('click', function(event) {
         event.preventDefault();
 		results = compileCode();
 	});
 	document.getElementById('start-stop-animation').addEventListener('click', function(event) {
-		event.preventDefault();
-		if (state.executing === false)
-			execute(results);
-	});
-	
-	document.getElementById('execute').addEventListener('click', function(event) {
 		event.preventDefault();
 		if (state.executing === false)
 			execute(results);
