@@ -3,6 +3,7 @@ import * as formatCode from "./Compile/formatCode.js"
 
 import * as generateSignal from "./InstructionCycle/generateSignal.js"
 import {state} from "./InstructionCycle/animationSpeed.js"
+import { logParsingResults, validateParsedResults } from "../HandleOutLook/logBox.js"
 
 function compileCode() {
 	const results = formatCode.getResult();
@@ -10,14 +11,13 @@ function compileCode() {
 		console.error("formatcode: Have some problem!");
 		return;
 	}
+	logParsingResults(results);
 	return results;
 }
 
 async function execute(results) {
-	if (results == null) {
-		console.warn("formatcode: Have some problem!");
+    if (validateParsedResults(results, "log-box") != true)
 		return;
-	}
 	const Components = generateSignal.initialize(results);
 	console.log("---------------START----------------");
 	state.executing = true;
@@ -44,7 +44,6 @@ export function trigger() {
         event.preventDefault();
 		results = compileCode();
 	});
-	console.log(state);
 	document.getElementById('start-stop-animation').addEventListener('click', function(event) {
 		event.preventDefault();
 		if (state.executing === false)

@@ -2,49 +2,96 @@ import {parseLegv8Instruction, buildLabelTable} from "./parser.js"
 
 
 export function getResult() {
-	const instructionTextarea = document.getElementById('instructionCode');
-	const codeLines = instructionTextarea.value.split(/\r?\n/);
+    const instructionTextarea = document.getElementById('instructionCode');
+    if (!instructionTextarea) {
+        console.error("Textarea with ID 'instructionCode' not found.");
+        // Return an array with a single error object for consistency,
+        // so logParsingResults can handle it.
+        return [{
+            lineNumber: 0, // Or some other indicator for a global error
+            assemblyInstruction: "Error finding code input area.",
+            parsed: { error: "Could not find instruction input textarea." }
+        }];
+    }
+    const codeLines = instructionTextarea.value.split(/\r?\n/);
 
-	const labelTable = buildLabelTable(codeLines);
-	const results = [];
+    const labelTable = buildLabelTable(codeLines);
+    const results = []; // This array will be returned
 
-	for (let i = 0; i < codeLines.length; i++) {
-		const trimmedLine = codeLines[i].replace(/(\/\/|;).*/, '').trim();
+    for (let i = 0; i < codeLines.length; i++) {
+        const originalLineNumber = i + 1;
+        const rawLineContent = codeLines[i]; // Keep for original context, especially for errors
+        const trimmedLine = rawLineContent.replace(/(\/\/|;).*/, '').trim();
 
-		// Bỏ qua dòng trống hoặc comment
-		if (!trimmedLine || trimmedLine.startsWith('//') || trimmedLine.startsWith(';')) {
-			continue;
-		}
+        // Skip empty lines or lines that are only comments
+        if (!trimmedLine) {
+            continue;
+        }
 
-		// Kiểm tra xem dòng này có định nghĩa nhãn và lệnh trên cùng dòng không
-		const labelMatch = trimmedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
-		let instructionPart = trimmedLine;
-	
-		if (labelMatch) {
-			instructionPart = labelMatch[2].trim(); // Lấy phần lệnh sau nhãn
-			if (!instructionPart) { // Nếu chỉ có nhãn trên dòng này
-				// console.log(`Line ${i+1} is label only: ${labelMatch[1]}`);
-				continue; // Bỏ qua, nhãn đã được xử lý
-			}
-		}
-		
+        // Check for label definitions
+        const labelMatch = trimmedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
+        let instructionPart = trimmedLine;
+        let labelName = null;
+        let isLabelDefinitionOnly = false;
 
-		const parsedInstruction = parseLegv8Instruction(instructionPart, labelTable);
+        if (labelMatch) {
+            labelName = labelMatch[1];
+            instructionPart = labelMatch[2].trim(); // Get the part after the label
+            if (!instructionPart) {
+                isLabelDefinitionOnly = true;
+            }
+        }
 
-		if (!parsedInstruction || parsedInstruction.error) {
-			console.error(`Error parsing line ${i + 1}: ${parsedInstruction?.error || 'Parser returned null'}`);
-			return null;
-		}
+        if (isLabelDefinitionOnly) {
+            // It's just a label definition on this line.
+            // Optionally, add it to results if you want to log label definitions.
+            results.push({
+                lineNumber: originalLineNumber,
+                assemblyInstruction: rawLineContent.trim(), // Show the original label line
+                parsed: {
+                    type: 'LABEL_DEF',
+                    label: labelName,
+                    error: null
+                }
+            });
+            continue; // Move to the next line
+        }
 
-		results.push({
-			lineNumber: i + 1,
-			assemblyInstruction: instructionPart,
-			parsed: parsedInstruction
-		});
+        // If we've reached here, 'instructionPart' should be an actual instruction to parse.
+        const parsedInstruction = parseLegv8Instruction(instructionPart, labelTable);
 
-		console.log(`Line ${i + 1}: "${instructionPart}"`);
-		console.log(`Parsed Line ${i + 1}:`, parsedInstruction);
-	}
+        if (!parsedInstruction || parsedInstruction.error || (parsedInstruction.type === 'UNKNOWN' && parsedInstruction.mnemonic)) {
+            // --- MODIFICATION HERE ---
+            // Instead of just console.error and returning null,
+            // add an error object to the results array.
+            const errorMessage = parsedInstruction?.error || `Parser returned null or unknown mnemonic for: '${instructionPart.split(/\s+/)[0]}'`;
+            console.error(`Error parsing line ${originalLineNumber} ("${rawLineContent.trim()}"): ${errorMessage}`); // Keep console.error for dev
+            
+            results.push({
+                lineNumber: originalLineNumber,
+                assemblyInstruction: rawLineContent.trim(), // Use the raw line for better error context
+                parsed: {
+                    error: errorMessage,
+                    // Optionally include the attempted mnemonic if available
+                    mnemonic: parsedInstruction?.mnemonic || instructionPart.split(/\s+/)[0]
+                }
+            });
+            // Continue to the next line to parse other instructions,
+            // rather than stopping the whole process.
+            // If you wanted to stop on the first error, you would return `results` here or `null`.
+            continue; 
+        }
 
-	return results;
+        // Successfully parsed instruction (and it's not just a label definition)
+        // The check 'parsedInstruction.type !== 'LABEL_DEF'' might be redundant if 'isLabelDefinitionOnly' is handled correctly
+        if (parsedInstruction.type !== 'LABEL_DEF') {
+             results.push({
+                lineNumber: originalLineNumber,
+                assemblyInstruction: instructionPart, // The part that was actually parsed as an instruction
+                parsed: parsedInstruction
+            });
+        }
+    }
+
+    return results; // Return all results, including errors and successful parses
 }
