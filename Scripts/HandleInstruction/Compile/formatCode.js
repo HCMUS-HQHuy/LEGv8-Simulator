@@ -45,15 +45,15 @@ export function getResult() {
         if (isLabelDefinitionOnly) {
             // It's just a label definition on this line.
             // Optionally, add it to results if you want to log label definitions.
-            results.push({
-                lineNumber: originalLineNumber,
-                assemblyInstruction: rawLineContent.trim(), // Show the original label line
-                parsed: {
-                    type: 'LABEL_DEF',
-                    label: labelName,
-                    error: null
-                }
-            });
+            // results.push({
+            //     lineNumber: originalLineNumber,
+            //     assemblyInstruction: rawLineContent.trim(), // Show the original label line
+            //     parsed: {
+            //         type: 'LABEL_DEF',
+            //         label: labelName,
+            //         error: null
+            //     }
+            // });
             continue; // Move to the next line
         }
 

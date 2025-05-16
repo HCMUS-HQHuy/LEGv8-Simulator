@@ -128,7 +128,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
                 throw new Error(`Invalid operands for B-type instruction ${mnemonic}`);
             }
         } else if (['CBZ', 'CBNZ'].includes(mnemonic)) {
-            if (opCount === 2 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i)) {
+            if (opCount === 2 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i)) {
                 result.type = 'CB';
                 const labelName = ops[1];
                 result.structuredOperands = { Rt: ops[0], label: labelName };
@@ -143,26 +143,40 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
         }
         // --- GIỮ NGUYÊN CÁC PHẦN PARSE KHÁC (R, D, I, IW, SYS, NOP) ---
         else if (['ADD', 'SUB', 'AND', 'ORR', 'EOR', 'LSL', 'LSR', 'ASR', 'MUL', 'SDIV', 'UDIV', 'SUBS'].includes(mnemonic)) {
-             if (opCount === 3 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[1].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[2].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i)) {
+             if (opCount === 3 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[1].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[2].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i)) {
                 result.type = 'R';
                 result.structuredOperands = { Rd: ops[0], Rn: ops[1], Rm: ops[2] };
-            } else if (opCount === 3 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[1].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[2].match(/^#\d+$/)) {
+            } else if (opCount === 3 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[1].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[2].match(/^#\d+$/)) {
                  result.type = 'R_Shift';
                  result.structuredOperands = { Rd: ops[0], Rn: ops[1], shift_imm: ops[2] };
             } else {
                  throw new Error(`Invalid operands for R-type instruction ${mnemonic}`);
             }
-        } else if (['ADDI', 'SUBI', 'ANDI', 'ORRI', 'EORI', 'SUBIS'].includes(mnemonic)) {
-             if (opCount === 3 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[1].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[2].match(/^#-?\d+$/)) {
-                result.type = 'I';
+        } else if (['ADDI', 'SUBI', 'SUBIS'].includes(mnemonic)) { // ARITHMETIC I-types
+             if (opCount === 3 &&
+                 ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rd
+                 ops[1].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rn
+                 ops[2].match(/^#-?\d+$/)) {                         // #immediate (signed decimal)
+                result.type = 'I'; // Or just 'I' if you handle encoding based on mnemonic
                 result.structuredOperands = { Rd: ops[0], Rn: ops[1], immediate: ops[2] };
             } else {
-                throw new Error(`Invalid operands for I-type instruction ${mnemonic}`);
+                throw new Error(`Invalid operands for Arithmetic I-type instruction ${mnemonic}. Expected Rd, Rn, #decimal_immediate`);
+            }
+        } else if (['ANDI', 'ORRI', 'EORI'].includes(mnemonic)) { // LOGICAL I-types
+            if (opCount === 3 &&
+                ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rd
+                ops[1].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rn
+                ops[2].match(/^#0x[0-9a-f]+$/i)) {                  // #0xHEX_immediate (unsigned hex for bitmask)
+                                                                  // Case-insensitive for '0x' and hex digits
+                result.type = 'I'; // Or just 'I'
+                result.structuredOperands = { Rd: ops[0], Rn: ops[1], bitmask_immediate: ops[2] };
+            } else {
+                throw new Error(`Invalid operands for Logical I-type instruction ${mnemonic}. Expected Rd, Rn, #0xHEX_immediate`);
             }
         } else if (['LDUR', 'STUR', 'LDURSW', 'LDURH', 'STURH', 'LDURB', 'STURB'].includes(mnemonic)) {
-            if (opCount === 2 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[1].match(/^\[X([0-9]|1[0-9]|2[0-7]|SP|ZR)\s*(,\s*#-?\d+)?\s*\]$/i)) {
+            if (opCount === 2 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[1].match(/^\[X([0-9]|1[0-9]|2[0-9]|30|ZR)\s*(,\s*#-?\d+)?\s*\]$/i)) {
                 result.type = 'D';
-                const memMatch = ops[1].match(/^\[(X[0-9]+|XSP|XZR)\s*(?:,\s*(#-?\d+))?\s*\]$/i);
+                const memMatch = ops[1].match(/^\[X(?:[0-9]|1[0-9]|2[0-9]|30|SP|ZR)\s*(?:,\s*(#-?\d+))?\s*\]$/i);
                 if (memMatch) {
                     result.structuredOperands = {
                         Rt: ops[0],
@@ -176,7 +190,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
                 throw new Error(`Invalid operands for D-type instruction ${mnemonic}`);
             }
         } else if (['MOVZ', 'MOVK'].includes(mnemonic)) {
-             if (opCount >= 2 && opCount <= 4 && ops[0].match(/^X([0-9]|1[0-9]|2[0-7]|SP|ZR)$/i) && ops[1].match(/^#-?\d+$/)) {
+             if (opCount >= 2 && opCount <= 4 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[1].match(/^#-?\d+$/)) {
                  result.type = 'IW';
                  result.structuredOperands = { Rd: ops[0], immediate: ops[1], shift: null };
                  if (opCount > 2) {
