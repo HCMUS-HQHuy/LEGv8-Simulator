@@ -129,7 +129,6 @@ body {
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 0.7% 0.7%;
   margin-left: 20px;
-  font-size: px;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
@@ -383,6 +382,29 @@ body {
   flex-direction: column;
   height: 50%;
 }
+.label-code {
+  color: var(--text-color);                 
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* hoặc dùng margin-left: auto cho button */
+  letter-spacing: 1.5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+.import-code-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  
+  font-size: 100%;
+  padding: 1% 8%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+}
+.import-code-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
 .code-editor {
   display: flex;
   border: 2px solid var(--border-color); 
@@ -524,6 +546,7 @@ body {
   align-items: stretch; /* Đảm bảo các phần tử con bắt đầu từ đầu */
   justify-content: space-between; /* Đẩy box đầu tiên sang trái, box cuối sang phải */
   font-size: 130%;
+  height: 100%;
 }
 .parsedOutputTable {
   width: 100%;
@@ -621,6 +644,7 @@ body {
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
   flex: 0 0 6%;
+  height: 100%;
 }
 
 /* Registers */
@@ -630,6 +654,7 @@ body {
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
   align-items: flex-start;
   flex: 0 0 67%; /* Không co giãn, chiếm 30% */
+  height: 100%;
 }
 
 /* dataMemoryBox */
@@ -638,6 +663,7 @@ body {
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
   flex: 0 0 21%; /* Không co giãn, chiếm 30% */
+  height: 100%;
 }
 
 .range-container {
