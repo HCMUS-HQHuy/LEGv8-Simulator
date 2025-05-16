@@ -2,7 +2,7 @@ import * as currentInstruction from "./Compile/currentInstruction.js"
 import * as formatCode from "./Compile/formatCode.js"
 
 import * as generateSignal from "./InstructionCycle/generateSignal.js"
-import {state} from "./InstructionCycle/animationSpeed.js"
+import {state, switchIcon} from "./InstructionCycle/animationSpeed.js"
 import { logParsingResults, validateParsedResults } from "../HandleOutLook/logBox.js"
 
 function compileCode() {
@@ -41,7 +41,8 @@ export function trigger() {
 	});
 	document.getElementById('start-stop-animation').addEventListener('click', function(event) {
 		event.preventDefault();
-		if (state.executing === false)
+		if (state.executing === false) {
 			execute(results);
+		} else switchIcon();
 	});
 }
