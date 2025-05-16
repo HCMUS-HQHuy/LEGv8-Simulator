@@ -260,6 +260,110 @@ body {
   display: flex;
   align-items: stretch; 
   width: 100%; /* Toàn bộ chiều rộng của container */
+  height: 100vh;
+}
+/* frameBox */
+.frameBox {
+  flex: 0 0 75%; /* Không co giãn, chiếm 70% */
+  padding: 0 1%; /* Padding ngang (trái và phải) */
+  overflow: auto;
+  display: flex;
+  flex-direction: column; /* Chia frameBox thành các phần theo cột */
+}
+.frame {
+	background-color: var(--frame-bg-color); /* Use variable */
+  border: 2px solid var(--border-color); /* Use variable */
+  padding: 0 0;
+	overflow: hidden;
+	position: relative;
+  font-family: monospace;
+}
+.content {
+	transform-origin: top left;
+	transition: transform 0.1s ease;
+	width: auto;
+	height: auto;
+}
+.frameBox:-webkit-full-screen,
+.frameBox:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  background-color: var(--bg-color);
+  overflow: auto;
+}
+/* To make frameBox fullscreen style look better */
+.frame-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 10px;
+  right: 10px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+}
+.frame-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
+.compile-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 60px;
+  right: 10px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+}
+.compile-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
+.start-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 110px;
+  right: 10px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+}
+.start-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
+.stop-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 160px;
+  right: 10px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+}
+.stop-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }
 /* codeBox */
 .codeBox {
@@ -269,6 +373,14 @@ body {
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
   overflow: hidden;
+
+  height: 100%;
+}
+.label-and-code-editor {
+  height: 50%;
+}
+.label-and-log-box {
+  height: 50%;
 }
 .code-editor {
   display: flex;
@@ -279,10 +391,11 @@ body {
   overflow-x: auto; 
   overflow-y: hidden; 
 
-  height: 400px;
-  width: 100%;
+  flex: 1;
   
   font-size: 130%;
+
+  height: 80%;
 }
 
 /* Thanh cuộn chung cho line-numbers và instructionCode */
@@ -381,9 +494,11 @@ body {
   background-color: var(--frame-bg-color); /* Use variable */
   padding: 5% 5%;
   font-family: monospace;
-  font-size: 130%;
   overflow: auto;
-  height: 50%;
+  flex: 1;
+  font-size: 130%;
+
+  height: 66%;
 }
 /* Tùy chỉnh thanh cuộn ngang */
 .log-box::-webkit-scrollbar {
@@ -400,108 +515,7 @@ body {
 .log-box::-webkit-scrollbar-track {
   background-color: transparent; /* Màu nền cho track của thanh cuộn */
 }
-/* frameBox */
-.frameBox {
-  flex: 0 0 75%; /* Không co giãn, chiếm 70% */
-  padding: 0 1%; /* Padding ngang (trái và phải) */
-  overflow: auto;
-}
-.frame {
-  flex: 0 0 75%; /* Không co giãn, chiếm 70% */
-	background-color: var(--frame-bg-color); /* Use variable */
-  border: 2px solid var(--border-color); /* Use variable */
-  padding: 0 0;
-	overflow: hidden;
-	position: relative;
-  font-family: monospace;
-}
-.content {
-	transform-origin: top left;
-	transition: transform 0.1s ease;
-	width: auto;
-	height: auto;
-}
-.frameBox:-webkit-full-screen,
-.frameBox:fullscreen {
-  width: 100vw;
-  height: 100vh;
-  box-sizing: border-box;
-  background-color: var(--bg-color);
-  overflow: auto;
-}
-/* To make frameBox fullscreen style look better */
-.frame-button {
-  background-color: var(--button-bg-color); /* Sử dụng biến mới */
-  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
-  color: var(--button-text-color); /* Sử dụng biến mới */
-  padding: 8px 16px;
-  top: 10px;
-  right: 10px;
-  font-size: 100%;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s, color 0.3s;
 
-  position: absolute;
-}
-.frame-button:hover {
-  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
-  color: var(--button-hover-text-color); /* Sử dụng biến mới */
-}
-.compile-button {
-  background-color: var(--button-bg-color); /* Sử dụng biến mới */
-  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
-  color: var(--button-text-color); /* Sử dụng biến mới */
-  padding: 8px 16px;
-  top: 60px;
-  right: 10px;
-  font-size: 100%;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s, color 0.3s;
-
-  position: absolute;
-}
-.compile-button:hover {
-  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
-  color: var(--button-hover-text-color); /* Sử dụng biến mới */
-}
-.start-button {
-  background-color: var(--button-bg-color); /* Sử dụng biến mới */
-  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
-  color: var(--button-text-color); /* Sử dụng biến mới */
-  padding: 8px 16px;
-  top: 110px;
-  right: 10px;
-  font-size: 100%;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s, color 0.3s;
-
-  position: absolute;
-}
-.start-button:hover {
-  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
-  color: var(--button-hover-text-color); /* Sử dụng biến mới */
-}
-.stop-button {
-  background-color: var(--button-bg-color); /* Sử dụng biến mới */
-  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
-  color: var(--button-text-color); /* Sử dụng biến mới */
-  padding: 8px 16px;
-  top: 160px;
-  right: 10px;
-  font-size: 100%;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s, color 0.3s;
-
-  position: absolute;
-}
-.stop-button:hover {
-  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
-  color: var(--button-hover-text-color); /* Sử dụng biến mới */
-}
 /* Output container */
 .outputContainer {
   display: flex;
