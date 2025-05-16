@@ -18,6 +18,7 @@ function compileCode() {
 async function execute(results) {
     if (validateParsedResults(results, "log-box") != true)
 		return;
+	switchIcon();
 	const Components = generateSignal.initialize(results);
 	console.log("---------------START----------------");
 	state.executing = true;

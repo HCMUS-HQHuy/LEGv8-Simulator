@@ -6,22 +6,23 @@ export const state = {
 	executing: false
 };
 
+const svgCanvas = document.getElementById('zoomFrame');
+const StateInfor = {
+	start: {
+		icon: "▶",
+		title: "Start animation",
+		call: () => svgCanvas.unpauseAnimations()  // wrapped in arrow function
+	},
+	stop: {
+		icon: "⏹︎",
+		title: "Stop animation",
+		call: () => svgCanvas.pauseAnimations()
+	}
+};
+
 let stateCode = "start"; // Track the current state
 export function switchIcon() {
 	const button = document.getElementById('start-stop-animation');
-    const svgCanvas = document.getElementById('zoomFrame');
-	const StateInfor = {
-		start: {
-			icon: "▶",
-			title: "Start animation",
-			call: () => svgCanvas.unpauseAnimations()  // wrapped in arrow function
-		},
-		stop: {
-			icon: "⏹︎",
-			title: "Stop animation",
-			call: () => svgCanvas.pauseAnimations()
-		}
-	};
 	StateInfor[stateCode].call();
 	if (stateCode === "start") stateCode = "stop";
 	else stateCode = "start";
