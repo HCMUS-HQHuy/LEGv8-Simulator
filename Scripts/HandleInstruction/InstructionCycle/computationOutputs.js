@@ -43,10 +43,7 @@ export function computeOutputs(componentName, components) {
 			break;
 
 		case 'ALU':
-			const op = components[componentName].option;
-			const a = components[componentName].input1;
-			const b = components[componentName].input2;
-			components[componentName].output = doALUOperation(op, a, b);
+			components[componentName].output = doALUOperation(components);
 			components[componentName].zero = (components[componentName].output === 0 ? 1 : 0);
 			break;
 
@@ -72,7 +69,10 @@ export function computeOutputs(componentName, components) {
 	}
 }
 
-function doALUOperation(aluControlCode, operand1, operand2) {
+function doALUOperation(currentState) {
+    const aluControlCode = currentState['ALU'].option;
+    const operand1 = currentState['ALU'].input1;
+    const operand2 = currentState['ALU'].input2;
 	switch (aluControlCode) {
 		case '0010': // ADD
 			return operand1 + operand2;
