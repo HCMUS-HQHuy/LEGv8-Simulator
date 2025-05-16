@@ -271,12 +271,14 @@ body {
   flex-direction: column; /* Chia frameBox thành các phần theo cột */
 }
 .frame {
-	background-color: var(--frame-bg-color); /* Use variable */
+  flex: 1;
+  background-color: var(--frame-bg-color); /* Use variable */
   border: 2px solid var(--border-color); /* Use variable */
   padding: 0 0;
 	overflow: hidden;
 	position: relative;
   font-family: monospace;
+  height: 100%;
 }
 .content {
 	transform-origin: top left;
@@ -373,13 +375,12 @@ body {
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
   overflow: hidden;
-
+  flex: 1;
   height: 100%;
 }
-.label-and-code-editor {
-  height: 50%;
-}
-.label-and-log-box {
+.label-and-code-editor, .label-and-log-box {
+  display: flex;
+  flex-direction: column;
   height: 50%;
 }
 .code-editor {
@@ -395,7 +396,7 @@ body {
   
   font-size: 130%;
 
-  height: 80%;
+  height: 100%;
 }
 
 /* Thanh cuộn chung cho line-numbers và instructionCode */
@@ -498,7 +499,7 @@ body {
   flex: 1;
   font-size: 130%;
 
-  height: 66%;
+  height: 100%;
 }
 /* Tùy chỉnh thanh cuộn ngang */
 .log-box::-webkit-scrollbar {
