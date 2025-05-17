@@ -259,7 +259,7 @@ body {
   display: flex;
   align-items: stretch; 
   width: 100%; /* Toàn bộ chiều rộng của container */
-  height: 100vh;
+  height: 94vh;
 }
 /* frameBox */
 .frameBox {
@@ -277,7 +277,6 @@ body {
 	overflow: hidden;
 	position: relative;
   font-family: monospace;
-  height: 100%;
 }
 .content {
 	transform-origin: top left;
@@ -546,7 +545,6 @@ body {
   align-items: stretch; /* Đảm bảo các phần tử con bắt đầu từ đầu */
   justify-content: space-between; /* Đẩy box đầu tiên sang trái, box cuối sang phải */
   font-size: 130%;
-  height: 100%;
 }
 .parsedOutputTable {
   width: 100%;
@@ -613,6 +611,7 @@ body {
   font-size: 100%;
   color: var(--text-color); /* Set base text color for table */
   background-color: var(--table-row-odd-bg); /* Set base background */
+  height: 100%;
 }
 .dataMemoryTable thead th {
   position: sticky;
