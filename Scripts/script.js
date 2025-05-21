@@ -256,14 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Event Listeners ---
-
-    instructionCode.addEventListener('input', () => {
-        // updateLineNumbers();
-        // Maybe clear highlights when code changes?
-        // clearAllHighlights();
-    });
-
     // Sync lineNumbers scroll and overlay when TEXTAREA scrolls
     instructionCode.addEventListener('scroll', () => {
         // Update lineNumbers scroll position to match textarea
