@@ -164,22 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`Calculated Line Height: ${cachedLineHeight}px, Padding Top: ${cachedPaddingTop}px`);
     }
 
-    // --- Function to update line numbers ---
-    function updateLineNumbers() {
-        const lines = instructionCode.value.split('\n');
-        lineCount = lines.length;
-        lineNumbersDiv.innerHTML = '';
-        for (let i = 1; i <= lineCount; i++) {
-            const lineNumElement = document.createElement('div');
-            lineNumElement.textContent = i;
-            lineNumbersDiv.appendChild(lineNumElement);
-        }
-        // Re-apply highlight if necessary after redraw
-        if(currentHighlightIndex >= 0) {
-             highlightLine(currentHighlightIndex, false); // Don't scroll on redraw
-        }
-    }
-
     // --- Function to position the highlight overlay ---
     function positionHighlightOverlay(index) {
         if (index >= 0 && index < lineCount && cachedLineHeight > 0) {
@@ -275,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners ---
 
     instructionCode.addEventListener('input', () => {
-        updateLineNumbers();
+        // updateLineNumbers();
         // Maybe clear highlights when code changes?
         // clearAllHighlights();
     });
@@ -335,8 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Initial setup ---
-    calculateMetrics(); // Calculate line height etc.
-    updateLineNumbers(); // Generate line numbers
+    calculateMetrics();
     window.addEventListener('resize', calculateMetrics); // Recalculate on resize
     // Ensure initial scroll is synced (usually 0)
     lineNumbersDiv.scrollTop = instructionCode.scrollTop;

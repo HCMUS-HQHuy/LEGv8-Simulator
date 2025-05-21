@@ -24,7 +24,7 @@ async function execute(results) {
 	state.executing = true;
 	let instructionPos = 0;
 	while (state.executing) {
-		currentInstruction.update(results[instructionPos]);
+		currentInstruction.update(instructionPos, results[instructionPos]);
 		instructionPos = await new Promise((promise) => {
 			generateSignal.start(Components, promise); // This triggers the signal generation
 		});

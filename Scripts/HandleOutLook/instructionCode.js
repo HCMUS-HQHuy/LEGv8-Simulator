@@ -5,13 +5,15 @@ export function trigger() {
 	const lineNumbers = document.getElementById("lineNumbers");
 
 	function updateLineNumbers() {
-	const lines = textarea.value.split("\n").length;
-	lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => `${i + 1}`).join("<br>");
+		const lines = textarea.value.split("\n").length;
+		lineNumbers.innerHTML = "";
+		for(let i = 1; i <= lines + 1; i++) 
+			lineNumbers.innerHTML += `<div id = lineId${i - 1}>${i.toString(10).padStart(2, ' ')}</div>`
 	}
 
 	// Đồng bộ scroll giữa số dòng và textarea
 	textarea.addEventListener("scroll", () => {
-	lineNumbers.scrollTop = textarea.scrollTop;
+		lineNumbers.scrollTop = textarea.scrollTop;
 	});
 
 	textarea.addEventListener("input", updateLineNumbers);
