@@ -19,7 +19,7 @@
     <h2>Frame</h2>
 
     <div class = "frame">
-      <svg viewBox = "0 0 1800 1050" id = "zoomFrame">
+      <svg viewBox = "0 0 1800 3050" id = "zoomFrame">
       <g class = "content" id = "zoomContent">
         <!-- Signal Lines Layer -->
         <g id = "signal-lines">
@@ -706,7 +706,7 @@
     <div class = "label-and-code-editor">
       <div class="label-code">
         <h2>Code</h2>
-        <button class = "import-code-button" id ="import-code">Import code</button>
+        <button class = "import-code-button" id ="import-code">📄 Import code</button>
       </div>
       <!-- Add id="instructionCode" to the textarea -->
       <div class = "code-editor">
@@ -734,163 +734,167 @@ End_If:
   <div class = "flagsBox">
     <h2>Flags</h2>
     
-    <table class = "parsedOutputTable">
-      <thead>
-        <tr>
-          <th>N</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th id = "N">0</th>
-        </tr>
-      </tbody>
-    </table>
-    <table class = "parsedOutputTable">
-      <thead>
-        <tr>
-          <th>Z</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th id = "Z">0</th>
-        </tr>
-      </tbody>
-    </table>
-    <table class = "parsedOutputTable">
-      <thead>
-        <tr>
-          <th>V</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th id = "V">0</th>
-        </tr>
-      </tbody>
-    </table>
-    <table class = "parsedOutputTable">
-      <thead>
-        <tr>
-          <th>C</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th id = "C">0</th>
-        </tr>
-      </tbody>
-    </table>
+    <div class = "flagBoxBorder">
+      <table class = "parsedOutputTable">
+        <thead>
+          <tr>
+            <th>N</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th id = "N">0</th>
+          </tr>
+        </tbody>
+      </table>
+      <table class = "parsedOutputTable">
+        <thead>
+          <tr>
+            <th>Z</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th id = "Z">0</th>
+          </tr>
+        </tbody>
+      </table>
+      <table class = "parsedOutputTable">
+        <thead>
+          <tr>
+            <th>V</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th id = "V">0</th>
+          </tr>
+        </tbody>
+      </table>
+      <table class = "parsedOutputTable">
+        <thead>
+          <tr>
+            <th>C</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th id = "C">0</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class = "registersBox">
     <h2>Registers</h2>
 
-    <table class = "parsedOutputTable">
-      <thead>
-        <tr>
-          <th>X00</th>
-          <th>X01</th>
-          <th>X02</th>
-          <th>X03</th>
-          <th>X04</th>
-          <th>X05</th>
-          <th>X06</th>
-          <th>X07</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th id = "X00">0x00000000</th>
-          <th id = "X01">0x00000000</th>
-          <th id = "X02">0x00000000</th>
-          <th id = "X03">0x00000000</th>
-          <th id = "X04">0x00000000</th>
-          <th id = "X05">0x00000000</th>
-          <th id = "X06">0x00000000</th>
-          <th id = "X07">0x00000000</th>
-        </tr>
-      </tbody>
-    </table>
-    <table class = "parsedOutputTable">
-      <thead>
-        <tr>
-          <th>X08</th>
-          <th>X09</th>
-          <th>X10</th>
-          <th>X11</th>
-          <th>X12</th>
-          <th>X13</th>
-          <th>X14</th>
-          <th>X15</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th id = "X08">0x00000000</th>
-          <th id = "X09">0x00000000</th>
-          <th id = "X10">0x00000000</th>
-          <th id = "X11">0x00000000</th>
-          <th id = "X12">0x00000000</th>
-          <th id = "X13">0x00000000</th>
-          <th id = "X14">0x00000000</th>
-          <th id = "X15">0x00000000</th>
-        </tr>
-      </tbody>
-    </table>
-    <table class = "parsedOutputTable">
-      <thead>
-        <tr>
-          <th>X16</th>
-          <th>X17</th>
-          <th>X18</th>
-          <th>X19</th>
-          <th>X20</th>
-          <th>X21</th>
-          <th>X22</th>
-          <th>X23</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th id="X16">0x00000000</th>
-          <th id="X17">0x00000000</th>
-          <th id="X18">0x00000000</th>
-          <th id="X19">0x00000000</th>
-          <th id="X20">0x00000000</th>
-          <th id="X21">0x00000000</th>
-          <th id="X22">0x00000000</th>
-          <th id="X23">0x00000000</th>
-        </tr>
-      </tbody>
-    </table>
-    <table class = "parsedOutputTable">
-      <thead>
-        <tr>
-          <th>X24</th>
-          <th>X25</th>
-          <th>X26</th>
-          <th>X27</th>
-          <th>X28</th>
-          <th>X29</th>
-          <th>X30</th>
-          <th>XZR</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th id="X24">0x00000000</th>
-          <th id="X25">0x00000000</th>
-          <th id="X26">0x00000000</th>
-          <th id="X27">0x00000000</th>
-          <th id="X28">0x00000000</th>
-          <th id="X29">0x00000000</th>
-          <th id="X30">0x00000000</th>
-          <th id="XZR">0x00000000</th>
-        </tr>
-      </tbody>
-    </table>
+    <div class = "registerBoxBorder">
+      <table class = "parsedOutputTable">
+        <thead>
+          <tr>
+            <th>X00</th>
+            <th>X01</th>
+            <th>X02</th>
+            <th>X03</th>
+            <th>X04</th>
+            <th>X05</th>
+            <th>X06</th>
+            <th>X07</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th id = "X00">0x00000000</th>
+            <th id = "X01">0x00000000</th>
+            <th id = "X02">0x00000000</th>
+            <th id = "X03">0x00000000</th>
+            <th id = "X04">0x00000000</th>
+            <th id = "X05">0x00000000</th>
+            <th id = "X06">0x00000000</th>
+            <th id = "X07">0x00000000</th>
+          </tr>
+        </tbody>
+      </table>
+      <table class = "parsedOutputTable">
+        <thead>
+          <tr>
+            <th>X08</th>
+            <th>X09</th>
+            <th>X10</th>
+            <th>X11</th>
+            <th>X12</th>
+            <th>X13</th>
+            <th>X14</th>
+            <th>X15</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th id = "X08">0x00000000</th>
+            <th id = "X09">0x00000000</th>
+            <th id = "X10">0x00000000</th>
+            <th id = "X11">0x00000000</th>
+            <th id = "X12">0x00000000</th>
+            <th id = "X13">0x00000000</th>
+            <th id = "X14">0x00000000</th>
+            <th id = "X15">0x00000000</th>
+          </tr>
+        </tbody>
+      </table>
+      <table class = "parsedOutputTable">
+        <thead>
+          <tr>
+            <th>X16</th>
+            <th>X17</th>
+            <th>X18</th>
+            <th>X19</th>
+            <th>X20</th>
+            <th>X21</th>
+            <th>X22</th>
+            <th>X23</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th id="X16">0x00000000</th>
+            <th id="X17">0x00000000</th>
+            <th id="X18">0x00000000</th>
+            <th id="X19">0x00000000</th>
+            <th id="X20">0x00000000</th>
+            <th id="X21">0x00000000</th>
+            <th id="X22">0x00000000</th>
+            <th id="X23">0x00000000</th>
+          </tr>
+        </tbody>
+      </table>
+      <table class = "parsedOutputTable">
+        <thead>
+          <tr>
+            <th>X24</th>
+            <th>X25</th>
+            <th>X26</th>
+            <th>X27</th>
+            <th>X28</th>
+            <th>X29</th>
+            <th>X30</th>
+            <th>XZR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th id="X24">0x00000000</th>
+            <th id="X25">0x00000000</th>
+            <th id="X26">0x00000000</th>
+            <th id="X27">0x00000000</th>
+            <th id="X28">0x00000000</th>
+            <th id="X29">0x00000000</th>
+            <th id="X30">0x00000000</th>
+            <th id="XZR">0x00000000</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class = "dataMemoryBox">

@@ -317,3 +317,9 @@ document.addEventListener('DOMContentLoaded', () => {
     lineNumbersDiv.scrollTop = instructionCode.scrollTop;
 
 });
+
+window.addEventListener('DOMContentLoaded', function() {
+  const flagsBox = document.querySelector('.flagsBox');
+  const outputContainer = document.querySelector('.outputContainer');
+  outputContainer.style.height = flagsBox.offsetHeight + 'px';
+});

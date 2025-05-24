@@ -18,12 +18,12 @@ let prevIndex = -1
 function updateHighlight(nextLineIndex) {
 	let tmp = document.getElementById(`lineId${prevIndex}`);
 	if (tmp) {
-		tmp.innerText = `${prevIndex}`
+		tmp.innerText = `${prevIndex}\u2009`;
 		tmp.style.color = `var(--line-number-color)`;
 	}
 	tmp = document.getElementById(`lineId${nextLineIndex + 1}`);
 	if (tmp){
-		tmp.innerText = `▶${nextLineIndex + 1}`
+		tmp.innerText = `>${nextLineIndex + 1}<`
 		tmp.style.color = `red`;
 		prevIndex = nextLineIndex + 1;
 	} else prevIndex = -1;

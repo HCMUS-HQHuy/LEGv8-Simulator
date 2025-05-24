@@ -8,7 +8,7 @@ export function trigger() {
 		const lines = textarea.value.split("\n").length;
 		lineNumbers.innerHTML = "";
 		for(let i = 1; i <= lines + 1; i++) 
-			lineNumbers.innerHTML += `<div id = lineId${i}>${i.toString(10).padStart(2, ' ')}</div>`
+			lineNumbers.innerHTML += `<div id = lineId${i}>${i}&#8201</div>`
 	}
 
 	// Đồng bộ scroll giữa số dòng và textarea

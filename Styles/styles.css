@@ -395,7 +395,7 @@ body {
   color: var(--button-text-color); /* Sử dụng biến mới */
   
   font-size: 100%;
-  padding: 1% 8%;
+  padding: 1% 3%;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
@@ -545,14 +545,14 @@ body {
   align-items: stretch; /* Đảm bảo các phần tử con bắt đầu từ đầu */
   justify-content: space-between; /* Đẩy box đầu tiên sang trái, box cuối sang phải */
   font-size: 130%;
+  height: 360px; 
 }
 .parsedOutputTable {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 5px;
+  /* margin-top: 5px; */
   font-family: monospace;
   font-size: 100%;
-  border: 2px solid var(--border-color); /* Use variable */
   color: var(--text-color); /* Set base text color for table */
   background-color: var(--table-row-odd-bg); /* Set base background */
 }
@@ -563,7 +563,7 @@ body {
 .parsedOutputTable th,
 .parsedOutputTable td {
   border: 1px solid var(--table-border-color); /* Use variable */
-  padding: 8px 8px;
+  padding: 8px;
   text-align: center;
 }
 
@@ -585,12 +585,16 @@ body {
   color: var(--emphasis-color); /* Use variable */
 }
 .table-scroll-wrapper {
-  max-height: 319px; /* hoặc ví dụ: 256px */
+  /* max-height: 319px; hoặc ví dụ: 256px */
+  flex: 1;
   overflow-x: hidden;
   overflow-y: auto;
-  margin-top: 5px;
   position: relative;
   border: 2px solid var(--border-color); /* Use variable */
+}
+.flagBoxBorder, .registerBoxBorder {
+  border: 2px solid var(--border-color); /* Use variable */
+  flex: 1;
 }
 /* Scrollbar: thanh cuộn màu xanh lá, bắt đầu từ thead */
 .table-scroll-wrapper::-webkit-scrollbar {
@@ -643,7 +647,6 @@ body {
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
   flex: 0 0 6%;
-  height: 100%;
 }
 
 /* Registers */
@@ -652,8 +655,6 @@ body {
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
   align-items: flex-start;
-  flex: 0 0 67%; /* Không co giãn, chiếm 30% */
-  height: 100%;
 }
 
 /* dataMemoryBox */
