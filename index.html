@@ -712,12 +712,21 @@
       <div class = "code-editor">
         <div class = "line-numbers" id = "lineNumbers"> 1 </div>
         <textarea class = "instructionCode" id = "instructionCode" name = "message" placeholder="Enter LEGv8 code here, one instruction per line...">
+ADDI X1, X1, #2
+ADDI X2, X2, #3
+ADD	X3, X1, X2
+SUB	X4, X2, X1
+LDUR	X5, [X1, #0]	// X0 points to value1
+STUR	X3, [X1, #8]	// Store at offset for 'result'
+ORR	X6, X1, X2
+AND	X7, X1, X2
 CBNZ X20, Else
 ADDI X19, X19, #1
 B End_If
 Else:
 ADDI X19, X19, #2
 End_If:
+        
         </textarea>
         <div class="highlight-overlay" id="highlightOverlay"></div>
       </div>

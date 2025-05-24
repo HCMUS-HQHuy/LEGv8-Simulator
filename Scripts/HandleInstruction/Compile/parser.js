@@ -252,14 +252,26 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
 
 function parseRegisterNumber(regString) {
     if (!regString) throw new Error(`Register string is null or undefined.`);
-    const upperReg = regString.toUpperCase();
+    const upperReg = regString.toUpperCase().trim();
+
     if (upperReg === 'XZR') return 31;
-    if (upperReg === 'SP') return 28; // Theo convention, SP là X28
+    if (upperReg === 'SP') return 28; // Convention: SP is X28
+
+    // Handle #<number> format
+    const hashMatch = upperReg.match(/^#(\d+)$/);
+    if (hashMatch) {
+        const num = parseInt(hashMatch[1], 10);
+        if (num >= 0 && num <= 31) return num;
+        throw new Error(`Register number out of valid range: ${num}`);
+    }
+
+    // Handle X<number> format
     const match = upperReg.match(/^X(\d+)$/);
     if (match) {
         const num = parseInt(match[1], 10);
         if (num >= 0 && num <= 30) return num; // X0-X30
     }
+
     throw new Error(`Invalid register name: ${regString}`);
 }
 
