@@ -18,19 +18,18 @@ function compileCode() {
 let stepByStepMode = 0;
 let instructionPos = -1;
 let Components = null;
+let isFinish = true;
 
 async function execute(results) {
     if (validateParsedResults(results, "log-box") != true)
 		return;
-	
-	state.executing = true;
-
 	if (instructionPos === -1) {
 		Components = generateSignal.initialize(results);
 		instructionPos = 0;
 	}
 
-	while (state.executing) {
+	isFinish = false;
+	while (isFinish === false) {
 		console.log(`instructionPos: ${instructionPos}`);
 		currentInstruction.update(instructionPos, results[instructionPos]);
 		instructionPos = await new Promise((promise) => {
@@ -38,6 +37,7 @@ async function execute(results) {
 		});
 		if (instructionPos === -1 || stepByStepMode === 1) {
 			state.executing = false;
+			isFinish = true;
 		}
 		
 	}
@@ -49,11 +49,15 @@ export function trigger() {
         event.preventDefault();
 		results = compileCode();
 	});
+	state.executing = false;
 	document.getElementById('start-stop-animation').addEventListener('click', function(event) {
 		event.preventDefault();
-		if (state.executing === false) {
+		if (isFinish === true) {
 			execute(results);
 		}
+		if (state.executing === true) 
+			state.executing = false;
+		else state.executing = true;
 	});
 
 	document.getElementById('step-by-step-mode-button').addEventListener('click', function(event) {
