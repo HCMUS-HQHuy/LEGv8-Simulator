@@ -706,7 +706,10 @@
     <div class = "label-and-code-editor">
       <div class="label-code">
         <h2>Code</h2>
-        <button class = "import-code-button" id ="import-code">📄 Import code</button>
+          <label for="import-code" class="import-code-button">📄 Import code</label>
+          <input type="file" id="import-code" accept=".txt,.s,.asm" style="display: none;"> 
+          <!-- The actual file input is hidden -->
+          <span id="file-name-display" class="file-name-display">No file chosen</span>
       </div>
       <!-- Add id="instructionCode" to the textarea -->
       <div class = "code-editor">
@@ -989,6 +992,7 @@ End_If:
 </div>
   
 <script type="module" src="./Scripts/script.js"></script>
+<script type="module" src="./Scripts/HandleOutLook/importCode.js"></script>
 
 <div class="footer">
   Author: 23120015 - 23120304 (HCMUS - Honor Program) © 2025 LEGv8 Visual Simulator. All rights reserved.
