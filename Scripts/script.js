@@ -161,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
              cachedLineHeight = parseFloat(lineH) * fontSz; // Unitless multiplier
         }
         cachedPaddingTop = parseFloat(styles.paddingTop);
-        console.log(`Calculated Line Height: ${cachedLineHeight}px, Padding Top: ${cachedPaddingTop}px`);
     }
 
     // --- Function to position the highlight overlay ---

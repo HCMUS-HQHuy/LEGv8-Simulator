@@ -312,7 +312,6 @@ function updateSignExtend(currentState) {
     if (control.ALUSrc === 1) {
         // D-type (LDUR/STUR): Offset 9 bit (DT-address)
         if (opcode === '11111000010' || opcode === '11111000000') {
-            console.warn(`SignExtend: Using Imm9_20_12 for sign extension.`);
             inputBinary = SignExtend.substring(11, 20);
             originalBits = 9;
         }

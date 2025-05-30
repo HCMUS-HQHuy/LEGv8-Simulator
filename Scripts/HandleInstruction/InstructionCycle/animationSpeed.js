@@ -21,7 +21,6 @@ const StateInfor = {
 };
 
 function switchIcon(stateCode) {
-	console.log(`FROM Here ${stateCode}`);
 	const button = document.getElementById('start-stop-animation');
 	button.innerText = StateInfor[stateCode].icon;
 	button.title = StateInfor[stateCode].title;
