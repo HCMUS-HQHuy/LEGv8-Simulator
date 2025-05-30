@@ -9,25 +9,23 @@ export const state = {
 const svgCanvas = document.getElementById('zoomFrame');
 const StateInfor = {
 	start: {
-		icon: "▶",
+		icon: "⏹︎",
 		title: "Start animation",
 		call: () => svgCanvas.unpauseAnimations()  // wrapped in arrow function
 	},
 	stop: {
-		icon: "⏹︎",
+		icon: "▶",
 		title: "Stop animation",
 		call: () => svgCanvas.pauseAnimations()
 	}
 };
 
-let stateCode = "start"; // Track the current state
-export function switchIcon() {
+function switchIcon(stateCode) {
+	console.log(`FROM Here ${stateCode}`);
 	const button = document.getElementById('start-stop-animation');
-	StateInfor[stateCode].call();
-	if (stateCode === "start") stateCode = "stop";
-	else stateCode = "start";
 	button.innerText = StateInfor[stateCode].icon;
 	button.title = StateInfor[stateCode].title;
+	StateInfor[stateCode].call();
 }
 
 export function trigger() {
@@ -60,6 +58,7 @@ export function trigger() {
 }
 
 function enable() {
+	switchIcon("stop");
 	const rangeSlider = document.getElementById('range-slider');
 	const value = (rangeSlider.value - rangeSlider.min) / (rangeSlider.max - rangeSlider.min) * 100;
 	rangeSlider.style.background = `linear-gradient(to right, rgb(67, 161, 70) ${value}%, #ddd ${value}%)`;
@@ -67,6 +66,7 @@ function enable() {
 }
 
 function disable() {
+	switchIcon("start");
 	const rangeSlider = document.getElementById('range-slider');
 	const value = (rangeSlider.value - rangeSlider.min) / (rangeSlider.max - rangeSlider.min) * 100;
 	rangeSlider.style.background = `linear-gradient(to right,rgb(78, 92, 79) ${value}%, #ddd ${value}%)`;
