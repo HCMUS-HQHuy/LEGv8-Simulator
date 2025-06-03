@@ -40,7 +40,7 @@
   text-anchor: middle; /* Center text horizontally */
   dominant-baseline: central; /* Center text vertically */
   /* Default font size - can be overridden */
-  font-size: 20px;
+  font-size: 18px;
   font: monospace;
   /* Prevent text selection when dragging node */
   user-select: none;
