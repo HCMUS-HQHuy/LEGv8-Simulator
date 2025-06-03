@@ -130,10 +130,6 @@ function traverseAndAnimateBFS(components) {
 				});
 			}
 
-			if (target === 'Register.WriteData') {
-				console.log(`tartget: ${target}-> ${originalCallbacks}`)
-			}
-
 			console.log(`Creating animation for: ${source} -> ${target} (pathId: ${pathId})`);
 			createNodeWithAnimation({
 				value: value,
