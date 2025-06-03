@@ -162,7 +162,7 @@ function resetComponents(Components) {
 			() => {
 				document.getElementById(`mux-${i}-${Components[`Mux${i}`].option}-selected`).style.visibility = "visible";
 				document.getElementById(`mux-${i}-${Components[`Mux${i}`].option ^ 1}-selected`).style.visibility = "hidden";
-				document.getElementById(`mux-${i}-value`).textContent = Components[`Mux${i}`].option;
+				// document.getElementById(`mux-${i}-value`).textContent = Components[`Mux${i}`].option;
 			}
 		);
 	}
@@ -170,7 +170,7 @@ function resetComponents(Components) {
 	new Set(['write', 'read']).forEach(val => {
 		signalCallbackTable[`DataMemory.${val}Enable`].push(
 			() => {
-				document.getElementById(`data-memory-${val}-enable-value`).textContent = Components.DataMemory[`${val}Enable`];
+				// document.getElementById(`data-memory-${val}-enable-value`).textContent = Components.DataMemory[`${val}Enable`];
 			}
 		);
 	})
@@ -261,30 +261,30 @@ function resetComponents(Components) {
 	// ]
 	
 	
-	signalCallbackTable[`ALUControl.ALUOp`].push(
-		() => {document.getElementById(`alu-control-aluop-value`).textContent = Components.ALUControl.ALUOp;}
-	);
+	// signalCallbackTable[`ALUControl.ALUOp`].push(
+	// 	() => {document.getElementById(`alu-control-aluop-value`).textContent = Components.ALUControl.ALUOp;}
+	// );
 	
-	signalCallbackTable[`ALU.option`].push(
-		() => {document.getElementById(`alu-option-value`).textContent = Components.ALU.option;}
-	);
+	// signalCallbackTable[`ALU.option`].push(
+	// 	() => {document.getElementById(`alu-option-value`).textContent = Components.ALU.option;}
+	// );
 	
-	signalCallbackTable[`Register.option`].push(
-		() => {document.getElementById(`register-option-value`).textContent = Components.Register.option;}
-	);
+	// signalCallbackTable[`Register.option`].push(
+	// 	() => {document.getElementById(`register-option-value`).textContent = Components.Register.option;}
+	// );
 
 	for (let i = 1; i <= 2; i++) {
 		signalCallbackTable[`AndGate.input${i}`].push(
-			() => {document.getElementById(`and-gate-input${i}-value`).textContent = Components.AndGate[`input${i}`];}
+			// () => {document.getElementById(`and-gate-input${i}-value`).textContent = Components.AndGate[`input${i}`];}
 		);
 		signalCallbackTable[`OrGate.input${i}`].push(
-			() => {document.getElementById(`or-gate-input${i}-value`).textContent = Components.OrGate[`input${i}`];}
+			// () => {document.getElementById(`or-gate-input${i}-value`).textContent = Components.OrGate[`input${i}`];}
 		);
 	}
 	
 	signalCallbackTable[`PC.value`].push(
 		async () => {
-			document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;
+			// document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;
 			pcSignalPromiseResolve();
 		}
 	);
