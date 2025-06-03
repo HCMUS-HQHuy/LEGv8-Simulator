@@ -15,14 +15,15 @@ function compileCode() {
 	return results;
 }
 
-let stepByStepMode = 0;
 let instructionPos = -1;
 let Components = null;
 let isFinish = true;
 
 async function execute(results) {
-    if (validateParsedResults(results, "log-box") != true)
+    if (validateParsedResults(results, "log-box") != true) {
+		state.executing = false;
 		return;
+	}
 	if (instructionPos === -1) {
 		Components = generateSignal.initialize(results);
 		instructionPos = 0;
@@ -35,7 +36,7 @@ async function execute(results) {
 		instructionPos = await new Promise((promise) => {
 			generateSignal.start(Components, promise); // This triggers the signal generation
 		});
-		if (instructionPos === -1 || stepByStepMode === 1) {
+		if (instructionPos === -1 || state.stepByStepMode === 1) {
 			state.executing = false;
 			isFinish = true;
 		}
@@ -52,24 +53,12 @@ export function trigger() {
 	state.executing = false;
 	document.getElementById('start-stop-animation').addEventListener('click', function(event) {
 		event.preventDefault();
-		if (isFinish === true) {
-			execute(results);
-		}
 		if (state.executing === true) 
 			state.executing = false;
 		else state.executing = true;
-	});
 
-	document.getElementById('step-by-step-mode-button').addEventListener('click', function(event) {
-		event.preventDefault();
-		stepByStepMode ^= 1;
-		if (stepByStepMode) {
-			document.getElementById('step-by-step-mode-button').style.setProperty('background-color', 'var(--button-hover-bg-color)');
-			document.getElementById('step-by-step-mode-button').style.setProperty('color', 'var(--button-hover-text-color)');
-		}
-		else {
-			document.getElementById('step-by-step-mode-button').style.setProperty('background-color', 'var(--button-bg-color)');
-			document.getElementById('step-by-step-mode-button').style.setProperty('color', 'var(--button-text-color)');
+		if (isFinish === true) {
+			execute(results);
 		}
 	});
 }

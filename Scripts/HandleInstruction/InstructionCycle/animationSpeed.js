@@ -3,7 +3,8 @@ const MININUM_DURATION = 500
 
 export let DURATION_ANIMATION = 2000;
 export const state = {
-	executing: false
+	executing: false,
+	stepByStepMode: false
 };
 
 const svgCanvas = document.getElementById('zoomFrame');
@@ -54,6 +55,21 @@ export function trigger() {
 		enable();
 	});
 	state.executing = false;
+	state.stepByStepMode = 0;
+
+	document.getElementById('step-by-step-mode-button').addEventListener('click', function(event) {
+		event.preventDefault();
+		state.stepByStepMode ^= 1;
+		if (state.stepByStepMode) {
+			document.getElementById('step-by-step-mode-button').style.setProperty('background-color', 'var(--button-hover-bg-color)');
+			document.getElementById('step-by-step-mode-button').style.setProperty('color', 'var(--button-hover-text-color)');
+		}
+		else {
+			document.getElementById('step-by-step-mode-button').style.setProperty('background-color', 'var(--button-bg-color)');
+			document.getElementById('step-by-step-mode-button').style.setProperty('color', 'var(--button-text-color)');
+		}
+	});
+
 }
 
 function enable() {

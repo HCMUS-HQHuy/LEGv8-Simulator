@@ -72,6 +72,7 @@ import { DURATION_ANIMATION } from "./animationSpeed.js";
 import { watchDataMemory } from "../Compile/memoryState.js";
 import { watchRegisters } from "../Compile/memoryState.js";
 import { shapes } from "./shape.js";
+import { state } from "./animationSpeed.js";
 
 function getValueFromComponents(source, components) {
 	const [comp, field] = source.split('.');
@@ -150,28 +151,31 @@ function traverseAndAnimateBFS(components) {
 function resetComponents(Components) {
 	for (const key in signalCallbackTable)
 		if (signalCallbackTable.hasOwnProperty(key))
-			signalCallbackTable[key] = null;
+			signalCallbackTable[key] = [() => {
+				if (state.stepByStepMode)
+					state.executing = false;
+			}];
 	
 	
 	for (let i = 0; i <= 3; i++) {
-		signalCallbackTable[`Mux${i}.option`] = [
+		signalCallbackTable[`Mux${i}.option`].push(
 			() => {
 				document.getElementById(`mux-${i}-${Components[`Mux${i}`].option}-selected`).style.visibility = "visible";
 				document.getElementById(`mux-${i}-${Components[`Mux${i}`].option ^ 1}-selected`).style.visibility = "hidden";
 				document.getElementById(`mux-${i}-value`).textContent = Components[`Mux${i}`].option;
 			}
-		];
+		);
 	}
 	
 	new Set(['write', 'read']).forEach(val => {
-		signalCallbackTable[`DataMemory.${val}Enable`] = [
+		signalCallbackTable[`DataMemory.${val}Enable`].push(
 			() => {
 				document.getElementById(`data-memory-${val}-enable-value`).textContent = Components.DataMemory[`${val}Enable`];
 			}
-		];
+		);
 	})
 	
-	signalCallbackTable[`DataMemory.address`] = [
+	signalCallbackTable[`DataMemory.address`].push(
 		() => {
 			const index = Components.DataMemory.address;
 			const indexHex = `0x${(index*8).toString(16).toUpperCase().padStart(4, '0')}`;
@@ -186,37 +190,37 @@ function resetComponents(Components) {
 				document.getElementById(`row-${indexHex}`).style.color = "";
 			}, DURATION_ANIMATION);
 		}
-	]
+	);
 	
-	signalCallbackTable[`DataMemory.WriteData`] = [
+	signalCallbackTable[`DataMemory.WriteData`].push(
 		() => { document.getElementById('data-memory-write-data-value').textContent = Components.DataMemory.WriteData}
-	]
+	);
 	
-	signalCallbackTable[`ALU.input2`] = [
+	signalCallbackTable[`ALU.input2`].push(
 		() => { document.getElementById('add-2-input-2-value').textContent = Components.ALU.input2; }
-	]
-	signalCallbackTable[`ALU.input1`] = [
+	);
+	signalCallbackTable[`ALU.input1`].push(
 		() => {
 			document.getElementById('add-2-input-1-value').textContent = Components.ALU.input1; 
 			document.getElementById('add-2-output-value').textContent = Components.ALU.output; 
 		}
-	]
+	);
 	
-	signalCallbackTable[`SignExtend.input`] = [
+	signalCallbackTable[`SignExtend.input`].push(
 		() => {
 			document.getElementById('sign-extend-input-value').textContent = Components.SignExtend.input.toString(2).padStart(8, '0');
 			document.getElementById('sign-extend-output-value').textContent = Components.SignExtend.output; 
 		}
-	]
+	);
 	
-	signalCallbackTable['ShiftLeft2.input'] = [
+	signalCallbackTable['ShiftLeft2.input'].push(
 		() => {
 			document.getElementById('shift-left-2-input-value').textContent = Components.ShiftLeft2.input; 
 			document.getElementById('shift-left-2-output-value').textContent = Components.ShiftLeft2.output; 
 		}
-	]
+	);
 	
-	signalCallbackTable[`Register.WriteData`] = [
+	signalCallbackTable[`Register.WriteData`].push(
 		() => {
 			const index = Components.Register.WriteReg;
 			if (index == 31) {
@@ -238,10 +242,10 @@ function resetComponents(Components) {
 			}, DURATION_ANIMATION);
 			document.getElementById(`register-WriteData-value`).textContent = `0x${value.toString(16).toUpperCase().padStart(2, '0')}`;
 		}
-	]
+	);
 	
 	new Set(['Read1', 'Read2', 'WriteReg']).forEach(val => {
-		signalCallbackTable[`Register.${val}`] = [
+		signalCallbackTable[`Register.${val}`].push(
 			() => {
 				document.getElementById(`register-${val}-value`).textContent = `${Components.Register[`${val}`]}`;
 				if (val === 'Read2') {
@@ -249,7 +253,7 @@ function resetComponents(Components) {
 					document.getElementById(`register-ReadData2-value`).textContent = `${Components.Register[`ReadData2`]}`;
 				}
 			}
-		];
+		);
 	})
 	
 	// signalCallbackTable[`Register.Read1`] = [
@@ -257,42 +261,42 @@ function resetComponents(Components) {
 	// ]
 	
 	
-	signalCallbackTable[`ALUControl.ALUOp`] = [
+	signalCallbackTable[`ALUControl.ALUOp`].push(
 		() => {document.getElementById(`alu-control-aluop-value`).textContent = Components.ALUControl.ALUOp;}
-	];
+	);
 	
-	signalCallbackTable[`ALU.option`] = [
+	signalCallbackTable[`ALU.option`].push(
 		() => {document.getElementById(`alu-option-value`).textContent = Components.ALU.option;}
-	];
+	);
 	
-	signalCallbackTable[`Register.option`] = [
+	signalCallbackTable[`Register.option`].push(
 		() => {document.getElementById(`register-option-value`).textContent = Components.Register.option;}
-	];
+	);
 
 	for (let i = 1; i <= 2; i++) {
-		signalCallbackTable[`AndGate.input${i}`] = [
+		signalCallbackTable[`AndGate.input${i}`].push(
 			() => {document.getElementById(`and-gate-input${i}-value`).textContent = Components.AndGate[`input${i}`];}
-		];
-		signalCallbackTable[`OrGate.input${i}`] = [
+		);
+		signalCallbackTable[`OrGate.input${i}`].push(
 			() => {document.getElementById(`or-gate-input${i}-value`).textContent = Components.OrGate[`input${i}`];}
-		];
+		);
 	}
 	
-	signalCallbackTable[`PC.value`] = [
+	signalCallbackTable[`PC.value`].push(
 		async () => {
 			document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;
 			pcSignalPromiseResolve();
 		}
-	];
+	);
 	
-	signalCallbackTable[`InstructionMemory.ReadAddress`] = [
+	signalCallbackTable[`InstructionMemory.ReadAddress`].push(
 		() => {
 			document.getElementById(`instruction-memory-read-address-value`).textContent = `0x${(Components.InstructionMemory.ReadAddress).toString(16).padStart(2, '0').toUpperCase()}`;
 			const InstructionMemory = Components.InstructionMemory;
 			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2];
 			document.getElementById(`instruction-memory-instruction-[31-0]-value`).textContent = `0x${parseInt(encodedInstruction, 2).toString(16).padStart(8, '0').toUpperCase()}`;
 		}
-	];
+	);
 }
 
 export function initialize(code) {
