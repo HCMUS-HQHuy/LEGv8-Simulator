@@ -71,8 +71,10 @@ export function createNodeWithAnimation({
 
     animateMotion.addEventListener('beginEvent', () => {
         document.getElementById(pathId).style.stroke = 'var(--actived-line)';
-        document.getElementById(pathId + '-circle').style.stroke = 'var(--actived-line)';
+        document.getElementById(pathId + '-clone')?.style && (document.getElementById(pathId + '-clone').style.stroke = 'var(--actived-line)');
+        document.getElementById(pathId + '-circle')?.style && (document.getElementById(pathId + '-circle').style.stroke = 'var(--actived-line)');
         document.getElementById(pathId).style['stroke-width'] = 5;
+        document.getElementById(pathId + '-clone')?.style && (document.getElementById(pathId + '-clone').style['stroke-width'] = 5);
     });
 
     animateMotion.addEventListener('endEvent', (event) => {
@@ -86,8 +88,10 @@ export function createNodeWithAnimation({
         }
         shape.style.fill = 'gray';
         document.getElementById(pathId).style.stroke = previousColor;
-        document.getElementById(pathId + '-circle').style.stroke = previousColor;
+        document.getElementById(pathId + '-clone')?.style && (document.getElementById(pathId + '-clone').style.stroke = previousColor);
+        document.getElementById(pathId + '-circle')?.style && (document.getElementById(pathId + '-circle').style.stroke = previousColor);
         document.getElementById(pathId).style['stroke-width'] = previouswidth;
+        document.getElementById(pathId + '-clone')?.style && (document.getElementById(pathId + '-clone').style['stroke-width'] = previouswidth);
         // event.target.closest('g')?.remove();
     });
     const mpath = document.createElementNS(svgNS, 'mpath');

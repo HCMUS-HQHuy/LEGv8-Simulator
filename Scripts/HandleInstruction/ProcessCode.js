@@ -61,4 +61,8 @@ export function trigger() {
 			execute(results);
 		}
 	});
+	
+	// state.executing = true;
+	// results = compileCode();
+	// execute(results);
 }

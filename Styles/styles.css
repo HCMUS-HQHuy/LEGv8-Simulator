@@ -395,7 +395,7 @@ body {
   color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }
 .help-fullscreen {
-  top: 19px;
+  top: 18px;
   right: 65px;
   position: absolute;
 
@@ -405,7 +405,7 @@ body {
   background-color: var(--frame-bg-color);
 }
 .help-compile {
-  top: 70px;
+  top: 69px;
   right: 65px;
   position: absolute;
 
@@ -414,7 +414,7 @@ body {
   background-color: var(--frame-bg-color);
 }
 .help-start {
-  top: 119px;
+  top: 118px;
   right: 65px;
   position: absolute;
 
@@ -423,7 +423,7 @@ body {
   background-color: var(--frame-bg-color);
 }
 .help-mode {
-  top: 169px;
+  top: 168px;
   right: 65px;
   position: absolute;
 
