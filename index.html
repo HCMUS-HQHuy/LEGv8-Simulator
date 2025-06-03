@@ -19,7 +19,7 @@
     <h2>Frame</h2>
 
     <div class = "frame">
-      <svg viewBox = "0 0 1800 3050" id = "zoomFrame">
+      <svg viewBox = "0 0 1900 3050" id = "zoomFrame">
       <g class = "content" id = "zoomContent">
         <!-- Signal Lines Layer -->
         <g id = "signal-lines">
@@ -139,7 +139,7 @@
                 d          = "M420,630 L490,630 L490,380 L655,380" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
-          <path id         = temporary-circle
+          <path id         = "instruction-memory-to-control-path-circle"
                 d          = "M490,630"
                 class      = "signal-line"
                 marker-end = "url(#circle)" />
@@ -148,7 +148,7 @@
                 d          = "M420,630 L490,630 L490,540 L775,540" 
                 class      = "signal-line" 
                 marker-end = "url(#arrow)" />
-          <path id         = temporary-circle
+          <path id         = "instruction-memory-to-read-register-1-path-circle"
                 d          = "M490,540"
                 class      = "signal-line"
                 marker-end = "url(#circle)" />
@@ -541,7 +541,6 @@
 
         <g id="data-signal-nodes">
         </g>
-
       </g>
 
       <g id = "selected-component">
@@ -683,10 +682,20 @@
 
       </svg>
 
+      <g class = "help-group" style = "display: none;">  
+        <span class = "help-fullscreen">Fullscreen</span>
+        <span class = "help-compile">Compile</span>
+        <span class = "help-start">Start</span>
+        <span class = "help-mode">Mode</span>
+        <span class = "help-mode-option">default:auto|step</span>
+      </g>
+      
       <button class = "frame-button" id = "fullscreen-btn" title = "Toggle fullscreen"></button>
       <button class = "compile-button" id = "compile-btn" title = "Compile code">⚙</button>
       <button class = "start-button" id = "start-stop-animation" title = "Start animation">▶</button>
-      <button class = "stop-button"  id = "step-by-step-mode-button" title = "Step by step mode">⏭</button>
+      <button class = "stop-button" id = "step-by-step-mode-button" title = "Step by step mode">⏭</button>
+
+      <button class = "help-button" id = "help-button" title = "Help">?</button>
 
       <div class = "command-box">
         <p id = "assembly-instruction"> </p>
@@ -708,8 +717,6 @@
         <h2>Code</h2>
           <label for="import-code" class="import-code-button">📄 Import code</label>
           <input type="file" id="import-code" accept=".txt,.s,.asm" style="display: none;"> 
-          <!-- The actual file input is hidden -->
-          <span id="file-name-display" class="file-name-display">No file chosen</span>
       </div>
       <!-- Add id="instructionCode" to the textarea -->
       <div class = "code-editor">
@@ -717,19 +724,18 @@
         <textarea class = "instructionCode" id = "instructionCode" name = "message" placeholder="Enter LEGv8 code here, one instruction per line...">
 ADDI X1, X1, #2
 ADDI X2, X2, #3
-ADD	X3, X1, X2
-SUB	X4, X2, X1
-LDUR	X5, [X1, #0]	// X0 points to value1
-STUR	X3, [X1, #8]	// Store at offset for 'result'
-ORR	X6, X1, X2
-AND	X7, X1, X2
+ADD X3, X1, X2
+SUB X4, X2, X1
+LDUR X5, [X1, #0] // X0 points to value1
+STUR X3, [X1, #8] // Store at offset for 'result'
+ORR X6, X1, X2
+AND X7, X1, X2
 CBNZ X20, Else
 ADDI X19, X19, #1
 B End_If
 Else:
 ADDI X19, X19, #2
-End_If:
-        
+End_If:        
         </textarea>
         <div class="highlight-overlay" id="highlightOverlay"></div>
       </div>

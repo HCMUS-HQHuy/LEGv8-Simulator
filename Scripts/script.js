@@ -322,3 +322,31 @@ window.addEventListener('DOMContentLoaded', function() {
   const outputContainer = document.querySelector('.outputContainer');
   outputContainer.style.height = flagsBox.offsetHeight + 'px';
 });
+
+const helpButton = document.getElementById("help-button");
+const helpGroups = document.querySelectorAll(".help-group");
+
+let helpVisible = false;
+
+function showHelpGroups() {
+helpGroups.forEach(g => g.style.display = "block");
+helpVisible = true;
+}
+
+function hideHelpGroups() {
+helpGroups.forEach(g => g.style.display = "none");
+helpVisible = false;
+}
+
+helpButton.addEventListener("click", (event) => {
+    event.stopPropagation(); // Ngăn click lan ra ngoài SVG
+    if (!helpVisible) {
+        showHelpGroups();
+    } else {
+        hideHelpGroups();
+    }
+});
+
+document.addEventListener("click", () => {
+    if (helpVisible) hideHelpGroups();
+});

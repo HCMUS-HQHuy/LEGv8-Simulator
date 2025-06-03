@@ -13,6 +13,8 @@
   --mem-label-fill: #bdb8b8; /* Memory specific labels */
   --label-start-fill: #fff; /* Assuming this label is on the main background */
   --signal-line-stroke: #6aff4d; /* Bright green signal */
+  --actived-line: yellow;
+  --help-line-stroke: red; /* Bright green signal */
   --emphasis-color: red; /* For moving dot, last table cell */
   --line-number-bg: #000;
   --line-number-color: #169976;
@@ -43,6 +45,8 @@ body.light {
   --mem-label-fill: #555555; /* Dark gray */
   --label-start-fill: #000000; /* Assuming this label is on the main background */
   --signal-line-stroke: #228B22; /* Forest green */
+  --help-line-stroke: red; /* Forest green */
+  --actived-line: rgb(244, 186, 13);
   --emphasis-color: red; /* Red usually works on light too */
   --line-number-bg: #f0f0f0;
   --line-number-color: #555555;
@@ -72,6 +76,8 @@ body.dark {
   --mem-label-fill: #bdb8b8;
   --label-start-fill: #fff;
   --signal-line-stroke: #6aff4d;
+  --help-line-stroke: red;
+  --actived-line: yellow;
   --emphasis-color: red;
   --line-number-bg: #000;
   --line-number-color: #169976;
@@ -306,6 +312,7 @@ body {
   transition: background-color 0.3s, color 0.3s;
 
   position: absolute;
+  background-color: var(--frame-bg-color);
 }
 .frame-button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
@@ -324,6 +331,7 @@ body {
   transition: background-color 0.3s, color 0.3s;
 
   position: absolute;
+  background-color: var(--frame-bg-color);
 }
 .compile-button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
@@ -360,11 +368,80 @@ body {
   transition: background-color 0.3s, color 0.3s;
 
   position: absolute;
+  background-color: var(--frame-bg-color);
 }
 .stop-button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
   color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }
+
+.help-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  bottom: 10px;
+  right: 10px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+  background-color: var(--frame-bg-color);
+}
+.help-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
+.help-fullscreen {
+  top: 19px;
+  right: 65px;
+  position: absolute;
+
+  font-size: 20px;
+  color:#007acc;
+
+  background-color: var(--frame-bg-color);
+}
+.help-compile {
+  top: 70px;
+  right: 65px;
+  position: absolute;
+
+  font-size: 20px;
+  color:#007acc;
+  background-color: var(--frame-bg-color);
+}
+.help-start {
+  top: 119px;
+  right: 65px;
+  position: absolute;
+
+  font-size: 20px;
+  color:#007acc;
+  background-color: var(--frame-bg-color);
+}
+.help-mode {
+  top: 169px;
+  right: 65px;
+  position: absolute;
+
+  font-size: 20px;
+  color:#007acc;
+  background-color: var(--frame-bg-color);
+}
+.help-mode-option {
+  top: 205px;
+  right: 10px;
+  position: absolute;
+
+  font-size: 20px;
+  color:#007acc;
+  background-color: var(--frame-bg-color);
+}
+
+
 /* codeBox */
 .codeBox {
   flex: 0 0 21%; /* Không co giãn, chiếm 30% */

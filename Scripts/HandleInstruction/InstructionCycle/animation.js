@@ -70,7 +70,7 @@ export function createNodeWithAnimation({
     const previouswidth = document.getElementById(pathId).style['stroke-width'];
 
     animateMotion.addEventListener('beginEvent', () => {
-        document.getElementById(pathId).style.stroke = '#c93006';
+        document.getElementById(pathId).style.stroke = 'var(--actived-line)';
         document.getElementById(pathId).style['stroke-width'] = 5;
     });
 
