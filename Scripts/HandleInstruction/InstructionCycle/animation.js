@@ -66,6 +66,14 @@ export function createNodeWithAnimation({
     animateMotion.setAttribute('begin', 'indefinite');
     animateMotion.setAttribute('fill', 'freeze');
 
+    const previousColor = document.getElementById(pathId).style.stroke;
+    const previouswidth = document.getElementById(pathId).style['stroke-width'];
+
+    animateMotion.addEventListener('beginEvent', () => {
+        document.getElementById(pathId).style.stroke = '#c93006';
+        document.getElementById(pathId).style['stroke-width'] = 5;
+    });
+
     animateMotion.addEventListener('endEvent', (event) => {
         if (Array.isArray(onEndCallback)) {
             onEndCallback.forEach(cb => {
@@ -76,6 +84,8 @@ export function createNodeWithAnimation({
             });
         }
         shape.style.fill = 'gray';
+        document.getElementById(pathId).style.stroke = previousColor;
+        document.getElementById(pathId).style['stroke-width'] = previouswidth;
         // event.target.closest('g')?.remove();
     });
     const mpath = document.createElementNS(svgNS, 'mpath');
