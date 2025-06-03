@@ -66,7 +66,6 @@ export function createNodeWithAnimation({
     animateMotion.setAttribute('begin', 'indefinite');
     animateMotion.setAttribute('fill', 'freeze');
 
-    // Xóa node sau khi animation kết thúc (không cần giữ lại ở đích)
     animateMotion.addEventListener('endEvent', (event) => {
         if (Array.isArray(onEndCallback)) {
             onEndCallback.forEach(cb => {
@@ -76,8 +75,8 @@ export function createNodeWithAnimation({
                 else console.warn("onEndCallback list contains a non-function");
             });
         }
-
-        event.target.closest('g')?.remove();
+        shape.style.fill = 'gray';
+        // event.target.closest('g')?.remove();
     });
     const mpath = document.createElementNS(svgNS, 'mpath');
     mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${pathId}`);
