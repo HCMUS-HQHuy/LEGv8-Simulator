@@ -315,7 +315,7 @@ function resetComponents(Components) {
 	
 	signalCallbackTable[`PC.value`].push(
 		async () => {
-			// document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).toUpperCase()}`;
+			document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).padStart(4, '0').toUpperCase()}`;
 			pcSignalPromiseResolve();
 		}
 	);

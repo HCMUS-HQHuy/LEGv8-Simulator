@@ -37,8 +37,8 @@ async function execute(results) {
 			generateSignal.start(Components, promise); // This triggers the signal generation
 		});
 		if (instructionPos === -1 || state.stepByStepMode === 1) {
-			state.executing = false;
 			isFinish = true;
+			state.executing = false;
 		}
 		
 	}
