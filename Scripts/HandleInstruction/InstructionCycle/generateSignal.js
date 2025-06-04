@@ -62,6 +62,23 @@ const signalCallbackTable = {
 	"PC.value": null
 };
 
+const arrayPath = [
+	'sign-extend-to-shift-left-2-path',
+	'shift-left-2-to-add-1-path',
+	'sign-extend-to-mux-2-1-path',
+	'shift-left-2-to-add-1-path',
+	'ALU-add-1-to-mux-0-1-path',
+	'ALU-add-0-to-mux-0-0-path'
+];
+
+const PCPath = [
+	'pc-to-ALU-add-0-path',
+	'const-4-to-ALU-add-0-path',
+	'pc-to-ALU-add-1-path',
+	'pc-to-instruction-memory-path',
+	'mux-0-to-pc-path'
+]
+
 import { getComponents } from "../Compile/Define/components.js";
 import { Connections } from "../Compile/Define/Connections.js"
 import {createNodeWithAnimation} from "./animation.js"
@@ -131,8 +148,26 @@ function traverseAndAnimateBFS(components) {
 			}
 
 			console.log(`Creating animation for: ${source} -> ${target} (pathId: ${pathId})`);
+			let cloneValue = value;
+			if (arrayPath.includes(pathId)){
+				const bigValue = BigInt(value); // Convert to BigInt
+				const hexValue = (bigValue & 0xFFFFFFFFFFFFFFFFn) // Mask to 64 bits
+					.toString(16)
+					.toUpperCase()
+					.padStart(16, '0');
+				cloneValue = `0x${hexValue}`;
+			}
+			else if (PCPath.includes(pathId)){
+				const bigValue = BigInt(value); // Convert to BigInt
+				const hexValue = (bigValue & 0xFFFFFFFFFFFFFFFFn) // Mask to 64 bits
+					.toString(16)
+					.toUpperCase()
+					.padStart(4, '0');
+				cloneValue = `0x${hexValue}`;
+			}
+
 			createNodeWithAnimation({
-				value: value,
+				value: cloneValue,
 				fieldName: `${target}`,
 				onEndCallback: originalCallbacks,
 				pathId: pathId,
