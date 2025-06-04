@@ -69,10 +69,15 @@ export function computeOutputs(componentName, components) {
 	}
 }
 
+// ADDI X1, X1, #2
+// ADDI X2, X2, #3
+// STUR X2, [X1, #8]
+
 function doALUOperation(currentState) {
     const aluControlCode = currentState['ALU'].option;
-    const operand1 = currentState['ALU'].input1;
-    const operand2 = currentState['ALU'].input2;
+    // some trick herre (reverse values!!! =))
+    const operand2 = currentState['ALU'].input1;
+    const operand1 = currentState['ALU'].input2;
 	switch (aluControlCode) {
 		case '0010': // ADD
 			return operand1 + operand2;
@@ -172,13 +177,10 @@ function updateControlUnit(currentState) {
         if (opcode11bit === D_TYPE_OPCODES['LDUR']) { // LDUR
             currentState.Control.RegWrite = 1;
             currentState.Control.MemRead = 1;
-            currentState.Control.MemtoReg = 1;      // Dữ liệu từ Memory ghi vào Reg
-            // Reg2Loc = 0 (Mux1 chọn Rt làm thanh ghi đích)
-            // MemWrite, Branch, UncondBranch = 0
-        } else if (opcode11bit === D_TYPE_OPCODES['STUR']) { // STUR
+            currentState.Control.MemtoReg = 1;
+        } else if (opcode11bit === D_TYPE_OPCODES['STUR']) {
             currentState.Control.MemWrite = 1;
-            // Reg2Loc = 0 (Mux1 chọn Rt làm thanh ghi nguồn để ghi vào memory)
-            // RegWrite, MemRead, MemtoReg, Branch, UncondBranch = 0
+            currentState.Control.Reg2Loc = 1
         }
         // console.log(`Control set for D-format (Opcode: ${opcode11bit})`);
 
@@ -312,6 +314,7 @@ function updateSignExtend(currentState) {
     if (control.ALUSrc === 1) {
         // D-type (LDUR/STUR): Offset 9 bit (DT-address)
         if (opcode === '11111000010' || opcode === '11111000000') {
+            console.warn('SignExtend: ', SignExtend)
             inputBinary = SignExtend.substring(11, 20);
             originalBits = 9;
         }
@@ -357,6 +360,7 @@ function updateSignExtend(currentState) {
     let outputValue = null;
     if (inputBinary !== null && originalBits > 0) {
         outputValue = signExtend(inputBinary, originalBits, targetBits);
+        console.warn(`inputBinary: ${inputBinary} -> ${outputValue}`)
     }
 
     currentState.SignExtend.input = parseInt(inputBinary, 2);

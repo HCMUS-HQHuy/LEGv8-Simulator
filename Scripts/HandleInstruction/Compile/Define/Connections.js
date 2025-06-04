@@ -21,8 +21,8 @@ export const Connections = {
 		{ source: 'InstructionMemory.Rn_09_05', target: 'Register.Read1', pathId: 'instruction-memory-to-read-register-1-path' },
 		{ source: 'InstructionMemory.RdRt_04_00', target: 'Register.WriteReg', pathId: 'instruction-memory-to-write-register-path' },
 
-		{ source: 'InstructionMemory.RdRt_04_00', target: 'Mux1.input0', pathId: 'instruction-memory-to-mux-1-0-path' },
-		{ source: 'InstructionMemory.Rm_20_16',   target: 'Mux1.input1', pathId: 'instruction-memory-to-mux-1-1-path' },
+		{ source: 'InstructionMemory.Rm_20_16',   target: 'Mux1.input0', pathId: 'instruction-memory-to-mux-1-0-path'},
+		{ source: 'InstructionMemory.RdRt_04_00', target: 'Mux1.input1', pathId: 'instruction-memory-to-mux-1-1-path' },
 		
 		{ source: 'InstructionMemory.SignExtend', target: 'SignExtend.input', pathId: 'instruction-memory-to-sign-extend-path', condition: 'I-type' },
 	],
