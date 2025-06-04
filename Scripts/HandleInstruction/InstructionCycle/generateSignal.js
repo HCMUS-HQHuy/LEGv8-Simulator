@@ -219,7 +219,7 @@ function resetComponents(Components) {
 			setTimeout(() => {
 				document.getElementById(`row-${indexHex}`).style.backgroundColor = "";
 				document.getElementById(`row-${indexHex}`).style.color = "";
-			}, DURATION_ANIMATION);
+			}, DURATION_ANIMATION * 5);
 		}
 	);
 	
@@ -270,7 +270,7 @@ function resetComponents(Components) {
 			setTimeout(() => {
 				document.getElementById(`${indexHex}`).style.backgroundColor = "";
 				document.getElementById(`${indexHex}`).style.color = "";
-			}, DURATION_ANIMATION);
+			}, DURATION_ANIMATION * 5);
 			document.getElementById(`register-WriteData-value`).textContent = `0x${value.toString(16).toUpperCase().padStart(2, '0')}`;
 		}
 	);

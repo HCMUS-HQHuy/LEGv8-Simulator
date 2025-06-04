@@ -716,9 +716,9 @@ body {
 .dataMemoryTable tbody tr:hover {
   background-color: var(--table-row-hover-bg); /* Use variable */
 }
-.dataMemoryTable td:last-child {
-  color: var(--emphasis-color); /* Use variable */
-}
+/* .dataMemoryTable td:last-child { */
+  /* color: var(--emphasis-color); Use variable */
+/* } */
 .flagsBox {
   padding: 0 1%; /* Padding ngang (trái và phải) */
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
