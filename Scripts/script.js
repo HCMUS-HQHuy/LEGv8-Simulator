@@ -329,13 +329,20 @@ const helpGroups = document.querySelectorAll(".help-group");
 let helpVisible = false;
 
 function showHelpGroups() {
-helpGroups.forEach(g => g.style.display = "block");
-helpVisible = true;
+    helpGroups.forEach(g => g.style.display = "block");
+    helpVisible = true;
+
+    helpButton.style.setProperty('background-color', 'var(--button-hover-bg-color)');
+    helpButton.style.setProperty('color', 'var(--button-hover-text-color)');
+
 }
 
 function hideHelpGroups() {
-helpGroups.forEach(g => g.style.display = "none");
-helpVisible = false;
+    helpGroups.forEach(g => g.style.display = "none");
+    helpVisible = false;
+
+    helpButton.style.setProperty('background-color', 'var(--button-bg-color)');
+    helpButton.style.setProperty('color', 'var(--button-text-color)');
 }
 
 helpButton.addEventListener("click", (event) => {
