@@ -338,11 +338,11 @@
                 class      = "control-signal-line" />
 
           <path id         = "control-uncondbranch-path"
-                d          = "M730,300 L1650,300"
+                d          = "M730,300 L1655,300"
                 class      = "control-signal-line" 
                 style      = "display: none" />
           <path id         = "control-uncondbranch-path-clone"
-                d          = "M730,300 L1670,300"
+                d          = "M730,300 L1675,300"
                 class      = "control-signal-line" />
 
           <path id         = "control-branch-path"
@@ -412,20 +412,20 @@
 
           <!-- AND gate -->
           <path id         = "AND-gate-to-OR-gate-path"
-                d          = "M1430,500 L1590,500 L1590,325 L1650,325"
+                d          = "M1430,500 L1590,500 L1590,325 L1655,325"
                 class      = "control-signal-line" 
                 style      = "display: none" />
           <path id         = "AND-gate-to-OR-gate-path-clone"
-                d          = "M1430,500 L1590,500 L1590,325 L1670,325"
+                d          = "M1430,500 L1590,500 L1590,325 L1675,325"
                 class      = "control-signal-line" />
 
           <!-- OR gate -->
           <path id         = "OR-gate-to-mux-0-1-path"
-                d          = "M1730,315 L1760,315 L1760,140, L1745,140"
+                d          = "M1730,312.5 L1760,312.5 L1760,140, L1745,140"
                 class      = "control-signal-line" 
                 style      = "display: none" />
           <path id         = "OR-gate-to-mux-0-1-path-clone"
-                d          = "M1730,315 L1760,315 L1760,140, L1730,140"
+                d          = "M1730,312.5 L1760,312.5 L1760,140, L1730,140"
                 class      = "control-signal-line" />
         </g>
 
@@ -687,8 +687,8 @@
           </g>
 
           <!-- OR gate -->
-          <g id="or-gate" transform="translate(1650, 265)">
-            <path d="M0,0 Q40,40 0,100 Q50,100 80,50 Q50,0 0,0" stroke="deepskyblue" class="control-component" />
+          <g id="or-gate" transform="translate(1650, 262.5)">
+            <path d="M0,0 Q50,50 0,100 Q50,100 80,50 Q50,0 0,0" stroke="deepskyblue" class="control-component" />
 
             <text id = "or-gate-input1-value" x = "-5" y = "25" class = "mem-control-label"></text>
             <text id = "or-gate-input2-value" x = "-5" y = "80" class = "mem-control-label"></text>
@@ -835,18 +835,53 @@
           <text x = "80"   y = "0"   class = "label"> ╲ </text>
         </g>
       </g>
-
-      </svg>
+    </svg>
 
       <g class = "help-group" style = "display: none;">
       <!-- <g class = "help-group"> -->
         <div class = "help-overlay"></div>
+        <svg class = "help-register" viewBox = "0 0 1930 3050">
+          <g id="register-selected" transform = "translate(10, 10), scale(1.5)">
+            <rect x = "-10" y = "-10" width = "187" height = "237" class = "selected-component" />
+            <rect width = "170" height = "220" class = "component" />
+
+            <text x = "115" y = "205" class = "label"> Registers </text>
+
+            <text x = "5"   y = "20"  class = "mem-label"> Read </text>
+            <text x = "5"   y = "36"  class = "mem-label"> register 1 </text>
+            <text id = "register-Read1-value" x = "5"  y = "52" class = "component-value">0</text>
+
+            <text x = "5"   y = "75"  class = "mem-label"> Read </text>
+            <text x = "5"   y = "91"  class = "mem-label"> register 2 </text>
+            <text id = "register-Read2-value" x = "5"  y = "107" class = "component-value">0</text>
+      
+            <text x = "5"   y = "130" class = "mem-label"> Write </text>
+            <text x = "5"   y = "146" class = "mem-label"> register </text>
+            <text id = "register-WriteReg-value" x = "5"  y = "161" class = "component-value">0</text>
+              
+            <text x = "5"   y = "182" class = "mem-label"> Write </text>
+            <text x = "5"   y = "197" class = "mem-label"> data </text>
+            <text id = "register-WriteData-value" x = "5"  y = "211" class = "component-value">0</text>
+
+            <text x = "115" y = "40"  class = "mem-label"> Read </text>
+            <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
+            <text id = "register-ReadData1-value" x = "155"  y = "72" class = "component-value">0</text>
+            
+            <text x = "115" y = "130" class = "mem-label"> Read </text>
+            <text x = "110" y = "150" class = "mem-label"> data 2 </text>
+            <text id = "register-ReadData2-value" x = "155"  y = "164" class = "component-value">0</text>
+          </g>
+        </svg>
         <span class = "help-text help-fullscreen">Fullscreen-></span>
         <span class = "help-text help-compile">Compile-></span>
         <span class = "help-text help-start">Start-></span>
         <span class = "help-text help-mode">Mode-></span>
         <span class = "help-text help-mode-option">default:[auto] / step-by-step</span>
         <span class = "help-text help-speed"><-Change animation speed</span>
+        <span class = "help-text help-register-click"><-Click on the components</span>
+        <span class = "help-text help-register-click-1">on the diagram to view the data</span>
+        <button class = "help-stop-button">➔</button>
+        <button class = "help-stop-button-actived">➔</button>
       </g>
       
       <button class = "frame-button" id = "fullscreen-btn" title = "Toggle fullscreen"></button>

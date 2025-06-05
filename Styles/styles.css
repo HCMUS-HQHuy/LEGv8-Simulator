@@ -4,6 +4,7 @@
   --frame-bg-color: #111;
   --frame-bg-color-blur: rgba(17, 17, 17, 0.5);
   --text-color: #1DCD9F;
+  --data-node-text-color: white;
   --border-color: #1DCD9F; /* Primary border, used for frame, code editor, toggle */
   --header-bg-color: #222;
   --header-border-color: #4CAF50; /* Green accent */
@@ -37,6 +38,7 @@ body.light {
   --frame-bg-color: #fdfced;
   --frame-bg-color-blur: rgba(253, 252, 237, 0.5);
   --text-color: #000000;
+  --data-node-text-color: white;
   --border-color: #000000;
   --header-bg-color: #eeeeee;
   --header-border-color: #4CAF50; /* Keep green accent, or change to #555 */
@@ -381,10 +383,6 @@ body {
 
   z-index: 2;
 }
-.stop-button:hover {
-  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
-  color: var(--button-hover-text-color); /* Sử dụng biến mới */
-}
 
 .help-overlay {
   position: absolute;
@@ -413,9 +411,11 @@ body {
 
   z-index: 2;
 }
-.help-button:hover {
-  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
-  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+.help-register {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 2;
 }
 .help-text {
   font-size: 20px;
@@ -447,7 +447,49 @@ body {
   bottom: 4px;
   left: 315px;
 }
+.help-register-click {
+  top: 130px;
+  left: 200px;
+}
+.help-register-click-1 {
+  top: 150px;
+  left: 223px;
+}
+.help-stop-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 230px;
+  right: 182px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
 
+  position: absolute;
+  background-color: var(--frame-bg-color);
+
+  z-index: 2;
+}
+.help-stop-button-actived {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 230px;
+  right: 51px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+  background-color: var(--button-hover-bg-color);
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+
+  z-index: 2;
+}
 
 /* codeBox */
 .codeBox {

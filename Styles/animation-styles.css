@@ -6,6 +6,8 @@
 
 .data-node rect {
   fill: #008006;
+  rx: 1;
+  ry: 1;
 }
 
 .signal-control-unit.value-0 circle {
@@ -36,7 +38,7 @@
 .signal-control-unit text,
 .data-node text {
   font-weight: bolder;
-  fill: rgb(255, 255, 255); /* Default text color */
+  fill: var(--data-node-text-color); /* Default text color */
   text-anchor: middle; /* Center text horizontally */
   dominant-baseline: central; /* Center text vertically */
   /* Default font size - can be overridden */
