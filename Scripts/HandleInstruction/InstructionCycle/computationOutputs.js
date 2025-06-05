@@ -108,11 +108,11 @@ function doALUOperation(currentState) {
 			return operand1 << BigInt(shamtLSL);
 			
 		case '1100': // Pass Input B (operand2)
+        case '0111':
 			return operand2;
 			
 		case '1101': // Pass Input A (operand1)
 			return operand1;
-			
 		// Thêm các mã khác nếu cần (SLT, MUL, DIV...)
 		// case '0111': // SLT (Set on Less Than) - Ví dụ
 		//     resultBigInt = (operand1 < operand2) ? 1n : 0n;
