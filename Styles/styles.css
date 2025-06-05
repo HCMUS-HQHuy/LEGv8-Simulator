@@ -668,10 +668,9 @@ body {
 .outputContainer {
   display: flex;
   width: 100%; /* Toàn bộ chiều rộng của container */
-  align-items: stretch; /* Đảm bảo các phần tử con bắt đầu từ đầu */
+  align-items: flex-start; /* Đảm bảo các phần tử con bắt đầu từ đầu */
   justify-content: space-between; /* Đẩy box đầu tiên sang trái, box cuối sang phải */
-  font-size: 130%;
-  height: 360px; 
+  font-size: 100%;
 }
 .parsedOutputTable {
   width: 100%;
@@ -710,8 +709,7 @@ body {
 .parsedOutputTable td:last-child {
   color: var(--emphasis-color); /* Use variable */
 }
-.table-scroll-wrapper {
-  /* max-height: 319px; hoặc ví dụ: 256px */
+.table-scroll-wrapper { 
   flex: 1;
   overflow-x: hidden;
   overflow-y: auto;
@@ -724,7 +722,7 @@ body {
 }
 /* Scrollbar: thanh cuộn màu xanh lá, bắt đầu từ thead */
 .table-scroll-wrapper::-webkit-scrollbar {
-  width:10px; /* Độ rộng thanh cuộn */
+  width: 10px; /* Độ rộng thanh cuộn */
 }
 .table-scroll-wrapper::-webkit-scrollbar-thumb {
   background-color: #4CAF50;
@@ -780,7 +778,7 @@ body {
   padding: 0 1%; /* Padding ngang (trái và phải) */
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
-  align-items: flex-start;
+  flex: 1;
 }
 
 /* dataMemoryBox */
@@ -789,7 +787,6 @@ body {
   display: flex; /* Thêm flex để quản lý chiều cao của code-editor */
   flex-direction: column; /* Sắp xếp h2 và form theo cột */
   flex: 0 0 21%; /* Không co giãn, chiếm 30% */
-  height: 100%;
 }
 
 .range-container {
@@ -800,7 +797,7 @@ body {
   left: 10px;
   position: absolute;
   width: 70%;
-
+  
   z-index: 2;
 }
 .range-slider {
