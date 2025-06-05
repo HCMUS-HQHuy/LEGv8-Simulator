@@ -341,7 +341,7 @@ function hideHelpGroups() {
     helpGroups.forEach(g => g.style.display = "none");
     helpVisible = false;
 
-    helpButton.style.setProperty('background-color', 'var(--button-bg-color)');
+    helpButton.style.setProperty('background-color', 'var(--frame-bg-color)');
     helpButton.style.setProperty('color', 'var(--button-text-color)');
 }
 

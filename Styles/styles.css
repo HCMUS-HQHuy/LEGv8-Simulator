@@ -2,7 +2,9 @@
 :root {
   --bg-color: #111;
   --frame-bg-color: #111;
+  --frame-bg-color-blur: rgba(17, 17, 17, 0.5);
   --text-color: #1DCD9F;
+  --data-node-text-color: white;
   --border-color: #1DCD9F; /* Primary border, used for frame, code editor, toggle */
   --header-bg-color: #222;
   --header-border-color: #4CAF50; /* Green accent */
@@ -34,7 +36,9 @@
 body.light {
   --bg-color: #ffffff;
   --frame-bg-color: #fdfced;
+  --frame-bg-color-blur: rgba(253, 252, 237, 0.5);
   --text-color: #000000;
+  --data-node-text-color: white;
   --border-color: #000000;
   --header-bg-color: #eeeeee;
   --header-border-color: #4CAF50; /* Keep green accent, or change to #555 */
@@ -313,6 +317,8 @@ body {
 
   position: absolute;
   background-color: var(--frame-bg-color);
+
+  z-index: 2;
 }
 .frame-button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
@@ -332,6 +338,8 @@ body {
 
   position: absolute;
   background-color: var(--frame-bg-color);
+
+  z-index: 2;
 }
 .compile-button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
@@ -350,6 +358,9 @@ body {
   transition: background-color 0.3s, color 0.3s;
 
   position: absolute;
+  background-color: var(--frame-bg-color);
+
+  z-index: 2;
 }
 .start-button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
@@ -369,12 +380,20 @@ body {
 
   position: absolute;
   background-color: var(--frame-bg-color);
-}
-.stop-button:hover {
-  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
-  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+
+  z-index: 2;
 }
 
+.help-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--frame-bg-color); /* Màu đen với độ mờ 50% */
+  opacity: 0.5;
+  z-index: 1;
+}
 .help-button {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
@@ -389,58 +408,88 @@ body {
 
   position: absolute;
   background-color: var(--frame-bg-color);
+
+  z-index: 2;
 }
-.help-button:hover {
-  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
-  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+.help-register {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 2;
+}
+.help-text {
+  font-size: 20px;
+  color: var(--control-color);
+  z-index: 2;
+  position: absolute;
 }
 .help-fullscreen {
   top: 18px;
   right: 65px;
-  position: absolute;
-
-  font-size: 20px;
-  color:#007acc;
-
-  background-color: var(--frame-bg-color);
 }
 .help-compile {
   top: 69px;
   right: 65px;
-  position: absolute;
-
-  font-size: 20px;
-  color:#007acc;
-  background-color: var(--frame-bg-color);
 }
 .help-start {
   top: 118px;
   right: 65px;
-  position: absolute;
-
-  font-size: 20px;
-  color:#007acc;
-  background-color: var(--frame-bg-color);
 }
 .help-mode {
   top: 168px;
   right: 65px;
-  position: absolute;
-
-  font-size: 20px;
-  color:#007acc;
-  background-color: var(--frame-bg-color);
 }
 .help-mode-option {
   top: 205px;
   right: 10px;
-  position: absolute;
-
-  font-size: 20px;
-  color:#007acc;
-  background-color: var(--frame-bg-color);
 }
+.help-speed {
+  bottom: 4px;
+  left: 315px;
+}
+.help-register-click {
+  top: 130px;
+  left: 200px;
+}
+.help-register-click-1 {
+  top: 150px;
+  left: 223px;
+}
+.help-stop-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 230px;
+  right: 182px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
 
+  position: absolute;
+  background-color: var(--frame-bg-color);
+
+  z-index: 2;
+}
+.help-stop-button-actived {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 230px;
+  right: 51px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+  background-color: var(--button-hover-bg-color);
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+
+  z-index: 2;
+}
 
 /* codeBox */
 .codeBox {
@@ -492,7 +541,7 @@ body {
 
   flex: 1;
   
-  font-size: 130%;
+  font-size: 100%;
 
   height: 100%;
 }
@@ -505,7 +554,7 @@ body {
   position: relative;
 }
 .line-numbers {
-  padding: 10px 10px;
+  padding: 10px 5px;
   text-align: right;
   background-color: var(--line-number-bg); /* Use variable */
   color: var(--line-number-color); /* Use variable */
@@ -595,7 +644,7 @@ body {
   font-family: monospace;
   overflow: auto;
   flex: 1;
-  font-size: 130%;
+  font-size: 100%;
 
   height: 100%;
 }
@@ -751,6 +800,8 @@ body {
   left: 10px;
   position: absolute;
   width: 70%;
+
+  z-index: 2;
 }
 .range-slider {
   -webkit-appearance: none; /* Xóa kiểu mặc định (Chrome, Safari) */
@@ -808,18 +859,23 @@ body {
   font-weight: bold;
   font-size: 17px;
   color: var(--text-color);
+  background-color: var(--frame-bg-color-blur);
 }
 
 .command-box {
   font-family: monospace;
   font-weight: bold;
   font-size: 17px;
-  bottom: 15px;
+  bottom: 18px;
   left: -2px;
   padding: 10px; /* Thêm khoảng cách giữa nội dung và border */
   position: absolute;
+  
+  background-color: var(--frame-bg-color-blur);
+  color: var(--control-color);
+  z-index: 2;
 }
 .command-box p {
   margin: 0; /* Loại bỏ khoảng cách ngoài của thẻ p */
-  line-height: 1; /* Chỉnh khoảng cách giữa các dòng trong thẻ p */
+  line-height: 1.4; /* Chỉnh khoảng cách giữa các dòng trong thẻ p */
 }

@@ -2,6 +2,7 @@ const MAXIMUM_DURATION = 5000
 const MININUM_DURATION = 500
 
 export let DURATION_ANIMATION = 2000;
+// DURATION_ANIMATION = 20;
 export const state = {
 	executing: false,
 	stepByStepMode: false
@@ -65,7 +66,7 @@ export function trigger() {
 			document.getElementById('step-by-step-mode-button').style.setProperty('color', 'var(--button-hover-text-color)');
 		}
 		else {
-			document.getElementById('step-by-step-mode-button').style.setProperty('background-color', 'var(--button-bg-color)');
+			document.getElementById('step-by-step-mode-button').style.setProperty('background-color', 'var(--frame-bg-color)');
 			document.getElementById('step-by-step-mode-button').style.setProperty('color', 'var(--button-text-color)');
 		}
 	});

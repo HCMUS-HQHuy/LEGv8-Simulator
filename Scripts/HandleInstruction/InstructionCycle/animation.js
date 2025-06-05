@@ -86,7 +86,9 @@ export function createNodeWithAnimation({
                 else console.warn("onEndCallback list contains a non-function");
             });
         }
+
         shape.style.fill = 'gray';
+        shape.style.opacity = '0.6';
         document.getElementById(pathId).style.stroke = previousColor;
         document.getElementById(pathId + '-clone')?.style && (document.getElementById(pathId + '-clone').style.stroke = previousColor);
         document.getElementById(pathId + '-circle')?.style && (document.getElementById(pathId + '-circle').style.stroke = previousColor);
@@ -113,8 +115,6 @@ export function createNodeWithAnimation({
         if (shapeType === 'circle') {
             const radius = Math.max(bbox.width, bbox.height) / 2.2;
             shape.setAttribute('r', radius + paddingX);   // Cập nhật bán kính
-            shape.setAttribute('cx', 0);        // Tọa độ tâm theo trục x
-            shape.setAttribute('cy', 0);        // Tọa độ tâm theo trục y
         }
         else if (shapeType === 'rect') {
             const width = bbox.width + paddingX * 2;
@@ -123,8 +123,6 @@ export function createNodeWithAnimation({
             shape.setAttribute('height', height);
             shape.setAttribute('x', -width / 2);
             shape.setAttribute('y', -height / 2);
-            shape.setAttribute('rx', 10);
-            shape.setAttribute('ry', 10);
         }
         else console.error(`shape ${shapeType} is not supported`);
     });
