@@ -357,3 +357,22 @@ helpButton.addEventListener("click", (event) => {
 document.addEventListener("click", () => {
     if (helpVisible) hideHelpGroups();
 });
+
+function adjustDataMemoryBoxHeight() {
+  const flagsBox = document.querySelector('.flagsBox');
+  const registersBox = document.querySelector('.registersBox');
+  const dataMemoryBox = document.querySelector('.dataMemoryBox');
+
+  if (!flagsBox || !registersBox || !dataMemoryBox) return;
+
+  // Reset height về 'auto' để lấy chiều cao thực
+  flagsBox.style.height = 'auto';
+  registersBox.style.height = 'auto';
+
+  const maxHeight = Math.max(flagsBox.offsetHeight, registersBox.offsetHeight);
+  dataMemoryBox.style.height = maxHeight + 'px';
+}
+
+window.addEventListener('load', adjustDataMemoryBoxHeight);
+window.addEventListener('resize', adjustDataMemoryBoxHeight);
+
