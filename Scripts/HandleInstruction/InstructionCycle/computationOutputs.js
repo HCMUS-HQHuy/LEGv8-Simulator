@@ -75,9 +75,9 @@ export function computeOutputs(componentName, components) {
 
 function doALUOperation(currentState) {
     const aluControlCode = currentState['ALU'].option;
-    // some trick herre (reverse values!!! =))
-    const operand2 = currentState['ALU'].input1;
-    const operand1 = currentState['ALU'].input2;
+
+    const operand1 = currentState['ALU'].input1;
+    const operand2 = currentState['ALU'].input2;
 	switch (aluControlCode) {
 		case '0010': // ADD
 			return operand1 + operand2;
@@ -198,21 +198,13 @@ function updateControlUnit(currentState) {
         // --- B-Type (B, BL) ---
         // Opcode của B-type là 6 bit
         currentState.Control.UncondBranch = 1;
-        currentState.Control.ALUOp = '01'; // Thường ALU không dùng hoặc dùng cho tính toán branch không quan trọng lắm
-                                         // Đặt '01' (Branch) có thể giúp ALUControl đơn giản hơn
-        // Tất cả các tín hiệu khác (RegWrite, MemRead, etc.) là 0
-        // console.log(`Control set for B-format (Opcode: ${opcode6bit})`);
+        currentState.Control.ALUOp = '01';
 
     } else if (Object.values(CB_TYPE_OPCODES).includes(opcode8bit)) {
-        // --- CB-Type (CBZ, CBNZ) ---
-        // Opcode của CB-type là 8 bit
+        currentState.Control.Reg2Loc = 1;
+        currentState.Control.ALUSrc = 0;
         currentState.Control.Branch = 1;
-        currentState.Control.ALUSrc = 0;   // So sánh thanh ghi Rt (đọc qua cổng 1 hoặc 2 tùy Mux1)
-                                           // với 0. Nếu Rt đọc qua cổng 1, input 2 ALU có thể là XZR
-        currentState.Control.ALUOp = '01'; // ALU thực hiện phép trừ (Rt - XZR) để set cờ Zero
-        // Reg2Loc = 0 (Mux1 chọn Rt)
-        // Tất cả các tín hiệu khác (RegWrite, MemRead, etc.) là 0
-        // console.log(`Control set for CB-format (Opcode: ${opcode8bit})`);
+        currentState.Control.ALUOp = '01';
 
     }
     // --- THÊM CÁC LOẠI LỆNH KHÁC Ở ĐÂY (IW, SYS) ---
@@ -234,10 +226,10 @@ function updateALUControl(currentState) {
     let aluControlCode = '1111';
     switch (aluOpSignal) {
         case '00':
-            aluControlCode = '0010'; // Mã ADD
+            aluControlCode = '0010';
             break;
         case '01':
-            aluControlCode = '0110'; // Mã SUB
+            aluControlCode = '0111';
             break;
         case '10':
             switch (mainOpcode) {
@@ -248,11 +240,8 @@ function updateALUControl(currentState) {
                 case '11101010000': aluControlCode = '1000'; break; // EOR
                 case '11010011010': aluControlCode = '1001'; break; // LSR (Kiểm tra opcode)
                 case '11010011011': aluControlCode = '1010'; break; // LSL (Kiểm tra opcode)
-                // Thêm các lệnh R-type khác nếu hỗ trợ
-                // case '10011011000': aluControlCode = 'xxxx'; break; // MUL (cần mã riêng)
                 case '11010110000': // BR
-                    aluControlCode = '1101'; // Mã Pass A (giả định ALU chuyển địa chỉ từ Rn)
-                                             // Hoặc '1111' (NOP) nếu ALU không dùng
+                    aluControlCode = '1101';
                     break;
                 default:
                     aluControlCode = '1111'; // Mã UNKNOWN/ERROR

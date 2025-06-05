@@ -35,7 +35,7 @@ export const Connections = {
 	],
 	Register: [
 		{ source: 'Register.ReadData2', target: 'Mux2.input0', pathId: 'register-to-mux-2-0-path' },
-		{ source: 'Register.ReadData1', target: 'ALU.input2', pathId: 'register-to-ALU-add-2-path' },
+		{ source: 'Register.ReadData1', target: 'ALU.input1', pathId: 'register-to-ALU-add-2-path' },
 		{ source: 'Register.ReadData2', target: 'DataMemory.WriteData', pathId: 'register-to-data-memory-path' }
 	],
 	ALU: [
@@ -47,7 +47,7 @@ export const Connections = {
 		{ source: 'Mux3.output', target: 'Register.WriteData', pathId: 'mux-3-to-register-path' }
 	],
 	Mux2: [
-		{ source: 'Mux2.output', target: 'ALU.input1', pathId: 'mux-2-to-ALU-add-2-path' }
+		{ source: 'Mux2.output', target: 'ALU.input2', pathId: 'mux-2-to-ALU-add-2-path' }
 	],
 	Mux1: [
 		{ source: 'Mux1.output', target: 'Register.Read2', pathId: 'mux-1-to-register-path' }
