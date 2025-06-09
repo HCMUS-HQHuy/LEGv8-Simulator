@@ -33,9 +33,7 @@ async function execute(results) {
 	while (isFinish === false) {
 		console.log(`instructionPos: ${instructionPos}`);
 		currentInstruction.update(instructionPos, results[instructionPos]);
-		instructionPos = await new Promise((promise) => {
-			generateSignal.start(Components, promise); // This triggers the signal generation
-		});
+		instructionPos = await generateSignal.start(Components); // This triggers the signal generation
 		if (instructionPos === -1 || state.stepByStepMode === 1) {
 			isFinish = true;
 			state.executing = false;

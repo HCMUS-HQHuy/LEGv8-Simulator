@@ -347,9 +347,8 @@ export function initialize(code) {
 	return Components;
 }
 
-export async function start(Components, promise) {
+export async function start(Components) {
 	if ((Components.PC.value >> 2) >= Components.InstructionMemory.instruction.length) {
-		promise(-1);
 		return -1;
 	}
 	resetComponents(Components);
@@ -362,5 +361,5 @@ export async function start(Components, promise) {
 	await new Promise((promise) => {
 		pcSignalPromiseResolve = promise;
 	});
-	promise(Components.PC.value >> 2);
+	return Components.PC.value >> 2;
 }
