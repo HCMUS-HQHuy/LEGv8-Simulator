@@ -313,12 +313,10 @@ function resetComponents(Components) {
 		);
 	}
 	
-	signalCallbackTable[`PC.value`].push(
-		async () => {
+	signalCallbackTable[`PC.value`].push(() => {
 			document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).padStart(4, '0').toUpperCase()}`;
 			pcSignalPromiseResolve();
-		}
-	);
+		});
 	
 	signalCallbackTable[`InstructionMemory.ReadAddress`].push(
 		() => {
