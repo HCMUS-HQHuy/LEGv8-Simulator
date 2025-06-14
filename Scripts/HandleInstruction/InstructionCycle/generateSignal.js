@@ -19,7 +19,6 @@ const requiredTriggers = {
 	OrGate: 2
 };
 
-
 const signalCallbackTable = {
 	"InstructionMemory.ReadAddress": null,
 	"Add0.input1": null,
@@ -83,6 +82,7 @@ import { getComponents } from "../Compile/Define/components.js";
 import { Connections } from "../Compile/Define/Connections.js"
 import {createNodeWithAnimation} from "./animation.js"
 import {startSignalAnimation} from "./animation.js"
+import {setTimestamp} from "./animation.js"
 import { computeOutputs } from "./computationOutputs.js";
 import { encodeLegv8Instruction } from "../Compile/parser.js";
 import { DURATION_ANIMATION } from "./animationSpeed.js";
@@ -101,7 +101,7 @@ function setValueInComponents(target, value, components) {
 	if (components[comp]) components[comp][field] = value;
 }
 
-let pcSignalPromiseResolve = null
+export let pcSignalPromiseResolve = null
 
 function traverseAndAnimateBFS(components) {
 	// Initial queue setup as in the example
@@ -123,7 +123,6 @@ function traverseAndAnimateBFS(components) {
 			const { source, target, pathId } = conn;
 
 			const value = getValueFromComponents(source, components);
-			console.log(`Signal: ${source} -> ${target}, Value: ${value}`);
 			setValueInComponents(target, value, components);
 
 			const targetComponent = target.split('.')[0];
@@ -133,21 +132,19 @@ function traverseAndAnimateBFS(components) {
 			const originalCallbacks = signalCallbackTable[target] ? [...signalCallbackTable[target]] : [];
 
 			if (triggerCount[targetComponent] === requiredTriggers[targetComponent]) {
-				console.log(`Component ${targetComponent} has all required inputs. Computing outputs.`);
 				computeOutputs(targetComponent, components);
 				queue.push({ node: targetComponent, depth: depth + 1 });
 				originalCallbacks.push(() => {
                     const outgoingFromFiredComponent = Connections[targetComponent];
                     if (outgoingFromFiredComponent) {
                         outgoingFromFiredComponent.forEach(outConn => {
-							console.log(`[Callback] Priming signal animation for next step: ${targetComponent} -> ${outConn.target} (pathId: ${outConn.pathId || 'N/A'})`);
+							// console.log(`[Callback] Priming signal animation for next step: ${targetComponent} -> ${outConn.target} (pathId: ${outConn.pathId || 'N/A'})`);
 							startSignalAnimation(outConn.target); 
                         });
                     }
 				});
 			}
 
-			console.log(`Creating animation for: ${source} -> ${target} (pathId: ${pathId})`);
 			let cloneValue = value;
 			if (arrayPath.includes(pathId)){
 				const bigValue = BigInt(value); // Convert to BigInt
@@ -165,7 +162,7 @@ function traverseAndAnimateBFS(components) {
 					.padStart(4, '0');
 				cloneValue = `0x${hexValue}`;
 			}
-
+			console.warn("CREATING");
 			createNodeWithAnimation({
 				value: cloneValue,
 				fieldName: `${target}`,
@@ -329,6 +326,7 @@ function resetComponents(Components) {
 }
 
 export function initialize(code) {
+	setTimestamp(new Date());
 	const Components = getComponents();
 	resetComponents(Components)
 	watchDataMemory(Components.DataMemory);

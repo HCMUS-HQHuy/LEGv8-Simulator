@@ -1,4 +1,12 @@
+let TimestampState = -1;
+let canClear = true;
+export function setTimestamp(value) {
+    TimestampState = value;
+    canClear = true;
+}
+
 const parentGroup = document.getElementById("data-signal-nodes");
+const rootpath = document.getElementById('root-path');
 
 export function startSignalAnimation(id) {
 	const animation = document.getElementById(`data-anim-${id}`);
@@ -11,6 +19,22 @@ export function startSignalAnimation(id) {
     signalNode.setAttribute('visibility', 'visible');
     animation.beginElement();
     return true;
+}
+
+function cloneAndModifyPath(pathId) {
+  const original = document.getElementById(pathId);
+  if (!original) return;
+  const clone = original.cloneNode(true);
+  clone.id = pathId + '-new-clone';
+  clone.classList.add('svg-clone-color'); // Add class for tracking
+  clone.style.stroke = 'var(--actived-line)';
+  clone.style['stroke-width'] = 5;
+  rootpath.appendChild(clone);
+}
+
+function clearClonedPaths() {
+  const clones = rootpath.querySelectorAll('.svg-clone-color');
+  clones.forEach(el => el.remove());
 }
 
 export function createNodeWithAnimation({ 
@@ -66,19 +90,24 @@ export function createNodeWithAnimation({
     animateMotion.setAttribute('begin', 'indefinite');
     animateMotion.setAttribute('fill', 'freeze');
 
-    const previousColor = document.getElementById(pathId).style.stroke;
-    const previouswidth = document.getElementById(pathId).style['stroke-width'];
-
     animateMotion.addEventListener('beginEvent', () => {
-        document.getElementById(pathId).style.stroke = 'var(--actived-line)';
-        document.getElementById(pathId + '-clone')?.style && (document.getElementById(pathId + '-clone').style.stroke = 'var(--actived-line)');
-        document.getElementById(pathId + '-circle')?.style && (document.getElementById(pathId + '-circle').style.stroke = 'var(--actived-line)');
-        document.getElementById(pathId).style['stroke-width'] = 5;
-        document.getElementById(pathId + '-clone')?.style && (document.getElementById(pathId + '-clone').style['stroke-width'] = 5);
+        if (canClear) {
+            clearClonedPaths();
+            canClear = false;
+            setTimeout(() => {
+                canClear = true;
+            }, duration/2);
+        }
+        cloneAndModifyPath(pathId);
+        cloneAndModifyPath(pathId + '-clone');
+        cloneAndModifyPath(pathId + '-circle');
     });
 
+    const currentTimestamp = TimestampState;
     animateMotion.addEventListener('endEvent', (event) => {
-        if (Array.isArray(onEndCallback)) {
+        shape.style.fill = 'gray';
+        shape.style.opacity = '0.6';
+        if (currentTimestamp == TimestampState && Array.isArray(onEndCallback)) {
             onEndCallback.forEach(cb => {
                 if (typeof cb === 'function') {
                     cb();
@@ -87,14 +116,6 @@ export function createNodeWithAnimation({
             });
         }
 
-        shape.style.fill = 'gray';
-        shape.style.opacity = '0.6';
-        document.getElementById(pathId).style.stroke = previousColor;
-        document.getElementById(pathId + '-clone')?.style && (document.getElementById(pathId + '-clone').style.stroke = previousColor);
-        document.getElementById(pathId + '-circle')?.style && (document.getElementById(pathId + '-circle').style.stroke = previousColor);
-        document.getElementById(pathId).style['stroke-width'] = previouswidth;
-        document.getElementById(pathId + '-clone')?.style && (document.getElementById(pathId + '-clone').style['stroke-width'] = previouswidth);
-        // event.target.closest('g')?.remove();
     });
     const mpath = document.createElementNS(svgNS, 'mpath');
     mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${pathId}`);

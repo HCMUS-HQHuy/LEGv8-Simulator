@@ -5,7 +5,8 @@ export let DURATION_ANIMATION = 2000;
 // DURATION_ANIMATION = 20;
 export const state = {
 	executing: false,
-	stepByStepMode: false
+	stepByStepMode: false,
+	kill: false
 };
 
 const svgCanvas = document.getElementById('zoomFrame');

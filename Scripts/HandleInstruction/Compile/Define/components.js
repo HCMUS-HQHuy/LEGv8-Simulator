@@ -1,5 +1,5 @@
 export function getComponents() {
-	return {
+	return new Object({
 		PC: {
 			value: 0
 		},
@@ -126,5 +126,5 @@ export function getComponents() {
 			input2: 0,
 			output: 0
 		}
-	};
+	});
 }

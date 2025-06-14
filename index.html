@@ -22,6 +22,7 @@
       <svg viewBox = "0 0 1930 3050" id = "zoomFrame">
       <g class = "content" id = "zoomContent">
         <!-- Signal Lines Layer -->
+
         <g id = "signal-lines">
           <defs>
             <marker id = "circle" markerWidth = "8" markerHeight = "8" refX = "5" refY = "5">
@@ -428,6 +429,7 @@
                 d          = "M1730,312.5 L1760,312.5 L1760,140, L1730,140"
                 class      = "control-signal-line" />
         </g>
+        <g id="root-path"></g>
 
         <!-- Components Layer (Drawn AFTER lines = On Top) -->
         <g id="components">
@@ -694,8 +696,8 @@
             <text id = "or-gate-input2-value" x = "-5" y = "80" class = "mem-control-label"></text>
           </g>  
         </g> <!-- End Components Layer -->
-
-        <g id="data-signal-nodes">
+        <g id="container-data-signal-nodes">
+          <g id="data-signal-nodes"></g>
         </g>
       </g>
 
@@ -888,6 +890,7 @@
       <button class = "compile-button" id = "compile-btn" title = "Compile code">⚙</button>
       <button class = "start-button" id = "start-stop-animation" title = "Start animation">▶</button>
       <button class = "stop-button" id = "step-by-step-mode-button" title = "Step by step mode">➔</button>
+      <button class = "stop-button" id = "replay-all-botton" title = "Step by step mode">&#10227</button>
 
       <button class = "help-button" id = "help-button" title = "Help">?</button>
 

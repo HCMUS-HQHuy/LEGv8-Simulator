@@ -277,8 +277,6 @@ function updateALUControl(currentState) {
             break;
     }
     currentState.ALUControl.output = aluControlCode;
-
-    console.log("ALU Control Updated:", currentState.ALUControl);
 }
 
 function updateSignExtend(currentState) {
@@ -349,14 +347,10 @@ function updateSignExtend(currentState) {
     let outputValue = null;
     if (inputBinary !== null && originalBits > 0) {
         outputValue = signExtend(inputBinary, originalBits, targetBits);
-        console.warn(`inputBinary: ${inputBinary} -> ${outputValue}`)
     }
 
     currentState.SignExtend.input = parseInt(inputBinary, 2);
-    console.log(`inputBinary: ${inputBinary} -> ${currentState.SignExtend.input}`);
     currentState.SignExtend.output = parseInt(outputValue, 2);
-
-    console.log("Sign Extend Updated:", currentState.SignExtend);
 }
 
 function updateRegister(currentState) {

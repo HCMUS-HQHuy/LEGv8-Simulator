@@ -59,6 +59,16 @@ export function trigger() {
 			execute(results);
 		}
 	});
+
+	document.getElementById('replay-all-botton').addEventListener('click', function(event) {
+		event.preventDefault();
+		console.log("Stop/Replay All button clicked.");
+		instructionPos = -1;
+		state.executing = false;
+		isFinish = true;
+		document.getElementById('start-stop-animation').click();
+		console.log("Simulation state set to not executing.");
+	});
 	
 	// state.executing = true;
 	// results = compileCode();
