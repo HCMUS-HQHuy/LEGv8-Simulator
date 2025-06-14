@@ -381,8 +381,60 @@ body {
   position: absolute;
   background-color: var(--frame-bg-color);
 
+  font-size: 14px;
+
   z-index: 2;
 }
+
+.replay-all-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 207px;
+  right: 10px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  position: absolute;
+  background-color: var(--frame-bg-color);
+
+  font-size: 14px;
+
+  z-index: 2;
+}
+.replay-all-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
+
+.replay-one-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 251px;
+  right: 10px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  font-size: 16px;
+
+  position: absolute;
+  background-color: var(--frame-bg-color);
+
+  z-index: 2;
+}
+.replay-one-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
+
+
 
 .help-overlay {
   position: absolute;
@@ -440,16 +492,16 @@ body {
   right: 65px;
 }
 .help-mode-option {
-  top: 205px;
-  right: 10px;
+  top: 140px;
+  right: 160px;
 }
 .help-speed {
   bottom: 4px;
-  left: 315px;
+  left: 325px;
 }
 .help-register-click {
   top: 130px;
-  left: 200px;
+  left: 210px;
 }
 .help-register-click-1 {
   top: 150px;
@@ -460,8 +512,8 @@ body {
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 8px 16px;
-  top: 230px;
-  right: 182px;
+  top: 170px;
+  right: 331px;
   font-size: 100%;
   cursor: pointer;
   border-radius: 8px;
@@ -477,8 +529,8 @@ body {
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 8px 16px;
-  top: 230px;
-  right: 51px;
+  top: 170px;
+  right: 200px;
   font-size: 100%;
   cursor: pointer;
   border-radius: 8px;
@@ -490,6 +542,15 @@ body {
 
   z-index: 2;
 }
+.help-replay-all {
+  top: 216px;
+  right: 65px;
+}
+.help-replay-one {
+  top: 263px;
+  right: 65px;
+}
+
 
 /* codeBox */
 .codeBox {
