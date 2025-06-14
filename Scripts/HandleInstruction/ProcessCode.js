@@ -17,6 +17,7 @@ function compileCode() {
 
 let instructionPos = -1;
 let Components = null;
+let ComponentsBackup = null;
 let isFinish = true;
 
 async function execute(results) {
@@ -26,12 +27,14 @@ async function execute(results) {
 	}
 	if (instructionPos === -1) {
 		Components = generateSignal.initialize(results);
+		ComponentsBackup = JSON.stringify(Components)
 		instructionPos = 0;
 	}
 
 	isFinish = false;
 	while (isFinish === false) {
 		console.log(`instructionPos: ${instructionPos}`);
+		ComponentsBackup = JSON.stringify(Components)
 		currentInstruction.update(instructionPos, results[instructionPos]);
 		instructionPos = await generateSignal.start(Components); // This triggers the signal generation
 		if (instructionPos === -1 || state.stepByStepMode === 1) {
@@ -66,6 +69,17 @@ export function trigger() {
 		instructionPos = -1;
 		state.executing = false;
 		isFinish = true;
+		document.getElementById('start-stop-animation').click();
+		console.log("Simulation state set to not executing.");
+	});
+
+	document.getElementById('replay-one-botton').addEventListener('click', function(event) {
+		event.preventDefault();
+		console.log("Stop/Replay one button clicked.");
+		state.executing = false;
+		isFinish = true;
+		generateSignal.initialize(null, true);
+		Components = JSON.parse(ComponentsBackup);
 		document.getElementById('start-stop-animation').click();
 		console.log("Simulation state set to not executing.");
 	});

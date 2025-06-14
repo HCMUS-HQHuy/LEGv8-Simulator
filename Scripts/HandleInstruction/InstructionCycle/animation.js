@@ -32,9 +32,15 @@ function cloneAndModifyPath(pathId) {
   rootpath.appendChild(clone);
 }
 
-function clearClonedPaths() {
-  const clones = rootpath.querySelectorAll('.svg-clone-color');
-  clones.forEach(el => el.remove());
+function clearClonedPaths(duration) {
+    if (!canClear) return;
+    canClear = false;
+    setTimeout(() => {
+        canClear = true;
+    }, duration/2);
+
+    const clones = rootpath.querySelectorAll('.svg-clone-color');
+    clones.forEach(el => el.remove());
 }
 
 export function createNodeWithAnimation({ 
@@ -91,13 +97,7 @@ export function createNodeWithAnimation({
     animateMotion.setAttribute('fill', 'freeze');
 
     animateMotion.addEventListener('beginEvent', () => {
-        if (canClear) {
-            clearClonedPaths();
-            canClear = false;
-            setTimeout(() => {
-                canClear = true;
-            }, duration/2);
-        }
+        clearClonedPaths(duration);
         cloneAndModifyPath(pathId);
         cloneAndModifyPath(pathId + '-clone');
         cloneAndModifyPath(pathId + '-circle');
@@ -105,6 +105,7 @@ export function createNodeWithAnimation({
 
     const currentTimestamp = TimestampState;
     animateMotion.addEventListener('endEvent', (event) => {
+        clearClonedPaths(duration);
         shape.style.fill = 'gray';
         shape.style.opacity = '0.6';
         if (currentTimestamp == TimestampState && Array.isArray(onEndCallback)) {

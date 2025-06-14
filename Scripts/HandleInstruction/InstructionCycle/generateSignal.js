@@ -162,7 +162,6 @@ function traverseAndAnimateBFS(components) {
 					.padStart(4, '0');
 				cloneValue = `0x${hexValue}`;
 			}
-			console.warn("CREATING");
 			createNodeWithAnimation({
 				value: cloneValue,
 				fieldName: `${target}`,
@@ -325,8 +324,9 @@ function resetComponents(Components) {
 	);
 }
 
-export function initialize(code) {
+export function initialize(code, onlysettime = false) {
 	setTimestamp(new Date());
+	if (onlysettime) return;
 	const Components = getComponents();
 	resetComponents(Components)
 	watchDataMemory(Components.DataMemory);
