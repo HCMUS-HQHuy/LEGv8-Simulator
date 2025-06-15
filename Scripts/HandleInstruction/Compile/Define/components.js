@@ -66,7 +66,13 @@ export function getComponents() {
 			input2: 0,
 			option: 0,
 			output: 0,
-			zero  : 0
+			zero  : 0,
+			Flags: {
+				N: 0,
+				Z: 0, 
+				V: 0,
+				C: 0
+			},
 		},
 		Control: {
 			Reg2Loc:  0,

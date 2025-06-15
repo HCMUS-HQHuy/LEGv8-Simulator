@@ -88,6 +88,7 @@ import { encodeLegv8Instruction } from "../Compile/parser.js";
 import { DURATION_ANIMATION } from "./animationSpeed.js";
 import { watchDataMemory } from "../Compile/memoryState.js";
 import { watchRegisters } from "../Compile/memoryState.js";
+import { watchFlags } from "../Compile/memoryState.js";
 import { shapes } from "./shape.js";
 import { state } from "./animationSpeed.js";
 
@@ -222,9 +223,35 @@ function resetComponents(Components) {
 	signalCallbackTable[`DataMemory.WriteData`].push(
 		() => { document.getElementById('data-memory-write-data-value').textContent = Components.DataMemory.WriteData}
 	);
-	
+
+	const flag = JSON.parse(JSON.stringify(Components.ALU.Flags));
+
 	signalCallbackTable[`ALU.input2`].push(
-		() => { document.getElementById('add-2-input-2-value').textContent = Components.ALU.input2; }
+		() => { 
+			document.getElementById('add-2-input-2-value').textContent = Components.ALU.input2; 
+			const flagNames = ['N', 'Z', 'V', 'C'];
+			const duration = DURATION_ANIMATION * 5;
+
+			flagNames.forEach(flagName => {
+				const element = document.getElementById(flagName);
+				if (!element) {
+					console.error(`Flag element with ID '${flagName}' not found.`);
+					return; // Skip to the next flag if element is not found
+				}
+				if (Components.ALU.Flags[flagName] !== flag[flagName]) {
+					element.innerText = Components.ALU.Flags[flagName];
+					const parentRow = element.closest('tr');
+					if (parentRow) {
+						parentRow.style.backgroundColor = 'yellow';
+						parentRow.style.color = 'red';
+						setTimeout(() => {
+							parentRow.style.backgroundColor = "";
+							parentRow.style.color = "";
+						}, duration);
+					}
+				}
+			});
+		}
 	);
 	signalCallbackTable[`ALU.input1`].push(
 		() => {
@@ -331,6 +358,7 @@ export function initialize(code, onlysettime = false) {
 	resetComponents(Components)
 	watchDataMemory(Components.DataMemory);
 	watchRegisters(Components.Register);
+	watchFlags(Components.ALU);
 	Components.PC.value = 0;
 	
 	code.forEach(key => {

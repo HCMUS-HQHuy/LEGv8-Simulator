@@ -1,3 +1,19 @@
+function updateValue(target, prop, value) {
+    if (prop >= 0 && prop < target.length) {
+        console.log(`Values[${prop}] changed from ${target[prop]} to ${value}`);
+        target[prop] = value;
+        return true;
+    }
+    console.error(`Cannot update memory: ${prop}`);
+    return false;
+}
+
+function getValue(target, prop) {
+    if (prop < 0 || prop >= target.length)
+        console.error(`Cannot access memory: ${prop}`);
+    return target[prop];
+}
+
 
 export function watchDataMemory(DataMemory) {
     for (let i = 0; i < 64; i++) {
@@ -38,18 +54,49 @@ export function watchRegisters(Register) {
 	Register.registerValues = valuesProxy;
 }
 
-function updateValue(target, prop, value) {
-    if (prop >= 0 && prop < target.length) {
-        console.log(`Values[${prop}] changed from ${target[prop]} to ${value}`);
-        target[prop] = value;
-        return true;
+
+export function watchFlags(ALU) {
+    // Check if ALU and ALU.Flags exist to prevent errors
+    if (!ALU || typeof ALU.Flags !== 'object') {
+        console.error("watchFlags Error: Invalid ALU object or ALU.Flags is missing.");
+        return;
     }
-    console.error(`Cannot update memory: ${prop}`);
-    return false;
+    
+    // 1. Khởi tạo giá trị ban đầu trên giao diện
+    updateFlagDOM('N', ALU.Flags.N);
+    updateFlagDOM('Z', ALU.Flags.Z);
+    updateFlagDOM('V', ALU.Flags.V);
+    updateFlagDOM('C', ALU.Flags.C);
+
+    // 2. Tạo một Proxy để theo dõi đối tượng Flags
+    const flagsProxy = new Proxy(ALU.Flags, {
+        set: function(target, prop, value) {
+            if (value != target[prop]) {
+                console.log(`Flag '${prop}' changed from ${target[prop]} to ${value}`);
+                
+                target[prop] = value;
+                
+                // updateFlagDOM(prop, value);    
+            }
+            return true;
+        },
+        get: function(target, prop) {
+            return target[prop];
+        }
+    });
+    ALU.Flags = flagsProxy;
 }
 
-function getValue(target, prop) {
-    if (prop < 0 || prop >= target.length)
-        console.error(`Cannot access memory: ${prop}`);
-    return target[prop];
+// The helper function updateFlagDOM remains the same.
+function updateFlagDOM(flagName, value) {
+    const element = document.getElementById(flagName);
+    if (element) {
+        element.innerText = value;
+        element.classList.add('changed');
+        setTimeout(() => {
+            element.classList.remove('changed');
+        }, 500);
+    } else {
+        console.error(`Flag element with ID '${flagName}' not found.`);
+    }
 }

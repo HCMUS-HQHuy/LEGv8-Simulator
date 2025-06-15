@@ -42,14 +42,37 @@ export function computeOutputs(componentName, components) {
 			components[componentName].output = components[componentName].input << 2;
 			break;
 
-		case 'ALU':
-			components[componentName].output = doALUOperation(components);
+        case 'ALU':
+            // Lấy đối tượng kết quả từ hàm ALU
+            const aluResultObject = doALUOperation(components);
+            
+            // Cập nhật output của ALU
+            components[componentName].output = aluResultObject.result;
+
+            // Lấy opcode để kiểm tra xem có phải lệnh set cờ không
+            const opcode10bit = components.InstructionMemory.Opcode_31_21.substring(0, 10);
+            const flagSettingInstructions = [
+                I_TYPE_OPCODES['ADDIS'],
+                I_TYPE_OPCODES['SUBIS'],
+                I_TYPE_OPCODES['ANDIS'],
+                R_TYPE_OPCODES['SUBS']
+            ];
+
+            if (flagSettingInstructions.includes(opcode10bit) || flagSettingInstructions.includes(components.InstructionMemory.Opcode_31_21)) {
+                
+                console.log(aluResultObject);
+                components.ALU.Flags.N = aluResultObject.N;
+                components.ALU.Flags.Z = aluResultObject.Z;
+                components.ALU.Flags.V = aluResultObject.V;
+                components.ALU.Flags.C = aluResultObject.C;
+            }
             const tmp = components.InstructionMemory.Opcode_31_21.substring(0, 8);
-            if (tmp == '10110101') // CBNZ
-			    components[componentName].zero = (components[componentName].output === 0 ? 0 : 1);
-			else 
-                components[componentName].zero = (components[componentName].output === 0 ? 1 : 0);
-			break;
+            if (tmp === CB_TYPE_OPCODES['CBNZ']) { // Giả sử bạn có hằng số này
+                components[componentName].zero = (aluResultObject.result == 0 ? 0 : 1);
+            } else {
+                components[componentName].zero = (aluResultObject.result == 0 ? 1 : 0);
+            }
+            break;
 
 		case 'Mux0':
 		case 'Mux1':
@@ -73,59 +96,106 @@ export function computeOutputs(componentName, components) {
 	}
 }
 
-// ADDI X1, X1, #2
-// ADDI X2, X2, #3
-// STUR X2, [X1, #8]
-
 function doALUOperation(currentState) {
     const aluControlCode = currentState['ALU'].option;
+    // Ensure inputs are Numbers, default to 0 if null/undefined
+    const operand1 = Number(currentState['ALU'].input1 || 0);
+    const operand2 = Number(currentState['ALU'].input2 || 0);
 
-    const operand1 = currentState['ALU'].input1;
-    const operand2 = currentState['ALU'].input2;
-	switch (aluControlCode) {
-		case '0010': // ADD
-			return operand1 + operand2;
-		case '0110': // SUB (used for SUB, SUBI, and comparisons for branches)
-			return operand1 - operand2;
-		case '0000': // AND
-			return operand1 & operand2;
-		case '0001': // ORR
-			return operand1 | operand2;
-		case '1000': // EOR (XOR)
-			return operand1 ^ operand2;
-		case '1001': // LSR (Logical Shift Right)
-			// !! Quan trọng: Phép dịch trong JS/BigInt cần xử lý số âm đặc biệt
-			// !! để mô phỏng đúng LSR (điền 0). Cách dễ nhất là dùng mask.
-			// !! Lượng dịch (shamt) thường đến từ instruction bits, không phải operand2.
-			// !! -> Cần lấy shamt từ InstructionMemory.Shamt_15_10
-			const shamtLSR = currentState.InstructionMemory?.Shamt_15_10 ? parseInt(currentState.InstructionMemory.Shamt_15_10, 2) : 0;
-			const sixtyFourBitMaskLSR = (1n << 64n) - 1n;
-			// Chuyển operand1 thành số không dấu 64bit trước khi dịch
-			const unsignedOperand1LSR = operand1 & sixtyFourBitMaskLSR;
-			return unsignedOperand1LSR >> BigInt(shamtLSR);
-			
-		case '1010': // LSL (Logical Shift Left)
-			// Lượng dịch (shamt) từ instruction bits.
-			const shamtLSL = currentState.InstructionMemory?.Shamt_15_10 ? parseInt(currentState.InstructionMemory.Shamt_15_10, 2) : 0;
-			 // Dịch trái có thể tự nhiên hoạt động đúng với BigInt
-			 // Nhưng vẫn nên mask kết quả để đảm bảo 64-bit
-			return operand1 << BigInt(shamtLSL);
-			
-		case '1100': // Pass Input B (operand2)
-        case '0111':
-			return operand2;
-			
-		case '1101': // Pass Input A (operand1)
-			return operand1;
-		// Thêm các mã khác nếu cần (SLT, MUL, DIV...)
-		// case '0111': // SLT (Set on Less Than) - Ví dụ
-		//     resultBigInt = (operand1 < operand2) ? 1n : 0n;
-		//     break;
-		case '1111': // Error code from ALUControl
-		default:
-			console.warn(`ALU Warning: Received unknown or error ALU control code '${aluControlCode}'. Outputting 0.`);
-			return;
-	}
+    let result = 0;
+    let nFlag = 0, zFlag = 0, vFlag = 0, cFlag = 0;
+
+    // --- Helper function for 32-bit signed overflow check ---
+    const checkSignedOverflow = (a, b, res) => {
+        if ((a > 0 && b > 0 && res < 0) || (a < 0 && b < 0 && res > 0)) {
+            return 1;
+        }
+        return 0;
+    };
+
+    switch (aluControlCode) {
+        case '0010': { // ADD
+            result = operand1 + operand2;
+            
+            const op1_32 = operand1 | 0;
+            const op2_32 = operand2 | 0;
+            const res_32 = result | 0;
+
+            nFlag = (res_32 < 0) ? 1 : 0;
+            zFlag = (res_32 === 0) ? 1 : 0;
+            vFlag = checkSignedOverflow(op1_32, op2_32, res_32);
+            if (operand1 > 0 && operand2 > 0 && result < operand1) {
+                 cFlag = 1;
+            } else {
+                 const MAX_UINT32 = 0xFFFFFFFF;
+                 if (operand1 > MAX_UINT32 - operand2) {
+                     cFlag = 1;
+                 }
+            }
+            break;
+        }
+
+        case '0110': { // SUB
+            result = operand1 - operand2;
+            const op1_32 = operand1 | 0;
+            const op2_32 = operand2 | 0;
+            const res_32 = result | 0;
+            nFlag = (res_32 < 0) ? 1 : 0;
+            zFlag = (res_32 === 0) ? 1 : 0;
+            if ((op1_32 > 0 && op2_32 < 0 && res_32 < 0) || (op1_32 < 0 && op2_32 > 0 && res_32 > 0)) {
+                vFlag = 1;
+            }
+            // C (as Not-Borrow): Set if op1 >= op2 (unsigned)
+            cFlag = (operand1 >= operand2) ? 1 : 0;
+            break;
+        }
+
+        case '0000': // AND
+        case '0001': // ORR
+        case '1000': { // EOR (XOR)
+            if (aluControlCode === '0000') result = operand1 & operand2;
+            if (aluControlCode === '0001') result = operand1 | operand2;
+            if (aluControlCode === '1000') result = operand1 ^ operand2;
+            
+            nFlag = (result < 0) ? 1 : 0;
+            zFlag = (result === 0) ? 1 : 0;
+            vFlag = 0;
+            cFlag = 0;
+            break;
+        }
+
+        case '1001': { // LSR (Logical Shift Right)
+            const shamt = parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2);
+            result = operand1 >>> shamt;
+            break;
+        }
+        case '1010': { // LSL (Logical Shift Left)
+            const shamt = parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2);
+            result = operand1 << shamt;
+            break;
+        }
+        
+        case '1100': // Pass B
+        case '0111': // Pass B (for branch)
+            result = operand2;
+            break;
+        case '1101': // Pass A
+            result = operand1;
+            break;
+        case '1111':
+        default:
+            console.warn(`ALU Warning: Received unknown ALU control code '${aluControlCode}'.`);
+            result = 0; // Return a safe value
+            zFlag = 1; // Indicate a zero result from an error
+            break;
+    }
+    return {
+        result: result,
+        N: nFlag,
+        Z: zFlag,
+        V: vFlag,
+        C: cFlag
+    };
 }
 
 function updateControlUnit(currentState) {
@@ -189,18 +259,11 @@ function updateControlUnit(currentState) {
         // console.log(`Control set for D-format (Opcode: ${opcode11bit})`);
 
     } else if (Object.values(I_TYPE_OPCODES).includes(opcode10bit)) {
-        // --- I-Type (ADDI, SUBI, ANDI, ORRI, EORI) ---
-        // Opcode của I-type là 10 bit
         currentState.Control.RegWrite = 1;
-        currentState.Control.ALUSrc = 1;        // Dùng Immediate
-        currentState.Control.MemtoReg = 0;      // Kết quả từ ALU
-        currentState.Control.ALUOp = '11';      // ALU Control sẽ biết là loại I (ADD/SUB/Logic)
-        // Reg2Loc, MemRead, MemWrite, Branch, UncondBranch = 0
-        // console.log(`Control set for I-format (Opcode: ${opcode10bit})`);
-
+        currentState.Control.ALUSrc = 1;
+        currentState.Control.MemtoReg = 0;
+        currentState.Control.ALUOp = '10'; 
     } else if (Object.values(B_TYPE_OPCODES).includes(opcode6bit)) {
-        // --- B-Type (B, BL) ---
-        // Opcode của B-type là 6 bit
         currentState.Control.UncondBranch = 1;
         currentState.Control.ALUOp = '01';
 
@@ -211,75 +274,64 @@ function updateControlUnit(currentState) {
         currentState.Control.ALUOp = '01';
 
     }
-    // --- THÊM CÁC LOẠI LỆNH KHÁC Ở ĐÂY (IW, SYS) ---
-    // else if (/* IW-type opcodes */) { ... }
-    // else if (/* SYS-type opcodes */) { ... }
     else {
-        // Opcode không được nhận dạng, các tín hiệu đã được reset về mặc định (ALUOp='XX')
         console.warn(`ControlUnit: Opcode ${opcode11bit} not recognized or supported. Using default signals.`);
     }
 }
 
 function updateALUControl(currentState) {
     const aluOpSignal = currentState.Control.ALUOp; // Tín hiệu 2-bit từ Control chính
-    const mainOpcode = currentState.InstructionMemory.Opcode_31_21; // Opcode 11-bit
+    const fullOpcode = currentState.InstructionMemory.Opcode_31_21; // Opcode 11-bit
+    const opcode10bit = fullOpcode.substring(0, 10); // Opcode 10-bit cho I-type
 
-    if (currentState.ALUControl.ALUOp !== aluOpSignal || currentState.ALUControl.Opcode !== mainOpcode)
-		console.error("Have some problem in updateALUControl");
-    
-    let aluControlCode = '1111';
+    let aluControlCode = '1111'; // Default to ERROR/UNKNOWN
+
     switch (aluOpSignal) {
-        case '00':
-            aluControlCode = '0010';
-            break;
-        case '01':
-            aluControlCode = '0111';
-            break;
-        case '10':
-            switch (mainOpcode) {
-                case '10001011000': aluControlCode = '0010'; break; // ADD
-                case '11001011000': aluControlCode = '0110'; break; // SUB
-                case '10001010000': aluControlCode = '0000'; break; // AND
-                case '10101010000': aluControlCode = '0001'; break; // ORR
-                case '11101010000': aluControlCode = '1000'; break; // EOR
-                case '11010011010': aluControlCode = '1001'; break; // LSR (Kiểm tra opcode)
-                case '11010011011': aluControlCode = '1010'; break; // LSL (Kiểm tra opcode)
-                case '11010110000': // BR
-                    aluControlCode = '1101';
-                    break;
-                default:
-                    aluControlCode = '1111'; // Mã UNKNOWN/ERROR
-                    console.warn(`ALU Control: Unknown R-type opcode ${mainOpcode} for ALUOp='10'`);
-                    break;
-            }
+        case '00': // D-Type (LDUR/STUR) -> Address calculation
+            aluControlCode = '0010'; // ALU performs ADD
             break;
 
-        case '11': // Dành cho I-type instructions (Arithmetic/Logic/Move Wide)
-            // Hoạt động cụ thể phụ thuộc vào opcode 11 bit
-            if (mainOpcode.startsWith('1001000100')) { // ADDI
-                aluControlCode = '0010'; // Mã ADD
-            } else if (mainOpcode.startsWith('1101000100')) { // SUBI
-                aluControlCode = '0110'; // Mã SUB
-            } else if (mainOpcode.startsWith('1001001000')) { // ANDI
-                aluControlCode = '0000'; // Mã AND
-            } else if (mainOpcode.startsWith('1011001000')) { // ORRI
-                aluControlCode = '0001'; // Mã ORR
-            } else if (mainOpcode.startsWith('1101001000')) { // EORI
-                aluControlCode = '1000'; // Mã EOR
-            } else if (mainOpcode.startsWith('110100101')) { // MOVZ / MOVK
-                aluControlCode = '1100'; // Mã Pass B (ALU chuyển immediate đã mở rộng)
-            } else {
-                 aluControlCode = '1111'; // Mã UNKNOWN/ERROR
-                 console.warn(`ALU Control: Unknown I/IW-type opcode ${mainOpcode} for ALUOp='11'`);
-            }
+        case '01': // B-Type & CB-Type -> Branching
+            aluControlCode = '0111'; // ALU performs SUB to check flags (for B.cond and CBZ/CBNZ)
             break;
 
-        case 'XX': // Trường hợp lỗi từ Control Unit chính
+        case '10': // Handles ALL R-Type and I-Type instructions
+            // The ALU Control must now look at the opcode to determine the specific operation.
+            
+            // R-Type Instructions (check full 11-bit opcode)
+            if (fullOpcode === R_TYPE_OPCODES['ADD'])     { aluControlCode = '0010'; break; } // ADD
+            if (fullOpcode === R_TYPE_OPCODES['SUB'])     { aluControlCode = '0110'; break; } // SUB
+            if (fullOpcode === R_TYPE_OPCODES['AND'])     { aluControlCode = '0000'; break; } // AND
+            if (fullOpcode === R_TYPE_OPCODES['ORR'])     { aluControlCode = '0001'; break; } // ORR
+            if (fullOpcode === R_TYPE_OPCODES['EOR'])     { aluControlCode = '1000'; break; } // EOR
+            if (fullOpcode === R_TYPE_OPCODES['LSL'])     { aluControlCode = '1010'; break; } // LSL
+            if (fullOpcode === R_TYPE_OPCODES['LSR'])     { aluControlCode = '1001'; break; } // LSR
+            if (fullOpcode === R_TYPE_OPCODES['BR'])      { aluControlCode = '1101'; break; } // BR (Pass A)
+
+            // I-Type Instructions (check 10-bit opcode prefix)
+            if (opcode10bit === I_TYPE_OPCODES['ADDI'])   { aluControlCode = '0010'; break; } // ADD
+            if (opcode10bit === I_TYPE_OPCODES['SUBI'])   { aluControlCode = '0110'; break; } // SUB
+            if (opcode10bit === I_TYPE_OPCODES['ADDIS'])  { aluControlCode = '0010'; break; } // ADD
+            if (opcode10bit === I_TYPE_OPCODES['SUBIS'])  { aluControlCode = '0110'; break; } // SUB
+            if (opcode10bit === I_TYPE_OPCODES['ANDI'])   { aluControlCode = '0000'; break; } // AND
+            if (opcode10bit === I_TYPE_OPCODES['ORRI'])   { aluControlCode = '0001'; break; } // ORR
+            if (opcode10bit === I_TYPE_OPCODES['EORI'])   { aluControlCode = '1000'; break; } // EOR
+            if (opcode10bit === I_TYPE_OPCODES['ANDIS'])  { aluControlCode = '0000'; break; } // AND
+
+            // If we reach here, no specific R-type or I-type opcode was matched.
+            console.warn(`ALU Control: Unknown R/I-type opcode ${fullOpcode} for ALUOp='10'`);
+            break;
+
+        // NOTE: Case '11' is now removed as per your instruction.
+        // It could be used for other instruction types in the future if needed.
+
+        case 'XX': // Error case from the main Control Unit
         default:
-            aluControlCode = '1111'; // Mã ERROR
+            aluControlCode = '1111'; // ERROR code
             console.error(`ALU Control: Received invalid ALUOp signal '${aluOpSignal}' from main Control.`);
             break;
     }
+
     currentState.ALUControl.output = aluControlCode;
 }
 
@@ -295,41 +347,30 @@ function updateSignExtend(currentState) {
     let originalBits = 0;
     const targetBits = 64;
     
-
-    // InstructionMemory.Imm12_21_10 = encodedInstruction.substring(10, 22); // For I-type ALU
-    // InstructionMemory.Imm9_20_12 = encodedInstruction;  // For D-type offset
-    // InstructionMemory.Imm19_23_5 = encodedInstruction;   // For CB-type offset
-    // InstructionMemory.Imm26_25_0 = encodedInstruction.;   // For B-type 
-
-
     if (control.ALUSrc === 1) {
+        const opcode10bit = opcode.substring(0, 10);
         // D-type (LDUR/STUR): Offset 9 bit (DT-address)
-        if (opcode === '11111000010' || opcode === '11111000000') {
-            console.warn('SignExtend: ', SignExtend)
-            inputBinary = SignExtend.substring(11, 20);
+        if (opcode === D_TYPE_OPCODES['LDUR'] || opcode === D_TYPE_OPCODES['STUR']) {
+            inputBinary = SignExtend.substring(11, 20); // Bits 20-12
             originalBits = 9;
         }
-        // I-type (ADDI/SUBI): Immediate 12 bit
-        else if (opcode?.startsWith('1001000100') || opcode?.startsWith('1101000100')) {
-            inputBinary = SignExtend.substring(10, 22); // 12 bits
+        // I-type (Arithmetic & Logical): Immediate 12 bit
+        else if (Object.values(I_TYPE_OPCODES).includes(opcode10bit)) {
+            // This single block now handles all 12-bit I-type instructions:
+            // ADDI, SUBI, ANDI, ORRI, EORI, ADDIS, SUBIS, ANDIS
+            inputBinary = SignExtend.substring(10, 22); // Bits 21-10
             originalBits = 12;
         }
-        // Kiểu MOVZ (16 bit immediate)
-        else if (opcode?.startsWith('110100101')) {
-            inputBinary = SignExtend.Imm16_20_5; // 16 bits
+        // IW-type (MOVZ/MOVK): Immediate 16 bit
+        else if (Object.values(IW_TYPE_OPCODES).includes(opcode11bit.substring(0, 9))) { // MOVZ/MOVK have 9-bit opcodes
+            inputBinary = SignExtend.substring(5, 21); // Bits 20-5
             originalBits = 16;
         }
-        // Các lệnh khác như ANDI, ORRI - cũng là I-type 12 bit
-        else if (opcode?.startsWith('1001001000') || // ANDI
-                 opcode?.startsWith('1011001000') || // ORRI
-                 opcode?.startsWith('1101001000'))   // EORI
-        {
-            inputBinary = SignExtend.substring(10, 22); // 12 bits
-            originalBits = 12;
-        }
         else {
-            // ALUSrc=1 nhưng không khớp loại lệnh nào ở trên? Cảnh báo
-            console.warn(`Warning: ALUSrc is 1, but opcode ${opcode} doesn't match expected I/D/IW types needing immediate for ALU.`);
+            // ALUSrc=1 but doesn't match any expected types? This is a potential issue in the Control Unit.
+            console.warn(`SignExtend Warning: ALUSrc is 1, but opcode ${opcode} doesn't match expected I/D/IW types.`);
+            inputBinary = '0'.repeat(32); 
+            originalBits = 32;
         }
     
     } else if (control.UncondBranch === 1) {

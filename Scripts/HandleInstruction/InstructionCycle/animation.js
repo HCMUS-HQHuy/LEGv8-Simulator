@@ -15,7 +15,6 @@ export function startSignalAnimation(id) {
 		console.warn(`No id:${id} data signal nodes found to animate.`);
 		return false;
 	}
-    console.log(`RUN: ${id}`);
     signalNode.setAttribute('visibility', 'visible');
     animation.beginElement();
     return true;

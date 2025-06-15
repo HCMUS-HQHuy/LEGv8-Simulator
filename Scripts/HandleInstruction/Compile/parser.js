@@ -54,37 +54,20 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
     if (!line) {
         return null;
     }
-  
-    // 1. Remove comments and trim whitespace
+
     let cleanedLine = line.replace(/(\/\/|;).*/, '').trim();
-  
-    // --- BỎ QUA NẾU DÒNG LÀ ĐỊNH NGHĨA NHÃN ---
-    // Nếu một dòng chứa nhãn VÀ lệnh, hàm buildLabelTable đã xử lý phần nhãn
-    // và cleanedLine ở đây sẽ là phần lệnh còn lại.
-    // Nếu dòng CHỈ là nhãn, buildLabelTable đã continue, hoặc dòng này sẽ trông như "LabelName:"
-    // Ta cần đảm bảo không parse "LabelName:" như một mnemonic.
-    // Một cách đơn giản là nếu cleanedLine kết thúc bằng ':' và không có gì khác, coi như chỉ là nhãn.
-    // Tuy nhiên, việc tiền xử lý loại bỏ dòng chỉ chứa nhãn sẽ tốt hơn.
-    // Giả định rằng dòng truyền vào đây ĐÃ được xác định là một lệnh tiềm năng.
+
     const labelDefinitionMatch = cleanedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):$/);
     if (labelDefinitionMatch && cleanedLine.endsWith(':') && cleanedLine.indexOf(' ') === -1) {
-        // console.log(`Skipping label-only line: ${cleanedLine}`);
         return { type: 'LABEL_DEF', label: labelDefinitionMatch[1], error: null }; // Trả về thông tin nhãn nếu muốn
     }
-    // Hoặc nếu dòng đã được tiền xử lý, cleanedLine sẽ không còn nhãn đứng một mình.
-    // Nếu có lệnh trên cùng dòng với nhãn, cleanedLine sẽ là phần lệnh đó.
-  
     if (!cleanedLine) {
         return null;
     }
-  
-    // 2. Split into mnemonic and the rest
     const parts = cleanedLine.split(/\s+/);
     let mnemonic = parts[0].toUpperCase();
     const operandString = parts.slice(1).join(' ');
   
-    // Xử lý trường hợp nhãn đứng trước lệnh trên cùng dòng, ví dụ "Else: ADDI..."
-    // Hàm buildLabelTable đã lấy nhãn, ở đây ta cần đảm bảo mnemonic là "ADDI" chứ không phải "Else:".
     if (mnemonic.includes(':')) {
         const splitByColon = mnemonic.split(':');
         // labelName = splitByColon[0]; // Nhãn này đã được xử lý ở buildLabelTable
@@ -111,8 +94,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
   
         const opCount = result.operands.length;
         const ops = result.operands;
-  
-        // --- Sửa các phần parse lệnh B và CBZ/CBNZ ---
+
         if (['B', 'BL'].includes(mnemonic)) {
             if (opCount === 1) {
                 result.type = 'B';
@@ -152,12 +134,12 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
             } else {
                  throw new Error(`Invalid operands for R-type instruction ${mnemonic}`);
             }
-        } else if (['ADDI', 'SUBI', 'SUBIS'].includes(mnemonic)) { // ARITHMETIC I-types
+        } else if (['ADDI', 'SUBI', 'SUBIS', 'ADDIS', 'ANDIS'].includes(mnemonic)) { // ARITHMETIC I-types
              if (opCount === 3 &&
                  ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rd
                  ops[1].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rn
                  ops[2].match(/^#-?\d+$/)) {                         // #immediate (signed decimal)
-                result.type = 'I'; // Or just 'I' if you handle encoding based on mnemonic
+                result.type = 'I';
                 result.structuredOperands = { Rd: ops[0], Rn: ops[1], immediate: ops[2] };
             } else {
                 throw new Error(`Invalid operands for Arithmetic I-type instruction ${mnemonic}. Expected Rd, Rn, #decimal_immediate`);
@@ -168,7 +150,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
                 ops[1].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rn
                 ops[2].match(/^#0x[0-9a-f]+$/i)) {                  // #0xHEX_immediate (unsigned hex for bitmask)
                                                                   // Case-insensitive for '0x' and hex digits
-                result.type = 'I'; // Or just 'I'
+                result.type = 'I';
                 result.structuredOperands = { Rd: ops[0], Rn: ops[1], bitmask_immediate: ops[2] };
             } else {
                 throw new Error(`Invalid operands for Logical I-type instruction ${mnemonic}. Expected Rd, Rn, #0xHEX_immediate`);

@@ -31,6 +31,7 @@ export const I_TYPE_OPCODES = {
     'ANDI': '1001001000',
     'ORRI': '1011001000',
     'EORI': '1101001000',
-    'SUBIS': '1111000100' // Opcode cho SUBIS
-    // Thêm các lệnh I-type khác
+    'ADDIS': '1011000100',
+    'SUBIS': '1111000100',
+    'ANDIS': '1111001000'
 };
