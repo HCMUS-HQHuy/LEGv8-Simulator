@@ -44,7 +44,11 @@ export function computeOutputs(componentName, components) {
 
 		case 'ALU':
 			components[componentName].output = doALUOperation(components);
-			components[componentName].zero = (components[componentName].output === 0 ? 1 : 0);
+            const tmp = components.InstructionMemory.Opcode_31_21.substring(0, 8);
+            if (tmp == '10110101') // CBNZ
+			    components[componentName].zero = (components[componentName].output === 0 ? 0 : 1);
+			else 
+                components[componentName].zero = (components[componentName].output === 0 ? 1 : 0);
 			break;
 
 		case 'Mux0':

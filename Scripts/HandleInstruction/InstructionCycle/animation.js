@@ -43,15 +43,7 @@ function clearClonedPaths(duration) {
     clones.forEach(el => el.remove());
 }
 
-export function createNodeWithAnimation({ 
-    value, 
-    fieldName,
-    onEndCallback, 
-    pathId, 
-    duration,
-    className,
-    shapeType
-}) {
+export function createNodeWithAnimation({value, fieldName, onEndCallback, pathId, duration, className, shapeType}) {
 	if (!pathId) {
         console.warn(`Path ID ${pathId} is not defined.`);
         return;
