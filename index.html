@@ -921,13 +921,11 @@
       <div class = "code-editor">
         <div class = "line-numbers" id = "lineNumbers"> 1 </div>
         <textarea class = "instructionCode" id = "instructionCode" name = "message" placeholder="Enter LEGv8 code here, one instruction per line...">
-	ADDIS	X10, X10, #4
-
-	B.EQ	ELSE
-	ADDI	X10, X10, #10
+ADDIS	X10, X10, #4
+B.EQ	ELSE
+ADDI	X10, X10, #10
 ELSE:
-	ADDI	X10, X10, #4
-  
+ADDI	X10, X10, #4
 ADDI X1, X1, #2
 ADDI X2, X2, #3
 ADD X3, X1, X2
