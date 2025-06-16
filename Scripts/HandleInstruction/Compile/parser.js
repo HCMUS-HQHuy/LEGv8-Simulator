@@ -1,52 +1,39 @@
 import { R_TYPE_OPCODES, D_TYPE_OPCODES }  from "./Define/Opcode.js"
 import { B_TYPE_OPCODES, CB_TYPE_OPCODES }  from "./Define/Opcode.js"
 import { I_TYPE_OPCODES }  from "./Define/Opcode.js"
+import { B_COND_OPCODE_PREFIX, B_COND_CODES }  from "./Define/Opcode.js"
 
 export function buildLabelTable(codeLines, startAddress = 0, instructionSize = 4) {
     const labelTable = {};
-    let currentAddress = startAddress;
-    let actualInstructionCount = 0; // Đếm số lệnh thực tế để tính địa chỉ
-  
-    for (let i = 0; i < codeLines.length; i++) {
-        let line = codeLines[i].replace(/(\/\/|;).*/, '').trim(); // Xóa comment, trim
-  
-        if (!line) {
-            continue; // Bỏ qua dòng trống
+    let instructionIndex = 0; // Chỉ đếm các dòng có chứa lệnh thực sự
+
+    for (const line of codeLines) {
+        // 1. Dọn dẹp dòng code: xóa comment và khoảng trắng thừa
+        const cleanedLine = line.replace(/(\/\/|;).*/, '').trim();
+
+        // 2. Bỏ qua các dòng trống sau khi đã dọn dẹp
+        if (!cleanedLine) {
+            continue;
         }
-  
-        // Kiểm tra xem dòng có chứa định nghĩa nhãn không (ví dụ: "MyLabel:")
-        const labelMatch = line.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
-  
+
+        // 3. Tìm kiếm định nghĩa nhãn (ví dụ: "Loop:")
+        const labelMatch = cleanedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
+
         if (labelMatch) {
             const labelName = labelMatch[1];
-            const restOfLine = labelMatch[2].trim();
-  
+            const instructionPart = labelMatch[2].trim();
+            console.log(labelName, ' ', instructionIndex, instructionPart);
             if (labelTable.hasOwnProperty(labelName)) {
-                // Có thể cảnh báo hoặc báo lỗi nếu nhãn bị định nghĩa lại
-                console.warn(`Warning: Label "${labelName}" redefined at line ${i + 1}.`);
+                console.warn(`Warning: Label "${labelName}" is redefined.`);
             }
-            // Nhãn trỏ đến địa chỉ của lệnh *tiếp theo* (nếu có) hoặc lệnh trên cùng dòng
-            labelTable[labelName] = currentAddress;
-  
-            if (restOfLine) { // Nếu có lệnh trên cùng dòng với nhãn
-                line = restOfLine; // Xử lý phần còn lại như một lệnh
-            } else {
-                continue; // Nếu chỉ có nhãn, chuyển sang dòng tiếp theo
+            labelTable[labelName] = startAddress + (instructionIndex * instructionSize);
+            if (!instructionPart) {
+                continue;
             }
         }
-  
-        // Nếu dòng (hoặc phần còn lại của dòng sau nhãn) không trống,
-        // thì nó được coi là một lệnh và tăng địa chỉ.
-        // Chúng ta cần một cách sơ bộ để biết nó có phải là lệnh không,
-        // có thể dựa vào việc nó không phải là một định nghĩa nhãn khác.
-        // Hoặc, tốt hơn là, chỉ tăng currentAddress nếu dòng đó thực sự là một lệnh.
-        // Điều này hơi khó nếu không parse sâu, tạm thời giả định dòng không rỗng sau khi xử lý nhãn là lệnh.
-        if (line) {
-            currentAddress += instructionSize;
-            actualInstructionCount++;
-        }
+        instructionIndex++;
     }
-    // console.log("Label Table:", labelTable);
+    console.log(labelTable);
     return labelTable;
 }
 
@@ -95,6 +82,8 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
         const opCount = result.operands.length;
         const ops = result.operands;
 
+        const bCondMatch = mnemonic.match(/^B\.(EQ|NE|HS|LO|MI|PL|VS|VC|HI|LS|GE|LT|GT|LE)$/i);
+
         if (['B', 'BL'].includes(mnemonic)) {
             if (opCount === 1) {
                 result.type = 'B';
@@ -108,6 +97,30 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
                 }
             } else {
                 throw new Error(`Invalid operands for B-type instruction ${mnemonic}`);
+            }
+        } else if (bCondMatch) {
+            if (opCount === 1) {
+                result.type = 'B_COND'; // Một loại mới để dễ dàng nhận biết
+                
+                const condition = bCondMatch[1].toUpperCase(); // Trích xuất điều kiện (EQ, NE, etc.)
+                const labelName = ops[0];
+
+                // Kiểm tra xem điều kiện có hợp lệ không (dù regex đã làm việc này)
+                if (B_COND_CODES.hasOwnProperty(condition)) {
+                    result.structuredOperands = {
+                        condition: condition,
+                        label: labelName
+                    };
+                    if (labelTable && labelTable.hasOwnProperty(labelName)) {
+                        result.targetAddress = labelTable[labelName];
+                    } else if (labelTable) {
+                        throw new Error(`Label "${labelName}" not found for ${mnemonic} instruction.`);
+                    }
+                } else {
+                    throw new Error(`Invalid condition "${condition}" for B.cond instruction.`);
+                }
+            } else {
+                throw new Error(`Invalid operands for B.cond instruction ${mnemonic}. Expected a single label.`);
             }
         } else if (['CBZ', 'CBNZ'].includes(mnemonic)) {
             if (opCount === 2 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i)) {
@@ -171,34 +184,6 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
             } else {
                 throw new Error(`Invalid operands for D-type instruction ${mnemonic}`);
             }
-        } else if (['MOVZ', 'MOVK'].includes(mnemonic)) {
-             if (opCount >= 2 && opCount <= 4 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[1].match(/^#-?\d+$/)) {
-                 result.type = 'IW';
-                 result.structuredOperands = { Rd: ops[0], immediate: ops[1], shift: null };
-                 if (opCount > 2) {
-                     if (ops[2].toUpperCase() === 'LSL' && opCount === 4 && ops[3].match(/^#(0|16|32|48)$/)) {
-                          result.structuredOperands.shift = { type: 'LSL', amount: ops[3] };
-                     } else {
-                          throw new Error(`Invalid shift operand for ${mnemonic}`);
-                     }
-                 }
-             } else {
-                 throw new Error(`Invalid operands for IW-type instruction ${mnemonic}`);
-             }
-        } else if (['BRK', 'SVC', 'HLT'].includes(mnemonic)) {
-            if (opCount === 1 && ops[0].match(/^#\d+$/)) {
-                result.type = 'SYS';
-                result.structuredOperands = { immediate: ops[0] };
-            } else {
-                 throw new Error(`Invalid operands for System instruction ${mnemonic}`);
-            }
-        } else if (mnemonic === 'NOP') {
-             if (opCount === 0) {
-                  result.type = 'NOP';
-                  result.structuredOperands = {};
-             } else {
-                  throw new Error('NOP instruction takes no operands');
-             }
         } else {
              // Kiểm tra xem có phải là định nghĩa nhãn không (trường hợp "LABEL:" rồi hết)
              // Phần này có thể không cần nếu việc lọc dòng chỉ chứa nhãn đã tốt
@@ -206,13 +191,10 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
                   result.type = 'LABEL_DEF';
                   result.label = mnemonic.slice(0, -1);
                   result.mnemonic = null; // Không phải lệnh
-             } else if (result.type === 'UNKNOWN') { // Nếu không khớp lệnh nào ở trên
+             } else if (result.type === 'UNKNOWN') {
                  result.error = `Unknown mnemonic or invalid operands: ${mnemonic}`;
-                 // result.structuredOperands = { raw: result.operands }; // Có thể bỏ
              }
         }
-  
-  
     } catch (e) {
         result.error = e.message;
         result.type = null;
@@ -374,9 +356,6 @@ export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddr
             }
             const wordOffset = byteOffset / 4;
 
-            // Kiểm tra phạm vi cho 26-bit signed offset
-            // Max positive: (2^25 - 1) => (1 << 25) - 1
-            // Min negative: -(2^25)    => -(1 << 25)
             const maxOffsetB = (1 << 25) - 1;
             const minOffsetB = -(1 << 25);
             if (wordOffset < minOffsetB || wordOffset > maxOffsetB) {
@@ -407,9 +386,6 @@ export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddr
             }
             const wordOffset = byteOffset / 4;
 
-            // Kiểm tra phạm vi cho 19-bit signed offset
-            // Max positive: (2^18 - 1) => (1 << 18) - 1
-            // Min negative: -(2^18)    => -(1 << 18)
             const maxOffsetCB = (1 << 18) - 1;
             const minOffsetCB = -(1 << 18);
             if (wordOffset < minOffsetCB || wordOffset > maxOffsetCB) {
@@ -421,13 +397,40 @@ export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddr
             const machineCode = `${opcode}${immediateBin}${rtBin}`;
             if (machineCode.length !== 32) return { error: `CB-type: Generated code length is not 32 bits (${machineCode.length})` };
             return machineCode;
-        } else if (type === 'IW') {
-             // TODO: Implement IW-type encoding (MOVZ, MOVK...)
-             // Format: Opcode(9 bits), op2(2 bits), Immediate(16 bits), Rd(5 bits)
-             return { error: `Encoding for IW-type (${mnemonic}) not yet implemented.` };
-        } else if (type === 'SYS') {
-             // TODO: Implement SYS-type encoding (SVC, HLT, BRK...)
-             return { error: `Encoding for SYS-type (${mnemonic}) not yet implemented.` };
+        } else if (type === 'B_COND') {
+
+            const opcodeBase = B_COND_OPCODE_PREFIX;
+            const condition = structuredOperands.condition;
+            const conditionCode = B_COND_CODES[condition];
+
+            if (!conditionCode) {
+                return { error: `Invalid condition for B.cond: ${condition}` };
+            }
+
+            if (targetAddress === null || targetAddress === undefined) {
+                return { error: `B.cond instruction to label "${structuredOperands.label}" requires target address.`};
+            }
+
+            const byteOffset = targetAddress - currentInstructionAddress;
+            if (byteOffset % 4 !== 0) {
+                return { error: `B.cond target address ${targetAddress} is not word aligned.`};
+            }
+            const wordOffset = byteOffset / 4;
+
+            // Kiểm tra phạm vi cho offset 19-bit
+            const maxOffsetBCond = (1 << 18) - 1; // 2^(19-1) - 1
+            const minOffsetBCond = -(1 << 18);   // -2^(19-1)
+            if (wordOffset < minOffsetBCond || wordOffset > maxOffsetBCond) {
+                return { error: `B.cond offset ${wordOffset} out of 19-bit signed range.` };
+            }
+
+            const immediateBin = toBinary(wordOffset, 19); // 19-bit immediate (word offset)
+            
+            const condField = '0' + conditionCode; // Thêm bit 0 để đủ 5 bit
+            const finalMachineCode = `${opcodeBase}${immediateBin}${condField}`;
+            if (finalMachineCode.length !== 32) return { error: `B.cond: Generated code length is not 32 bits (${finalMachineCode.length})` };
+            
+            return finalMachineCode;
         } else {
             return { error: `Unsupported instruction type for encoding: ${type}` };
         }

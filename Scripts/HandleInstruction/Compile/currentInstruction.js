@@ -3,8 +3,9 @@ import {encodeLegv8Instruction} from "./parser.js"
 const assemblyInstruction = document.getElementById('assembly-instruction');
 const machineLangugageInstruction = document.getElementById('machine-language-instruction');
 
-export function update(index, line) {
-	updateHighlight(index)
+export function update(line) {
+	console.log(line);
+	updateHighlight(line.lineNumber)
 	if (line == null) {
 		console.warn("line code in update CurentInstruction is null");
 		assemblyInstruction.innerText = "";
@@ -14,17 +15,24 @@ export function update(index, line) {
 	assemblyInstruction.innerText = line.assemblyInstruction;
 	machineLangugageInstruction.innerText = encodeLegv8Instruction(line.parsed);
 }
-let prevIndex = -1
-function updateHighlight(nextLineIndex) {
-	let tmp = document.getElementById(`lineId${prevIndex}`);
-	if (tmp) {
-		tmp.innerText = `${prevIndex}\u2009`;
-		tmp.style.color = `var(--line-number-color)`;
-	}
-	tmp = document.getElementById(`lineId${nextLineIndex + 1}`);
-	if (tmp){
-		tmp.innerText = `>${nextLineIndex + 1}<`
-		tmp.style.color = `red`;
-		prevIndex = nextLineIndex + 1;
-	} else prevIndex = -1;
+
+let prevLineNumber = -1;
+function updateHighlight(currentLineNumber) {
+	const prevElement = document.getElementById(`lineId${prevLineNumber}`);
+    if (prevElement) {
+        prevElement.innerHTML = `${prevLineNumber} `; //   là một khoảng trắng mỏng
+        prevElement.style.color = ''; // Dùng '' để reset về CSS mặc định
+        prevElement.style.fontWeight = 'normal';
+    }
+
+	const nextElement = document.getElementById(`lineId${currentLineNumber}`);
+    if (nextElement) {
+        nextElement.innerHTML = `>${currentLineNumber}<`; // Dùng > < để bao quanh
+        nextElement.style.color = 'red';
+        nextElement.style.fontWeight = 'bold';
+        prevLineNumber = currentLineNumber;
+    } else {
+        // Nếu không tìm thấy dòng (ví dụ: kết thúc chương trình), reset lại
+        prevLineNumber = -1;
+    }
 };

@@ -1,5 +1,6 @@
 import { R_TYPE_OPCODES, D_TYPE_OPCODES } from "../Compile/Define/Opcode.js";
 import { B_TYPE_OPCODES, CB_TYPE_OPCODES }  from "../Compile/Define/Opcode.js"
+import { B_COND_OPCODE_PREFIX }  from "../Compile/Define/Opcode.js"
 import { I_TYPE_OPCODES }  from "../Compile/Define/Opcode.js"
 
 export function computeOutputs(componentName, components) {
@@ -219,8 +220,6 @@ function updateControlUnit(currentState) {
     const opcode8bit  = opcode11bit.substring(0, 8);  // Lấy 8 bit đầu cho CB-type
     const opcode6bit  = opcode11bit.substring(0, 6);  // Lấy 6 bit đầu cho B-type
 
-    // Reset về trạng thái mặc định trước khi set
-    // Điều này quan trọng để các tín hiệu không được set sẽ có giá trị 0/an toàn
     currentState.Control.Reg2Loc = 0;
     currentState.Control.ALUSrc = 0;
     currentState.Control.MemtoReg = 0;
@@ -229,22 +228,19 @@ function updateControlUnit(currentState) {
     currentState.Control.MemWrite = 0;
     currentState.Control.Branch = 0;
     currentState.Control.UncondBranch = 0;
-    currentState.Control.ALUOp = 'XX'; // Mặc định không xác định/lỗi
+    currentState.Control.ALUOp = 'XX';
 
     // 2. Xác định tín hiệu dựa trên loại lệnh và opcode
 
     if (Object.values(R_TYPE_OPCODES).includes(opcode11bit)) {
-        // --- R-Type (ADD, SUB, AND, ORR, EOR, LSL, LSR) ---
+        // --- R-Type ---
         currentState.Control.RegWrite = 1;
         currentState.Control.ALUSrc = 0;        // Dùng [Rm]
         currentState.Control.MemtoReg = 0;      // Kết quả từ ALU
         currentState.Control.ALUOp = '10';      // ALU Control sẽ dựa vào funct bits
-        // Reg2Loc = 0 (Mux1 chọn Rm)
-        // MemRead, MemWrite, Branch, UncondBranch = 0
-        // console.log(`Control set for R-format (Opcode: ${opcode11bit})`);
 
     } else if (Object.values(D_TYPE_OPCODES).includes(opcode11bit)) {
-        // --- D-Type (LDUR, STUR) ---
+        // --- D-Type ---
         currentState.Control.ALUSrc = 1;        // Dùng immediate (offset)
         currentState.Control.ALUOp = '00';      // ALU cộng địa chỉ (Base + Offset)
 
@@ -266,7 +262,10 @@ function updateControlUnit(currentState) {
     } else if (Object.values(B_TYPE_OPCODES).includes(opcode6bit)) {
         currentState.Control.UncondBranch = 1;
         currentState.Control.ALUOp = '01';
-
+    } else if (opcode8bit === B_COND_OPCODE_PREFIX) {
+        // --- B.cond Type (Conditional Branch) ---
+        currentState.Control.Branch = 1;
+        currentState.Control.ALUOp = '01';
     } else if (Object.values(CB_TYPE_OPCODES).includes(opcode8bit)) {
         currentState.Control.Reg2Loc = 1;
         currentState.Control.ALUSrc = 0;
