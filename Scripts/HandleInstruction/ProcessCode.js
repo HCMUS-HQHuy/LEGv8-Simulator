@@ -37,7 +37,7 @@ async function execute(results) {
 		ComponentsBackup = JSON.stringify(Components)
 		currentInstruction.update(results[instructionPos]);
 		instructionPos = await generateSignal.start(Components); // This triggers the signal generation
-		if (instructionPos >= Components.InstructionMemory.instruction.length || state.stepByStepMode === 1) {
+		if (instructionPos >= Components.InstructionMemory.instruction.length) {
 			isFinish = true;
 			state.executing = false;
 		}

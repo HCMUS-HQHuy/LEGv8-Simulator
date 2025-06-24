@@ -177,13 +177,13 @@ function traverseAndAnimateBFS(components) {
 }
 
 function resetComponents(Components) {
-	for (const key in signalCallbackTable)
+	const specialNode = ["InstructionMemory.ReadAddress", "ALU.option", "ALU.input2", "DataMemory.address","Mux0.option"]
+	for (const key of Object.keys(signalCallbackTable))
 		if (signalCallbackTable.hasOwnProperty(key))
 			signalCallbackTable[key] = [() => {
-				if (state.stepByStepMode)
+				if (state.stepByStepMode && specialNode.includes(key))
 					state.executing = false;
 			}];
-	
 	
 	for (let i = 0; i <= 3; i++) {
 		signalCallbackTable[`Mux${i}.option`].push(
