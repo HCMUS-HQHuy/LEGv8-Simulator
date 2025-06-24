@@ -176,13 +176,35 @@ function traverseAndAnimateBFS(components) {
 	}
 }
 
+// Ẩn tất cả step ban đầu
+const stepIds = ["step_1", "step_2", "step_3", "step_4", "step_5"];
+function hideAllSteps() {
+	stepIds.forEach(id => {
+		const el = document.getElementById(id);
+		if (el) el.style.display = "none";
+	});
+}
+
+hideAllSteps();
+
+// Hiển thị step hiện tại
+function showCurrentStep(currentStep) {
+	const id = stepIds[currentStep];
+	const el = document.getElementById(id);
+	if (el) el.style.display = "inline"; // dùng inline hoặc block tùy SVG
+}
+
 function resetComponents(Components) {
 	const specialNode = ["InstructionMemory.ReadAddress", "ALU.option", "ALU.input2", "DataMemory.address","Mux0.option"]
 	for (const key of Object.keys(signalCallbackTable))
 		if (signalCallbackTable.hasOwnProperty(key))
 			signalCallbackTable[key] = [() => {
-				if (state.stepByStepMode && specialNode.includes(key))
+				if (state.stepByStepMode && specialNode.includes(key)) {
 					state.executing = false;
+
+					hideAllSteps();
+					showCurrentStep(specialNode.indexOf(key) + 1);
+				}
 			}];
 	
 	for (let i = 0; i <= 3; i++) {
@@ -376,6 +398,11 @@ export async function start(Components) {
 	if ((Components.PC.value >> 2) >= Components.InstructionMemory.instruction.length) {
 		return -1;
 	}
+
+	if (state.stepByStepMode) {
+		showCurrentStep(0);
+	}
+
 	resetComponents(Components);
 	traverseAndAnimateBFS(Components);
 	startSignalAnimation("InstructionMemory.ReadAddress")

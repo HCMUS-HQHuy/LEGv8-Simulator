@@ -35,7 +35,7 @@
 /* --- Light Mode Overrides --- */
 body.light {
   --bg-color: #ffffff;
-  --frame-bg-color: #fdfced;
+  --frame-bg-color: #ffffff;
   --frame-bg-color-blur: rgba(253, 252, 237, 0.5);
   --text-color: #000000;
   --data-node-text-color: white;
@@ -48,7 +48,7 @@ body.light {
   --label-fill: #000000;
   --mem-label-fill: #555555; /* Dark gray */
   --label-start-fill: #000000; /* Assuming this label is on the main background */
-  --signal-line-stroke: #228B22; /* Forest green */
+  --signal-line-stroke: #1c8308; /* Forest green */
   --help-line-stroke: red; /* Forest green */
   --actived-line: rgb(244, 186, 13);
   --emphasis-color: red; /* Red usually works on light too */
@@ -169,6 +169,20 @@ body {
   stroke: var(--component-stroke); 
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
+}
+.step_area {
+  fill: none; 
+  stroke: red; 
+  stroke-width: 4;
+  vector-effect: non-scaling-stroke;
+}
+.step_area_label {
+  font-family: sans-serif;
+  font-size: 30px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  fill: var(--label-fill);
+  font-weight: bold;
 }
 .selected-component {
   fill: var(--component-fill); 

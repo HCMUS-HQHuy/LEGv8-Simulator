@@ -433,6 +433,31 @@
 
         <!-- Components Layer (Drawn AFTER lines = On Top) -->
         <g id="components">
+          <!-- step 1-->
+          <g id = "step_1" transform = "translate(80, 50)">
+            <rect width = "350" height = "690" class = "step_area" />
+            <text x = "135" y = "715" class = "step_area_label"> 1. Instruction Fetch </text>
+          </g>
+          <!-- step 2 -->
+          <g id = "step_2" transform = "translate(470, 505)">
+            <rect width = "510" height = "400" class = "step_area" />
+            <text x = "150" y = "425" class = "step_area_label"> 2. Instruction Decode </text>
+          </g>
+          <!-- step 3 -->
+          <g id = "step_3" transform = "translate(1000, 120)">
+            <path d = "M0 0 L620 0 L620 200 L320 200 L320 880 L0 880 L0 0" class = "step_area"/>
+            <text x = "208" y = "-30" class = "step_area_label"> 3. ALU - Arithmetic-Logic Unit </text>
+          </g>
+          <!-- step 4 -->
+          <g id = "step_4" transform = "translate(1420, 580)">
+            <rect width = "200" height = "260" class = "step_area" />
+            <text x = "75" y = "315" class = "step_area_label"> 4. Memory Access </text>
+          </g>
+          <!-- step 5 -->
+          <g id = "step_5" transform = "translate(1650, 650)">
+            <rect width = "125" height = "380" class = "step_area" />
+            <text x = "113" y = "-20" class = "step_area_label"> 5. Register Write </text>
+          </g>
           <!-- pc -->
           <g id="pc" transform = "translate(115, 500)">
             <rect width = "50" height = "100" class = "component" />
@@ -876,7 +901,7 @@
         </svg>
         <span class = "help-text help-fullscreen">Fullscreen-></span>
         <span class = "help-text help-compile">Compile-></span>
-        <span class = "help-text help-start">Start-></span>
+        <span class = "help-text help-start">Start / Stop-></span>
         <span class = "help-text help-mode">Mode-></span>
         <span class = "help-text help-mode-option">default:[auto] / step-by-step</span>
         <span class = "help-text help-speed"><-Change animation speed</span>
