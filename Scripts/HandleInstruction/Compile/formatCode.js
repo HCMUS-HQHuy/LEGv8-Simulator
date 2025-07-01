@@ -22,7 +22,7 @@ export function getResult() {
         if (!cleanedLine) {
             continue;
         }
-        console.log('line: ', effectiveLineCounter, cleanedLine);
+        // console.log('line: ', effectiveLineCounter, cleanedLine);
 
         // Tách nhãn và lệnh
         const labelMatch = cleanedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
@@ -67,6 +67,6 @@ export function getResult() {
             lineHTML = '';
         }
     }
-    instructionTextarea.value = formattedCodeHTML;
+    instructionTextarea.value = formattedCodeHTML + lineHTML;
     return parsedResults;
 }

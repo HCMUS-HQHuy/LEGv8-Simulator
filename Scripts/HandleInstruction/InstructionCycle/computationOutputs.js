@@ -9,7 +9,6 @@ export function computeOutputs(componentName, components) {
 			const InstructionMemory = components[componentName];
 			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2];
             if (encodedInstruction == null) console.error("encodedInstruction is null in computation Ouputs");
-            else console.log("hello: ", encodedInstruction);
 			InstructionMemory.Opcode_31_21 = encodedInstruction.substring(0, 11);
 			InstructionMemory.Rm_20_16 = encodedInstruction.substring(11, 16);
 			InstructionMemory.Rn_09_05 = encodedInstruction.substring(22, 27);

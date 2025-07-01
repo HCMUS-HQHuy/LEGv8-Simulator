@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (instructionTextarea) {
                         instructionTextarea.value = fileContent;
                         updateLineNumbers();
-                        console.log("File content loaded into textarea.");
                     }
                 };
                 reader.onerror = function(e) {
@@ -38,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (fileNameDisplay) {
                     fileNameDisplay.textContent = "No file chosen"; // Reset if no file
                 }
-                console.log("No file selected.");
+                console.warn("No file selected.");
             }
             event.target.value = null; // Reset file input
         });

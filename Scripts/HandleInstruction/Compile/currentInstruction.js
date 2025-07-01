@@ -4,7 +4,6 @@ const assemblyInstruction = document.getElementById('assembly-instruction');
 const machineLangugageInstruction = document.getElementById('machine-language-instruction');
 
 export function update(line) {
-	console.log(line);
 	updateHighlight(line.lineNumber)
 	if (line == null) {
 		console.warn("line code in update CurentInstruction is null");

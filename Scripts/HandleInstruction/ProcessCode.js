@@ -33,7 +33,7 @@ async function execute(results) {
 
 	isFinish = false;
 	while (isFinish === false) {
-		console.log(`instructionPos: ${instructionPos}`);
+		// console.log(`instructionPos: ${instructionPos}`);
 		ComponentsBackup = JSON.stringify(Components)
 		currentInstruction.update(results[instructionPos]);
 		instructionPos = await generateSignal.start(Components); // This triggers the signal generation
@@ -71,7 +71,6 @@ export function trigger() {
 		state.executing = false;
 		isFinish = true;
 		document.getElementById('start-stop-animation').click();
-		console.log("Simulation state set to not executing.");
 	});
 
 	document.getElementById('replay-one-botton').addEventListener('click', function(event) {
@@ -82,7 +81,6 @@ export function trigger() {
 		generateSignal.initialize(null, true);
 		Components = JSON.parse(ComponentsBackup);
 		document.getElementById('start-stop-animation').click();
-		console.log("Simulation state set to not executing.");
 	});
 	
 	// state.executing = true;

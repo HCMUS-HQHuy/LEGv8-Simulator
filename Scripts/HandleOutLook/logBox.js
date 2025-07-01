@@ -160,7 +160,6 @@ export function validateParsedResults(parsedResults, logBoxId = "log-box") {
 
     // If no errors and at least one executable instruction
     const successMessage = "Validation Successful: Code is ready for execution.";
-    console.log(successMessage);
     displayInLogBox(successMessage, logBoxId, false); // Display success in log-box
     return true; // Validation passes
 }

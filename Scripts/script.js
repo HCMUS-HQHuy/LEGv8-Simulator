@@ -283,31 +283,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Button Click Handlers ---
     const handleParseClick = () => {
-        console.log('Parse clicked: Clearing highlights.');
+        // console.log('Parse clicked: Clearing highlights.');
         clearAllHighlights();
         // Add actual parsing logic here...
-    };
-
-    const handleExecuteClick = () => {
-        const nextLineIndex = currentHighlightIndex + 1;
-        console.log(`Execute clicked: Highlighting line index ${nextLineIndex}`);
-        highlightLine(nextLineIndex); // Highlight the next line (handles bounds checks)
-
-        if (nextLineIndex >= lineCount) {
-             console.log('Execution finished or no more lines.');
-             // Optionally disable executeButton here
-             // executeButton.disabled = true;
-             // executeButtonFrame?.disabled = true; // If it's a button too
-        }
-         // Add actual execution logic for the instruction at 'nextLineIndex' here...
     };
 
     // Attach handlers to potentially multiple buttons
     if (parseButton) parseButton.addEventListener('click', handleParseClick);
     if (parseButtonFrame) parseButtonFrame.addEventListener('click', handleParseClick); // Handles frame button too
-    // if (executeButton) executeButton.addEventListener('click', handleExecuteClick);
-    // if (executeButtonFrame) executeButtonFrame.addEventListener('click', handleExecuteClick); // Handles frame button too
-
 
     // --- Initial setup ---
     calculateMetrics();

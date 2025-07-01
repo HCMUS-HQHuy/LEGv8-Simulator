@@ -22,7 +22,7 @@ export function buildLabelTable(codeLines, startAddress = 0, instructionSize = 4
         if (labelMatch) {
             const labelName = labelMatch[1];
             const instructionPart = labelMatch[2].trim();
-            console.log(labelName, ' ', instructionIndex, instructionPart);
+            // console.log(labelName, ' ', instructionIndex, instructionPart);
             if (labelTable.hasOwnProperty(labelName)) {
                 console.warn(`Warning: Label "${labelName}" is redefined.`);
             }
@@ -33,7 +33,6 @@ export function buildLabelTable(codeLines, startAddress = 0, instructionSize = 4
         }
         instructionIndex++;
     }
-    console.log(labelTable);
     return labelTable;
 }
 
