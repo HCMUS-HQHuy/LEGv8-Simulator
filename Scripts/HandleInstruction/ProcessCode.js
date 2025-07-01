@@ -27,6 +27,8 @@ function clearAll() {
 	instructionPos = -1;
 	state.executing = false;
 	state.currentStep = 6;
+	ComponentsBackup = null;
+	Components = null;
 	isFinish = true;
 	currentInstruction.update(-1);
 	for (let i = 0; i <= 3; i++) {
