@@ -14,7 +14,7 @@ export function resetAnimation() {
         rootpath.remove();
         const PathNew = document.createElementNS(svgNS, 'g');
         PathNew.setAttribute('id', "root-path");
-        document.getElementById("container-data-signal-nodes").appendChild(PathNew);
+        document.getElementById("container-root-path").appendChild(PathNew);
     }
     if (parentGroup != null) {
         parentGroup.remove();

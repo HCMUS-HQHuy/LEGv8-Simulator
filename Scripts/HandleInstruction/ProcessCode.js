@@ -55,6 +55,7 @@ export function trigger() {
 		resetAnimation();
 		instructionPos = -1;
 		state.executing = false;
+		state.currentStep = 6;
 		isFinish = true;
     	currentInstruction.update(-1);
 		results = compileCode();
