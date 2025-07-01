@@ -600,6 +600,10 @@ body {
   top: 163px;
   right: 65px;
 }
+.help-support-command {
+  bottom: 50px;
+  right: 10px;
+}
 
 
 /* codeBox */
