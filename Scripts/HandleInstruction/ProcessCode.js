@@ -26,13 +26,12 @@ function clearAll() {
 	resetAnimation();
 	instructionPos = -1;
 	state.executing = false;
-	state.currentStep = 6;
+	setTimeout(()=>{state.currentStep = 6;}, 2);
 	ComponentsBackup = null;
 	Components = null;
 	isFinish = true;
 	currentInstruction.update(-1);
 	for (let i = 0; i <= 3; i++) {
-		// mux-0-0-selected
 		document.getElementById(`mux-${i}-0-selected`).style.visibility = "hidden";
 		document.getElementById(`mux-${i}-1-selected`).style.visibility = "hidden";
 	}
