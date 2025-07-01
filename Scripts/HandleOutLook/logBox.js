@@ -24,7 +24,7 @@ function displayInLogBox(message, logBoxId = "log-box", isError = false) {
 
 export function validateParsedResults(parsedResults, logBoxId = "log-box") {
     if (parsedResults == null) {
-        const nullResultMessage = "Validation Error: Parsed results are null. Cannot proceed.";
+        const nullResultMessage = "Parsed results are null. Cannot proceed.";
         console.error(nullResultMessage);
         displayInLogBox(nullResultMessage, logBoxId, true);
         return false;
@@ -33,6 +33,13 @@ export function validateParsedResults(parsedResults, logBoxId = "log-box") {
         displayInLogBox(parsedResults, logBoxId, true);
         return false;
     }
+
+	if (parsedResults.length === 0) {
+		const errorMessage = "No parsed results found — the input appears to be empty. Aborting operation.";
+		displayInLogBox(errorMessage, logBoxId, true);
+		return false;
+	}
+
 	displayInLogBox("Compilation completed successfully.", logBoxId);
     return true;
 }
