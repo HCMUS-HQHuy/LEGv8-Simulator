@@ -385,7 +385,7 @@ body {
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 8px 16px;
-  top: 110px;
+  top: 60px;
   right: 10px;
   font-size: 100%;
   cursor: pointer;
@@ -420,13 +420,28 @@ body {
 
   z-index: 2;
 }
+.stop-button-outside {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
 
+  background-color: var(--frame-bg-color);
+
+  font-size: 14px;
+
+  z-index: 2;
+}
 .replay-all-button {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 8px 16px;
-  top: 207px;
+  top: 107px;
   right: 10px;
   font-size: 100%;
   cursor: pointer;
@@ -450,7 +465,7 @@ body {
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
   padding: 8px 16px;
-  top: 251px;
+  top: 151px;
   right: 10px;
   font-size: 100%;
   cursor: pointer;
@@ -519,7 +534,7 @@ body {
   right: 65px;
 }
 .help-start {
-  top: 118px;
+  top: 68px;
   right: 65px;
 }
 .help-mode {
@@ -578,11 +593,11 @@ body {
   z-index: 2;
 }
 .help-replay-all {
-  top: 216px;
+  top: 116px;
   right: 65px;
 }
 .help-replay-one {
-  top: 263px;
+  top: 163px;
   right: 65px;
 }
 
@@ -616,11 +631,14 @@ body {
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
   
-  font-size: 100%;
+  font-size: 90%;
   padding: 1% 3%;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
+  height: 28px;
+  line-height: 28px; 
+  font-family: sans-serif;
 }
 .import-code-button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */

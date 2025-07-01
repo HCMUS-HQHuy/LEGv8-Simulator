@@ -16,7 +16,10 @@
 
 <div class = "codeAndFrameContainer">
   <div class = "frameBox">
-    <h2>Frame</h2>
+    <div class = "label-code">
+      <h2>Frame</h2>
+      <button class = "stop-button-outside" id = "step-by-step-mode-button" title = "Step by step mode">Mode: Step-by-step</button>
+    </div>
 
     <div class = "frame">
       <svg viewBox = "0 0 1930 3050" id = "zoomFrame">
@@ -864,7 +867,7 @@
           <text x = "80"   y = "0"   class = "label"> ╲ </text>
         </g>
       </g>
-    </svg>
+      </svg>
 
       <g class = "help-group" style = "display: none;">
       <!-- <g class = "help-group"> -->
@@ -902,15 +905,10 @@
           </g>
         </svg>
         <span class = "help-text help-fullscreen">Fullscreen-></span>
-        <span class = "help-text help-compile">Compile-></span>
         <span class = "help-text help-start">Start / Stop-></span>
-        <span class = "help-text help-mode">Mode-></span>
-        <span class = "help-text help-mode-option">default:[auto] / step-by-step</span>
         <span class = "help-text help-speed"><-Change animation speed</span>
         <span class = "help-text help-register-click"><-Click on the components</span>
         <span class = "help-text help-register-click-1">on the diagram to view the data</span>
-        <button class = "help-stop-button">➔</button>
-        <button class = "help-stop-button-actived">➔</button>
         <span class = "help-text help-replay-all">Replay all-></span>
         <span class = "help-text help-replay-one">Replay one step-></span>
       </g>
@@ -918,7 +916,7 @@
       <button class = "frame-button" id = "fullscreen-btn" title = "Toggle fullscreen"></button>
       <!-- <button class = "compile-button" id = "compile-btn" title = "Compile code">⚙</button> -->
       <button class = "start-button" id = "start-stop-animation" title = "Start animation">▶</button>
-      <button class = "stop-button" id = "step-by-step-mode-button" title = "Step by step mode">➔</button>
+      <!-- <button class = "stop-button" id = "step-by-step-mode-button" title = "Step by step mode">➔</button> -->
       <button class = "replay-all-button" id = "replay-all-botton" title = "Replay all">&#10226</button>
       <button class = "replay-one-button" id = "replay-one-botton" title = "Replay one">⏮</button>
 
@@ -975,8 +973,8 @@ End_If:
     <div class = "label-and-log-box">
       <h2></h2>
       <div class = "outside-button-group">  
-        <button class = "compile-button-outside" id = "compile-btn" title = "Compile code">⚙</button>
-        <button class = "compile-button-outside" id = "compile-btn" title = "Compile code">⚙</button>
+        <button class = "compile-button-outside" id = "compile-btn" title = "Compile code">⚙ Compile</button>
+        <button class = "compile-button-outside" id = "start-stop-animation" title = "Compile code">▶ Execute</button> 
       </div>
       <h2>Log</h2>
       <div class="log-box" id="log-box">
