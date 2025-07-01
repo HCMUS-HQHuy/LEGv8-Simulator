@@ -43,8 +43,9 @@ export function getResult() {
 
             if (!parsedInstruction || parsedInstruction.error) {
                 // Xử lý lỗi: Hiển thị dòng lỗi
-                console.error(`Error parsing line ${i + 1}: ${parsedInstruction?.error || 'Unknown error'}`);
+                // console.error(`Error parsing line ${i + 1}: ${parsedInstruction?.error || 'Unknown error'}`);
                 lineHTML += `${instructionPart}`;
+                return `Error parsing line ${i + 1}: ${parsedInstruction?.error || 'Unknown error'}`;
             } else {
                 // Format lại lệnh cho đẹp
                 const mnemonic = parsedInstruction.mnemonic.toUpperCase();

@@ -3,7 +3,7 @@ import * as formatCode from "./Compile/formatCode.js"
 
 import * as generateSignal from "./InstructionCycle/generateSignal.js"
 import {state} from "./InstructionCycle/animationSpeed.js"
-import { logParsingResults, validateParsedResults } from "../HandleOutLook/logBox.js"
+import { validateParsedResults } from "../HandleOutLook/logBox.js"
 
 function compileCode() {
 	const results = formatCode.getResult();
@@ -11,7 +11,7 @@ function compileCode() {
 		console.error("formatcode: Have some problem!");
 		return;
 	}
-	logParsingResults(results);
+	validateParsedResults(results);
 	return results;
 }
 
@@ -36,7 +36,7 @@ async function execute(results) {
 		// console.log(`instructionPos: ${instructionPos}`);
 		ComponentsBackup = JSON.stringify(Components)
 		currentInstruction.update(results[instructionPos]);
-		instructionPos = await generateSignal.start(Components); // This triggers the signal generation
+		instructionPos = await generateSignal.start(Components);
 		if (instructionPos >= Components.InstructionMemory.instruction.length) {
 			isFinish = true;
 			state.executing = false;

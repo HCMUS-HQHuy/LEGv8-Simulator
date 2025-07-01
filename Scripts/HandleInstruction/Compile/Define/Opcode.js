@@ -3,8 +3,12 @@ export const R_TYPE_OPCODES = {
     'SUB':  '11001011000',
     'AND':  '10001010000',
     'ORR':  '10101010000',
-    'SUBS': '11101011000',
     'EOR':  '11001010000',
+
+    'ADDS': '10101011000', // S-bit (at index 2) is 1
+    'SUBS': '11101011000', // S-bit (at index 2) is 1
+    'ANDS': '11101010000', // S-bit (at index 2) is 1
+
     'LSL':  '11010011011',
     'LSR':  '11010011010',
 };

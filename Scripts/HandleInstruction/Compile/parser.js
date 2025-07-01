@@ -82,6 +82,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
         const ops = result.operands;
 
         const bCondMatch = mnemonic.match(/^B\.(EQ|NE|HS|LO|MI|PL|VS|VC|HI|LS|GE|LT|GT|LE)$/i);
+        const registerRegex = /^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i;
 
         if (['B', 'BL'].includes(mnemonic)) {
             if (opCount === 1) {
@@ -104,7 +105,6 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
                 const condition = bCondMatch[1].toUpperCase(); // Trích xuất điều kiện (EQ, NE, etc.)
                 const labelName = ops[0];
 
-                // Kiểm tra xem điều kiện có hợp lệ không (dù regex đã làm việc này)
                 if (B_COND_CODES.hasOwnProperty(condition)) {
                     result.structuredOperands = {
                         condition: condition,
@@ -122,7 +122,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
                 throw new Error(`Invalid operands for B.cond instruction ${mnemonic}. Expected a single label.`);
             }
         } else if (['CBZ', 'CBNZ'].includes(mnemonic)) {
-            if (opCount === 2 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i)) {
+            if (opCount === 2 && ops[0].match(registerRegex)) {
                 result.type = 'CB';
                 const labelName = ops[1];
                 result.structuredOperands = { Rt: ops[0], label: labelName };
@@ -136,39 +136,29 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
             }
         }
         // --- GIỮ NGUYÊN CÁC PHẦN PARSE KHÁC (R, D, I, IW, SYS, NOP) ---
-        else if (['ADD', 'SUB', 'AND', 'ORR', 'EOR', 'LSL', 'LSR', 'ASR', 'MUL', 'SDIV', 'UDIV', 'SUBS'].includes(mnemonic)) {
-             if (opCount === 3 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[1].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[2].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i)) {
+        else if (['ADD', 'SUB', 'AND', 'ORR', 'EOR', 'ADDS', 'SUBS', 'ANDS'].includes(mnemonic)) {
+             if (opCount === 3 && ops[0].match(registerRegex) && ops[1].match(registerRegex) && ops[2].match(registerRegex)) {
                 result.type = 'R';
                 result.structuredOperands = { Rd: ops[0], Rn: ops[1], Rm: ops[2] };
-            } else if (opCount === 3 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[1].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[2].match(/^#\d+$/)) {
-                 result.type = 'R_Shift';
-                 result.structuredOperands = { Rd: ops[0], Rn: ops[1], shift_imm: ops[2] };
             } else {
                  throw new Error(`Invalid operands for R-type instruction ${mnemonic}`);
             }
         } else if (['ADDI', 'SUBI', 'SUBIS', 'ADDIS', 'ANDIS'].includes(mnemonic)) { // ARITHMETIC I-types
-             if (opCount === 3 &&
-                 ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rd
-                 ops[1].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rn
-                 ops[2].match(/^#-?\d+$/)) {                         // #immediate (signed decimal)
+             if (opCount === 3 && ops[0].match(registerRegex) && ops[1].match(registerRegex) && ops[2].match(/^#-?\d+$/)) {
                 result.type = 'I';
                 result.structuredOperands = { Rd: ops[0], Rn: ops[1], immediate: ops[2] };
             } else {
                 throw new Error(`Invalid operands for Arithmetic I-type instruction ${mnemonic}. Expected Rd, Rn, #decimal_immediate`);
             }
         } else if (['ANDI', 'ORRI', 'EORI'].includes(mnemonic)) { // LOGICAL I-types
-            if (opCount === 3 &&
-                ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rd
-                ops[1].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && // Rn
-                ops[2].match(/^#0x[0-9a-f]+$/i)) {                  // #0xHEX_immediate (unsigned hex for bitmask)
-                                                                  // Case-insensitive for '0x' and hex digits
+            if (opCount === 3 && ops[0].match(registerRegex) && ops[1].match(registerRegex) && ops[2].match(/^#0x[0-9a-f]+$/i)) {
                 result.type = 'I';
                 result.structuredOperands = { Rd: ops[0], Rn: ops[1], bitmask_immediate: ops[2] };
             } else {
                 throw new Error(`Invalid operands for Logical I-type instruction ${mnemonic}. Expected Rd, Rn, #0xHEX_immediate`);
             }
         } else if (['LDUR', 'STUR'].includes(mnemonic)) {
-            if (opCount === 2 && ops[0].match(/^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i) && ops[1].match(/^\[X([0-9]|1[0-9]|2[0-9]|30|ZR)\s*(,\s*#-?\d+)?\s*\]$/i)) {
+            if (opCount === 2 && ops[0].match(registerRegex) && ops[1].match(/^\[X([0-9]|1[0-9]|2[0-9]|30|ZR)\s*(,\s*#-?\d+)?\s*\]$/i)) {
                 result.type = 'D';
                 const memMatch = ops[1].match(/^\[(X([0-9]|1[0-9]|2[0-9]|30|ZR))\s*(?:,\s*(#-?\d+))?\s*\]$/i);
                 if (memMatch) {

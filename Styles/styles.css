@@ -951,3 +951,7 @@ body {
   margin: 0; /* Loại bỏ khoảng cách ngoài của thẻ p */
   line-height: 1.4; /* Chỉnh khoảng cách giữa các dòng trong thẻ p */
 }
+
+.log-error {
+  color: #ff0000;                /* White text */
+}

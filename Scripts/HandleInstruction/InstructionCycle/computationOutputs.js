@@ -55,11 +55,12 @@ export function computeOutputs(componentName, components) {
                 I_TYPE_OPCODES['ADDIS'],
                 I_TYPE_OPCODES['SUBIS'],
                 I_TYPE_OPCODES['ANDIS'],
-                R_TYPE_OPCODES['SUBS']
+                R_TYPE_OPCODES['SUBS'],
+                R_TYPE_OPCODES['ADDS'],
+                R_TYPE_OPCODES['ANDS']
             ];
 
             if (flagSettingInstructions.includes(opcode10bit) || flagSettingInstructions.includes(components.InstructionMemory.Opcode_31_21)) {
-                
                 console.log(aluResultObject);
                 components.ALU.Flags.N = aluResultObject.N;
                 components.ALU.Flags.Z = aluResultObject.Z;
@@ -297,24 +298,29 @@ function updateALUControl(currentState) {
             // The ALU Control must now look at the opcode to determine the specific operation.
             
             // R-Type Instructions (check full 11-bit opcode)
-            if (fullOpcode === R_TYPE_OPCODES['ADD'])     { aluControlCode = '0010'; break; } // ADD
-            if (fullOpcode === R_TYPE_OPCODES['SUB'])     { aluControlCode = '0110'; break; } // SUB
-            if (fullOpcode === R_TYPE_OPCODES['AND'])     { aluControlCode = '0000'; break; } // AND
-            if (fullOpcode === R_TYPE_OPCODES['ORR'])     { aluControlCode = '0001'; break; } // ORR
-            if (fullOpcode === R_TYPE_OPCODES['EOR'])     { aluControlCode = '1000'; break; } // EOR
-            if (fullOpcode === R_TYPE_OPCODES['LSL'])     { aluControlCode = '1010'; break; } // LSL
-            if (fullOpcode === R_TYPE_OPCODES['LSR'])     { aluControlCode = '1001'; break; } // LSR
-            if (fullOpcode === R_TYPE_OPCODES['BR'])      { aluControlCode = '1101'; break; } // BR (Pass A)
+            if (fullOpcode === R_TYPE_OPCODES['ADD'])     { aluControlCode = '0010'; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['SUB'])     { aluControlCode = '0110'; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['AND'])     { aluControlCode = '0000'; break; } 
+            
+            if (fullOpcode === R_TYPE_OPCODES['ADDS'])     { aluControlCode = '0010'; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['SUBS'])     { aluControlCode = '0110'; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['ANDS'])     { aluControlCode = '0000'; break; }
+
+            if (fullOpcode === R_TYPE_OPCODES['ORR'])     { aluControlCode = '0001'; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['EOR'])     { aluControlCode = '1000'; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['LSL'])     { aluControlCode = '1010'; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['LSR'])     { aluControlCode = '1001'; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['BR'])      { aluControlCode = '1101'; break; } 
 
             // I-Type Instructions (check 10-bit opcode prefix)
-            if (opcode10bit === I_TYPE_OPCODES['ADDI'])   { aluControlCode = '0010'; break; } // ADD
-            if (opcode10bit === I_TYPE_OPCODES['SUBI'])   { aluControlCode = '0110'; break; } // SUB
-            if (opcode10bit === I_TYPE_OPCODES['ADDIS'])  { aluControlCode = '0010'; break; } // ADD
-            if (opcode10bit === I_TYPE_OPCODES['SUBIS'])  { aluControlCode = '0110'; break; } // SUB
-            if (opcode10bit === I_TYPE_OPCODES['ANDI'])   { aluControlCode = '0000'; break; } // AND
-            if (opcode10bit === I_TYPE_OPCODES['ORRI'])   { aluControlCode = '0001'; break; } // ORR
-            if (opcode10bit === I_TYPE_OPCODES['EORI'])   { aluControlCode = '1000'; break; } // EOR
-            if (opcode10bit === I_TYPE_OPCODES['ANDIS'])  { aluControlCode = '0000'; break; } // AND
+            if (opcode10bit === I_TYPE_OPCODES['ADDI'])   { aluControlCode = '0010'; break; }
+            if (opcode10bit === I_TYPE_OPCODES['SUBI'])   { aluControlCode = '0110'; break; }
+            if (opcode10bit === I_TYPE_OPCODES['ADDIS'])  { aluControlCode = '0010'; break; }
+            if (opcode10bit === I_TYPE_OPCODES['SUBIS'])  { aluControlCode = '0110'; break; }
+            if (opcode10bit === I_TYPE_OPCODES['ANDI'])   { aluControlCode = '0000'; break; }
+            if (opcode10bit === I_TYPE_OPCODES['ORRI'])   { aluControlCode = '0001'; break; }
+            if (opcode10bit === I_TYPE_OPCODES['EORI'])   { aluControlCode = '1000'; break; }
+            if (opcode10bit === I_TYPE_OPCODES['ANDIS'])  { aluControlCode = '0000'; break; }
 
             // If we reach here, no specific R-type or I-type opcode was matched.
             console.warn(`ALU Control: Unknown R/I-type opcode ${fullOpcode} for ALUOp='10'`);
