@@ -4,6 +4,7 @@ import * as formatCode from "./Compile/formatCode.js"
 import * as generateSignal from "./InstructionCycle/generateSignal.js"
 import {state} from "./InstructionCycle/animationSpeed.js"
 import { validateParsedResults } from "../HandleOutLook/logBox.js"
+import { resetAnimation } from "./InstructionCycle/animation.js"
 
 function compileCode() {
 	const results = formatCode.getResult();
@@ -47,11 +48,17 @@ async function execute(results) {
 
 export function trigger() {
 	let results = null;
+	state.executing = false;
+
 	document.getElementById('compile-btn').addEventListener('click', function(event) {
         event.preventDefault();
+		resetAnimation();
+		instructionPos = -1;
+		state.executing = false;
+		isFinish = true;
+    	currentInstruction.update(-1);
 		results = compileCode();
 	});
-	state.executing = false;
 	
 	document.getElementById('start-stop-animation').addEventListener('click', function(event) {
 		event.preventDefault();
@@ -82,8 +89,4 @@ export function trigger() {
 		Components = JSON.parse(ComponentsBackup);
 		document.getElementById('start-stop-animation').click();
 	});
-	
-	// state.executing = true;
-	// results = compileCode();
-	// execute(results);
 }

@@ -5,8 +5,26 @@ export function setTimestamp(value) {
     canClear = true;
 }
 
-const parentGroup = document.getElementById("data-signal-nodes");
-const rootpath = document.getElementById('root-path');
+const svgNS = "http://www.w3.org/2000/svg";
+let parentGroup = document.getElementById("data-signal-nodes");
+let rootpath = document.getElementById('root-path');
+
+export function resetAnimation() {
+    if (rootpath != null) {
+        rootpath.remove();
+        const PathNew = document.createElementNS(svgNS, 'g');
+        PathNew.setAttribute('id', "root-path");
+        document.getElementById("container-data-signal-nodes").appendChild(PathNew);
+    }
+    if (parentGroup != null) {
+        parentGroup.remove();
+        const parentGroupNew = document.createElementNS(svgNS, 'g');
+        parentGroupNew.setAttribute('id', "data-signal-nodes");
+        document.getElementById("container-data-signal-nodes").appendChild(parentGroupNew);
+    }
+    rootpath = document.getElementById('root-path');
+    parentGroup = document.getElementById("data-signal-nodes");
+}
 
 export function startSignalAnimation(id) {
 	const animation = document.getElementById(`data-anim-${id}`);
@@ -63,8 +81,6 @@ export function createNodeWithAnimation({value, fieldName, onEndCallback, pathId
     
     const existingNode = document.getElementById(nodeGroupId);
     if (existingNode) existingNode.remove();
-
-    const svgNS = "http://www.w3.org/2000/svg";
 
     // Tạo node mới (dùng hình chữ nhật cho địa chỉ)
     const nodeGroup = document.createElementNS(svgNS, 'g');

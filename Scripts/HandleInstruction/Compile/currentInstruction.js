@@ -11,6 +11,11 @@ export function update(line) {
 		machineLangugageInstruction.innerText = "";
 		return;
 	}
+    if (line === -1) {
+        assemblyInstruction.innerText = "Assembly Instruction";
+	    machineLangugageInstruction.innerText = "Machine Language Instruction";
+        return;
+    }
 	assemblyInstruction.innerText = line.assemblyInstruction;
 	machineLangugageInstruction.innerText = encodeLegv8Instruction(line.parsed);
 }
@@ -31,7 +36,6 @@ function updateHighlight(currentLineNumber) {
         nextElement.style.fontWeight = 'bold';
         prevLineNumber = currentLineNumber;
     } else {
-        // Nếu không tìm thấy dòng (ví dụ: kết thúc chương trình), reset lại
         prevLineNumber = -1;
     }
 };
