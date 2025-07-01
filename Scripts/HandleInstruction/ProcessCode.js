@@ -6,6 +6,12 @@ import {state} from "./InstructionCycle/animationSpeed.js"
 import { validateParsedResults } from "../HandleOutLook/logBox.js"
 import { resetAnimation } from "./InstructionCycle/animation.js"
 
+
+let instructionPos = -1;
+let Components = null;
+let ComponentsBackup = null;
+let isFinish = true;
+
 function compileCode() {
 	const results = formatCode.getResult();
 	if (results == null) {
@@ -16,10 +22,21 @@ function compileCode() {
 	return results;
 }
 
-let instructionPos = -1;
-let Components = null;
-let ComponentsBackup = null;
-let isFinish = true;
+function clearAll() {
+	resetAnimation();
+	instructionPos = -1;
+	state.executing = false;
+	state.currentStep = 6;
+	ComponentsBackup = null;
+	Components = null;
+	isFinish = true;
+	currentInstruction.update(-1);
+	for (let i = 0; i <= 3; i++) {
+		// mux-0-0-selected
+		document.getElementById(`mux-${i}-0-selected`).style.visibility = "hidden";
+		document.getElementById(`mux-${i}-1-selected`).style.visibility = "hidden";
+	}
+}
 
 async function execute(results) {
     if (validateParsedResults(results, "log-box") != true) {
@@ -52,12 +69,8 @@ export function trigger() {
 
 	document.getElementById('compile-btn').addEventListener('click', function(event) {
         event.preventDefault();
-		resetAnimation();
+		clearAll();
 		instructionPos = -1;
-		state.executing = false;
-		state.currentStep = 6;
-		isFinish = true;
-    	currentInstruction.update(-1);
 		results = compileCode();
 	});
 	
