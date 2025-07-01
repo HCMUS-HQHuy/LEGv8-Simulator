@@ -4,18 +4,20 @@ const assemblyInstruction = document.getElementById('assembly-instruction');
 const machineLangugageInstruction = document.getElementById('machine-language-instruction');
 
 export function update(line) {
-	updateHighlight(line.lineNumber)
 	if (line == null) {
-		console.warn("line code in update CurentInstruction is null");
+        console.warn("line code in update CurentInstruction is null");
 		assemblyInstruction.innerText = "";
 		machineLangugageInstruction.innerText = "";
 		return;
 	}
-    if (line === -1) {
+    console.log(line);
+    if (Number.isInteger(line)) {
         assemblyInstruction.innerText = "Assembly Instruction";
 	    machineLangugageInstruction.innerText = "Machine Language Instruction";
+        updateHighlight(line+1);
         return;
     }
+    updateHighlight(line.lineNumber)
 	assemblyInstruction.innerText = line.assemblyInstruction;
 	machineLangugageInstruction.innerText = encodeLegv8Instruction(line.parsed);
 }

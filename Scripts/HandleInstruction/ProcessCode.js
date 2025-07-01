@@ -50,11 +50,11 @@ async function execute(results) {
 
 	isFinish = false;
 	while (isFinish === false) {
-		// console.log(`instructionPos: ${instructionPos}`);
 		ComponentsBackup = JSON.stringify(Components)
 		currentInstruction.update(results[instructionPos]);
 		instructionPos = await generateSignal.start(Components);
 		if (instructionPos >= Components.InstructionMemory.instruction.length) {
+			currentInstruction.update(instructionPos);
 			isFinish = true;
 			state.executing = false;
 		}
