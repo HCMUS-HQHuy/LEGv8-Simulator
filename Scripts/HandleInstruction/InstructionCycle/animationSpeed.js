@@ -43,7 +43,7 @@ function hideAllSteps() {
 function showCurrentStep() {
 	const id = stepIds[state.currentStep];
 	const el = document.getElementById(id);
-	if (el) el.style.display = "inline"; // dùng inline hoặc block tùy SVG
+	if (el) el.style.display = "inline";
 }
 
 export function trigger() {
