@@ -195,18 +195,9 @@ function resetComponents(Components) {
 			() => {
 				document.getElementById(`mux-${i}-${Components[`Mux${i}`].option}-selected`).style.visibility = "visible";
 				document.getElementById(`mux-${i}-${Components[`Mux${i}`].option ^ 1}-selected`).style.visibility = "hidden";
-				// document.getElementById(`mux-${i}-value`).textContent = Components[`Mux${i}`].option;
 			}
 		);
 	}
-	
-	new Set(['write', 'read']).forEach(val => {
-		signalCallbackTable[`DataMemory.${val}Enable`].push(
-			() => {
-				// document.getElementById(`data-memory-${val}-enable-value`).textContent = Components.DataMemory[`${val}Enable`];
-			}
-		);
-	})
 	
 	signalCallbackTable[`DataMemory.address`].push(
 		() => {
@@ -226,7 +217,12 @@ function resetComponents(Components) {
 	);
 	
 	signalCallbackTable[`DataMemory.WriteData`].push(
-		() => { document.getElementById('data-memory-write-data-value').textContent = Components.DataMemory.WriteData}
+		() => { 
+			const rawValue = Components.DataMemory.WriteData;
+			const value = rawValue >>> 0;
+			const formattedHex = `0x${value.toString(16).toUpperCase().padStart(8, '0')}`;
+			document.getElementById('data-memory-write-data-value').textContent = formattedHex;
+		}
 	);
 
 	const flag = JSON.parse(JSON.stringify(Components.ALU.Flags));
@@ -279,29 +275,39 @@ function resetComponents(Components) {
 		}
 	);
 	
-	signalCallbackTable[`Register.WriteData`].push(
-		() => {
-			const index = Components.Register.WriteReg;
-			if (index == 31) {
-				console.warn(`Modify XZR register`);
-				return;
-			}
-			if (Components.Register.option === 0) return;
-			const indexHex = `X${index.toString().padStart(2, '0')}`;
-	
-			const value = Components.Mux3.output;
-			Components.Register.registerValues[index] = value;
-			document.getElementById(indexHex).innerText = `0x${value.toString(16).toUpperCase().padStart(8, '0')}`;
-			
-			document.getElementById(`${indexHex}`).style.backgroundColor = "yellow";
-			document.getElementById(`${indexHex}`).style.color = "red";
-			setTimeout(() => {
-				document.getElementById(`${indexHex}`).style.backgroundColor = "";
-				document.getElementById(`${indexHex}`).style.color = "";
-			}, DURATION_ANIMATION * 5);
-			document.getElementById(`register-WriteData-value`).textContent = `0x${value.toString(16).toUpperCase().padStart(2, '0')}`;
+	signalCallbackTable[`Register.WriteData`].push(() => {
+		const index = Components.Register.WriteReg;
+		if (index === 31) {
+			console.warn(`Modify XZR register`);
+			return;
 		}
-	);
+		if (Components.Register.option === 0) return;
+
+		const indexHex = `X${index.toString().padStart(2, '0')}`;
+
+		const rawValue = Components.Mux3.output;
+		const value = rawValue >>> 0; // Ensure unsigned 32-bit
+		Components.Register.registerValues[index] = value;
+
+		// Display value in register element
+		const regElem = document.getElementById(indexHex);
+		if (regElem) {
+			regElem.innerText = `0x${value.toString(16).toUpperCase().padStart(8, '0')}`;
+			regElem.style.backgroundColor = "yellow";
+			regElem.style.color = "red";
+
+			setTimeout(() => {
+				regElem.style.backgroundColor = "";
+				regElem.style.color = "";
+			}, DURATION_ANIMATION * 5);
+		}
+
+		// Update WriteData display
+		const writeDataElem = document.getElementById(`register-WriteData-value`);
+		if (writeDataElem) {
+			writeDataElem.textContent = `0x${value.toString(16).toUpperCase().padStart(2, '0')}`;
+		}
+	});
 	
 	new Set(['Read1', 'Read2', 'WriteReg']).forEach(val => {
 		signalCallbackTable[`Register.${val}`].push(
@@ -314,32 +320,6 @@ function resetComponents(Components) {
 			}
 		);
 	})
-	
-	// signalCallbackTable[`Register.Read1`] = [
-	// 	() => {document.getElementById(`alu-control-aluop-value`).textContent = Components.ALUControl.ALUOp;}
-	// ]
-	
-	
-	// signalCallbackTable[`ALUControl.ALUOp`].push(
-	// 	() => {document.getElementById(`alu-control-aluop-value`).textContent = Components.ALUControl.ALUOp;}
-	// );
-	
-	// signalCallbackTable[`ALU.option`].push(
-	// 	() => {document.getElementById(`alu-option-value`).textContent = Components.ALU.option;}
-	// );
-	
-	// signalCallbackTable[`Register.option`].push(
-	// 	() => {document.getElementById(`register-option-value`).textContent = Components.Register.option;}
-	// );
-
-	for (let i = 1; i <= 2; i++) {
-		signalCallbackTable[`AndGate.input${i}`].push(
-			// () => {document.getElementById(`and-gate-input${i}-value`).textContent = Components.AndGate[`input${i}`];}
-		);
-		signalCallbackTable[`OrGate.input${i}`].push(
-			// () => {document.getElementById(`or-gate-input${i}-value`).textContent = Components.OrGate[`input${i}`];}
-		);
-	}
 	
 	signalCallbackTable[`PC.value`].push(() => {
 			document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).padStart(4, '0').toUpperCase()}`;
