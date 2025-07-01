@@ -45,16 +45,6 @@ async function execute(results) {
 	}
 }
 
-// Ẩn tất cả step ban đầu
-const stepIds = ["step_1", "step_2", "step_3", "step_4", "step_5"];
-function hideAllSteps() {
-	stepIds.forEach(id => {
-		const el = document.getElementById(id);
-		if (el) el.style.display = "none";
-	});
-}
-
-
 export function trigger() {
 	let results = null;
 	document.getElementById('compile-btn').addEventListener('click', function(event) {
@@ -72,15 +62,9 @@ export function trigger() {
 		if (isFinish === true) {
 			execute(results);
 		}
-
-		if (state.stepByStepMode === 0) {
-			hideAllSteps();
-		}
 	});
 
 	document.getElementById('replay-all-botton').addEventListener('click', function(event) {
-		hideAllSteps();
-
 		event.preventDefault();
 		console.log("Stop/Replay All button clicked.");
 		instructionPos = -1;
@@ -91,8 +75,6 @@ export function trigger() {
 	});
 
 	document.getElementById('replay-one-botton').addEventListener('click', function(event) {
-		hideAllSteps();
-
 		event.preventDefault();
 		console.log("Stop/Replay one button clicked.");
 		state.executing = false;

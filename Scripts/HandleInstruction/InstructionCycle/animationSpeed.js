@@ -6,7 +6,7 @@ export let DURATION_ANIMATION = 2000;
 export const state = {
 	executing: false,
 	stepByStepMode: false,
-	kill: false
+	currentStep: 0
 };
 
 const svgCanvas = document.getElementById('zoomFrame');
@@ -30,6 +30,22 @@ function switchIcon(stateCode) {
 	StateInfor[stateCode].call();
 }
 
+// Ẩn tất cả step ban đầu
+const stepIds = ["step_1", "step_2", "step_3", "step_4", "step_5"];
+function hideAllSteps() {
+	stepIds.forEach(id => {
+		const el = document.getElementById(id);
+		if (el) el.style.display = "none";
+	});
+}
+
+// Hiển thị step hiện tại
+function showCurrentStep() {
+	const id = stepIds[state.currentStep];
+	const el = document.getElementById(id);
+	if (el) el.style.display = "inline"; // dùng inline hoặc block tùy SVG
+}
+
 export function trigger() {
 	const rangeSlider = document.getElementById('range-slider');
 	const rangeValue = document.getElementById('range-value');
@@ -42,6 +58,21 @@ export function trigger() {
 		},
 		get() {
 		  return this._executing;
+		}
+	});
+
+	Object.defineProperty(state, 'currentStep', {
+		set(newVal) {
+			if (newVal > 5)
+				console.warn("new Val > 5 ?");
+			this._currentStep = newVal;
+			if (state.stepByStepMode) {
+				hideAllSteps(); 
+				showCurrentStep();
+			}
+		},
+		get() {
+		  return this._currentStep;
 		}
 	});
 
@@ -63,10 +94,12 @@ export function trigger() {
 		event.preventDefault();
 		state.stepByStepMode ^= 1;
 		if (state.stepByStepMode) {
+			hideAllSteps(); showCurrentStep();
 			document.getElementById('step-by-step-mode-button').style.setProperty('background-color', 'var(--button-hover-bg-color)');
 			document.getElementById('step-by-step-mode-button').style.setProperty('color', 'var(--button-hover-text-color)');
 		}
 		else {
+			hideAllSteps();
 			document.getElementById('step-by-step-mode-button').style.setProperty('background-color', 'var(--frame-bg-color)');
 			document.getElementById('step-by-step-mode-button').style.setProperty('color', 'var(--button-text-color)');
 		}
