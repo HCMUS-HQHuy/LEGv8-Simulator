@@ -72,7 +72,12 @@ export function trigger() {
 		instructionPos = -1;
 		results = compileCode();
 	});
-	
+	document.getElementById('start-animation').addEventListener('click', function(event) {
+		event.preventDefault();
+		if (state.executing === true) 
+			return;
+		document.getElementById('start-stop-animation').click();
+	});
 	document.getElementById('start-stop-animation').addEventListener('click', function(event) {
 		event.preventDefault();
 		if (state.executing === true) 

@@ -919,7 +919,9 @@
           <br>CB Type: CBZ, CBNZ 
           <br>I  Type: ADDI, SUBI, ANDI, ORRI, 
           <br>         EORI, ADDIS, SUBIS, ANDIS 
-          <br>B  Cond: 
+          <br>B  Cond: B.EQ, B.NE, B.HS, B.LO, 
+          <br>         B.HI, B.LS, B.GE, B.LT,
+          <br>         B.GT, B.LE
         </span>
       </g>
       
@@ -984,7 +986,7 @@ End_If:
       <h2></h2>
       <div class = "outside-button-group">  
         <button class = "compile-button-outside" id = "compile-btn" title = "Compile code">⚙ Compile</button>
-        <button class = "compile-button-outside" id = "start-stop-animation" title = "Compile code">▶ Execute</button> 
+        <button class = "compile-button-outside" id = "start-animation" title = "Compile code">▶ Execute</button> 
       </div>
       <h2>Log</h2>
       <div class="log-box" id="log-box">
