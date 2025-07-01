@@ -359,6 +359,24 @@ body {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
   color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }
+.compile-button-outside {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 60px;
+  right: 10px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  background-color: var(--frame-bg-color);
+}
+.compile-button-outside:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
 .start-button {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
