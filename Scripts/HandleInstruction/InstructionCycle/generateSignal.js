@@ -287,7 +287,7 @@ function resetComponents(Components) {
 
 		const rawValue = Components.Mux3.output;
 		const value = rawValue >>> 0; // Ensure unsigned 32-bit
-		Components.Register.registerValues[index] = value;
+		Components.Register.registerValues[index] = rawValue;
 
 		// Display value in register element
 		const regElem = document.getElementById(indexHex);
