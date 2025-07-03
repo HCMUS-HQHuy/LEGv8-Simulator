@@ -872,52 +872,52 @@
       <g class = "help-group" style = "display: none;">
       <!-- <g class = "help-group"> -->
         <div class = "help-overlay"></div>
-        <svg class = "help-register" viewBox = "0 0 1930 3050">
-          <g id="register-selected" transform = "translate(10, 10), scale(1.5)">
-            <rect x = "-10" y = "-10" width = "187" height = "237" class = "selected-component" />
-            <rect width = "170" height = "220" class = "component" />
+        <div class = "help-register-group">
+          <svg class = "help-register" viewBox = "0 0 1930 3050">
+            <g id="register-selected" transform = "translate(10, 10), scale(1.5)">
+              <rect x = "-10" y = "-10" width = "187" height = "237" class = "selected-component" />
+              <rect width = "170" height = "220" class = "component" />
 
-            <text x = "115" y = "205" class = "label"> Registers </text>
+              <text x = "115" y = "205" class = "label"> Registers </text>
 
-            <text x = "5"   y = "20"  class = "mem-label"> Read </text>
-            <text x = "5"   y = "36"  class = "mem-label"> register 1 </text>
-            <text id = "register-Read1-value" x = "5"  y = "52" class = "component-value">0</text>
+              <text x = "5"   y = "20"  class = "mem-label"> Read </text>
+              <text x = "5"   y = "36"  class = "mem-label"> register 1 </text>
+              <text id = "register-Read1-value" x = "5"  y = "52" class = "component-value">0</text>
 
-            <text x = "5"   y = "75"  class = "mem-label"> Read </text>
-            <text x = "5"   y = "91"  class = "mem-label"> register 2 </text>
-            <text id = "register-Read2-value" x = "5"  y = "107" class = "component-value">0</text>
-      
-            <text x = "5"   y = "130" class = "mem-label"> Write </text>
-            <text x = "5"   y = "146" class = "mem-label"> register </text>
-            <text id = "register-WriteReg-value" x = "5"  y = "161" class = "component-value">0</text>
+              <text x = "5"   y = "75"  class = "mem-label"> Read </text>
+              <text x = "5"   y = "91"  class = "mem-label"> register 2 </text>
+              <text id = "register-Read2-value" x = "5"  y = "107" class = "component-value">0</text>
+        
+              <text x = "5"   y = "130" class = "mem-label"> Write </text>
+              <text x = "5"   y = "146" class = "mem-label"> register </text>
+              <text id = "register-WriteReg-value" x = "5"  y = "161" class = "component-value">0</text>
+                
+              <text x = "5"   y = "182" class = "mem-label"> Write </text>
+              <text x = "5"   y = "197" class = "mem-label"> data </text>
+              <text id = "register-WriteData-value" x = "5"  y = "211" class = "component-value">0</text>
+
+              <text x = "115" y = "40"  class = "mem-label"> Read </text>
+              <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
+              <text id = "register-ReadData1-value" x = "155"  y = "72" class = "component-value">0</text>
               
-            <text x = "5"   y = "182" class = "mem-label"> Write </text>
-            <text x = "5"   y = "197" class = "mem-label"> data </text>
-            <text id = "register-WriteData-value" x = "5"  y = "211" class = "component-value">0</text>
-
-            <text x = "115" y = "40"  class = "mem-label"> Read </text>
-            <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
-            <text id = "register-ReadData1-value" x = "155"  y = "72" class = "component-value">0</text>
-            
-            <text x = "115" y = "130" class = "mem-label"> Read </text>
-            <text x = "110" y = "150" class = "mem-label"> data 2 </text>
-            <text id = "register-ReadData2-value" x = "155"  y = "164" class = "component-value">0</text>
-          </g>
-        </svg>
+              <text x = "115" y = "130" class = "mem-label"> Read </text>
+              <text x = "110" y = "150" class = "mem-label"> data 2 </text>
+              <text id = "register-ReadData2-value" x = "155"  y = "164" class = "component-value">0</text>
+            </g>
+          </svg>
+          <span class = "help-text help-register-click"><-Click on the components<br><br>on the diagram to view the data</span>
+        </div>
         <span class = "help-text help-fullscreen">Fullscreen-></span>
         <span class = "help-text help-start">Start / Stop-></span>
-        <span class = "help-text help-speed"><-Change animation speed</span>
-        <span class = "help-text help-register-click"><-Click on the components</span>
-        <span class = "help-text help-register-click-1">on the diagram to view the data</span>
         <span class = "help-text help-replay-all">Replay all-></span>
         <span class = "help-text help-replay-one">Replay one step-></span>
-        <span class = "help-text help-support-command">Instruction Type 
-          <br>R  Type: ADD, SUB, AND, ORR,
-          <br>         EOR, ADDS, SUBS, ANDS
+        <span class = "help-text help-support-command">Instruction Types Supported:
+          <br>R  Type: ADD , SUB , AND , ORR,
+          <br>         EOR , ADDS, SUBS, ANDS
           <br>D  Type: LDUR, STUR 
-          <br>B  Type: B, BL 
-          <br>CB Type: CBZ, CBNZ 
-          <br>I  Type: ADDI, SUBI, ANDI, ORRI, 
+          <br>B  Type: B   , BL 
+          <br>CB Type: CBZ , CBNZ 
+          <br>I  Type: ADDI, SUBI , ANDI , ORRI, 
           <br>         EORI, ADDIS, SUBIS, ANDIS 
           <br>B  Cond: B.EQ, B.NE, B.HS, B.LO, 
           <br>         B.HI, B.LS, B.GE, B.LT,
@@ -942,6 +942,9 @@
         <label for="range-slider" class="range-label">
           <span id="range-value" class="range-value">Speed: 75%</span>
         </label>
+        <div class = "help-group" style = "display: none;">
+          <span class = "help-speed"><-Change animation speed</span>
+        </div>
       </div>
     </div>
   </div>

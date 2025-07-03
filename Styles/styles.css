@@ -514,12 +514,7 @@ body {
 
   z-index: 2;
 }
-.help-register {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 2;
-}
+
 .help-text {
   font-size: 20px;
   color: var(--control-color);
@@ -552,17 +547,31 @@ body {
   right: 160px;
 }
 .help-speed {
-  bottom: 10px;
-  left: 325px;
+  font-size: 20px;
+  color: var(--control-color);
+  font-weight: bolder;
+
+  white-space: pre;
+  line-height: 0.5;
+}
+.help-register-group {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;  /* ✅ xếp dọc */
+  gap: 12px;
+}
+.help-register {
+  width: 400%;
 }
 .help-register-click {
-  top: 130px;
-  left: 210px;
+  top: 90px;
+  left: 180px;
 }
-.help-register-click-1 {
-  top: 150px;
-  left: 223px;
-}
+
 .help-stop-button {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
@@ -608,7 +617,7 @@ body {
 }
 .help-support-command {
   bottom: 50px;
-  right: 10px;
+  right: 50px;
 }
 
 
