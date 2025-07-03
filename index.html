@@ -992,8 +992,8 @@ ORRI  X2, X1, #100
 EORI  X3, X2, #10   
 
 // --- Memory Access (D-Type) ---
-STUR  X12, [X20, #16]   // Store at addr 116
-LDUR  X13, [X20, #16]   // Load 86 → X13
+STUR  X12, [XZR, #16]   // Store at addr 16
+LDUR  X13, [XZR, #16]   // Load 16 → X13
 
 // --- Conditional Branch (CB-Type) ---
 SUBIS X15, X13, #86     // X15 = 0; Z=1

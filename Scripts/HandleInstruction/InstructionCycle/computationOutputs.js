@@ -1,6 +1,6 @@
 import { R_TYPE_OPCODES, D_TYPE_OPCODES } from "../Compile/Define/Opcode.js";
 import { B_TYPE_OPCODES, CB_TYPE_OPCODES }  from "../Compile/Define/Opcode.js"
-import { B_COND_OPCODE_PREFIX }  from "../Compile/Define/Opcode.js"
+import { B_COND_OPCODE_PREFIX, B_COND_CODES }  from "../Compile/Define/Opcode.js"
 import { I_TYPE_OPCODES }  from "../Compile/Define/Opcode.js"
 
 export function computeOutputs(componentName, components) {
@@ -67,12 +67,8 @@ export function computeOutputs(componentName, components) {
                 components.ALU.Flags.V = aluResultObject.V;
                 components.ALU.Flags.C = aluResultObject.C;
             }
-            const tmp = components.InstructionMemory.Opcode_31_21.substring(0, 8);
-            if (tmp === CB_TYPE_OPCODES['CBNZ']) { // Giả sử bạn có hằng số này
-                components[componentName].zero = (aluResultObject.result == 0 ? 0 : 1);
-            } else {
-                components[componentName].zero = (aluResultObject.result == 0 ? 1 : 0);
-            }
+            components.ALU.zero = checkBranchCondition(components);
+            console.log(components.ALU.zero)
             break;
 
 		case 'Mux0':
@@ -95,6 +91,45 @@ export function computeOutputs(componentName, components) {
 			console.warn(`undefined element!${componentName}`);
 			break;
 	}
+}
+
+function checkBranchCondition(components) {
+    const aluFlags = components.ALU.Flags;
+    const index = components.InstructionMemory.ReadAddress >> 2;
+    const type = components.InstructionMemory.instructionType[index];
+    console.log(aluFlags);
+
+    if (type === 'CB') {
+        const tmp = components.InstructionMemory.Opcode_31_21.substring(0, 8);
+        if (tmp === CB_TYPE_OPCODES['CBZ']) {
+            return aluFlags.Z; // Branch if Z=1
+        }
+        if (tmp === CB_TYPE_OPCODES['CBNZ']) {
+            return aluFlags.Z === 0 ? 1 : 0; // Branch if Z=0
+        }
+    } else if (type === 'B_COND-type') {
+        const encodedInstruction = components.InstructionMemory.instruction[index];
+        const condition = encodedInstruction.substring(28, 32);
+        console.log("condition: ", condition);
+        switch (condition) {
+            case B_COND_CODES['EQ']: return aluFlags.Z === 1 ? 1 : 0; // Z=1
+            case B_COND_CODES['NE']: return aluFlags.Z === 0 ? 1 : 0; // Z=0
+            case B_COND_CODES['LT']: return aluFlags.N !== aluFlags.V ? 1 : 0; // N!=V
+            case B_COND_CODES['LE']: return (aluFlags.Z === 1 || aluFlags.N !== aluFlags.V) ? 1 : 0; // Z=1 or N!=V
+            case B_COND_CODES['GT']: return (aluFlags.Z === 0 && aluFlags.N === aluFlags.V) ? 1 : 0; // Z=0 and N=V
+            case B_COND_CODES['GE']: return aluFlags.N === aluFlags.V ? 1 : 0; // N=V
+
+            case B_COND_CODES['LO']: return aluFlags.C === 0 ? 1 : 0; // C=0 (Lower)
+            case B_COND_CODES['LS']: return (aluFlags.C === 0 || aluFlags.Z === 1) ? 1 : 0; // C=0 or Z=1 (Lower or Same)
+            case B_COND_CODES['HI']: return (aluFlags.C === 1 && aluFlags.Z === 0) ? 1 : 0; // C=1 and Z=0 (Higher)
+            case B_COND_CODES['HS']: return aluFlags.C === 1 ? 1 : 0; // C=1 (Higher or Same)
+
+            default:
+                console.warn(`Unsupported B.cond condition: ${condition}`);
+                return 0;
+        }
+    }
+    return 0;
 }
 
 function doALUOperation(currentState) {
@@ -120,7 +155,7 @@ function doALUOperation(currentState) {
     };
 
     const isUnsignedBorrow = (a, b) => {
-        return a >= b;
+        return a <= b;
     };
     switch (aluControlCode) {
         case '0010': { // ADD
