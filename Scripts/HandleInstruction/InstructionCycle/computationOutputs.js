@@ -7,7 +7,7 @@ export function computeOutputs(componentName, components) {
 	switch (componentName) {
 		case 'InstructionMemory':
 			const InstructionMemory = components[componentName];
-			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2];
+			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2n];
             if (encodedInstruction == null) console.error("encodedInstruction is null in computation Ouputs");
 			InstructionMemory.Opcode_31_21 = encodedInstruction.substring(0, 11);
 			InstructionMemory.Rm_20_16 = encodedInstruction.substring(11, 16);
@@ -33,13 +33,13 @@ export function computeOutputs(componentName, components) {
             break;
 		case 'Add0':
 		case 'Add1':
-			const input1 = components[componentName].input1;
-			const input2 = components[componentName].input2;
-			components[componentName].output = input1 + input2;
+            const input1 = BigInt(components[componentName].input1);
+            const input2 = BigInt(components[componentName].input2);
+            components[componentName].output = input1 + input2;
 			break;
 
 		case 'ShiftLeft2':
-			components[componentName].output = components[componentName].input << 2;
+			components[componentName].output = components[componentName].input << 2n;
 			break;
 
         case 'ALU':
@@ -95,7 +95,7 @@ export function computeOutputs(componentName, components) {
 
 function checkBranchCondition(components) {
     const aluFlags = components.ALU.Flags;
-    const index = components.InstructionMemory.ReadAddress >> 2;
+    const index = components.InstructionMemory.ReadAddress >> 2n;
     const type = components.InstructionMemory.instructionType[index];
     console.log(aluFlags);
 
@@ -196,7 +196,7 @@ function doALUOperation(currentState) {
             break;
         }
 
-        case '1100': // Pass B
+        case '0111': // Pass B
             resultBigInt = operand2;
             break;
 
@@ -374,67 +374,70 @@ function updateALUControl(currentState) {
 }
 
 function updateSignExtend(currentState) {
+    // Helper to perform sign extension and return a 64-bit signed integer
     const signExtend = (binaryString, originalBitLength, targetBitLength = 64) => {
-        return binaryString[0].repeat(targetBitLength - originalBitLength) + binaryString;
-    }
-    
+        // Determine if the value is negative (MSB is '1')
+        const isNegative = binaryString[0] === '1';
+
+        // Extend the sign bit
+        const extended = binaryString[0].repeat(targetBitLength - originalBitLength) + binaryString;
+
+        // If negative, interpret as two's complement
+        if (isNegative) {
+            // Convert to signed integer
+            const bigIntValue = BigInt('0b' + extended);
+            const signedValue = bigIntValue - (BigInt(1) << BigInt(targetBitLength));
+            return signedValue;
+        } else {
+            return BigInt('0b' + extended);
+        }
+    };
+
     const control = currentState.Control;
     const opcode = currentState.InstructionMemory.Opcode_31_21;
     const SignExtend = currentState.InstructionMemory.SignExtend;
     let inputBinary = null;
     let originalBits = 0;
     const targetBits = 64;
-    
+
     if (control.ALUSrc === 1) {
         const opcode10bit = opcode.substring(0, 10);
-        // D-type (LDUR/STUR): Offset 9 bit (DT-address)
         if (opcode === D_TYPE_OPCODES['LDUR'] || opcode === D_TYPE_OPCODES['STUR']) {
             inputBinary = SignExtend.substring(11, 20); // Bits 20-12
             originalBits = 9;
-        }
-        // I-type (Arithmetic & Logical): Immediate 12 bit
-        else if (Object.values(I_TYPE_OPCODES).includes(opcode10bit)) {
-            // This single block now handles all 12-bit I-type instructions:
-            // ADDI, SUBI, ANDI, ORRI, EORI, ADDIS, SUBIS, ANDIS
+        } else if (Object.values(I_TYPE_OPCODES).includes(opcode10bit)) {
             inputBinary = SignExtend.substring(10, 22); // Bits 21-10
             originalBits = 12;
-        }
-        // IW-type (MOVZ/MOVK): Immediate 16 bit
-        else if (Object.values(IW_TYPE_OPCODES).includes(opcode11bit.substring(0, 9))) { // MOVZ/MOVK have 9-bit opcodes
-            inputBinary = SignExtend.substring(5, 21); // Bits 20-5
-            originalBits = 16;
-        }
-        else {
-            // ALUSrc=1 but doesn't match any expected types? This is a potential issue in the Control Unit.
+        } else {
             console.warn(`SignExtend Warning: ALUSrc is 1, but opcode ${opcode} doesn't match expected I/D/IW types.`);
             inputBinary = '0'.repeat(32); 
             originalBits = 32;
         }
-    
+
     } else if (control.UncondBranch === 1) {
-        // Lệnh B (Unconditional Branch)
-        inputBinary = SignExtend.substring(6, 32);
+        // B-type instruction (unconditional branch)
+        inputBinary = SignExtend.substring(6, 32); // Bits 31-6
         originalBits = 26;
     } else if (control.Branch === 1) {
-        // Lệnh Branch (Branch Instruction)
-        inputBinary = SignExtend.substring(8, 27);
+        // Conditional branch (e.g., CBZ/CBNZ)
+        inputBinary = SignExtend.substring(8, 27); // Bits 23-5
         originalBits = 19;
     } else {
-        // Khi không thuộc các trường hợp trên, chuyển đổi lệnh sang hex và thực hiện signExtend
         const inputHex = parseInt(SignExtend, 2).toString(16).toUpperCase();
         currentState.SignExtend.input = `0x${inputHex}`;
         const outputValue = signExtend(SignExtend, 32, targetBits);
-        currentState.SignExtend.output = parseInt(outputValue, 2);
+        currentState.SignExtend.output = outputValue;
         return;
     }
-    let outputValue = null;
-    if (inputBinary !== null && originalBits > 0) {
-        outputValue = signExtend(inputBinary, originalBits, targetBits);
-    }
 
-    currentState.SignExtend.input = parseInt(inputBinary, 2);
-    currentState.SignExtend.output = parseInt(outputValue, 2);
+    if (inputBinary !== null && originalBits > 0) {
+        const extendedValue = signExtend(inputBinary, originalBits, targetBits);
+        console.log('exten ', extendedValue);
+        currentState.SignExtend.input = parseInt(inputBinary, 2);
+        currentState.SignExtend.output = extendedValue;
+    }
 }
+
 
 function updateRegister(currentState) {
     const readAddr1Binary = currentState.InstructionMemory.Rn_09_05;

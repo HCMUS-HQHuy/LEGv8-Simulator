@@ -221,8 +221,8 @@ function resetComponents(Components) {
 	signalCallbackTable[`DataMemory.WriteData`].push(
 		() => { 
 			const rawValue = Components.DataMemory.WriteData;
-			const value = rawValue >>> 0;
-			const formattedHex = `0x${value.toString(16).toUpperCase().padStart(8, '0')}`;
+			const bigIntValue = typeof rawValue === 'bigint' ? rawValue : BigInt(rawValue);
+			const formattedHex = `0x${bigIntValue.toString(16).toUpperCase().padStart(16, '0')}`
 			document.getElementById('data-memory-write-data-value').textContent = formattedHex;
 		}
 	);
@@ -332,7 +332,7 @@ function resetComponents(Components) {
 		() => {
 			document.getElementById(`instruction-memory-read-address-value`).textContent = `0x${(Components.InstructionMemory.ReadAddress).toString(16).padStart(2, '0').toUpperCase()}`;
 			const InstructionMemory = Components.InstructionMemory;
-			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2];
+			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2n];
 			document.getElementById(`instruction-memory-instruction-[31-0]-value`).textContent = `0x${parseInt(encodedInstruction, 2).toString(16).padStart(8, '0').toUpperCase()}`;
 		}
 	);
@@ -346,10 +346,13 @@ export function initialize(code, onlysettime = false) {
 	watchDataMemory(Components.DataMemory);
 	watchRegisters(Components.Register);
 	watchFlags(Components.ALU);
-	Components.PC.value = 0;
+	Components.PC.value = 0n;
 	
 	code.forEach(key => {
+		console.log("key.lineNumber", (key.lineNumber - 1) << 2);
 		const encodedInstruction = encodeLegv8Instruction(key.parsed, (key.lineNumber - 1) << 2);
+		if (encodedInstruction.error) console.error(encodedInstruction.error);
+
 		Components.InstructionMemory.instruction.push(encodedInstruction);
 		Components.InstructionMemory.instructionType.push(`${key.parsed.type}`);
 	});
@@ -358,7 +361,7 @@ export function initialize(code, onlysettime = false) {
 }
 
 export async function start(Components) {
-	if ((Components.PC.value >> 2) >= Components.InstructionMemory.instruction.length) {
+	if ((Components.PC.value >> 2n) >= Components.InstructionMemory.instruction.length) {
 		return -1;
 	}
 
@@ -372,5 +375,5 @@ export async function start(Components) {
 	await new Promise((promise) => {
 		pcSignalPromiseResolve = promise;
 	});
-	return Components.PC.value >> 2;
+	return Components.PC.value >> 2n;
 }

@@ -243,6 +243,28 @@ function toBinary(number, bits) {
     return binaryString.padStart(bits, '0');
 }
 
+function toBinarySign(number, bits) {
+    if (typeof number !== 'number' || !Number.isInteger(number)) {
+        throw new Error(`Invalid input: "${number}" is not an integer.`);
+    }
+
+    const min = -(1 << (bits - 1));
+    const max = (1 << (bits - 1)) - 1;
+
+    if (number < min || number > max) {
+        throw new Error(`Number ${number} is out of range for ${bits} bits.`);
+    }
+
+    // Handle two's complement for negative numbers
+    let binaryString;
+    if (number >= 0) {
+        binaryString = number.toString(2);
+    } else {
+        binaryString = (number >>> 0).toString(2).slice(-bits);
+    }
+    return binaryString.padStart(bits, '0');
+}
+
 export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddress = 0) {
     if (!parsedInstruction || parsedInstruction.error) {
         const errorMsg = parsedInstruction ? parsedInstruction.error : "Parsed instruction is null.";
@@ -340,6 +362,7 @@ export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddr
             }
 
             const byteOffset = targetAddress - currentInstructionAddress;
+            console.log("CURRR", currentInstructionAddress, byteOffset);
             if (byteOffset % 4 !== 0) {
                 return { error: `B-type target address ${targetAddress} for ${mnemonic} is not word aligned relative to ${currentInstructionAddress}.`};
             }
@@ -351,7 +374,8 @@ export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddr
                 return { error: `B-type offset ${wordOffset} (for label ${structuredOperands.label}) out of 26-bit signed range for ${mnemonic}.` };
             }
 
-            const immediateBin = toBinary(wordOffset, 26); // 26-bit immediate (word offset)
+            const immediateBin = toBinarySign(wordOffset, 26); // 26-bit immediate (word offset)
+            console.log(wordOffset, immediateBin);
 
             const machineCode = `${opcode}${immediateBin}`;
             if (machineCode.length !== 32) return { error: `B-type: Generated code length is not 32 bits (${machineCode.length})` };
@@ -381,7 +405,7 @@ export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddr
                 return { error: `CB-type offset ${wordOffset} (for label ${structuredOperands.label}) out of 19-bit signed range for ${mnemonic}.` };
             }
 
-            const immediateBin = toBinary(wordOffset, 19); // 19-bit immediate (word offset)
+            const immediateBin = toBinarySign(wordOffset, 19); // 19-bit immediate (word offset)
 
             const machineCode = `${opcode}${immediateBin}${rtBin}`;
             if (machineCode.length !== 32) return { error: `CB-type: Generated code length is not 32 bits (${machineCode.length})` };
@@ -413,7 +437,7 @@ export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddr
                 return { error: `B.cond offset ${wordOffset} out of 19-bit signed range.` };
             }
 
-            const immediateBin = toBinary(wordOffset, 19); // 19-bit immediate (word offset)
+            const immediateBin = toBinarySign(wordOffset, 19); // 19-bit immediate (word offset)
             
             const condField = '0' + conditionCode; // Thêm bit 0 để đủ 5 bit
             const finalMachineCode = `${opcodeBase}${immediateBin}${condField}`;

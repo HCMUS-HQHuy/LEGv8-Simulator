@@ -5,6 +5,7 @@ import * as generateSignal from "./InstructionCycle/generateSignal.js"
 import {state} from "./InstructionCycle/animationSpeed.js"
 import { validateParsedResults } from "../HandleOutLook/logBox.js"
 import { resetAnimation } from "./InstructionCycle/animation.js"
+import { cloneComponents } from "./Compile/Define/components.js"
 
 
 let instructionPos = -1;
@@ -48,14 +49,14 @@ async function execute(results) {
 	}
 	if (instructionPos === -1) {
 		Components = generateSignal.initialize(results);
-		ComponentsBackup = JSON.stringify(Components)
+		ComponentsBackup = cloneComponents(Components)
 		instructionPos = 0;
 	}
 
 	isFinish = false;
 	while (isFinish === false) {
 		turnoffMux();
-		ComponentsBackup = JSON.stringify(Components)
+		ComponentsBackup = cloneComponents(Components)
 		currentInstruction.update(results[instructionPos]);
 		instructionPos = await generateSignal.start(Components);
 		if (instructionPos >= Components.InstructionMemory.instruction.length) {
@@ -109,7 +110,6 @@ export function trigger() {
 		state.executing = false;
 		isFinish = true;
 		generateSignal.initialize(null, true);
-		Components = JSON.parse(ComponentsBackup);
 		document.getElementById('start-stop-animation').click();
 	});
 }

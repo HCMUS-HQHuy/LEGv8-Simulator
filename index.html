@@ -959,69 +959,12 @@
       <div class = "code-editor">
         <div class = "line-numbers" id = "lineNumbers"> 1 </div>
         <textarea class = "instructionCode" id = "instructionCode" name = "message" placeholder="Enter LEGv8 code here, one instruction per line...">
-// --- Initialization (I-Type) ---
-ADDI  X1, XZR, #50      // X1 = 50
-ADDI  X2, XZR, #25      // X2 = 25
-ADDI  X20, XZR, #100    // Base address = 100
+Go_To_End: BL Print_Message
+After_Return: B Halt_Loop
+Print_Message: ADDI X25, XZR, #1
+B After_Return
+Halt_Loop: B Halt_Loop
 
-// --- Arithmetic (R-Type & Flag Setting) ---
-ADD   X3, X1, X2        // X3 = 75
-SUB   X4, X1, X2        // X4 = 25
-ADDS  X5, X1, X2        // X5 = 75; Flags: 0
-SUBS  XZR, X4, X2       // XZR = 0; Flags: Z=1
-
-// --- Conditional Branch (B.cond) ---
-B.EQ  Flags_Are_Equal   // Z=1 → Branch taken
-ADDI  X9, XZR, #999     // Skipped
-
-Flags_Are_Equal:
-ADDI  X9, XZR, #111     // X9 = 111
-
-SUBS  XZR, X1, XZR      // X1 = 50 → Z=0
-B.LT  Should_Not_Happen // Not taken (N=V)
-ADDI  X9, X9, #1        // X9 = 112
-
-Should_Not_Happen:
-ADDI  X9, XZR, #404     // Skipped
-
-// --- Logical Ops (R & I-Type) ---
-ORR   X10, X3, X4       // X10 = 95
-AND   X11, X3, X4       // X11 = 9
-EOR   X12, X10, X11     // X12 = 86
-ANDS  XZR, X10, XZR     // 95 & 0; Z=1
-ADDI  X1, XZR, #10
-ANDI  X1, X1, #15   
-ORRI  X2, X1, #100  
-EORI  X3, X2, #10   
-
-// --- Memory Access (D-Type) ---
-STUR  X12, [XZR, #16]   // Store at addr 16
-LDUR  X13, [XZR, #16]   // Load 16 → X13
-
-// --- Conditional Branch (CB-Type) ---
-SUBIS X15, X13, #86     // X15 = 0; Z=1
-CBNZ  X15, Skip_This    // Not taken
-ADDI  X14, XZR, #333    // X14 = 333
-
-Skip_This:
-ADDI  X14, XZR, #444    // Skipped
-
-CBNZ  X14, Go_To_End    // Taken (X14 ≠ 0)
-ADDI  X1, XZR, #555     // Skipped
-
-// --- Branch & Link (BL), Uncond Branch ---
-Go_To_End:
-BL    Print_Message     // Call subroutine;
-
-After_Return:
-B     Halt_Loop         // Jump to end
-
-Print_Message:
-ADDI  X25, XZR, #1      // Simulate work
-B     After_Return      // Return manually
-
-Halt_Loop:
-B     Halt_Loop         // Infinite loop (end)
 
         </textarea>
         <div class="highlight-overlay" id="highlightOverlay"></div>

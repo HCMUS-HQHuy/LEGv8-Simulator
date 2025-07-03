@@ -19,7 +19,7 @@ export function update(line) {
     }
     updateHighlight(line.lineNumber)
 	assemblyInstruction.innerText = line.assemblyInstruction;
-	machineLangugageInstruction.innerText = encodeLegv8Instruction(line.parsed);
+	machineLangugageInstruction.innerText = encodeLegv8Instruction(line.parsed, (line.lineNumber - 1) << 2);
 }
 
 let prevLineNumber = -1;
