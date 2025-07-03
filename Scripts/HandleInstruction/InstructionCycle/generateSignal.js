@@ -355,7 +355,6 @@ export function initialize(code, onlysettime = false) {
 	Components.PC.value = 0n;
 	
 	code.forEach(key => {
-		console.log("key.lineNumber", (key.lineNumber - 1) << 2);
 		const encodedInstruction = encodeLegv8Instruction(key.parsed, (key.lineNumber - 1) << 2);
 		if (encodedInstruction.error) console.error(encodedInstruction.error);
 

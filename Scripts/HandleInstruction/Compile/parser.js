@@ -362,7 +362,6 @@ export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddr
             }
 
             const byteOffset = targetAddress - currentInstructionAddress;
-            console.log("CURRR", currentInstructionAddress, byteOffset);
             if (byteOffset % 4 !== 0) {
                 return { error: `B-type target address ${targetAddress} for ${mnemonic} is not word aligned relative to ${currentInstructionAddress}.`};
             }
@@ -375,7 +374,6 @@ export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddr
             }
 
             const immediateBin = toBinarySign(wordOffset, 26); // 26-bit immediate (word offset)
-            console.log(wordOffset, immediateBin);
 
             const machineCode = `${opcode}${immediateBin}`;
             if (machineCode.length !== 32) return { error: `B-type: Generated code length is not 32 bits (${machineCode.length})` };
