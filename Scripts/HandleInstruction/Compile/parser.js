@@ -81,7 +81,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
         const opCount = result.operands.length;
         const ops = result.operands;
 
-        const bCondMatch = mnemonic.match(/^B\.(EQ|NE|HS|LO|MI|PL|VS|VC|HI|LS|GE|LT|GT|LE)$/i);
+        const bCondMatch = mnemonic.match(/^B\.(EQ|NE|HS|LO|HI|LS|GE|LT|GT|LE)$/i);
         const registerRegex = /^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i;
 
         if (['B', 'BL'].includes(mnemonic)) {

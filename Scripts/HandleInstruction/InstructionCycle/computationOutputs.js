@@ -107,7 +107,7 @@ function checkBranchCondition(components) {
         if (tmp === CB_TYPE_OPCODES['CBNZ']) {
             return aluFlags.Z === 0 ? 1 : 0; // Branch if Z=0
         }
-    } else if (type === 'B_COND-type') {
+    } else if (type === 'B_COND') {
         const encodedInstruction = components.InstructionMemory.instruction[index];
         const condition = encodedInstruction.substring(28, 32);
         console.log("condition: ", condition);

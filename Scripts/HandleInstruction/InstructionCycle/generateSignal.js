@@ -351,7 +351,7 @@ export function initialize(code, onlysettime = false) {
 	code.forEach(key => {
 		const encodedInstruction = encodeLegv8Instruction(key.parsed, (key.lineNumber - 1) << 2);
 		Components.InstructionMemory.instruction.push(encodedInstruction);
-		Components.InstructionMemory.instructionType.push(`${key.parsed.type}-type`);
+		Components.InstructionMemory.instructionType.push(`${key.parsed.type}`);
 	});
 	
 	return Components;
