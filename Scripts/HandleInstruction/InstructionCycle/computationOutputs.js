@@ -220,8 +220,8 @@ function doALUOperation(currentState) {
 
     // Xử lý kết quả: nếu bit dấu = 1 thì interpret là số âm (bù hai)
     let finalResultNumber = nFlag
-        ? Number(resultIn64Bit - (1n << 64n))  // Chuyển về signed
-        : Number(resultIn64Bit);               // Không đổi nếu dương
+        ? (resultIn64Bit - (1n << 64n))  // Chuyển về signed
+        : resultIn64Bit;               // Không đổi nếu dương
 
     return {
         result: finalResultNumber,
@@ -294,6 +294,8 @@ function updateControlUnit(currentState) {
         currentState.Control.MemtoReg = 0;
         currentState.Control.ALUOp = '10'; 
     } else if (Object.values(B_TYPE_OPCODES).includes(opcode6bit)) {
+        if (opcode6bit === '100101')
+            currentState.Control.RegWrite = 1;
         currentState.Control.UncondBranch = 1;
         currentState.Control.ALUOp = '01';
     } else if (opcode8bit === B_COND_OPCODE_PREFIX) {

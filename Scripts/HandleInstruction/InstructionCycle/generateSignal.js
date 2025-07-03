@@ -91,6 +91,7 @@ import { watchRegisters } from "../Compile/memoryState.js";
 import { watchFlags } from "../Compile/memoryState.js";
 import { shapes } from "./shape.js";
 import { state } from "./animationSpeed.js";
+import { B_TYPE_OPCODES } from "../Compile/Define/Opcode.js"
 
 function getValueFromComponents(source, components) {
 	const [comp, field] = source.split('.');
@@ -203,8 +204,8 @@ function resetComponents(Components) {
 	
 	signalCallbackTable[`DataMemory.address`].push(
 		() => {
-			const index = Components.DataMemory.address;
-			const indexHex = `0x${(index*8).toString(16).toUpperCase().padStart(4, '0')}`;
+			const index = BigInt(Components.DataMemory.address);
+			const indexHex = `0x${(index * 8n).toString(16).toUpperCase().padStart(4, '0')}`;
 			document.getElementById('data-memory-address-value').textContent = indexHex;
 			document.getElementById('data-read-data-value').textContent = Components.DataMemory.Values[index];
 			if (Components.DataMemory.writeEnable === 0) return;
@@ -276,7 +277,7 @@ function resetComponents(Components) {
 			document.getElementById('shift-left-2-output-value').textContent = Components.ShiftLeft2.output; 
 		}
 	);
-	
+	const currentPC = Components.PC.value;
 	signalCallbackTable[`Register.WriteData`].push(() => {
 		const index = Components.Register.WriteReg;
 		if (index === 31) {
@@ -285,32 +286,37 @@ function resetComponents(Components) {
 		}
 		if (Components.Register.option === 0) return;
 
-		const indexHex = `X${index.toString().padStart(2, '0')}`;
+		let indexHex = `X${index.toString().padStart(2, '0')}`;
+		let rawValue = Components.Mux3.output;
 
-		const rawValue = Components.Mux3.output;
-		const value = rawValue >>> 0; // Ensure unsigned 32-bit
-		Components.Register.registerValues[index] = rawValue;
+		const opcode = Components.InstructionMemory.Opcode_31_21.substring(0, 6);
+		if (Object.values(B_TYPE_OPCODES).includes(opcode) && opcode === '100101') {
+			indexHex = 'X30';
+			rawValue = currentPC;
+		}
 
-		// Display value in register element
+		// Safely assign BigInt (or convert if needed)
+		Components.Register.registerValues[index] = BigInt(rawValue);
+
+		const valueToDisplay = rawValue.toString(16).toUpperCase().padStart(8, '0')
+
 		const regElem = document.getElementById(indexHex);
 		if (regElem) {
-			regElem.innerText = `0x${value.toString(16).toUpperCase().padStart(8, '0')}`;
-			regElem.style.backgroundColor = "yellow";
-			regElem.style.color = "red";
-
+			regElem.innerText = `0x${valueToDisplay}`;
+			regElem.style.backgroundColor = 'yellow';
+			regElem.style.color = 'red';
 			setTimeout(() => {
-				regElem.style.backgroundColor = "";
-				regElem.style.color = "";
+				regElem.style.backgroundColor = '';
+				regElem.style.color = '';
 			}, DURATION_ANIMATION * 5);
 		}
 
 		// Update WriteData display
 		const writeDataElem = document.getElementById(`register-WriteData-value`);
 		if (writeDataElem) {
-			writeDataElem.textContent = `0x${value.toString(16).toUpperCase().padStart(2, '0')}`;
+			writeDataElem.textContent = `0x${valueToDisplay}`;
 		}
-	});
-	
+	});	
 	new Set(['Read1', 'Read2', 'WriteReg']).forEach(val => {
 		signalCallbackTable[`Register.${val}`].push(
 			() => {

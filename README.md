@@ -1,5 +1,5 @@
 # LEGv8 Single-Cycle Simulator
-Nhớ thêm X30
+
 A web-based, visual LEGv8 instruction set simulator designed for educational purposes. This tool helps students and enthusiasts understand the flow of data and control signals within a single-cycle LEGv8 processor datapath for each instruction.
 
 <p align="center">
