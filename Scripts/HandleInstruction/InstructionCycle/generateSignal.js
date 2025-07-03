@@ -162,6 +162,8 @@ function traverseAndAnimateBFS(components) {
 					.toUpperCase()
 					.padStart(4, '0');
 				cloneValue = `0x${hexValue}`;
+			} else if (currentNode == "InstructionMemory" || currentNode == "Mux1") {
+				cloneValue = `0b${value}`;
 			}
 			createNodeWithAnimation({
 				value: cloneValue,
