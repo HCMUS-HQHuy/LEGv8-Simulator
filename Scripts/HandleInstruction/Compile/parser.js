@@ -160,7 +160,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
         } else if (['LDUR', 'STUR'].includes(mnemonic)) {
             if (opCount === 2 && ops[0].match(registerRegex) && ops[1].match(/^\[X([0-9]|1[0-9]|2[0-9]|30|ZR)\s*(,\s*#-?\d+)?\s*\]$/i)) {
                 result.type = 'D';
-                const memMatch = ops[1].match(/^\[ *(X(?:[0-9]|1[0-9]|2[0-9]|30)|ZR) *(?:, *#(-?\d+))? *\]$/i);
+                const memMatch = ops[1].match(/^\[ *(X(?:[0-9]|1[0-9]|2[0-9]|30|ZR)) *(?:, *#(-?\d+))? *\]$/i);
                 if (memMatch) {
                     result.structuredOperands = {
                         Rt: ops[0],
