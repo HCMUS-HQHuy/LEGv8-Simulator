@@ -67,7 +67,7 @@ export function trigger() {
 				console.warn("new Val > 5 ?");
 			this._currentStep = newVal;
 			if (state.stepByStepMode) {
-				hideAllSteps(); 
+				hideAllSteps();
 				showCurrentStep();
 			}
 		},

@@ -81,7 +81,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
         const opCount = result.operands.length;
         const ops = result.operands;
 
-        const bCondMatch = mnemonic.match(/^B\.(EQ|NE|HS|LO|MI|PL|VS|VC|HI|LS|GE|LT|GT|LE)$/i);
+        const bCondMatch = mnemonic.match(/^B\.(EQ|NE|HS|LO|HI|LS|GE|LT|GT|LE)$/i);
         const registerRegex = /^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i;
 
         if (['B', 'BL'].includes(mnemonic)) {
@@ -151,21 +151,21 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
                 throw new Error(`Invalid operands for Arithmetic I-type instruction ${mnemonic}. Expected Rd, Rn, #decimal_immediate`);
             }
         } else if (['ANDI', 'ORRI', 'EORI'].includes(mnemonic)) { // LOGICAL I-types
-            if (opCount === 3 && ops[0].match(registerRegex) && ops[1].match(registerRegex) && ops[2].match(/^#0x[0-9a-f]+$/i)) {
+            if (opCount === 3 && ops[0].match(registerRegex) && ops[1].match(registerRegex) && ops[2].match(/^#-?\d+$/)) {
                 result.type = 'I';
-                result.structuredOperands = { Rd: ops[0], Rn: ops[1], bitmask_immediate: ops[2] };
+                result.structuredOperands = { Rd: ops[0], Rn: ops[1], immediate: ops[2] };
             } else {
-                throw new Error(`Invalid operands for Logical I-type instruction ${mnemonic}. Expected Rd, Rn, #0xHEX_immediate`);
+                throw new Error(`Invalid operands for Logical I-type instruction ${mnemonic}. Expected Rd, Rn, #decimal_immediate`);
             }
         } else if (['LDUR', 'STUR'].includes(mnemonic)) {
             if (opCount === 2 && ops[0].match(registerRegex) && ops[1].match(/^\[X([0-9]|1[0-9]|2[0-9]|30|ZR)\s*(,\s*#-?\d+)?\s*\]$/i)) {
                 result.type = 'D';
-                const memMatch = ops[1].match(/^\[(X([0-9]|1[0-9]|2[0-9]|30|ZR))\s*(?:,\s*(#-?\d+))?\s*\]$/i);
+                const memMatch = ops[1].match(/^\[ *(X(?:[0-9]|1[0-9]|2[0-9]|30|ZR)) *(?:, *#(-?\d+))? *\]$/i);
                 if (memMatch) {
                     result.structuredOperands = {
                         Rt: ops[0],
                         Rn: memMatch[1].toUpperCase(),
-                        address_imm: memMatch[2] || '#0'
+                        address_imm: `#${memMatch[2] ?? '0'}`
                     };
                 } else {
                     throw new Error(`Could not parse memory operand for ${mnemonic}: ${ops[1]}`);

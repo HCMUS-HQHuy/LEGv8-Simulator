@@ -1,6 +1,6 @@
 import { R_TYPE_OPCODES, D_TYPE_OPCODES } from "../Compile/Define/Opcode.js";
 import { B_TYPE_OPCODES, CB_TYPE_OPCODES }  from "../Compile/Define/Opcode.js"
-import { B_COND_OPCODE_PREFIX }  from "../Compile/Define/Opcode.js"
+import { B_COND_OPCODE_PREFIX, B_COND_CODES }  from "../Compile/Define/Opcode.js"
 import { I_TYPE_OPCODES }  from "../Compile/Define/Opcode.js"
 
 export function computeOutputs(componentName, components) {
@@ -67,12 +67,8 @@ export function computeOutputs(componentName, components) {
                 components.ALU.Flags.V = aluResultObject.V;
                 components.ALU.Flags.C = aluResultObject.C;
             }
-            const tmp = components.InstructionMemory.Opcode_31_21.substring(0, 8);
-            if (tmp === CB_TYPE_OPCODES['CBNZ']) { // Giả sử bạn có hằng số này
-                components[componentName].zero = (aluResultObject.result == 0 ? 0 : 1);
-            } else {
-                components[componentName].zero = (aluResultObject.result == 0 ? 1 : 0);
-            }
+            components.ALU.zero = checkBranchCondition(components);
+            console.log(components.ALU.zero)
             break;
 
 		case 'Mux0':
@@ -97,107 +93,145 @@ export function computeOutputs(componentName, components) {
 	}
 }
 
+function checkBranchCondition(components) {
+    const aluFlags = components.ALU.Flags;
+    const index = components.InstructionMemory.ReadAddress >> 2;
+    const type = components.InstructionMemory.instructionType[index];
+    console.log(aluFlags);
+
+    if (type === 'CB') {
+        const tmp = components.InstructionMemory.Opcode_31_21.substring(0, 8);
+        if (tmp === CB_TYPE_OPCODES['CBZ']) {
+            return aluFlags.Z; // Branch if Z=1
+        }
+        if (tmp === CB_TYPE_OPCODES['CBNZ']) {
+            return aluFlags.Z === 0 ? 1 : 0; // Branch if Z=0
+        }
+    } else if (type === 'B_COND') {
+        const encodedInstruction = components.InstructionMemory.instruction[index];
+        const condition = encodedInstruction.substring(28, 32);
+        console.log("condition: ", condition);
+        switch (condition) {
+            case B_COND_CODES['EQ']: return aluFlags.Z === 1 ? 1 : 0; // Z=1
+            case B_COND_CODES['NE']: return aluFlags.Z === 0 ? 1 : 0; // Z=0
+            case B_COND_CODES['LT']: return aluFlags.N !== aluFlags.V ? 1 : 0; // N!=V
+            case B_COND_CODES['LE']: return (aluFlags.Z === 1 || aluFlags.N !== aluFlags.V) ? 1 : 0; // Z=1 or N!=V
+            case B_COND_CODES['GT']: return (aluFlags.Z === 0 && aluFlags.N === aluFlags.V) ? 1 : 0; // Z=0 and N=V
+            case B_COND_CODES['GE']: return aluFlags.N === aluFlags.V ? 1 : 0; // N=V
+
+            case B_COND_CODES['LO']: return aluFlags.C === 0 ? 1 : 0; // C=0 (Lower)
+            case B_COND_CODES['LS']: return (aluFlags.C === 0 || aluFlags.Z === 1) ? 1 : 0; // C=0 or Z=1 (Lower or Same)
+            case B_COND_CODES['HI']: return (aluFlags.C === 1 && aluFlags.Z === 0) ? 1 : 0; // C=1 and Z=0 (Higher)
+            case B_COND_CODES['HS']: return aluFlags.C === 1 ? 1 : 0; // C=1 (Higher or Same)
+
+            default:
+                console.warn(`Unsupported B.cond condition: ${condition}`);
+                return 0;
+        }
+    }
+    return 0;
+}
+
 function doALUOperation(currentState) {
     const aluControlCode = currentState['ALU'].option;
-    // Ensure inputs are Numbers, default to 0 if null/undefined
-    const operand1 = Number(currentState['ALU'].input1 || 0);
-    const operand2 = Number(currentState['ALU'].input2 || 0);
+    const operand1 = BigInt(currentState['ALU'].input1 || 0);
+    const operand2 = BigInt(currentState['ALU'].input2 || 0);
 
-    let result = 0;
+    let resultBigInt = 0n;
     let nFlag = 0, zFlag = 0, vFlag = 0, cFlag = 0;
 
-    // --- Helper function for 32-bit signed overflow check ---
-    const checkSignedOverflow = (a, b, res) => {
-        if ((a > 0 && b > 0 && res < 0) || (a < 0 && b < 0 && res > 0)) {
-            return 1;
-        }
-        return 0;
+    const MASK_64BIT = (1n << 64n) - 1n;
+    const MSB_64BIT = 1n << 63n;
+
+    const isSignedOverflow = (a, b, result) => {
+        const signA = (a & MSB_64BIT) !== 0n;
+        const signB = (b & MSB_64BIT) !== 0n;
+        const signR = (result & MSB_64BIT) !== 0n;
+        return (signA === signB) && (signR !== signA);
     };
 
+    const isUnsignedCarry = (a, b) => {
+        return (a + b) > MASK_64BIT;
+    };
+
+    const isUnsignedBorrow = (a, b) => {
+        return a <= b;
+    };
     switch (aluControlCode) {
         case '0010': { // ADD
-            result = operand1 + operand2;
-            
-            const op1_32 = operand1 | 0;
-            const op2_32 = operand2 | 0;
-            const res_32 = result | 0;
+            resultBigInt = operand1 + operand2;
 
-            nFlag = (res_32 < 0) ? 1 : 0;
-            zFlag = (res_32 === 0) ? 1 : 0;
-            vFlag = checkSignedOverflow(op1_32, op2_32, res_32);
-            if (operand1 > 0 && operand2 > 0 && result < operand1) {
-                 cFlag = 1;
-            } else {
-                 const MAX_UINT32 = 0xFFFFFFFF;
-                 if (operand1 > MAX_UINT32 - operand2) {
-                     cFlag = 1;
-                 }
-            }
+            vFlag = isSignedOverflow(operand1, operand2, resultBigInt) ? 1 : 0;
+            cFlag = isUnsignedCarry(operand1 & MASK_64BIT, operand2 & MASK_64BIT) ? 1 : 0;
             break;
         }
 
         case '0110': { // SUB
-            result = operand1 - operand2;
-            const op1_32 = operand1 | 0;
-            const op2_32 = operand2 | 0;
-            const res_32 = result | 0;
-            nFlag = (res_32 < 0) ? 1 : 0;
-            zFlag = (res_32 === 0) ? 1 : 0;
-            if ((op1_32 > 0 && op2_32 < 0 && res_32 < 0) || (op1_32 < 0 && op2_32 > 0 && res_32 > 0)) {
-                vFlag = 1;
-            }
-            // C (as Not-Borrow): Set if op1 >= op2 (unsigned)
-            cFlag = (operand1 >= operand2) ? 1 : 0;
+            resultBigInt = operand1 - operand2;
+            console.log("IN SUB", isUnsignedBorrow(operand1 & MASK_64BIT, operand2 & MASK_64BIT));
+            vFlag = isSignedOverflow(operand1, ~operand2 + 1n, resultBigInt) ? 1 : 0;
+            cFlag = isUnsignedBorrow(operand1 & MASK_64BIT, operand2 & MASK_64BIT) ? 1 : 0;
             break;
         }
 
         case '0000': // AND
+            resultBigInt = operand1 & operand2;
+            break;
         case '0001': // ORR
-        case '1000': { // EOR (XOR)
-            if (aluControlCode === '0000') result = operand1 & operand2;
-            if (aluControlCode === '0001') result = operand1 | operand2;
-            if (aluControlCode === '1000') result = operand1 ^ operand2;
-            
-            nFlag = (result < 0) ? 1 : 0;
-            zFlag = (result === 0) ? 1 : 0;
-            vFlag = 0;
-            cFlag = 0;
+            resultBigInt = operand1 | operand2;
+            break;
+        case '1000': // EOR (XOR)
+            resultBigInt = operand1 ^ operand2;
+            break;
+
+        case '1001': { // LSR (Logical Shift Right)
+            const shamt = BigInt(parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2));
+            resultBigInt = (operand1 & MASK_64BIT) >> shamt;
             break;
         }
 
-        case '1001': { // LSR (Logical Shift Right)
-            const shamt = parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2);
-            result = operand1 >>> shamt;
-            break;
-        }
         case '1010': { // LSL (Logical Shift Left)
-            const shamt = parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2);
-            result = operand1 << shamt;
+            const shamt = BigInt(parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2));
+            resultBigInt = (operand1 << shamt) & MASK_64BIT;
             break;
         }
-        
+
         case '1100': // Pass B
-        case '0111': // Pass B (for branch)
-            result = operand2;
+            resultBigInt = operand2;
             break;
+
         case '1101': // Pass A
-            result = operand1;
+            resultBigInt = operand1;
             break;
-        case '1111':
+
+        case '1111': // Invalid/Unknown
         default:
-            console.warn(`ALU Warning: Received unknown ALU control code '${aluControlCode}'.`);
-            result = 0; // Return a safe value
-            zFlag = 1; // Indicate a zero result from an error
+            console.warn(`ALU Warning: Unknown ALU control code '${aluControlCode}'`);
+            resultBigInt = 0n;
             break;
     }
+
+    // Chuẩn hóa kết quả 64-bit
+    const resultIn64Bit = resultBigInt & MASK_64BIT;
+
+    // Flag N (bit dấu), Z (kết quả bằng 0)
+    nFlag = (resultIn64Bit & MSB_64BIT) ? 1 : 0;
+    zFlag = resultIn64Bit === 0n ? 1 : 0;
+
+    // Xử lý kết quả: nếu bit dấu = 1 thì interpret là số âm (bù hai)
+    let finalResultNumber = nFlag
+        ? Number(resultIn64Bit - (1n << 64n))  // Chuyển về signed
+        : Number(resultIn64Bit);               // Không đổi nếu dương
+
     return {
-        result: result,
+        result: finalResultNumber,
         N: nFlag,
         Z: zFlag,
         V: vFlag,
         C: cFlag
     };
 }
+
 
 function updateControlUnit(currentState) {
     // 1. Input Validation

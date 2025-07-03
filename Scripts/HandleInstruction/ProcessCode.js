@@ -6,6 +6,12 @@ import {state} from "./InstructionCycle/animationSpeed.js"
 import { validateParsedResults } from "../HandleOutLook/logBox.js"
 import { resetAnimation } from "./InstructionCycle/animation.js"
 
+
+let instructionPos = -1;
+let Components = null;
+let ComponentsBackup = null;
+let isFinish = true;
+
 function compileCode() {
 	const results = formatCode.getResult();
 	if (results == null) {
@@ -16,10 +22,24 @@ function compileCode() {
 	return results;
 }
 
-let instructionPos = -1;
-let Components = null;
-let ComponentsBackup = null;
-let isFinish = true;
+function turnoffMux() {
+	for (let i = 0; i <= 3; i++) {
+		document.getElementById(`mux-${i}-0-selected`).style.visibility = "hidden";
+		document.getElementById(`mux-${i}-1-selected`).style.visibility = "hidden";
+	}
+}
+
+function clearAll() {
+	resetAnimation();
+	instructionPos = -1;
+	state.executing = false;
+	setTimeout(()=>{state.currentStep = 6;}, 2);
+	ComponentsBackup = null;
+	Components = null;
+	isFinish = true;
+	currentInstruction.update(-1);
+	turnoffMux();
+}
 
 async function execute(results) {
     if (validateParsedResults(results, "log-box") != true) {
@@ -34,11 +54,12 @@ async function execute(results) {
 
 	isFinish = false;
 	while (isFinish === false) {
-		// console.log(`instructionPos: ${instructionPos}`);
+		turnoffMux();
 		ComponentsBackup = JSON.stringify(Components)
 		currentInstruction.update(results[instructionPos]);
 		instructionPos = await generateSignal.start(Components);
 		if (instructionPos >= Components.InstructionMemory.instruction.length) {
+			currentInstruction.update(instructionPos);
 			isFinish = true;
 			state.executing = false;
 		}
@@ -52,15 +73,16 @@ export function trigger() {
 
 	document.getElementById('compile-btn').addEventListener('click', function(event) {
         event.preventDefault();
-		resetAnimation();
+		clearAll();
 		instructionPos = -1;
-		state.executing = false;
-		state.currentStep = 6;
-		isFinish = true;
-    	currentInstruction.update(-1);
 		results = compileCode();
 	});
-	
+	document.getElementById('start-animation').addEventListener('click', function(event) {
+		event.preventDefault();
+		if (state.executing === true) 
+			return;
+		document.getElementById('start-stop-animation').click();
+	});
 	document.getElementById('start-stop-animation').addEventListener('click', function(event) {
 		event.preventDefault();
 		if (state.executing === true) 

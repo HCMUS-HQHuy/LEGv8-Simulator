@@ -162,6 +162,8 @@ function traverseAndAnimateBFS(components) {
 					.toUpperCase()
 					.padStart(4, '0');
 				cloneValue = `0x${hexValue}`;
+			} else if (currentNode == "InstructionMemory" || currentNode == "Mux1") {
+				cloneValue = `0b${value}`;
 			}
 			createNodeWithAnimation({
 				value: cloneValue,
@@ -178,7 +180,7 @@ function traverseAndAnimateBFS(components) {
 
 function resetComponents(Components) {
 	state.currentStep = 0;
-	const specialNode = ["InstructionMemory.ReadAddress", "ALU.option", "ALU.input2", "DataMemory.address","Mux0.option"]
+	const specialNode = ["InstructionMemory.ReadAddress", "Register.Read1", "ALU.input2", "DataMemory.address","Mux0.option"]
 	for (const key of Object.keys(signalCallbackTable))
 		if (signalCallbackTable.hasOwnProperty(key))
 			signalCallbackTable[key] = [() => {
@@ -287,7 +289,7 @@ function resetComponents(Components) {
 
 		const rawValue = Components.Mux3.output;
 		const value = rawValue >>> 0; // Ensure unsigned 32-bit
-		Components.Register.registerValues[index] = value;
+		Components.Register.registerValues[index] = rawValue;
 
 		// Display value in register element
 		const regElem = document.getElementById(indexHex);
@@ -349,7 +351,7 @@ export function initialize(code, onlysettime = false) {
 	code.forEach(key => {
 		const encodedInstruction = encodeLegv8Instruction(key.parsed, (key.lineNumber - 1) << 2);
 		Components.InstructionMemory.instruction.push(encodedInstruction);
-		Components.InstructionMemory.instructionType.push(`${key.parsed.type}-type`);
+		Components.InstructionMemory.instructionType.push(`${key.parsed.type}`);
 	});
 	
 	return Components;
