@@ -22,6 +22,13 @@ function compileCode() {
 	return results;
 }
 
+function turnoffMux() {
+	for (let i = 0; i <= 3; i++) {
+		document.getElementById(`mux-${i}-0-selected`).style.visibility = "hidden";
+		document.getElementById(`mux-${i}-1-selected`).style.visibility = "hidden";
+	}
+}
+
 function clearAll() {
 	resetAnimation();
 	instructionPos = -1;
@@ -31,10 +38,7 @@ function clearAll() {
 	Components = null;
 	isFinish = true;
 	currentInstruction.update(-1);
-	for (let i = 0; i <= 3; i++) {
-		document.getElementById(`mux-${i}-0-selected`).style.visibility = "hidden";
-		document.getElementById(`mux-${i}-1-selected`).style.visibility = "hidden";
-	}
+	turnoffMux();
 }
 
 async function execute(results) {
@@ -50,6 +54,7 @@ async function execute(results) {
 
 	isFinish = false;
 	while (isFinish === false) {
+		turnoffMux();
 		ComponentsBackup = JSON.stringify(Components)
 		currentInstruction.update(results[instructionPos]);
 		instructionPos = await generateSignal.start(Components);
