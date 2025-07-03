@@ -108,90 +108,86 @@ function doALUOperation(currentState) {
     const MASK_64BIT = (1n << 64n) - 1n;
     const MSB_64BIT = 1n << 63n;
 
+    const isSignedOverflow = (a, b, result) => {
+        const signA = (a & MSB_64BIT) !== 0n;
+        const signB = (b & MSB_64BIT) !== 0n;
+        const signR = (result & MSB_64BIT) !== 0n;
+        return (signA === signB) && (signR !== signA);
+    };
+
+    const isUnsignedCarry = (a, b) => {
+        return (a + b) > MASK_64BIT;
+    };
+
+    const isUnsignedBorrow = (a, b) => {
+        return a > b;
+    };
     switch (aluControlCode) {
         case '0010': { // ADD
             resultBigInt = operand1 + operand2;
-            // V flag: signs of operands are the same, AND sign of result is different
-            if (!((operand1 ^ operand2) & MSB_64BIT) && ((operand1 ^ resultBigInt) & MSB_64BIT)) {
-                vFlag = 1;
-            }
-            // C flag: unsigned addition overflows 64 bits
-            if ((operand1 & MASK_64BIT) + (operand2 & MASK_64BIT) > MASK_64BIT) {
-                cFlag = 1;
-            }
+
+            vFlag = isSignedOverflow(operand1, operand2, resultBigInt) ? 1 : 0;
+            cFlag = isUnsignedCarry(operand1 & MASK_64BIT, operand2 & MASK_64BIT) ? 1 : 0;
             break;
         }
 
         case '0110': { // SUB
             resultBigInt = operand1 - operand2;
-            // V flag: signs of operands are different, AND sign of result is different from op1
-            // THIS IS THE CORRECTED LOGIC
-            if (((operand1 ^ operand2) & MSB_64BIT) && ((operand1 ^ resultBigInt) & MSB_64BIT)) {
-                vFlag = 1;
-            }
-            // C flag (Not-Borrow): op1_unsigned >= op2_unsigned
-            // THIS IS THE CORRECTED LOGIC
-            if ((operand1 & MASK_64BIT) < (operand2 & MASK_64BIT)) {
-                cFlag = 1;
-            }
+            console.log("IN SUB", isUnsignedBorrow(operand1 & MASK_64BIT, operand2 & MASK_64BIT));
+            vFlag = isSignedOverflow(operand1, ~operand2 + 1n, resultBigInt) ? 1 : 0;
+            cFlag = isUnsignedBorrow(operand1 & MASK_64BIT, operand2 & MASK_64BIT) ? 1 : 0;
             break;
         }
 
         case '0000': // AND
+            resultBigInt = operand1 & operand2;
+            break;
         case '0001': // ORR
-        case '1000': { // EOR (XOR)
-            if (aluControlCode === '0000') resultBigInt = operand1 & operand2;
-            if (aluControlCode === '0001') resultBigInt = operand1 | operand2;
-            if (aluControlCode === '1000') resultBigInt = operand1 ^ operand2;
-            // N, Z flags are calculated below. V and C are always 0 for these logical ops.
-            vFlag = 0;
-            cFlag = 0;
+            resultBigInt = operand1 | operand2;
+            break;
+        case '1000': // EOR (XOR)
+            resultBigInt = operand1 ^ operand2;
+            break;
+
+        case '1001': { // LSR (Logical Shift Right)
+            const shamt = BigInt(parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2));
+            resultBigInt = (operand1 & MASK_64BIT) >> shamt;
             break;
         }
 
-        case '1001': { // LSR
+        case '1010': { // LSL (Logical Shift Left)
             const shamt = BigInt(parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2));
-            const unsignedOperand1 = operand1 & MASK_64BIT;
-            resultBigInt = unsignedOperand1 >> shamt;
-            // For logical operations, V and C are typically cleared.
-            vFlag = 0; cFlag = 0;
+            resultBigInt = (operand1 << shamt) & MASK_64BIT;
             break;
         }
-        case '1010': { // LSL
-            const shamt = BigInt(parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2));
-            resultBigInt = operand1 << shamt;
-            vFlag = 0; cFlag = 0;
-            break;
-        }
-        
+
         case '1100': // Pass B
             resultBigInt = operand2;
-            vFlag = 0; cFlag = 0;
-            break;
-        case '1101': // Pass A
-            resultBigInt = operand1;
-            vFlag = 0; cFlag = 0;
             break;
 
-        case '1111': // Error code
+        case '1101': // Pass A
+            resultBigInt = operand1;
+            break;
+
+        case '1111': // Invalid/Unknown
         default:
-            console.warn(`ALU Warning: Received unknown ALU control code '${aluControlCode}'.`);
+            console.warn(`ALU Warning: Unknown ALU control code '${aluControlCode}'`);
             resultBigInt = 0n;
             break;
     }
 
+    // Chuẩn hóa kết quả 64-bit
     const resultIn64Bit = resultBigInt & MASK_64BIT;
 
+    // Flag N (bit dấu), Z (kết quả bằng 0)
     nFlag = (resultIn64Bit & MSB_64BIT) ? 1 : 0;
-    zFlag = (resultIn64Bit === 0n) ? 1 : 0;
+    zFlag = resultIn64Bit === 0n ? 1 : 0;
 
-    let finalResultNumber;
-    if (nFlag === 1) {
-        const negativeValue = resultIn64Bit - (1n << 64n);
-        finalResultNumber = Number(negativeValue);
-    } else {
-        finalResultNumber = Number(resultIn64Bit);
-    }
+    // Xử lý kết quả: nếu bit dấu = 1 thì interpret là số âm (bù hai)
+    let finalResultNumber = nFlag
+        ? Number(resultIn64Bit - (1n << 64n))  // Chuyển về signed
+        : Number(resultIn64Bit);               // Không đổi nếu dương
+
     return {
         result: finalResultNumber,
         N: nFlag,
@@ -200,6 +196,7 @@ function doALUOperation(currentState) {
         C: cFlag
     };
 }
+
 
 function updateControlUnit(currentState) {
     // 1. Input Validation
