@@ -987,9 +987,9 @@ AND   X11, X3, X4       // X11 = 9
 EOR   X12, X10, X11     // X12 = 86
 ANDS  XZR, X10, XZR     // 95 & 0; Z=1
 ADDI  X1, XZR, #10
-ANDI  X1, X1, #0xF      // X1 = 10
-ORRI  X2, X1, #0x50     // X2 = 90
-EORI  X3, X2, #0xFF     // X3 = 165
+ANDI  X1, X1, #15   
+ORRI  X2, X1, #100  
+EORI  X3, X2, #10   
 
 // --- Memory Access (D-Type) ---
 STUR  X12, [X20, #16]   // Store at addr 116
