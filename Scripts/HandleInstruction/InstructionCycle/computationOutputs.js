@@ -99,99 +99,101 @@ export function computeOutputs(componentName, components) {
 
 function doALUOperation(currentState) {
     const aluControlCode = currentState['ALU'].option;
-    // Ensure inputs are Numbers, default to 0 if null/undefined
-    const operand1 = Number(currentState['ALU'].input1 || 0);
-    const operand2 = Number(currentState['ALU'].input2 || 0);
+    const operand1 = BigInt(currentState['ALU'].input1 || 0);
+    const operand2 = BigInt(currentState['ALU'].input2 || 0);
 
-    let result = 0;
+    let resultBigInt = 0n;
     let nFlag = 0, zFlag = 0, vFlag = 0, cFlag = 0;
 
-    // --- Helper function for 32-bit signed overflow check ---
-    const checkSignedOverflow = (a, b, res) => {
-        if ((a > 0 && b > 0 && res < 0) || (a < 0 && b < 0 && res > 0)) {
-            return 1;
-        }
-        return 0;
-    };
+    const MASK_64BIT = (1n << 64n) - 1n;
+    const MSB_64BIT = 1n << 63n;
 
     switch (aluControlCode) {
         case '0010': { // ADD
-            result = operand1 + operand2;
-            
-            const op1_32 = operand1 | 0;
-            const op2_32 = operand2 | 0;
-            const res_32 = result | 0;
-
-            nFlag = (res_32 < 0) ? 1 : 0;
-            zFlag = (res_32 === 0) ? 1 : 0;
-            vFlag = checkSignedOverflow(op1_32, op2_32, res_32);
-            if (operand1 > 0 && operand2 > 0 && result < operand1) {
-                 cFlag = 1;
-            } else {
-                 const MAX_UINT32 = 0xFFFFFFFF;
-                 if (operand1 > MAX_UINT32 - operand2) {
-                     cFlag = 1;
-                 }
+            resultBigInt = operand1 + operand2;
+            // V flag: signs of operands are the same, AND sign of result is different
+            if (!((operand1 ^ operand2) & MSB_64BIT) && ((operand1 ^ resultBigInt) & MSB_64BIT)) {
+                vFlag = 1;
+            }
+            // C flag: unsigned addition overflows 64 bits
+            if ((operand1 & MASK_64BIT) + (operand2 & MASK_64BIT) > MASK_64BIT) {
+                cFlag = 1;
             }
             break;
         }
 
         case '0110': { // SUB
-            result = operand1 - operand2;
-            const op1_32 = operand1 | 0;
-            const op2_32 = operand2 | 0;
-            const res_32 = result | 0;
-            nFlag = (res_32 < 0) ? 1 : 0;
-            zFlag = (res_32 === 0) ? 1 : 0;
-            if ((op1_32 > 0 && op2_32 < 0 && res_32 < 0) || (op1_32 < 0 && op2_32 > 0 && res_32 > 0)) {
+            resultBigInt = operand1 - operand2;
+            // V flag: signs of operands are different, AND sign of result is different from op1
+            // THIS IS THE CORRECTED LOGIC
+            if (((operand1 ^ operand2) & MSB_64BIT) && ((operand1 ^ resultBigInt) & MSB_64BIT)) {
                 vFlag = 1;
             }
-            // C (as Not-Borrow): Set if op1 >= op2 (unsigned)
-            cFlag = (operand1 >= operand2) ? 1 : 0;
+            // C flag (Not-Borrow): op1_unsigned >= op2_unsigned
+            // THIS IS THE CORRECTED LOGIC
+            if ((operand1 & MASK_64BIT) < (operand2 & MASK_64BIT)) {
+                cFlag = 1;
+            }
             break;
         }
 
         case '0000': // AND
         case '0001': // ORR
         case '1000': { // EOR (XOR)
-            if (aluControlCode === '0000') result = operand1 & operand2;
-            if (aluControlCode === '0001') result = operand1 | operand2;
-            if (aluControlCode === '1000') result = operand1 ^ operand2;
-            
-            nFlag = (result < 0) ? 1 : 0;
-            zFlag = (result === 0) ? 1 : 0;
+            if (aluControlCode === '0000') resultBigInt = operand1 & operand2;
+            if (aluControlCode === '0001') resultBigInt = operand1 | operand2;
+            if (aluControlCode === '1000') resultBigInt = operand1 ^ operand2;
+            // N, Z flags are calculated below. V and C are always 0 for these logical ops.
             vFlag = 0;
             cFlag = 0;
             break;
         }
 
-        case '1001': { // LSR (Logical Shift Right)
-            const shamt = parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2);
-            result = operand1 >>> shamt;
+        case '1001': { // LSR
+            const shamt = BigInt(parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2));
+            const unsignedOperand1 = operand1 & MASK_64BIT;
+            resultBigInt = unsignedOperand1 >> shamt;
+            // For logical operations, V and C are typically cleared.
+            vFlag = 0; cFlag = 0;
             break;
         }
-        case '1010': { // LSL (Logical Shift Left)
-            const shamt = parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2);
-            result = operand1 << shamt;
+        case '1010': { // LSL
+            const shamt = BigInt(parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2));
+            resultBigInt = operand1 << shamt;
+            vFlag = 0; cFlag = 0;
             break;
         }
         
         case '1100': // Pass B
-        case '0111': // Pass B (for branch)
-            result = operand2;
+            resultBigInt = operand2;
+            vFlag = 0; cFlag = 0;
             break;
         case '1101': // Pass A
-            result = operand1;
+            resultBigInt = operand1;
+            vFlag = 0; cFlag = 0;
             break;
-        case '1111':
+
+        case '1111': // Error code
         default:
             console.warn(`ALU Warning: Received unknown ALU control code '${aluControlCode}'.`);
-            result = 0; // Return a safe value
-            zFlag = 1; // Indicate a zero result from an error
+            resultBigInt = 0n;
             break;
     }
+
+    const resultIn64Bit = resultBigInt & MASK_64BIT;
+
+    nFlag = (resultIn64Bit & MSB_64BIT) ? 1 : 0;
+    zFlag = (resultIn64Bit === 0n) ? 1 : 0;
+
+    let finalResultNumber;
+    if (nFlag === 1) {
+        const negativeValue = resultIn64Bit - (1n << 64n);
+        finalResultNumber = Number(negativeValue);
+    } else {
+        finalResultNumber = Number(resultIn64Bit);
+    }
     return {
-        result: result,
+        result: finalResultNumber,
         N: nFlag,
         Z: zFlag,
         V: vFlag,
