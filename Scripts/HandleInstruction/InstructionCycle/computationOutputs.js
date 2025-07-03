@@ -120,7 +120,7 @@ function doALUOperation(currentState) {
     };
 
     const isUnsignedBorrow = (a, b) => {
-        return a > b;
+        return a >= b;
     };
     switch (aluControlCode) {
         case '0010': { // ADD
