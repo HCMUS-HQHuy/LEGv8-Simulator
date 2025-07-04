@@ -39,6 +39,7 @@ function clearAll() {
 	Components = null;
 	isFinish = true;
 	currentInstruction.update(-1);
+	document.getElementById('pc-value-text').textContent = '0xF000';
 	turnoffMux();
 }
 

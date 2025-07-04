@@ -207,7 +207,7 @@ function resetComponents(Components) {
 			const index = BigInt(Components.DataMemory.address);
 			const indexHex = `0x${(index * 8n).toString(16).toUpperCase().padStart(4, '0')}`;
 			document.getElementById('data-memory-address-value').textContent = indexHex;
-			document.getElementById('data-read-data-value').textContent = Components.DataMemory.Values[index];
+			document.getElementById('data-read-data-value').textContent = String(Components.DataMemory.Values[index]).padStart(4, '0');
 			if (Components.DataMemory.writeEnable === 0) return;
 			
 			const bigIntValue = Components.DataMemory.Values[index];
@@ -342,7 +342,7 @@ function resetComponents(Components) {
 		() => {
 			document.getElementById(`instruction-memory-read-address-value`).textContent = `0x${(Components.InstructionMemory.ReadAddress).toString(16).padStart(2, '0').toUpperCase()}`;
 			const InstructionMemory = Components.InstructionMemory;
-			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2n];
+			const encodedInstruction = InstructionMemory.instruction[((InstructionMemory.ReadAddress - Components.PC.offset) >> 2n)];
 			document.getElementById(`instruction-memory-instruction-[31-0]-value`).textContent = `0x${parseInt(encodedInstruction, 2).toString(16).padStart(8, '0').toUpperCase()}`;
 		}
 	);
@@ -356,7 +356,7 @@ export function initialize(code, onlysettime = false) {
 	watchDataMemory(Components.DataMemory);
 	watchRegisters(Components.Register);
 	watchFlags(Components.ALU);
-	Components.PC.value = 0n;
+	Components.PC.value = Components.PC.offset;
 	
 	code.forEach(key => {
 		const encodedInstruction = encodeLegv8Instruction(key.parsed, (key.lineNumber - 1) << 2);
@@ -370,7 +370,7 @@ export function initialize(code, onlysettime = false) {
 }
 
 export async function start(Components) {
-	if ((Components.PC.value >> 2n) >= Components.InstructionMemory.instruction.length) {
+	if (((Components.PC.value - Components.PC.offset) >> 2n) >= Components.InstructionMemory.instruction.length) {
 		return -1;
 	}
 
@@ -384,5 +384,5 @@ export async function start(Components) {
 	await new Promise((promise) => {
 		pcSignalPromiseResolve = promise;
 	});
-	return Components.PC.value >> 2n;
+	return ((Components.PC.value - Components.PC.offset) >> 2n);
 }

@@ -7,7 +7,7 @@ export function computeOutputs(componentName, components) {
 	switch (componentName) {
 		case 'InstructionMemory':
 			const InstructionMemory = components[componentName];
-			const encodedInstruction = InstructionMemory.instruction[InstructionMemory.ReadAddress >> 2n];
+			const encodedInstruction = InstructionMemory.instruction[(InstructionMemory.ReadAddress - components.PC.offset) >> 2n];
             if (encodedInstruction == null) console.error("encodedInstruction is null in computation Ouputs");
 			InstructionMemory.Opcode_31_21 = encodedInstruction.substring(0, 11);
 			InstructionMemory.Rm_20_16 = encodedInstruction.substring(11, 16);
@@ -95,7 +95,7 @@ export function computeOutputs(componentName, components) {
 
 function checkBranchCondition(components) {
     const aluFlags = components.ALU.Flags;
-    const index = components.InstructionMemory.ReadAddress >> 2n;
+    const index = ((components.InstructionMemory.ReadAddress - components.PC.offset) >> 2n);
     const type = components.InstructionMemory.instructionType[index];
     console.log(aluFlags);
 

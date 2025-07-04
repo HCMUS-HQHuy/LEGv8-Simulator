@@ -20,7 +20,8 @@ function deepClone(obj) {
 export function getComponents() {
 	return new Object({
 		PC: {
-			value: 0n
+			value: 61440n,
+			offset: 61440n,
 		},
 		Const4: {
 			value: 4n
