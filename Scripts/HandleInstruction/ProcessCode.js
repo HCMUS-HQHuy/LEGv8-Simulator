@@ -60,7 +60,7 @@ async function execute(results) {
 		currentInstruction.update(results[instructionPos]);
 		instructionPos = await generateSignal.start(Components);
 		if (instructionPos >= Components.InstructionMemory.instruction.length) {
-			currentInstruction.update(instructionPos);
+			currentInstruction.update(Number(instructionPos));
 			isFinish = true;
 			state.executing = false;
 		}
