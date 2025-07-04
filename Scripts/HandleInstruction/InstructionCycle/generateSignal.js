@@ -252,6 +252,7 @@ function resetComponents(Components) {
 					console.error(`Flag element with ID '${flagName}' not found.`);
 					return; // Skip to the next flag if element is not found
 				}
+				document.getElementById(`add-2-${flagName}-value`).textContent = Components.ALU.Flags[flagName];
 				if (Components.ALU.Flags[flagName] !== flag[flagName]) {
 					element.innerText = Components.ALU.Flags[flagName];
 					const parentRow = element.closest('tr');
