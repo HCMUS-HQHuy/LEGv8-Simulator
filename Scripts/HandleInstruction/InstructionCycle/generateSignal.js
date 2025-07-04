@@ -209,7 +209,17 @@ function resetComponents(Components) {
 			document.getElementById('data-memory-address-value').textContent = indexHex;
 			document.getElementById('data-read-data-value').textContent = Components.DataMemory.Values[index];
 			if (Components.DataMemory.writeEnable === 0) return;
-			document.getElementById(indexHex).innerText = `0x${Components.DataMemory.Values[index].toString(16).toUpperCase().padStart(4, '0')}`;
+			
+			const bigIntValue = Components.DataMemory.Values[index];
+			let valueToDisplay;
+			if (bigIntValue < 0n) {
+				const mask16 = 0xFFFFn;
+				valueToDisplay = (bigIntValue & mask16).toString(16).toUpperCase().padStart(4, '0');
+			} else {
+				valueToDisplay = bigIntValue.toString(16).toUpperCase().padStart(4, '0');
+			}
+
+			document.getElementById(indexHex).innerText = `0x${valueToDisplay}`;
 			document.getElementById(`row-${indexHex}`).style.backgroundColor = "yellow";
 			document.getElementById(`row-${indexHex}`).style.color = "red";
 			setTimeout(() => {
@@ -296,9 +306,17 @@ function resetComponents(Components) {
 		}
 
 		// Safely assign BigInt (or convert if needed)
-		Components.Register.registerValues[index] = BigInt(rawValue);
-
-		const valueToDisplay = rawValue.toString(16).toUpperCase().padStart(8, '0')
+		const bigIntValue = BigInt(rawValue);
+		Components.Register.registerValues[index] = bigIntValue;
+		let valueToDisplay;
+		if (bigIntValue < 0n) {
+			// 64-bit two's complement for negative numbers
+			const mask32 = 0xFFFFFFFFn;
+			valueToDisplay = (bigIntValue & mask32).toString(16).toUpperCase().padStart(8, '0');
+		} else {
+			valueToDisplay = bigIntValue.toString(16).toUpperCase().padStart(8, '0');
+		}
+		console.log("BIGINT", bigIntValue, valueToDisplay);
 
 		const regElem = document.getElementById(indexHex);
 		if (regElem) {
@@ -311,7 +329,6 @@ function resetComponents(Components) {
 			}, DURATION_ANIMATION * 5);
 		}
 
-		// Update WriteData display
 		const writeDataElem = document.getElementById(`register-WriteData-value`);
 		if (writeDataElem) {
 			writeDataElem.textContent = `0x${valueToDisplay}`;
