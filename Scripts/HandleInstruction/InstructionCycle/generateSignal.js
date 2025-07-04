@@ -242,7 +242,7 @@ function resetComponents(Components) {
 
 	signalCallbackTable[`ALU.input2`].push(
 		() => { 
-			document.getElementById('add-2-input-2-value').textContent = Components.ALU.input2; 
+			document.getElementById('add-2-input-2-value').textContent = String(Components.ALU.input2).padStart(4, '0'); 
 			const flagNames = ['N', 'Z', 'V', 'C'];
 			const duration = DURATION_ANIMATION * 5;
 
@@ -270,8 +270,8 @@ function resetComponents(Components) {
 	);
 	signalCallbackTable[`ALU.input1`].push(
 		() => {
-			document.getElementById('add-2-input-1-value').textContent = Components.ALU.input1; 
-			document.getElementById('add-2-output-value').textContent = Components.ALU.output; 
+			document.getElementById('add-2-input-1-value').textContent = String(Components.ALU.input1).padStart(4, '0'); 
+			document.getElementById('add-2-output-value').textContent  = String(Components.ALU.output).padStart(4, '0'); 
 		}
 	);
 	
@@ -324,10 +324,10 @@ function resetComponents(Components) {
 	new Set(['Read1', 'Read2', 'WriteReg']).forEach(val => {
 		signalCallbackTable[`Register.${val}`].push(
 			() => {
-				document.getElementById(`register-${val}-value`).textContent = `${Components.Register[`${val}`]}`;
+				document.getElementById(`register-${val}-value`).textContent = String(Components.Register[`${val}`]).padStart(4, '0');
 				if (val === 'Read2') {
-					document.getElementById(`register-ReadData1-value`).textContent = `${Components.Register[`ReadData1`]}`;
-					document.getElementById(`register-ReadData2-value`).textContent = `${Components.Register[`ReadData2`]}`;
+					document.getElementById(`register-ReadData1-value`).textContent = String(Components.Register[`ReadData1`]).padStart(4, '0');
+					document.getElementById(`register-ReadData2-value`).textContent = String(Components.Register[`ReadData2`]).padStart(4, '0');
 				}
 			}
 		);
