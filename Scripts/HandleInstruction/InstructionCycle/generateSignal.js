@@ -318,7 +318,7 @@ function resetComponents(Components) {
 
 		const writeDataElem = document.getElementById(`register-WriteData-value`);
 		if (writeDataElem) {
-			writeDataElem.textContent = `0x${valueToDisplay.substring(4, 7)}`;
+			writeDataElem.textContent = `0x${valueToDisplay.substring(4)}`;
 		}
 	});	
 	new Set(['Read1', 'Read2', 'WriteReg']).forEach(val => {
