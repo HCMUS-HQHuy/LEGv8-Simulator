@@ -179,6 +179,11 @@ function traverseAndAnimateBFS(components) {
 	}
 }
 
+function formatSignedBigInt(n, k) {
+    const absStr = String(n < 0n ? -n : n).padStart(k - 1, '0');
+    return (n < 0n ? '-' : '0') + absStr;
+}
+
 function resetComponents(Components) {
 	state.currentStep = 0;
 	const specialNode = ["InstructionMemory.ReadAddress", "Register.Read1", "ALU.input2", "DataMemory.address","Mux0.option"]
@@ -207,7 +212,7 @@ function resetComponents(Components) {
 			const index = BigInt(Components.DataMemory.address);
 			const indexHex = `0x${(index * 8n).toString(16).toUpperCase().padStart(4, '0')}`;
 			document.getElementById('data-memory-address-value').textContent = indexHex;
-			document.getElementById('data-read-data-value').textContent = String(Components.DataMemory.Values[index]).padStart(4, '0');
+			document.getElementById('data-read-data-value').textContent = formatSignedBigInt(Components.DataMemory.Values[index], 4);
 			if (Components.DataMemory.writeEnable === 0) return;
 			
 			const bigIntValue = Components.DataMemory.Values[index];
@@ -242,7 +247,7 @@ function resetComponents(Components) {
 
 	signalCallbackTable[`ALU.input2`].push(
 		() => { 
-			document.getElementById('add-2-input-2-value').textContent = String(Components.ALU.input2).padStart(4, '0'); 
+			document.getElementById('add-2-input-2-value').textContent = formatSignedBigInt(Components.ALU.input2, 4);
 			const flagNames = ['N', 'Z', 'V', 'C'];
 			const duration = DURATION_ANIMATION * 5;
 
@@ -270,8 +275,8 @@ function resetComponents(Components) {
 	);
 	signalCallbackTable[`ALU.input1`].push(
 		() => {
-			document.getElementById('add-2-input-1-value').textContent = String(Components.ALU.input1).padStart(4, '0'); 
-			document.getElementById('add-2-output-value').textContent  = String(Components.ALU.output).padStart(4, '0'); 
+			document.getElementById('add-2-input-1-value').textContent = formatSignedBigInt(Components.ALU.input1, 4);
+			document.getElementById('add-2-output-value').textContent  = formatSignedBigInt(Components.ALU.output, 4);
 		}
 	);
 	
@@ -324,10 +329,10 @@ function resetComponents(Components) {
 	new Set(['Read1', 'Read2', 'WriteReg']).forEach(val => {
 		signalCallbackTable[`Register.${val}`].push(
 			() => {
-				document.getElementById(`register-${val}-value`).textContent = String(Components.Register[`${val}`]).padStart(4, '0');
+				document.getElementById(`register-${val}-value`).textContent = formatSignedBigInt(Components.Register[`${val}`], 4);
 				if (val === 'Read2') {
-					document.getElementById(`register-ReadData1-value`).textContent = String(Components.Register[`ReadData1`]).padStart(4, '0');
-					document.getElementById(`register-ReadData2-value`).textContent = String(Components.Register[`ReadData2`]).padStart(4, '0');
+					document.getElementById(`register-ReadData1-value`).textContent = formatSignedBigInt(Components.Register[`ReadData1`], 4);
+					document.getElementById(`register-ReadData2-value`).textContent = formatSignedBigInt(Components.Register[`ReadData2`], 4);
 				}
 			}
 		);
