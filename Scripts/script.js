@@ -124,9 +124,7 @@ function component_selected(group, groupId, posX, posY, scale) {
 
 component_selected(instructionMemoryGroup, "instruction-memory-selected", 10, 10, 1.5)
 component_selected(registerGroup, "register-selected", 10, 10, 1.5)
-component_selected(signExtendGroup, "sign-extend-selected", 295, 70, 1.5)
 component_selected(ALUGroup, "add-2-selected", 10, 85, 1.5)
-component_selected(shiftLeft2Group, "shift-left-2-selected", 295, 70, 1.5)
 component_selected(dataMemoryGroup, "data-memory-selected", 10, 10, 1.5)
 
 

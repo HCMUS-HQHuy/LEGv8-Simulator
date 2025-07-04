@@ -233,7 +233,7 @@ function resetComponents(Components) {
 		() => { 
 			const rawValue = Components.DataMemory.WriteData;
 			const bigIntValue = typeof rawValue === 'bigint' ? rawValue : BigInt(rawValue);
-			const formattedHex = `0x${bigIntValue.toString(16).toUpperCase().padStart(16, '0')}`
+			const formattedHex = `0x${bigIntValue.toString(16).toUpperCase().padStart(4, '0')}`
 			document.getElementById('data-memory-write-data-value').textContent = formattedHex;
 		}
 	);
@@ -275,19 +275,6 @@ function resetComponents(Components) {
 		}
 	);
 	
-	signalCallbackTable[`SignExtend.input`].push(
-		() => {
-			document.getElementById('sign-extend-input-value').textContent = Components.SignExtend.input.toString(2).padStart(8, '0');
-			document.getElementById('sign-extend-output-value').textContent = Components.SignExtend.output; 
-		}
-	);
-	
-	signalCallbackTable['ShiftLeft2.input'].push(
-		() => {
-			document.getElementById('shift-left-2-input-value').textContent = Components.ShiftLeft2.input; 
-			document.getElementById('shift-left-2-output-value').textContent = Components.ShiftLeft2.output; 
-		}
-	);
 	const currentPC = Components.PC.value;
 	signalCallbackTable[`Register.WriteData`].push(() => {
 		const index = Components.Register.WriteReg;
@@ -317,7 +304,6 @@ function resetComponents(Components) {
 		} else {
 			valueToDisplay = bigIntValue.toString(16).toUpperCase().padStart(8, '0');
 		}
-		console.log("BIGINT", bigIntValue, valueToDisplay);
 
 		const regElem = document.getElementById(indexHex);
 		if (regElem) {
@@ -332,7 +318,7 @@ function resetComponents(Components) {
 
 		const writeDataElem = document.getElementById(`register-WriteData-value`);
 		if (writeDataElem) {
-			writeDataElem.textContent = `0x${valueToDisplay}`;
+			writeDataElem.textContent = `0x${valueToDisplay.substring(4, 7)}`;
 		}
 	});	
 	new Set(['Read1', 'Read2', 'WriteReg']).forEach(val => {
