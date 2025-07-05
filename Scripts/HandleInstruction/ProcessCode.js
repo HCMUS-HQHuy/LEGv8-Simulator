@@ -40,6 +40,16 @@ function clearAll() {
 	isFinish = true;
 	currentInstruction.update(-1);
 	document.getElementById('pc-value-text').textContent = '0xF000';
+	
+	const flagNames = ['N', 'Z', 'V', 'C'];
+	flagNames.forEach(flagName => {
+		document.getElementById(flagName).innerText = '0';
+		document.getElementById(`add-2-${flagName}-value`).textContent = '0';
+		const parentRow = document.getElementById(flagName).closest('tr');
+		parentRow.style.backgroundColor = "";
+		parentRow.style.color = "";
+	});
+
 	turnoffMux();
 }
 
