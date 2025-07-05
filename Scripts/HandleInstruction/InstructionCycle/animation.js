@@ -33,8 +33,7 @@ export function startSignalAnimation(id) {
 		console.warn(`No id:${id} data signal nodes found to animate.`);
 		return false;
 	}
-    const duration = parseFloat(animation.getAttribute('dur'));
-    if (duration > 1) signalNode.setAttribute('visibility', 'visible');
+    signalNode.setAttribute('visibility', 'visible');
     animation.beginElement();
     return true;
 }

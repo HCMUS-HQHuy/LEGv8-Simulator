@@ -91,9 +91,7 @@ async function nextStep(results) {
 	removeAllContent();
 	ComponentsBackup = cloneComponents(Components)
 	currentInstruction.update(results[instructionPos]);
-	const tmp = await generateSignal.start(Components);
-	currentInstruction.update(results[tmp]);	
-	return tmp;
+	return await generateSignal.start(Components);
 }
 
 async function execute(results) {
@@ -169,6 +167,13 @@ export function trigger() {
 		event.preventDefault();
 		state.executing = false;
 		isFinish = true;
+
+		if (instructionPos === -1) {
+			if (validateParsedResults(results, "log-box") != true) return;
+			ComponentsBackup = generateSignal.initialize(results);
+			instructionPos = 0;
+		}
+
 		generateSignal.initialize(null, true);
 		Components = ComponentsBackup;
 		ComponentsBackup = cloneComponents(Components);
