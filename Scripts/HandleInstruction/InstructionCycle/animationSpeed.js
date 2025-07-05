@@ -10,7 +10,6 @@ export function setDURATION_ANIMATION(val) {
 export function resetDURATION_ANIMATION() {
 	const rangeSlider = document.getElementById('range-slider');
 	const currentPercentage = rangeSlider.value;
-	rangeValue.textContent = `Speed: ${currentPercentage}%`;
 	DURATION_ANIMATION = MAXIMUM_DURATION - currentPercentage * (MAXIMUM_DURATION - MININUM_DURATION) / 100;
 }
 

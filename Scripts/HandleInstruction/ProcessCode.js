@@ -2,7 +2,7 @@ import * as currentInstruction from "./Compile/currentInstruction.js"
 import * as formatCode from "./Compile/formatCode.js"
 
 import * as generateSignal from "./InstructionCycle/generateSignal.js"
-import {state} from "./InstructionCycle/animationSpeed.js"
+import {state, setDURATION_ANIMATION, resetDURATION_ANIMATION, DURATION_ANIMATION} from "./InstructionCycle/animationSpeed.js"
 import { validateParsedResults } from "../HandleOutLook/logBox.js"
 import { resetAnimation } from "./InstructionCycle/animation.js"
 import { cloneComponents } from "./Compile/Define/components.js"
@@ -160,4 +160,20 @@ export function trigger() {
 		generateSignal.initialize(null, true);
 		document.getElementById('start-stop-animation').click();
 	});
+
+	document.getElementById('next-button').addEventListener('click', async function(event) {
+		event.preventDefault();
+		state.executing = false;
+		isFinish = true;
+		generateSignal.initialize(null, true);
+		setDURATION_ANIMATION(1);
+		state.executing = true;
+		console.log('instructionPos1', instructionPos);
+		instructionPos = await nextStep(results);
+		console.log('instructionPos2', instructionPos);
+		state.executing = false;
+		resetDURATION_ANIMATION();
+		console.warn("DURATION_ANIMATION", DURATION_ANIMATION);
+	});
+
 }
