@@ -305,7 +305,6 @@ function resetComponents(Components) {
 		Components.Register.registerValues[index] = bigIntValue;
 		let valueToDisplay;
 		if (bigIntValue < 0n) {
-			// 64-bit two's complement for negative numbers
 			const mask32 = 0xFFFFFFFFn;
 			valueToDisplay = (bigIntValue & mask32).toString(16).toUpperCase().padStart(8, '0');
 		} else {
