@@ -485,6 +485,29 @@ body {
   color: var(--button-hover-text-color); /* Sử dụng biến mới */
 }
 
+.next-button {
+  background-color: var(--button-bg-color); /* Sử dụng biến mới */
+  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
+  color: var(--button-text-color); /* Sử dụng biến mới */
+  padding: 8px 16px;
+  top: 201px;
+  right: 10px;
+  font-size: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+
+  font-size: 13px;
+
+  position: absolute;
+  background-color: var(--frame-bg-color);
+
+  z-index: 2;
+}
+.next-button:hover {
+  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
+  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+}
 
 
 .help-overlay {
