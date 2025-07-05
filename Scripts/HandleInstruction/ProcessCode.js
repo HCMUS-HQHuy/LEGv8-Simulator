@@ -91,7 +91,9 @@ async function nextStep(results) {
 	removeAllContent();
 	ComponentsBackup = cloneComponents(Components)
 	currentInstruction.update(results[instructionPos]);
-	return await generateSignal.start(Components);
+	const tmp = await generateSignal.start(Components);
+	currentInstruction.update(results[tmp]);	
+	return tmp;
 }
 
 async function execute(results) {
@@ -168,9 +170,7 @@ export function trigger() {
 		generateSignal.initialize(null, instructionPos, Components);
 		setDURATION_ANIMATION(1);
 		state.executing = true;
-		console.log('instructionPos1', instructionPos);
 		instructionPos = await nextStep(results);
-		console.log('instructionPos2', instructionPos);
 		state.executing = false;
 		resetDURATION_ANIMATION();
 		console.warn("DURATION_ANIMATION", DURATION_ANIMATION);
