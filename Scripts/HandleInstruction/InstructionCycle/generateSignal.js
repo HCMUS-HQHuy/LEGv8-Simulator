@@ -353,8 +353,8 @@ function resetComponents(Components) {
 }
 
 export function initialize(code, currentInstruction = 0, components = null) {
+	setTimestamp(new Date());
 	if (components != null) {
-		setTimestamp(new Date());
 		components.PC.value = (BigInt(currentInstruction) << 2n) + components.PC.offset;
 		return;
 	}
