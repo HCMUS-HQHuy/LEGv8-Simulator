@@ -23,11 +23,25 @@ function compileCode() {
 	return results;
 }
 
-function turnoffMux() {
+function removeAllContent() {
 	for (let i = 0; i <= 3; i++) {
 		document.getElementById(`mux-${i}-0-selected`).style.visibility = "hidden";
 		document.getElementById(`mux-${i}-1-selected`).style.visibility = "hidden";
 	}
+	document.getElementById('instruction-memory-read-address-value').textContent='';
+	document.getElementById('instruction-memory-instruction-[31-0]-value').textContent = '';
+	document.getElementById('register-Read1-value').textContent = '';
+	document.getElementById('register-Read2-value').textContent = '';
+	document.getElementById('register-WriteReg-value').textContent = '';
+	document.getElementById('register-WriteData-value').textContent = '';
+	document.getElementById('register-ReadData1-value').textContent = '';
+	document.getElementById('register-ReadData2-value').textContent = '';
+	document.getElementById('add-2-input-1-value').textContent = '';
+	document.getElementById('add-2-input-2-value').textContent = '';
+	document.getElementById('add-2-output-value').textContent = '';
+	document.getElementById('data-memory-address-value').textContent = '';
+	document.getElementById('data-read-data-value').textContent = '';
+	document.getElementById('data-memory-write-data-value').textContent = '';
 }
 
 function clearAll() {
@@ -49,8 +63,7 @@ function clearAll() {
 		parentRow.style.backgroundColor = "";
 		parentRow.style.color = "";
 	});
-
-	turnoffMux();
+	removeAllContent();
 }
 
 async function execute(results) {
@@ -66,7 +79,7 @@ async function execute(results) {
 
 	isFinish = false;
 	while (isFinish === false) {
-		turnoffMux();
+		removeAllContent();
 		ComponentsBackup = cloneComponents(Components)
 		currentInstruction.update(results[instructionPos]);
 		instructionPos = await generateSignal.start(Components);

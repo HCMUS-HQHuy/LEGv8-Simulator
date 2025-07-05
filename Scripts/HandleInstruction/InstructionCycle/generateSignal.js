@@ -248,7 +248,8 @@ function resetComponents(Components) {
 	const flag = JSON.parse(JSON.stringify(Components.ALU.Flags));
 
 	signalCallbackTable[`ALU.input2`].push(
-		() => { 
+		() => {
+			document.getElementById('add-2-output-value').textContent  = formatSignedBigInt(Components.ALU.output, 4);
 			document.getElementById('add-2-input-2-value').textContent = formatSignedBigInt(Components.ALU.input2, 4);
 			const flagNames = ['N', 'Z', 'V', 'C'];
 			const duration = DURATION_ANIMATION * 5;
@@ -276,10 +277,7 @@ function resetComponents(Components) {
 		}
 	);
 	signalCallbackTable[`ALU.input1`].push(
-		() => {
-			document.getElementById('add-2-input-1-value').textContent = formatSignedBigInt(Components.ALU.input1, 4);
-			document.getElementById('add-2-output-value').textContent  = formatSignedBigInt(Components.ALU.output, 4);
-		}
+		() => { document.getElementById('add-2-input-1-value').textContent = formatSignedBigInt(Components.ALU.input1, 4); }
 	);
 	
 	const currentPC = Components.PC.value;
