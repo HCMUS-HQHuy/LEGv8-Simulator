@@ -48,7 +48,6 @@ function clearAll() {
 	resetAnimation();
 	instructionPos = -1;
 	state.executing = false;
-	setTimeout(()=>{state.currentStep = 6;}, 2);
 	ComponentsBackup = null;
 	Components = null;
 	isFinish = true;
@@ -63,7 +62,10 @@ function clearAll() {
 		parentRow.style.backgroundColor = "";
 		parentRow.style.color = "";
 	});
-	removeAllContent();
+	setTimeout(()=>{
+		state.currentStep = 6;
+		removeAllContent();
+	}, 2);
 }
 
 async function execute(results) {
