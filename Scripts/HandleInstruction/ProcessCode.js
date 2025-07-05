@@ -5,7 +5,7 @@ import * as generateSignal from "./InstructionCycle/generateSignal.js"
 import {state, setDURATION_ANIMATION, resetDURATION_ANIMATION, DURATION_ANIMATION} from "./InstructionCycle/animationSpeed.js"
 import { validateParsedResults } from "../HandleOutLook/logBox.js"
 import { resetAnimation } from "./InstructionCycle/animation.js"
-import { cloneComponents } from "./Compile/Define/components.js"
+import { cloneComponents, getComponents } from "./Compile/Define/components.js"
 
 
 let instructionPos = -1;
@@ -104,7 +104,7 @@ async function execute(results) {
 		return;
 	}
 	if (instructionPos === -1) {
-		Components = generateSignal.initialize(results);
+		Components = generateSignal.initialize(results, getComponents());
 		ComponentsBackup = cloneComponents(Components)
 		instructionPos = 0;
 	}
@@ -161,9 +161,8 @@ export function trigger() {
 		console.log("Stop/Replay one button clicked.");
 		state.executing = false;
 		isFinish = true;
-		generateSignal.initialize(null, true);
-		Components = ComponentsBackup;
-		ComponentsBackup = cloneComponents(Components);
+		Components = cloneComponents(ComponentsBackup);
+		generateSignal.initialize(null, Components);
 		document.getElementById('start-stop-animation').click();
 	});
 
@@ -174,14 +173,13 @@ export function trigger() {
 
 		if (instructionPos === -1) {
 			if (validateParsedResults(results, "log-box") != true) return;
-			ComponentsBackup = generateSignal.initialize(results);
+			ComponentsBackup = generateSignal.initialize(results, getComponents());
 			instructionPos = 0;
 		}
 		coverScreen();
 
-		generateSignal.initialize(null, true);
-		Components = ComponentsBackup;
-		ComponentsBackup = cloneComponents(Components);
+		generateSignal.initialize(null, null);
+		Components = cloneComponents(ComponentsBackup);
 
 		setDURATION_ANIMATION();
 		state.executing = true;

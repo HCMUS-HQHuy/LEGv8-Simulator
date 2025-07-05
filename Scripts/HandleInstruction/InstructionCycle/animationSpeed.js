@@ -76,8 +76,8 @@ export function trigger() {
 
 	Object.defineProperty(state, 'currentStep', {
 		set(newVal) {
-			if (newVal > 5)
-				console.warn("new Val > 5 ?");
+			// if (newVal > 5)
+			// 	console.warn("new Val > 5 ?");
 			this._currentStep = newVal;
 			if (state.stepByStepMode) {
 				hideAllSteps();

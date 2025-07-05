@@ -1026,7 +1026,7 @@ body {
   font-weight: bold;
   font-size: 17px;
   bottom: 18px;
-  left: -2px;
+  left: 0px;
   padding: 10px; /* Thêm khoảng cách giữa nội dung và border */
   position: absolute;
   

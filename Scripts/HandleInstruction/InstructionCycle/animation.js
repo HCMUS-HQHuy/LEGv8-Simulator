@@ -30,7 +30,7 @@ export function startSignalAnimation(id) {
 	const animation = document.getElementById(`data-anim-${id}`);
 	const signalNode = document.getElementById(`data-node-${id}`);
 	if (animation == null || signalNode == null) {
-		console.warn(`No id:${id} data signal nodes found to animate.`);
+		// console.warn(`No id:${id} data signal nodes found to animate.`);
 		return false;
 	}
     signalNode.setAttribute('visibility', 'visible');

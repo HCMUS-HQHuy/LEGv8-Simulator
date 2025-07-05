@@ -78,7 +78,6 @@ const PCPath = [
 	'mux-0-to-pc-path'
 ]
 
-import { getComponents } from "../Compile/Define/components.js";
 import { Connections } from "../Compile/Define/Connections.js"
 import {createNodeWithAnimation} from "./animation.js"
 import {startSignalAnimation} from "./animation.js"
@@ -350,24 +349,25 @@ function resetComponents(Components) {
 	);
 }
 
-export function initialize(code, onlysettime = false) {
+export function initialize(code, Components) {
 	setTimestamp(new Date());
-	if (onlysettime) return;
-	const Components = getComponents();
+	if (Components == null) return;
 	resetComponents(Components)
 	watchDataMemory(Components.DataMemory);
 	watchRegisters(Components.Register);
 	watchFlags(Components.ALU);
-	Components.PC.value = Components.PC.offset;
-
-	code.forEach(key => {
-		const encodedInstruction = encodeLegv8Instruction(key.parsed, (key.lineNumber - 1) << 2);
-		if (encodedInstruction.error) console.error(encodedInstruction.error);
-
-		Components.InstructionMemory.instruction.push(encodedInstruction);
-		Components.InstructionMemory.instructionType.push(`${key.parsed.type}`);
-	});
 	
+	if (code != null) {
+		Components.PC.value = Components.PC.offset;
+		code.forEach(key => {
+			const encodedInstruction = encodeLegv8Instruction(key.parsed, (key.lineNumber - 1) << 2);
+			if (encodedInstruction.error) console.error(encodedInstruction.error);
+	
+			Components.InstructionMemory.instruction.push(encodedInstruction);
+			Components.InstructionMemory.instructionType.push(`${key.parsed.type}`);
+		});
+	}
+	document.getElementById(`pc-value-text`).textContent = `0x${(Components.PC.value).toString(16).padStart(4, '0').toUpperCase()}`;
 	return Components;
 }
 
