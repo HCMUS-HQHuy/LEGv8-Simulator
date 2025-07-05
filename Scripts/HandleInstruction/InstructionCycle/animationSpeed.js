@@ -2,15 +2,18 @@ const MAXIMUM_DURATION = 5000
 const MININUM_DURATION = 500
 
 export let DURATION_ANIMATION = 2000;
+export let DURATION_RESET_COLOR = DURATION_ANIMATION * 5;
 
-export function setDURATION_ANIMATION(val) {
-	DURATION_ANIMATION = val;
+export function setDURATION_ANIMATION() {
+	DURATION_ANIMATION = 1;
+	DURATION_RESET_COLOR = 1000;
 }
 
 export function resetDURATION_ANIMATION() {
 	const rangeSlider = document.getElementById('range-slider');
 	const currentPercentage = rangeSlider.value;
 	DURATION_ANIMATION = MAXIMUM_DURATION - currentPercentage * (MAXIMUM_DURATION - MININUM_DURATION) / 100;
+	DURATION_RESET_COLOR = DURATION_ANIMATION * 5;
 }
 
 export const state = {

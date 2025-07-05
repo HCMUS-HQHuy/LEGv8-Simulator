@@ -33,7 +33,8 @@ export function startSignalAnimation(id) {
 		console.warn(`No id:${id} data signal nodes found to animate.`);
 		return false;
 	}
-    signalNode.setAttribute('visibility', 'visible');
+    const duration = parseFloat(animation.getAttribute('dur'));
+    if (duration > 1) signalNode.setAttribute('visibility', 'visible');
     animation.beginElement();
     return true;
 }
@@ -105,9 +106,11 @@ export function createNodeWithAnimation({value, fieldName, onEndCallback, pathId
 
     animateMotion.addEventListener('beginEvent', () => {
         clearClonedPaths(duration);
-        cloneAndModifyPath(pathId);
-        cloneAndModifyPath(pathId + '-clone');
-        cloneAndModifyPath(pathId + '-circle');
+        if (duration > 1) {
+            cloneAndModifyPath(pathId);
+            cloneAndModifyPath(pathId + '-clone');
+            cloneAndModifyPath(pathId + '-circle');
+        }
     });
 
     const currentTimestamp = TimestampState;

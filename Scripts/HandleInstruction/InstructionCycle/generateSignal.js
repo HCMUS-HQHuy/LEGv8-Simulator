@@ -85,7 +85,7 @@ import {startSignalAnimation} from "./animation.js"
 import {setTimestamp} from "./animation.js"
 import { computeOutputs } from "./computationOutputs.js";
 import { encodeLegv8Instruction } from "../Compile/parser.js";
-import { DURATION_ANIMATION } from "./animationSpeed.js";
+import { DURATION_ANIMATION, DURATION_RESET_COLOR } from "./animationSpeed.js";
 import { watchDataMemory } from "../Compile/memoryState.js";
 import { watchRegisters } from "../Compile/memoryState.js";
 import { watchFlags } from "../Compile/memoryState.js";
@@ -232,7 +232,7 @@ function resetComponents(Components) {
 			setTimeout(() => {
 				document.getElementById(`row-${indexHex}`).style.backgroundColor = "";
 				document.getElementById(`row-${indexHex}`).style.color = "";
-			}, DURATION_ANIMATION * 5);
+			}, DURATION_RESET_COLOR);
 		}
 	);
 	
@@ -252,7 +252,6 @@ function resetComponents(Components) {
 			document.getElementById('add-2-output-value').textContent  = formatSignedBigInt(Components.ALU.output, 4);
 			document.getElementById('add-2-input-2-value').textContent = formatSignedBigInt(Components.ALU.input2, 4);
 			const flagNames = ['N', 'Z', 'V', 'C'];
-			const duration = DURATION_ANIMATION * 5;
 
 			flagNames.forEach(flagName => {
 				const element = document.getElementById(flagName);
@@ -270,7 +269,7 @@ function resetComponents(Components) {
 						setTimeout(() => {
 							parentRow.style.backgroundColor = "";
 							parentRow.style.color = "";
-						}, duration);
+						}, DURATION_RESET_COLOR);
 					}
 				}
 			});
@@ -317,7 +316,7 @@ function resetComponents(Components) {
 			setTimeout(() => {
 				regElem.style.backgroundColor = '';
 				regElem.style.color = '';
-			}, DURATION_ANIMATION * 5);
+			}, DURATION_RESET_COLOR);
 		}
 
 		const writeDataElem = document.getElementById(`register-WriteData-value`);

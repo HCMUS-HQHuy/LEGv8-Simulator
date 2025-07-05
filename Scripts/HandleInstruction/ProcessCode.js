@@ -168,12 +168,12 @@ export function trigger() {
 		state.executing = false;
 		isFinish = true;
 		generateSignal.initialize(null, instructionPos, Components);
-		setDURATION_ANIMATION(1);
+		setDURATION_ANIMATION();
 		state.executing = true;
+		console.warn("DURATION_ANIMATION", DURATION_ANIMATION);
 		instructionPos = await nextStep(results);
 		state.executing = false;
 		resetDURATION_ANIMATION();
-		console.warn("DURATION_ANIMATION", DURATION_ANIMATION);
 	});
 
 }
