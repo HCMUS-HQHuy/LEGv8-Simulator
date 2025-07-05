@@ -10,7 +10,6 @@ export function update(line) {
 		machineLangugageInstruction.innerText = "";
 		return;
 	}
-    console.log(line);
     if (Number.isInteger(line)) {
         assemblyInstruction.innerText = "Assembly Instruction";
 	    machineLangugageInstruction.innerText = "Machine Language Instruction";

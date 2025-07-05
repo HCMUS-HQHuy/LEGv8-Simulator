@@ -283,7 +283,6 @@ function resetComponents(Components) {
 	signalCallbackTable[`Register.WriteData`].push(() => {
 		const index = Components.Register.WriteReg;
 		if (index === 31) {
-			console.warn(`Modify XZR register`);
 			return;
 		}
 		if (Components.Register.option === 0) return;
@@ -373,8 +372,13 @@ export function initialize(code, onlysettime = false) {
 }
 
 export async function start(Components) {
-	if (((Components.PC.value - Components.PC.offset) >> 2n) >= Components.InstructionMemory.instruction.length) {
+	if (((Components.PC.value - Components.PC.offset) >> 2n) > Components.InstructionMemory.instruction.length) {
+		console.warn("In start pos = -1");
 		return -1;
+	}
+
+	if (((Components.PC.value - Components.PC.offset) >> 2n) == Components.InstructionMemory.instruction.length) {
+		return ((Components.PC.value - Components.PC.offset) >> 2n);
 	}
 
 	resetComponents(Components);

@@ -50,3 +50,25 @@
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE/Edge */
 }
+
+#fade-overlay {
+  position: absolute;      /* Position relative to the nearest positioned ancestor (.frame) */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--frame-bg-color); /* Black with 70% opacity */
+  transition: opacity 0.1s ease-in-out; /* A nice smooth transition */
+  opacity: 0;
+  z-index: 10;             /* Ensure it's on top of the SVG */
+  pointer-events: none;  /* Clicks go through when it's transparent */
+}
+
+#fade-overlay.active {
+  opacity: 1;              /* Make it fully visible */
+  pointer-events: auto;    /* Block clicks when it's visible (optional) */
+}
+
+#fade-overlay.smooth-transition {
+    transition: opacity 0.8s ease-out; /* Adjust duration and easing as needed */
+}

@@ -61,14 +61,12 @@ export function computeOutputs(componentName, components) {
             ];
 
             if (flagSettingInstructions.includes(opcode10bit) || flagSettingInstructions.includes(components.InstructionMemory.Opcode_31_21)) {
-                console.log(aluResultObject);
                 components.ALU.Flags.N = aluResultObject.N;
                 components.ALU.Flags.Z = aluResultObject.Z;
                 components.ALU.Flags.V = aluResultObject.V;
                 components.ALU.Flags.C = aluResultObject.C;
             }
             components.ALU.zero = checkBranchCondition(components);
-            console.log(components.ALU.zero)
             break;
 
 		case 'Mux0':
@@ -97,7 +95,6 @@ function checkBranchCondition(components) {
     const aluFlags = components.ALU.Flags;
     const index = ((components.InstructionMemory.ReadAddress - components.PC.offset) >> 2n);
     const type = components.InstructionMemory.instructionType[index];
-    console.log(aluFlags);
 
     if (type === 'CB') {
         const tmp = components.InstructionMemory.Opcode_31_21.substring(0, 8);
@@ -110,7 +107,6 @@ function checkBranchCondition(components) {
     } else if (type === 'B_COND') {
         const encodedInstruction = components.InstructionMemory.instruction[index];
         const condition = encodedInstruction.substring(28, 32);
-        console.log("condition: ", condition);
         switch (condition) {
             case B_COND_CODES['EQ']: return aluFlags.Z === 1 ? 1 : 0; // Z=1
             case B_COND_CODES['NE']: return aluFlags.Z === 0 ? 1 : 0; // Z=0
@@ -168,7 +164,6 @@ function doALUOperation(currentState) {
 
         case '0110': { // SUB
             resultBigInt = operand1 - operand2;
-            console.log("IN SUB", isUnsignedBorrow(operand1 & MASK_64BIT, operand2 & MASK_64BIT));
             vFlag = isSignedOverflow(operand1, ~operand2 + 1n, resultBigInt) ? 1 : 0;
             cFlag = isUnsignedBorrow(operand1 & MASK_64BIT, operand2 & MASK_64BIT) ? 1 : 0;
             break;
@@ -434,7 +429,6 @@ function updateSignExtend(currentState) {
 
     if (inputBinary !== null && originalBits > 0) {
         const extendedValue = signExtend(inputBinary, originalBits, targetBits);
-        console.log('exten ', extendedValue);
         currentState.SignExtend.input = parseInt(inputBinary, 2);
         currentState.SignExtend.output = extendedValue;
     }

@@ -80,13 +80,17 @@ function clearAll() {
 	memoryCells.forEach(cell => {
 		cell.textContent = '0x0000';
 	});
-
 }
 
 async function nextStep(results) {
 	if (instructionPos === -1) {
 		console.warn('warn instructionPos:', instructionPos);
 		return -1;
+	}
+
+	if (instructionPos >= Components.InstructionMemory.instruction.length) {
+		currentInstruction.update(Number(instructionPos));
+		return instructionPos;
 	}
 	removeAllContent();
 	ComponentsBackup = cloneComponents(Components)
@@ -173,6 +177,7 @@ export function trigger() {
 			ComponentsBackup = generateSignal.initialize(results);
 			instructionPos = 0;
 		}
+		coverScreen();
 
 		generateSignal.initialize(null, true);
 		Components = ComponentsBackup;
@@ -180,11 +185,28 @@ export function trigger() {
 
 		setDURATION_ANIMATION();
 		state.executing = true;
-		console.warn("DURATION_ANIMATION", DURATION_ANIMATION);
 		instructionPos = await nextStep(results);
 		ComponentsBackup = cloneComponents(Components);
 		state.executing = false;
 		resetDURATION_ANIMATION();
+		uncoverScreen();
 	});
+}
 
+function coverScreen() {
+	const fadeOverlay = document.getElementById('fade-overlay');
+	if (!fadeOverlay) {
+		console.error("Fade overlay not found!");
+		return;
+	}
+	fadeOverlay.classList.remove('smooth-transition');
+	fadeOverlay.classList.add('active');
+}
+
+function uncoverScreen() {
+    const fadeOverlay = document.getElementById('fade-overlay');
+    if (fadeOverlay) {
+		fadeOverlay.classList.add('smooth-transition');
+        fadeOverlay.classList.remove('active');
+    }
 }

@@ -1,6 +1,5 @@
 function updateValue(target, prop, value) {
     if (prop >= 0 && prop < target.length) {
-        console.log(`Values[${prop}] changed from ${target[prop]} to ${value}`);
         target[prop] = value;
         return true;
     }
