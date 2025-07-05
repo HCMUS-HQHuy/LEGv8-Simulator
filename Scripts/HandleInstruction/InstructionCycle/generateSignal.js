@@ -351,12 +351,9 @@ function resetComponents(Components) {
 	);
 }
 
-export function initialize(code, currentInstruction = 0, components = null) {
+export function initialize(code, onlysettime = false) {
 	setTimestamp(new Date());
-	if (components != null) {
-		components.PC.value = (BigInt(currentInstruction) << 2n) + components.PC.offset;
-		return;
-	}
+	if (onlysettime) return;
 	const Components = getComponents();
 	resetComponents(Components)
 	watchDataMemory(Components.DataMemory);

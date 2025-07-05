@@ -159,7 +159,9 @@ export function trigger() {
 		console.log("Stop/Replay one button clicked.");
 		state.executing = false;
 		isFinish = true;
-		generateSignal.initialize(null, instructionPos, Components);
+		generateSignal.initialize(null, true);
+		Components = ComponentsBackup;
+		ComponentsBackup = cloneComponents(Components);
 		document.getElementById('start-stop-animation').click();
 	});
 
@@ -167,11 +169,15 @@ export function trigger() {
 		event.preventDefault();
 		state.executing = false;
 		isFinish = true;
-		generateSignal.initialize(null, instructionPos, Components);
+		generateSignal.initialize(null, true);
+		Components = ComponentsBackup;
+		ComponentsBackup = cloneComponents(Components);
+
 		setDURATION_ANIMATION();
 		state.executing = true;
 		console.warn("DURATION_ANIMATION", DURATION_ANIMATION);
 		instructionPos = await nextStep(results);
+		ComponentsBackup = cloneComponents(Components);
 		state.executing = false;
 		resetDURATION_ANIMATION();
 	});
