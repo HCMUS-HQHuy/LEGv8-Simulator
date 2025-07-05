@@ -209,11 +209,13 @@ function resetComponents(Components) {
 	
 	signalCallbackTable[`DataMemory.address`].push(
 		() => {
+			document.getElementById('data-memory-address-value').textContent = formatSignedBigInt('0', 4);
+			document.getElementById('data-read-data-value').textContent = formatSignedBigInt('0', 4);
+			if (Components.DataMemory.writeEnable === 0) return;
 			const index = BigInt(Components.DataMemory.address);
 			const indexHex = `0x${(index * 8n).toString(16).toUpperCase().padStart(4, '0')}`;
 			document.getElementById('data-memory-address-value').textContent = indexHex;
 			document.getElementById('data-read-data-value').textContent = formatSignedBigInt(Components.DataMemory.Values[index], 4);
-			if (Components.DataMemory.writeEnable === 0) return;
 			
 			const bigIntValue = Components.DataMemory.Values[index];
 			let valueToDisplay;
