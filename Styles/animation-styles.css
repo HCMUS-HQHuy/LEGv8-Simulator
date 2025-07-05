@@ -60,7 +60,7 @@
   background: var(--frame-bg-color); /* Black with 70% opacity */
   transition: opacity 0.1s ease-in-out; /* A nice smooth transition */
   opacity: 0;
-  z-index: 10;             /* Ensure it's on top of the SVG */
+  z-index: 2;             /* Ensure it's on top of the SVG */
   pointer-events: none;  /* Clicks go through when it's transparent */
 }
 

@@ -22,460 +22,726 @@
     </div>
 
     <div class = "frame">
-      <div id="fade-overlay"></div>
-      
-      <svg viewBox = "0 0 1930 3050" id = "zoomFrame">
-      <g class = "content" id = "zoomContent">
-        <!-- Signal Lines Layer -->
+      <div class = "frame">
+        <div id="fade-overlay"></div>
+        <svg viewBox = "0 0 1930 3050" id = "zoomFrame">
+        <g class = "content" id = "zoomContent">
+          <!-- Signal Lines Layer -->
 
-        <g id = "signal-lines">
+          <g id = "signal-lines">
+            <defs>
+              <marker id = "circle" markerWidth = "8" markerHeight = "8" refX = "5" refY = "5">
+                <circle cx = "5" cy = "5" r = "2" fill = "context-stroke" />
+              </marker>
+              <marker id = "arrow" markerWidth = "4" markerHeight = "4" refX = "2" refY = "2" orient = "auto">
+                <path d = "M0,0 L4,2 L0,4 z" fill = "context-stroke" />
+              </marker>
+            </defs>
+
+            <!-- Đường đi thật để dùng cho animation -->
+            <!-- pc -->
+            <path id         = "pc-to-instruction-memory-path" 
+                  d          = "M153,550 L235,550" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "pc-to-instruction-memory-path-clone" 
+                  d          = "M153,550 L282,550" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+
+            <path id         = "pc-to-ALU-add-0-path" 
+                  d          = "M153,550 L215,550 L215,75 L295,75" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "pc-to-ALU-add-0-path-clone" 
+                  d          = "M153,550 L215,550 L215,75 L342,75" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+            <path id         = pc-to-ALU-add-0-path-circle
+                  d          = "M215,550"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+            
+            <path id         = "pc-to-ALU-add-1-path" 
+                  d          = "M153,550 L215,550 L215,200 L450,200 L450,155 L1465,155" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "pc-to-ALU-add-1-path-clone" 
+                  d          = "M153,550 L215,550 L215,200 L450,200 L450,155 L1510,155" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+            <path id         = pc-to-ALU-add-1-path-circle
+                  d          = "M215,200"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+
+            <!-- const 4 -->
+            <path id         = "const-4-to-ALU-add-0-path" 
+                  d          = "M250,150 L295,150" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "const-4-to-ALU-add-0-path-clone" 
+                  d          = "M250,150 L342,150" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+
+            <!-- ALU-add-id -->
+            <path id         = "ALU-add-0-to-mux-0-0-path" 
+                  d          = "M370,110 L1625,110" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "ALU-add-0-to-mux-0-0-path-clone" 
+                  d          = "M370,110 L1730,110"   
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+
+            <path id         = "ALU-add-1-to-mux-0-1-path" 
+                  d          = "M1605,200 L1625,200, L1625,150" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "ALU-add-1-to-mux-0-1-path-clone" 
+                  d          = "M1605,200 L1625,200, L1625,150, L1730,150" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+                
+            <path id         = "ALU-add-2-to-data-memory-path"
+                  d          = "M1290,625 L1420,625"
+                  class      = "signal-line"
+                  style      = "display: none" />    
+            <path id         = "ALU-add-2-to-data-memory-path-clone"
+                  d          = "M1290,625 L1440,625"
+                  class      = "signal-line"
+                  marker-end = "url(#arrow)" />
+            
+            <path id         = "ALU-add-2-to-mux-3-0-path"
+                  d          = "M1290,625 L1370,625 L1370,850 L1615,850 L1615,750, L1660,750"
+                  class      = "signal-line"
+                  style      = "display: none" />
+            <path id         = "ALU-add-2-to-mux-3-0-path-clone"
+                  d          = "M1290,625 L1370,625 L1370,850 L1615,850 L1615,750, L1680,750"
+                  class      = "signal-line"
+                  marker-end = "url(#arrow)" />
+            <path id         = ALU-add-2-to-mux-3-0-path-circle
+                  d          = "M1370,625"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+            
+            <path id         = "ALU-add-2-zero-path"
+                  d          = "M1290,580 L1370,580 L1370,520 L1400,520"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "ALU-add-2-zero-path-clone"
+                  d          = "M1290,580 L1370,580 L1370,520 L1415,520"
+                  class      = "control-signal-line" />
+
+            <!-- mux-id-status -->
+            <path id         = "mux-0-to-pc-path" 
+                  d          = "M1780,130, L1810,130 L1810,30 L60,30 L60,550 L60,550" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "mux-0-to-pc-path-clone" 
+                  d          = "M1780,130, L1810,130 L1810,30 L60,30 L60,550 L105,550" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+
+            <path id         = "mux-1-to-register-path" 
+                  d          = "M710,600 L750,600" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "mux-1-to-register-path-clone" 
+                  d          = "M710,600 L790,600" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+            
+            <path id         = "mux-2-to-ALU-add-2-path" 
+                  d          = "M1110,668 L1180,668" 
+                  class      = "signal-line" 
+                  style      = "display: none" />      
+            <path id         = "mux-2-to-ALU-add-2-path-clone" 
+                  d          = "M1110,668 L1200,668" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />      
+            
+            <path id         = "mux-3-to-register-path" 
+                  d          = "M1730,715 L1760,715 L1760,1015 L725,1015 L725,710 L775,710" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "mux-3-to-register-path-clone" 
+                  d          = "M1730,715 L1760,715 L1760,1015 L725,1015 L725,710 L795,710" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+
+            <!-- sign-extend -->
+            <path id         = "sign-extend-to-shift-left-2-path" 
+                  d          = "M930,840 L990,840 L990,250 L1105,250" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "sign-extend-to-shift-left-2-path-clone" 
+                  d          = "M930,840 L990,840 L990,250 L1210,250" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+
+            <path id         = "sign-extend-to-mux-2-1-path" 
+                  d          = "M930,840 L990,840 L990,685, L986,685" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "sign-extend-to-mux-2-1-path-clone" 
+                  d          = "M930,840 L990,840 L990,685 L1090,685" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+            <path id         = sign-extend-to-mux-2-1-path-circle
+                  d          = "M990,685"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+
+            <!-- shift-left-2 -->
+            <path id         = "shift-left-2-to-add-1-path" 
+                  d          = "M1270,250 1405,250" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "shift-left-2-to-add-1-path-clone" 
+                  d          = "M1270,250 L1510,250" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+
+            <!-- instruction-memory -->
+            <path id         = "instruction-memory-to-control-path" 
+                  d          = "M420,630 L480,630 L480,380 L585,380" 
+                  class      = "signal-line"
+                  style      = "display: none" />
+            <path id         = "instruction-memory-to-control-path-clone" 
+                  d          = "M420,630 L480,630 L480,380 L655,380" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)"/>
+            <path id         = "instruction-memory-to-control-path-circle"
+                  d          = "M480,630"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+
+            <path id         = "instruction-memory-to-read-register-1-path" 
+                  d          = "M420,630 L480,630 L480,540 L750,540" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "instruction-memory-to-read-register-1-path-clone" 
+                  d          = "M420,630 L480,630 L480,540 L790,540" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+            <path id         = "instruction-memory-to-read-register-1-path-circle"
+                  d          = "M480,540"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+
+            <path id         = "instruction-memory-to-mux-1-0-path" 
+                  d          = "M420,630 L480,630 L480,570 L625,570" 
+                  class      = "signal-line" 
+                  style      = "display: none" />
+            <path id         = "instruction-memory-to-mux-1-0-path-clone" 
+                  d          = "M420,630 L480,630 L480,570 L665,570" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+            <path id         = instruction-memory-to-mux-1-0-path-circle
+                  d          = "M480,570"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+            
+            <path id         = "instruction-memory-to-mux-1-1-path" 
+                  d          = "M420,630 L480,630 L480,670 L580,670 L580,640 L625,640" 
+                  class      = "signal-line" 
+                  style      = "display: none" />          
+            <path id         = "instruction-memory-to-mux-1-1-path-clone" 
+                  d          = "M420,630 L480,630 L480,670 L580,670 L580,640 L665,640" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+            <path id         = instruction-memory-to-mux-1-1-path-circle
+                  d          = "M480,670"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+                  
+            <path id         = "instruction-memory-to-write-register-path" 
+                  d          = "M420,630 L480,630 L480,670 L750,670" 
+                  class      = "signal-line" 
+                  style      = "display: none" />                
+            <path id         = "instruction-memory-to-write-register-path-clone" 
+                  d          = "M420,630 L480,630 L480,670 L790,670" 
+                  class      = "signal-line" 
+                  marker-end = "url(#arrow)" />
+            <path id         = instruction-memory-to-write-register-path-circle
+                  d          = "M580,670"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+            
+            <path id         = "instruction-memory-to-sign-extend-path"
+                  d          = "M420,630 L490,630 L490,840 L650,840"
+                  class      = "signal-line"
+                  style      = "display: none" />          
+            <path id         = "instruction-memory-to-sign-extend-path-clone"
+                  d          = "M420,630 L480,630 L480,840 L825,840"
+                  class      = "signal-line"
+                  marker-end = "url(#arrow)" />
+
+            <path id         = "instruction-memory-to-alu-control-path"
+                  d          = "M420,630 L480,630 L480,840 L750,840 L750,990 L1130,990 L1130,985"
+                  class      = "signal-line"
+                  style      = "display: none" />
+            <path id         = "instruction-memory-to-alu-control-path-clone"
+                  d          = "M420,630 L480,630 L480,840 L750,840 L750,990 L1130,990 L1130,960"
+                  class      = "signal-line"
+                  marker-end = "url(#arrow)" />
+            <path id         = instruction-memory-to-alu-control-path-circle
+                  d          = "M750,840"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+
+            <!-- register -->
+            <path id         = "register-to-mux-2-0-path"
+                  d          = "M950,650 L1070,650"
+                  class      = "signal-line"
+                  style      = "display: none" />
+            <path id         = "register-to-mux-2-0-path-clone"
+                  d          = "M950,650 L1090,650"
+                  class      = "signal-line"
+                  marker-end = "url(#arrow)" />
+            
+            <path id         = "register-to-ALU-add-2-path"
+                  d          = "M950,560 L1180,560"
+                  class      = "signal-line"
+                  style      = "display: none" />
+            <path id         = "register-to-ALU-add-2-path-clone"
+                  d          = "M950,560 L1200,560"
+                  class      = "signal-line"
+                  marker-end = "url(#arrow)" />
+            
+            <path id         = "register-to-data-memory-path"
+                  d          = "M950,650 L1020,650 L1020,770 L1420,770"
+                  class      = "signal-line"
+                  style      = "display: none" /> 
+            <path id         = "register-to-data-memory-path-clone"
+                  d          = "M950,650 L1020,650 L1020,770 L1440,770"
+                  class      = "signal-line"
+                  marker-end = "url(#arrow)" />
+            <path id         = register-to-data-memory-path-circle
+                  d          = "M1020,650"
+                  class      = "signal-line"
+                  marker-end = "url(#circle)" />
+
+            <!-- data-memory -->
+            <path id         = "data-memory-to-mux-3-1-path"
+                  d          = "M1590,680 L1660,680"
+                  class      = "signal-line"
+                  style      = "display: none" />
+            <path id         = "data-memory-to-mux-3-1-path-clone"
+                  d          = "M1590,680 L1680,680"
+                  class      = "signal-line"
+                  marker-end = "url(#arrow)" />
+
+            <!-- control -->
+            <path id         = "control-reg2loc-path"
+                  d          = "M730,275 L770,275 L770,230 L450,230 L450,750 L690,750 L690,670"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "control-reg2loc-path-clone"
+                  d          = "M730,275 L770,275 L770,230 L450,230 L450,750 L690,750 L690,655"
+                  class      = "control-signal-line" />
+
+            <path id         = "control-uncondbranch-path"
+                  d          = "M730,300 L1655,300"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "control-uncondbranch-path-clone"
+                  d          = "M730,300 L1675,300"
+                  class      = "control-signal-line" />
+
+            <path id         = "control-branch-path"
+                  d          = "M730,325 L1370,325 L1370,480 L1400,480"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "control-branch-path-clone"
+                  d          = "M730,325 L1370,325 L1370,480 L1415,480"
+                  class      = "control-signal-line" />
+
+            <path id         = "control-memread-path"
+                  d          = "M730,350 L1640,350 L1640,870 L1520,870 L1520,827"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "control-memread-path-clone"
+                  d          = "M730,350 L1640,350 L1640,870 L1520,870 L1520,810"
+                  class      = "control-signal-line" />
+
+            <path id         = "control-memtoreg-path"
+                  d          = "M730,375 L1710,375 L1710,650"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "control-memtoreg-path-clone"
+                  d          = "M730,375 L1710,375 L1710,665"
+                  class      = "control-signal-line" />
+
+            <path id         = "control-aluop-path"
+                  d          = "M730,400 L1005,400 L1005,880 L1065,880"
+                  class      = "ALU-control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "control-aluop-path-clone"
+                  d          = "M730,400 L1005,400 L1005,880 L1080,880"
+                  class      = "ALU-control-signal-line" />
+
+            <path id         = "control-memwrite-path"
+                  d          = "M730,425 L1520,425 L1520,595"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "control-memwrite-path-clone"
+                  d          = "M730,425 L1520,425 L1520,610"
+                  class      = "control-signal-line" />
+
+            <path id         = "control-alusrc-path"
+                  d          = "M730,450 L1120,450 L1120,605"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "control-alusrc-path-clone"
+                  d          = "M730,450 L1120,450 L1120,620"
+                  class      = "control-signal-line" />
+
+            <path id         = "control-regwrite-path"
+                  d          = "M730,475 L885,475 L885,505"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "control-regwrite-path-clone"
+                  d          = "M730,475 L885,475 L885,520"
+                  class      = "control-signal-line" />
+
+            <!-- ALU-control -->
+            <path id         = "ALU-control-to-ALU-2-path"
+                  d          = "M1180,880 L1265,880 L1265,695"
+                  class      = "ALU-control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "ALU-control-to-ALU-2-path-clone"
+                  d          = "M1180,880 L1265,880 L1265,665"
+                  class      = "ALU-control-signal-line" />
+
+            <!-- AND gate -->
+            <path id         = "AND-gate-to-OR-gate-path"
+                  d          = "M1430,500 L1590,500 L1590,325 L1655,325"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "AND-gate-to-OR-gate-path-clone"
+                  d          = "M1430,500 L1590,500 L1590,325 L1675,325"
+                  class      = "control-signal-line" />
+
+            <!-- OR gate -->
+            <path id         = "OR-gate-to-mux-0-1-path"
+                  d          = "M1730,312.5 L1760,312.5 L1760,185"
+                  class      = "control-signal-line" 
+                  style      = "display: none" />
+            <path id         = "OR-gate-to-mux-0-1-path-clone"
+                  d          = "M1730,312.5 L1760,312.5 L1760,170"
+                  class      = "control-signal-line" />
+            <g id="container-root-path">
+              <g id="root-path"></g>
+            </g>
+          </g>
+
+          <!-- Components Layer (Drawn AFTER lines = On Top) -->
+          <g id="components">
+            <!-- step 1-->
+            <g id = "step_1" style="display: none;" transform = "translate(80, 50)">
+              <rect width = "350" height = "690" class = "step_area" />
+              <text x = "135" y = "715" class = "step_area_label"> 1. Instruction Fetch </text>
+            </g>
+            <!-- step 2 -->
+            <g id = "step_2" style="display: none;" transform = "translate(470, 505)">
+              <rect width = "510" height = "400" class = "step_area" />
+              <text x = "150" y = "425" class = "step_area_label"> 2. Instruction Decode </text>
+            </g>
+            <!-- step 3 -->
+            <g id = "step_3" style="display: none;" transform = "translate(1000, 120)">
+              <path d = "M0 0 L620 0 L620 200 L320 200 L320 880 L0 880 L0 0" class = "step_area"/>
+              <text x = "208" y = "-30" class = "step_area_label"> 3. ALU - Arithmetic-Logic Unit </text>
+            </g>
+            <!-- step 4 -->
+            <g id = "step_4" style="display: none;" transform = "translate(1420, 580)">
+              <rect width = "200" height = "260" class = "step_area" />
+              <text x = "75" y = "315" class = "step_area_label"> 4. Memory Access </text>
+            </g>
+            <!-- step 5 -->
+            <g id = "step_5" style="display: none;" transform = "translate(1650, 650)">
+              <rect width = "125" height = "380" class = "step_area" />
+              <text x = "113" y = "-20" class = "step_area_label"> 5. Register Write </text>
+            </g>
+            <!-- pc -->
+            <g id="pc" transform = "translate(115, 500)">
+              <rect width = "50" height = "100" class = "component" />
+
+              <text x = "25" y = "50" class = "label"> PC </text>
+              
+              <text id = "pc-value-text" x = "-8" y = "125" class = "mem-control-label"> 0xF000 </text>
+            </g>
+
+            <!-- instruction-memory -->
+            <g id="instruction-memory" transform = "translate(290, 530)">
+              <rect width = "130" height = "200" class = "component" />
+
+              <text x = "65" y = "165" class = "label"> Instruction </text>
+              <text x = "65" y = "185" class = "label"> memory</text>
+          
+              <text x = "5"  y = "20"  class = "mem-label"> Read </text>
+              <text x = "5"  y = "40"  class = "mem-label"> address </text>
+              <text id="read-address-instruction-memory" x = "30"  y = "60" class="instruction"></text>
+
+              <text x = "35" y = "95"  class = "mem-label"> Instruction </text> 
+              <text x = "75" y = "115" class = "mem-label"> [31-0] </text> 
+              
+              <text x = "205" y = "-170" class = "mem-label"> Instruction [31-21] </text> 
+
+              <text x = "205" y = "0"    class = "mem-label"> Instruction [9-5] </text> 
+
+              <text x = "205" y = "75"   class = "mem-label"> Instruction [20-16] </text> 
+
+              <text x = "205" y = "165"  class = "mem-label"> Instruction [4-0] </text> 
+
+              <text x = "205" y = "285"  class = "mem-label"> Instruction [31-0] </text> 
+
+              <text x = "465" y = "450"  class = "mem-label"> Instruction [31-21] </text> 
+            </g>
+            
+            <!-- register  -->
+            <g id="register" transform = "translate(800, 520)">
+              <rect width = "170" height = "220" class = "component" />
+
+              <text x = "115" y = "205" class = "label"> Registers </text>
+
+              <text x = "5"   y = "20"  class = "mem-label"> Read </text>
+              <text x = "5"   y = "40"  class = "mem-label"> register 1 </text>
+                
+              <text x = "5"   y = "75"  class = "mem-label"> Read </text>
+              <text x = "5"   y = "95"  class = "mem-label"> register 2 </text>
+        
+              <text x = "5"   y = "145" class = "mem-label"> Write </text>
+              <text x = "5"   y = "165" class = "mem-label"> register </text>
+                
+              <text x = "5"   y = "190" class = "mem-label"> Write </text>
+              <text x = "5"   y = "210" class = "mem-label"> data </text>
+
+              <text x = "115" y = "40"  class = "mem-label"> Read </text>
+              <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
+
+              <text x = "115" y = "130" class = "mem-label"> Read </text>
+              <text x = "110" y = "150" class = "mem-label"> data 2 </text>
+
+              <text id = "register-option-value" x = "95" y = "-5" class = "mem-control-label"></text>
+            </g>
+
+            <!-- data-memory  -->
+            <g id="data-memory" transform = "translate(1450, 610)">
+              <rect width = "140" height = "200" class = "component" />
+
+              <text x = "110" y = "165" class = "label"> Data </text>
+              <text x = "90"  y = "185" class = "label"> memory </text>
+
+              <text x = "5"   y = "22"  class = "mem-label"> Address </text>
+
+              <text x = "5"   y = "155" class = "mem-label"> Write </text>
+              <text x = "5"   y = "175" class = "mem-label"> data </text>
+
+              <text x = "85"  y = "65"  class = "mem-label"> Read </text>
+              <text x = "95"  y = "85"  class = "mem-label"> data </text>
+
+              <text id = "data-memory-write-enable-value" x = "55" y = "-5" class = "mem-control-label"></text>
+              <text id = "data-memory-read-enable-value" x = "55" y = "220" class = "mem-control-label"></text>
+            </g>
+
+            <!-- ALU -->
+            <!-- add-0 -->
+            <g id="add-0" transform = "translate(350, 57)">
+              <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(1.75)" class = "component"/>
+
+              <text x = "46"  y = "62" class = "label"> Add </text>
+              <text x = "-115" y = "95" class = "label"> 4 </text>
+            </g>
+
+            <!-- add-1 -->
+            <g id="add-1" transform = "translate(1520, 130)">
+              <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.10)" class = "component"/>
+
+              <text x = "55" y = "75" class = "label"> Add </text>
+              <text id = "add-1-1" x = "55" y = "70" class = "instruction"></text>
+              <text id = "add-1-2" x = "55" y = "100" class = "instruction"></text>
+            </g>
+
+            <!-- add-2 -->
+            <g id="add-2" transform = "translate(1210, 520)">
+              <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.5)" class = "component"/>
+
+              <text x = "60" y = "90" class = "label"> ALU </text>
+              
+              <text x = "40" y = "65" class = "mem-control-label"> Flags </text>
+              
+              <text id = "alu-option-value" x = "65" y = "160" class = "mem-control-label"></text>
+            </g>
+
+            <!-- End Alu -->
+
+            <!-- control -->
+            <g id="control" transform = "translate(640, 335)">
+                <ellipse cx = "70" cy = "50" rx = "50" ry = "120" class = "control-component" />
+                
+                <text x = "70" y = "50" class = "control-label"> Control </text>
+                
+                <text x = "140" y = "-65" class = "mem-control-label"> Reg2Loc </text>
+                <text x = "140" y = "-40" class = "mem-control-label"> Uncondbranch </text>
+                <text x = "140" y = "-15" class = "mem-control-label"> Branch </text>
+                <text x = "140" y = "10"  class = "mem-control-label"> MemRead </text>
+                <text x = "140" y = "35"  class = "mem-control-label"> MemtoReg </text>
+                <text x = "140" y = "60"  class = "mem-control-label"> ALUOp </text>
+                <text x = "140" y = "85"  class = "mem-control-label"> MemWrite </text>
+                <text x = "140" y = "110" class = "mem-control-label"> ALUSrc </text>
+                <text x = "140" y = "135" class = "mem-control-label"> RegWrite </text>
+            </g>
+
+            <!-- shift-left-2 -->
+            <g id="shift-left-2" transform = "translate(1260, 250)">
+              <circle cx = "0" cy = "0" r = "40" class = "component"/>
+              
+              <text x = "0" y = "-10" class = "label"> Shift </text>
+              <text x = "0" y = "10"  class = "label"> left 2 </text>
+              <text id="shift-left-2-text" x = "0" y = "10"  class = "instruction"> </text>
+            </g>
+
+            <!-- sign-extend -->
+            <g id="sign-extend" transform = "translate(885, 840)">
+              <circle cx = "0" cy = "0" r = "50" class = "component"/>
+              
+              <text x = "0" y = "-10" class = "label"> Sign- </text>
+              <text x = "0" y = "10"  class = "label"> extend </text>
+              
+              <text x = "-100" y = "-20" class = "mem-label"> 32 </text> 
+              <text x = "-90" y = "0"   class = "label"> ╲ </text> 
+              <text x = "70"   y = "-20" class = "mem-label"> 64 </text> 
+              <text x = "80"   y = "0"   class = "label"> ╲ </text>
+              
+              <text id="sign-extend-text" x = "0" y = "30"  class = "instruction"></text>
+              
+            </g>
+
+            <!-- ALU-control -->
+            <g id="ALU-control" transform = "translate(1130, 880)">
+              <ellipse cx = "0" cy = "0" rx = "50" ry = "70" class = "control-component" />
+
+              <text x = "0" y = "-10" class = "control-label"> ALU </text>
+              <text x = "0" y = "10"  class = "control-label"> Control </text>
+
+              <text id = "alu-control-aluop-value" x = "-75" y = "-5" class = "mem-control-label"></text>
+            </g>
+
+            <!-- mux-0 -->
+            <g id="mux-0" transform = "translate(1740, 70)">
+              <rect x = "0"  y = "0" width = "40" height = "120" rx = "20" ry = "20" class = "component"/>
+              
+              <path id = "mux-0-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,60 L0,60 Z" class = "mux-select-0"/>
+              <path id = "mux-0-1-selected" d = "M0,60 L40,60 L40,100 A20,20 0 0 1 20,120 A20,20 0 0 1 0,100 Z" class = "mux-select-1"/>
+              
+              <rect x = "0"  y = "0" width = "40" height = "120" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
+              
+              <text x = "14" y = "20"  class = "mem-label"> 0 </text>
+              <text x = "20" y = "40"  class = "label">     M </text>
+              <text x = "20" y = "60"  class = "label">     u </text>
+              <text x = "20" y = "80"  class = "label">     x </text>
+              <text x = "14" y = "110" class = "mem-label"> 1 </text>
+
+              <text id = "mux-0-value" x = "5" y = "140" class = "mem-control-label"></text>
+            </g>
+
+            <!-- mux-1 -->
+            <g id="mux-1" transform = "translate(670, 555)">
+              <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
+              
+              <path id = "mux-1-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,45 L0,45 Z" class = "mux-select-0"/>
+              <path id = "mux-1-1-selected" d = "M0,45 L40,45 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-1"/>
+              
+              <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
+              
+              <text x = "14" y = "20" class = "mem-label"> 0 </text>
+              <text x = "20" y = "35" class = "label">     M </text>
+              <text x = "20" y = "50" class = "label">     u </text>
+              <text x = "20" y = "65" class = "label">     x </text>
+              <text x = "14" y = "90" class = "mem-label"> 1 </text>
+              
+              <text id = "mux-1-value" x = "5" y = "190" class = "mem-control-label"></text>
+
+              <!-- HQH add -->
+              <rect id = "mux-1-0-background" x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style="display: none; fill:aqua"/>
+              <!-- <rect id = "mux-1-1-background" x = "0" y = "0"> </rect> -->
+              <text id="mux-1-0" x = "10"  y = "35" class="instruction"></text>
+              <text id="mux-1-1" x = "10"  y = "65" class="instruction"></text>
+
+            </g>
+            
+            <!-- mux-2 -->
+            <g id="mux-2" transform = "translate(1100, 618)">
+              <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
+              
+              <path id = "mux-2-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,50 L0,50 Z" class = "mux-select-0"/>
+              <path id = "mux-2-1-selected" d = "M0,50 L40,50 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-1"/>
+              
+              <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
+
+              <text x = "14" y = "20" class = "mem-label"> 0 </text>
+              <text x = "20" y = "35" class = "label">     M </text>
+              <text x = "20" y = "50" class = "label">     u </text>
+              <text x = "20" y = "67" class = "label">     x </text>
+              <text x = "14" y = "90" class = "mem-label"> 1 </text>
+
+              <text id="mux-2-0" x = "14"  y = "20" class="instruction"></text>
+              <text id="mux-2-1" x = "14"  y = "90" class="instruction"></text>
+
+              <text id = "mux-2-value" x = "5" y = "-5" class = "mem-control-label"></text>
+            </g>
+            
+            <!-- mux-3 -->
+            <g id="mux-3" transform="translate(1690, 665)">
+              <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
+              
+              <path id = "mux-3-0-selected" d = "M0,50 L40,50 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-0"/>
+              <path id = "mux-3-1-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,50 L0,50 Z" class = "mux-select-1"/>
+              
+              <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
+
+              <text x = "14" y = "20" class = "mem-label"> 1 </text>
+              <text x = "20" y = "35" class = "label">     M </text>
+              <text x = "20" y = "50" class = "label">     u </text>
+              <text x = "20" y = "65" class = "label">     x </text>
+              <text x = "14" y = "90" class = "mem-label"> 0 </text>
+
+              <text id = "mux-3-value" x = "5" y = "-5" class = "mem-control-label"></text>
+            </g>
+
+            <!-- AND gate -->
+            <g id="and-gate" transform="translate(1415, 450)">
+              <path d="M0,0 L40,0 A40,50 0 0,1 40,100 L0,100 Z" stroke="deepskyblue" class="control-component" />
+              
+              <text id = "and-gate-input1-value" x = "-15" y = "25" class = "mem-control-label"></text>
+              <text id = "and-gate-input2-value" x = "-15" y = "90" class = "mem-control-label"></text>
+            </g>
+
+            <!-- OR gate -->
+            <g id="or-gate" transform="translate(1650, 262.5)">
+              <path d="M0,0 Q50,50 0,100 Q50,100 80,50 Q50,0 0,0" stroke="deepskyblue" class="control-component" />
+
+              <text id = "or-gate-input1-value" x = "-5" y = "25" class = "mem-control-label"></text>
+              <text id = "or-gate-input2-value" x = "-5" y = "80" class = "mem-control-label"></text>
+            </g>  
+          </g> <!-- End Components Layer -->
+          <g id="container-data-signal-nodes">
+            <g id="data-signal-nodes"></g>
+          </g>
+        </g>
+
+        <g id = "selected-component">
           <defs>
-            <marker id = "circle" markerWidth = "8" markerHeight = "8" refX = "5" refY = "5">
-              <circle cx = "5" cy = "5" r = "2" fill = "context-stroke" />
-            </marker>
             <marker id = "arrow" markerWidth = "4" markerHeight = "4" refX = "2" refY = "2" orient = "auto">
               <path d = "M0,0 L4,2 L0,4 z" fill = "context-stroke" />
             </marker>
           </defs>
 
-          <!-- Đường đi thật để dùng cho animation -->
-          <!-- pc -->
-          <path id         = "pc-to-instruction-memory-path" 
-                d          = "M153,550 L235,550" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "pc-to-instruction-memory-path-clone" 
-                d          = "M153,550 L282,550" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-
-          <path id         = "pc-to-ALU-add-0-path" 
-                d          = "M153,550 L215,550 L215,75 L295,75" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "pc-to-ALU-add-0-path-clone" 
-                d          = "M153,550 L215,550 L215,75 L342,75" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-          <path id         = pc-to-ALU-add-0-path-circle
-                d          = "M215,550"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-          
-          <path id         = "pc-to-ALU-add-1-path" 
-                d          = "M153,550 L215,550 L215,200 L450,200 L450,155 L1465,155" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "pc-to-ALU-add-1-path-clone" 
-                d          = "M153,550 L215,550 L215,200 L450,200 L450,155 L1510,155" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-          <path id         = pc-to-ALU-add-1-path-circle
-                d          = "M215,200"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-
-          <!-- const 4 -->
-          <path id         = "const-4-to-ALU-add-0-path" 
-                d          = "M250,150 L295,150" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "const-4-to-ALU-add-0-path-clone" 
-                d          = "M250,150 L342,150" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-
-          <!-- ALU-add-id -->
-          <path id         = "ALU-add-0-to-mux-0-0-path" 
-                d          = "M370,110 L1625,110" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "ALU-add-0-to-mux-0-0-path-clone" 
-                d          = "M370,110 L1730,110"   
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-
-          <path id         = "ALU-add-1-to-mux-0-1-path" 
-                d          = "M1605,200 L1625,200, L1625,150" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "ALU-add-1-to-mux-0-1-path-clone" 
-                d          = "M1605,200 L1625,200, L1625,150, L1730,150" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-              
-          <path id         = "ALU-add-2-to-data-memory-path"
-                d          = "M1290,625 L1420,625"
-                class      = "signal-line"
-                style      = "display: none" />    
-          <path id         = "ALU-add-2-to-data-memory-path-clone"
-                d          = "M1290,625 L1440,625"
-                class      = "signal-line"
-                marker-end = "url(#arrow)" />
-          
-          <path id         = "ALU-add-2-to-mux-3-0-path"
-                d          = "M1290,625 L1370,625 L1370,850 L1615,850 L1615,750, L1660,750"
-                class      = "signal-line"
-                style      = "display: none" />
-          <path id         = "ALU-add-2-to-mux-3-0-path-clone"
-                d          = "M1290,625 L1370,625 L1370,850 L1615,850 L1615,750, L1680,750"
-                class      = "signal-line"
-                marker-end = "url(#arrow)" />
-          <path id         = ALU-add-2-to-mux-3-0-path-circle
-                d          = "M1370,625"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-          
-          <path id         = "ALU-add-2-zero-path"
-                d          = "M1290,580 L1370,580 L1370,520 L1400,520"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "ALU-add-2-zero-path-clone"
-                d          = "M1290,580 L1370,580 L1370,520 L1415,520"
-                class      = "control-signal-line" />
-
-          <!-- mux-id-status -->
-          <path id         = "mux-0-to-pc-path" 
-                d          = "M1780,130, L1810,130 L1810,30 L60,30 L60,550 L60,550" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "mux-0-to-pc-path-clone" 
-                d          = "M1780,130, L1810,130 L1810,30 L60,30 L60,550 L105,550" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-
-          <path id         = "mux-1-to-register-path" 
-                d          = "M710,600 L750,600" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "mux-1-to-register-path-clone" 
-                d          = "M710,600 L790,600" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-          
-          <path id         = "mux-2-to-ALU-add-2-path" 
-                d          = "M1110,668 L1180,668" 
-                class      = "signal-line" 
-                style      = "display: none" />      
-          <path id         = "mux-2-to-ALU-add-2-path-clone" 
-                d          = "M1110,668 L1200,668" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />      
-          
-          <path id         = "mux-3-to-register-path" 
-                d          = "M1730,715 L1760,715 L1760,1015 L725,1015 L725,710 L775,710" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "mux-3-to-register-path-clone" 
-                d          = "M1730,715 L1760,715 L1760,1015 L725,1015 L725,710 L795,710" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-
-          <!-- sign-extend -->
-          <path id         = "sign-extend-to-shift-left-2-path" 
-                d          = "M930,840 L990,840 L990,250 L1105,250" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "sign-extend-to-shift-left-2-path-clone" 
-                d          = "M930,840 L990,840 L990,250 L1210,250" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-
-          <path id         = "sign-extend-to-mux-2-1-path" 
-                d          = "M930,840 L990,840 L990,685, L986,685" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "sign-extend-to-mux-2-1-path-clone" 
-                d          = "M930,840 L990,840 L990,685 L1090,685" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-          <path id         = sign-extend-to-mux-2-1-path-circle
-                d          = "M990,685"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-
-          <!-- shift-left-2 -->
-          <path id         = "shift-left-2-to-add-1-path" 
-                d          = "M1270,250 1405,250" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "shift-left-2-to-add-1-path-clone" 
-                d          = "M1270,250 L1510,250" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-
-          <!-- instruction-memory -->
-          <path id         = "instruction-memory-to-control-path" 
-                d          = "M420,630 L480,630 L480,380 L585,380" 
-                class      = "signal-line"
-                style      = "display: none" />
-          <path id         = "instruction-memory-to-control-path-clone" 
-                d          = "M420,630 L480,630 L480,380 L655,380" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)"/>
-          <path id         = "instruction-memory-to-control-path-circle"
-                d          = "M480,630"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-
-          <path id         = "instruction-memory-to-read-register-1-path" 
-                d          = "M420,630 L480,630 L480,540 L750,540" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "instruction-memory-to-read-register-1-path-clone" 
-                d          = "M420,630 L480,630 L480,540 L790,540" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-          <path id         = "instruction-memory-to-read-register-1-path-circle"
-                d          = "M480,540"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-
-          <path id         = "instruction-memory-to-mux-1-0-path" 
-                d          = "M420,630 L480,630 L480,570 L625,570" 
-                class      = "signal-line" 
-                style      = "display: none" />
-          <path id         = "instruction-memory-to-mux-1-0-path-clone" 
-                d          = "M420,630 L480,630 L480,570 L665,570" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-          <path id         = instruction-memory-to-mux-1-0-path-circle
-                d          = "M480,570"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-          
-          <path id         = "instruction-memory-to-mux-1-1-path" 
-                d          = "M420,630 L480,630 L480,670 L580,670 L580,640 L625,640" 
-                class      = "signal-line" 
-                style      = "display: none" />          
-          <path id         = "instruction-memory-to-mux-1-1-path-clone" 
-                d          = "M420,630 L480,630 L480,670 L580,670 L580,640 L665,640" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-          <path id         = instruction-memory-to-mux-1-1-path-circle
-                d          = "M480,670"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-                
-          <path id         = "instruction-memory-to-write-register-path" 
-                d          = "M420,630 L480,630 L480,670 L750,670" 
-                class      = "signal-line" 
-                style      = "display: none" />                
-          <path id         = "instruction-memory-to-write-register-path-clone" 
-                d          = "M420,630 L480,630 L480,670 L790,670" 
-                class      = "signal-line" 
-                marker-end = "url(#arrow)" />
-          <path id         = instruction-memory-to-write-register-path-circle
-                d          = "M580,670"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-          
-          <path id         = "instruction-memory-to-sign-extend-path"
-                d          = "M420,630 L490,630 L490,840 L650,840"
-                class      = "signal-line"
-                style      = "display: none" />          
-          <path id         = "instruction-memory-to-sign-extend-path-clone"
-                d          = "M420,630 L480,630 L480,840 L825,840"
-                class      = "signal-line"
-                marker-end = "url(#arrow)" />
-
-          <path id         = "instruction-memory-to-alu-control-path"
-                d          = "M420,630 L480,630 L480,840 L750,840 L750,990 L1130,990 L1130,985"
-                class      = "signal-line"
-                style      = "display: none" />
-          <path id         = "instruction-memory-to-alu-control-path-clone"
-                d          = "M420,630 L480,630 L480,840 L750,840 L750,990 L1130,990 L1130,960"
-                class      = "signal-line"
-                marker-end = "url(#arrow)" />
-          <path id         = instruction-memory-to-alu-control-path-circle
-                d          = "M750,840"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-
-          <!-- register -->
-          <path id         = "register-to-mux-2-0-path"
-                d          = "M950,650 L1070,650"
-                class      = "signal-line"
-                style      = "display: none" />
-          <path id         = "register-to-mux-2-0-path-clone"
-                d          = "M950,650 L1090,650"
-                class      = "signal-line"
-                marker-end = "url(#arrow)" />
-          
-          <path id         = "register-to-ALU-add-2-path"
-                d          = "M950,560 L1180,560"
-                class      = "signal-line"
-                style      = "display: none" />
-          <path id         = "register-to-ALU-add-2-path-clone"
-                d          = "M950,560 L1200,560"
-                class      = "signal-line"
-                marker-end = "url(#arrow)" />
-          
-          <path id         = "register-to-data-memory-path"
-                d          = "M950,650 L1020,650 L1020,770 L1420,770"
-                class      = "signal-line"
-                style      = "display: none" /> 
-          <path id         = "register-to-data-memory-path-clone"
-                d          = "M950,650 L1020,650 L1020,770 L1440,770"
-                class      = "signal-line"
-                marker-end = "url(#arrow)" />
-          <path id         = register-to-data-memory-path-circle
-                d          = "M1020,650"
-                class      = "signal-line"
-                marker-end = "url(#circle)" />
-
-          <!-- data-memory -->
-          <path id         = "data-memory-to-mux-3-1-path"
-                d          = "M1590,680 L1660,680"
-                class      = "signal-line"
-                style      = "display: none" />
-          <path id         = "data-memory-to-mux-3-1-path-clone"
-                d          = "M1590,680 L1680,680"
-                class      = "signal-line"
-                marker-end = "url(#arrow)" />
-
-          <!-- control -->
-          <path id         = "control-reg2loc-path"
-                d          = "M730,275 L770,275 L770,230 L450,230 L450,750 L690,750 L690,670"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "control-reg2loc-path-clone"
-                d          = "M730,275 L770,275 L770,230 L450,230 L450,750 L690,750 L690,655"
-                class      = "control-signal-line" />
-
-          <path id         = "control-uncondbranch-path"
-                d          = "M730,300 L1655,300"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "control-uncondbranch-path-clone"
-                d          = "M730,300 L1675,300"
-                class      = "control-signal-line" />
-
-          <path id         = "control-branch-path"
-                d          = "M730,325 L1370,325 L1370,480 L1400,480"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "control-branch-path-clone"
-                d          = "M730,325 L1370,325 L1370,480 L1415,480"
-                class      = "control-signal-line" />
-
-          <path id         = "control-memread-path"
-                d          = "M730,350 L1640,350 L1640,870 L1520,870 L1520,827"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "control-memread-path-clone"
-                d          = "M730,350 L1640,350 L1640,870 L1520,870 L1520,810"
-                class      = "control-signal-line" />
-
-          <path id         = "control-memtoreg-path"
-                d          = "M730,375 L1710,375 L1710,650"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "control-memtoreg-path-clone"
-                d          = "M730,375 L1710,375 L1710,665"
-                class      = "control-signal-line" />
-
-          <path id         = "control-aluop-path"
-                d          = "M730,400 L1005,400 L1005,880 L1065,880"
-                class      = "ALU-control-signal-line" 
-                style      = "display: none" />
-          <path id         = "control-aluop-path-clone"
-                d          = "M730,400 L1005,400 L1005,880 L1080,880"
-                class      = "ALU-control-signal-line" />
-
-          <path id         = "control-memwrite-path"
-                d          = "M730,425 L1520,425 L1520,595"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "control-memwrite-path-clone"
-                d          = "M730,425 L1520,425 L1520,610"
-                class      = "control-signal-line" />
-
-          <path id         = "control-alusrc-path"
-                d          = "M730,450 L1120,450 L1120,605"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "control-alusrc-path-clone"
-                d          = "M730,450 L1120,450 L1120,620"
-                class      = "control-signal-line" />
-
-          <path id         = "control-regwrite-path"
-                d          = "M730,475 L885,475 L885,505"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "control-regwrite-path-clone"
-                d          = "M730,475 L885,475 L885,520"
-                class      = "control-signal-line" />
-
-          <!-- ALU-control -->
-          <path id         = "ALU-control-to-ALU-2-path"
-                d          = "M1180,880 L1265,880 L1265,695"
-                class      = "ALU-control-signal-line" 
-                style      = "display: none" />
-          <path id         = "ALU-control-to-ALU-2-path-clone"
-                d          = "M1180,880 L1265,880 L1265,665"
-                class      = "ALU-control-signal-line" />
-
-          <!-- AND gate -->
-          <path id         = "AND-gate-to-OR-gate-path"
-                d          = "M1430,500 L1590,500 L1590,325 L1655,325"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "AND-gate-to-OR-gate-path-clone"
-                d          = "M1430,500 L1590,500 L1590,325 L1675,325"
-                class      = "control-signal-line" />
-
-          <!-- OR gate -->
-          <path id         = "OR-gate-to-mux-0-1-path"
-                d          = "M1730,312.5 L1760,312.5 L1760,185"
-                class      = "control-signal-line" 
-                style      = "display: none" />
-          <path id         = "OR-gate-to-mux-0-1-path-clone"
-                d          = "M1730,312.5 L1760,312.5 L1760,170"
-                class      = "control-signal-line" />
-          <g id="container-root-path">
-            <g id="root-path"></g>
-          </g>
-        </g>
-
-        <!-- Components Layer (Drawn AFTER lines = On Top) -->
-        <g id="components">
-          <!-- step 1-->
-          <g id = "step_1" style="display: none;" transform = "translate(80, 50)">
-            <rect width = "350" height = "690" class = "step_area" />
-            <text x = "135" y = "715" class = "step_area_label"> 1. Instruction Fetch </text>
-          </g>
-          <!-- step 2 -->
-          <g id = "step_2" style="display: none;" transform = "translate(470, 505)">
-            <rect width = "510" height = "400" class = "step_area" />
-            <text x = "150" y = "425" class = "step_area_label"> 2. Instruction Decode </text>
-          </g>
-          <!-- step 3 -->
-          <g id = "step_3" style="display: none;" transform = "translate(1000, 120)">
-            <path d = "M0 0 L620 0 L620 200 L320 200 L320 880 L0 880 L0 0" class = "step_area"/>
-            <text x = "208" y = "-30" class = "step_area_label"> 3. ALU - Arithmetic-Logic Unit </text>
-          </g>
-          <!-- step 4 -->
-          <g id = "step_4" style="display: none;" transform = "translate(1420, 580)">
-            <rect width = "200" height = "260" class = "step_area" />
-            <text x = "75" y = "315" class = "step_area_label"> 4. Memory Access </text>
-          </g>
-          <!-- step 5 -->
-          <g id = "step_5" style="display: none;" transform = "translate(1650, 650)">
-            <rect width = "125" height = "380" class = "step_area" />
-            <text x = "113" y = "-20" class = "step_area_label"> 5. Register Write </text>
-          </g>
-          <!-- pc -->
-          <g id="pc" transform = "translate(115, 500)">
-            <rect width = "50" height = "100" class = "component" />
-
-            <text x = "25" y = "50" class = "label"> PC </text>
-            
-            <text id = "pc-value-text" x = "-8" y = "125" class = "mem-control-label"> 0xF000 </text>
-          </g>
-
-          <!-- instruction-memory -->
-          <g id="instruction-memory" transform = "translate(290, 530)">
+          <g id="instruction-memory-selected" transform = "translate(-500, -500)">
+            <rect x = "-10" y = "-10" width = "147" height = "217" class = "selected-component" />
             <rect width = "130" height = "200" class = "component" />
 
             <text x = "65" y = "165" class = "label"> Instruction </text>
@@ -483,362 +749,96 @@
         
             <text x = "5"  y = "20"  class = "mem-label"> Read </text>
             <text x = "5"  y = "40"  class = "mem-label"> address </text>
-            <text id="read-address-instruction-memory" x = "30"  y = "60" class="instruction"></text>
-
-            <text x = "35" y = "95"  class = "mem-label"> Instruction </text> 
-            <text x = "75" y = "115" class = "mem-label"> [31-0] </text> 
+            <text id = "instruction-memory-read-address-value" x = "5"  y = "55" class = "component-value"></text>
             
-            <text x = "205" y = "-170" class = "mem-label"> Instruction [31-21] </text> 
-
-            <text x = "205" y = "0"    class = "mem-label"> Instruction [9-5] </text> 
-
-            <text x = "205" y = "75"   class = "mem-label"> Instruction [20-16] </text> 
-
-            <text x = "205" y = "165"  class = "mem-label"> Instruction [4-0] </text> 
-
-            <text x = "205" y = "285"  class = "mem-label"> Instruction [31-0] </text> 
-
-            <text x = "465" y = "450"  class = "mem-label"> Instruction [31-21] </text> 
+            <text x = "35" y = "95"  class = "mem-label"> Instruction </text> 
+            <text x = "75" y = "115" class = "mem-label"> [31-0] </text>
+            <text id = "instruction-memory-instruction-[31-0]-value" x = "42"  y = "135" class = "component-value"></text>
           </g>
-          
-          <!-- register  -->
-          <g id="register" transform = "translate(800, 520)">
+
+          <g id="register-selected" transform = "translate(-500, -500)">
+            <rect x = "-10" y = "-10" width = "187" height = "237" class = "selected-component" />
             <rect width = "170" height = "220" class = "component" />
 
             <text x = "115" y = "205" class = "label"> Registers </text>
 
             <text x = "5"   y = "20"  class = "mem-label"> Read </text>
-            <text x = "5"   y = "40"  class = "mem-label"> register 1 </text>
-              
+            <text x = "5"   y = "36"  class = "mem-label"> register 1 </text>
+            <text id = "register-Read1-value" x = "5"  y = "53" class = "component-value"> </text>
+
             <text x = "5"   y = "75"  class = "mem-label"> Read </text>
-            <text x = "5"   y = "95"  class = "mem-label"> register 2 </text>
+            <text x = "5"   y = "91"  class = "mem-label"> register 2 </text>
+            <text id = "register-Read2-value" x = "5"  y = "109" class = "component-value"> </text>
       
-            <text x = "5"   y = "145" class = "mem-label"> Write </text>
-            <text x = "5"   y = "165" class = "mem-label"> register </text>
+            <text x = "5"   y = "130" class = "mem-label"> Write </text>
+            <text x = "5"   y = "146" class = "mem-label"> register </text>
+            <text id = "register-WriteReg-value" x = "5"  y = "164" class = "component-value"> </text>
               
-            <text x = "5"   y = "190" class = "mem-label"> Write </text>
-            <text x = "5"   y = "210" class = "mem-label"> data </text>
+            <text x = "5"   y = "182" class = "mem-label"> Write </text>
+            <text x = "5"   y = "197" class = "mem-label"> data </text>
+            <text id = "register-WriteData-value" x = "5"  y = "214" class = "component-value"> </text>
 
             <text x = "115" y = "40"  class = "mem-label"> Read </text>
             <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
-
+            <text id = "register-ReadData1-value" x = "130"  y = "74" class = "component-value"> </text>
+            
             <text x = "115" y = "130" class = "mem-label"> Read </text>
             <text x = "110" y = "150" class = "mem-label"> data 2 </text>
-
-            <text id = "register-option-value" x = "95" y = "-5" class = "mem-control-label"></text>
+            <text id = "register-ReadData2-value" x = "130"  y = "164" class = "component-value"> </text>
           </g>
 
-          <!-- data-memory  -->
-          <g id="data-memory" transform = "translate(1450, 610)">
+          <g id="data-memory-selected" transform = "translate(-500, -500)">
+            <rect x = "-10" y = "-10" width = "157" height = "217" class = "selected-component" />
             <rect width = "140" height = "200" class = "component" />
 
             <text x = "110" y = "165" class = "label"> Data </text>
             <text x = "90"  y = "185" class = "label"> memory </text>
 
-            <text x = "5"   y = "22"  class = "mem-label"> Address </text>
+            <text x = "5"   y = "45"  class = "mem-label"> Address </text>
+            <text id = "data-memory-address-value" x = "5"  y = "63" class = "component-value"></text>
 
             <text x = "5"   y = "155" class = "mem-label"> Write </text>
             <text x = "5"   y = "175" class = "mem-label"> data </text>
+            <text id = "data-memory-write-data-value" x = "5"  y = "135" class = "component-value"></text>
 
             <text x = "85"  y = "65"  class = "mem-label"> Read </text>
             <text x = "95"  y = "85"  class = "mem-label"> data </text>
-
-            <text id = "data-memory-write-enable-value" x = "55" y = "-5" class = "mem-control-label"></text>
-            <text id = "data-memory-read-enable-value" x = "55" y = "220" class = "mem-control-label"></text>
+            <text id = "data-read-data-value" x = "100"  y = "100" class = "component-value"></text>
           </g>
 
-          <!-- ALU -->
-          <!-- add-0 -->
-          <g id="add-0" transform = "translate(350, 57)">
-            <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(1.75)" class = "component"/>
+          <g id="add-2-selected" transform = "translate(-500, -500)">
+            <rect x = "-10" y = "-60" width = "117" height = "243" class = "selected-component" />
+            <path d = "M50,25 L50,-20" class = "signal-line" marker-end = "url(#arrow)"/> 
 
-            <text x = "46"  y = "62" class = "label"> Add </text>
-            <text x = "-115" y = "95" class = "label"> 4 </text>
-          </g>
-
-          <!-- add-1 -->
-          <g id="add-1" transform = "translate(1520, 130)">
-            <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.10)" class = "component"/>
-
-            <text x = "55" y = "75" class = "label"> Add </text>
-            <text id = "add-1-1" x = "55" y = "70" class = "instruction"></text>
-            <text id = "add-1-2" x = "55" y = "100" class = "instruction"></text>
-          </g>
-
-          <!-- add-2 -->
-          <g id="add-2" transform = "translate(1210, 520)">
             <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.5)" class = "component"/>
 
             <text x = "60" y = "90" class = "label"> ALU </text>
             
-            <text x = "40" y = "65" class = "mem-control-label"> Flags </text>
+            <text id = "add-2-input-1-value" x = "5"  y = "40" class = "component-value"></text>
+            <text id = "add-2-input-2-value" x = "5"  y = "145" class = "component-value"> </text>
+
+            <text id = "add-2-output-value" x = "65"  y = "115" class = "component-value"></text>
             
-            <text id = "alu-option-value" x = "65" y = "160" class = "mem-control-label"></text>
+            <rect x = "0"  y = "-50" width = "25" height = "25" class = "component"/>
+            <text x = "12"  y = "-35" class = "label">N</text>
+            <text id = "add-2-N-value" x = "8"  y = "-10" class = "component-value"> 0 </text>
+
+            <rect x = "25" y = "-50" width = "25" height = "25" class = "component"/>
+            <text x = "37"  y = "-35" class = "label">Z</text>
+            <text id = "add-2-Z-value" x = "33"  y = "-10" class = "component-value"> 0 </text>
+            
+            <rect x = "50" y = "-50" width = "25" height = "25" class = "component"/>
+            <text x = "62"  y = "-35" class = "label">C</text>
+            <text id = "add-2-C-value" x = "58"  y = "-10" class = "component-value"> 0 </text>
+            
+            <rect x = "75" y = "-50" width = "25" height = "25" class = "component"/>
+            <text x = "87"  y = "-35" class = "label">V</text>
+            <text id = "add-2-V-value" x = "83"  y = "-10" class = "component-value"> 0 </text>
           </g>
 
-          <!-- End Alu -->
-
-          <!-- control -->
-          <g id="control" transform = "translate(640, 335)">
-              <ellipse cx = "70" cy = "50" rx = "50" ry = "120" class = "control-component" />
-              
-              <text x = "70" y = "50" class = "control-label"> Control </text>
-              
-              <text x = "140" y = "-65" class = "mem-control-label"> Reg2Loc </text>
-              <text x = "140" y = "-40" class = "mem-control-label"> Uncondbranch </text>
-              <text x = "140" y = "-15" class = "mem-control-label"> Branch </text>
-              <text x = "140" y = "10"  class = "mem-control-label"> MemRead </text>
-              <text x = "140" y = "35"  class = "mem-control-label"> MemtoReg </text>
-              <text x = "140" y = "60"  class = "mem-control-label"> ALUOp </text>
-              <text x = "140" y = "85"  class = "mem-control-label"> MemWrite </text>
-              <text x = "140" y = "110" class = "mem-control-label"> ALUSrc </text>
-              <text x = "140" y = "135" class = "mem-control-label"> RegWrite </text>
-          </g>
-
-          <!-- shift-left-2 -->
-          <g id="shift-left-2" transform = "translate(1260, 250)">
-            <circle cx = "0" cy = "0" r = "40" class = "component"/>
-            
-            <text x = "0" y = "-10" class = "label"> Shift </text>
-            <text x = "0" y = "10"  class = "label"> left 2 </text>
-            <text id="shift-left-2-text" x = "0" y = "10"  class = "instruction"> </text>
-          </g>
-
-          <!-- sign-extend -->
-          <g id="sign-extend" transform = "translate(885, 840)">
-            <circle cx = "0" cy = "0" r = "50" class = "component"/>
-            
-            <text x = "0" y = "-10" class = "label"> Sign- </text>
-            <text x = "0" y = "10"  class = "label"> extend </text>
-            
-            <text x = "-100" y = "-20" class = "mem-label"> 32 </text> 
-            <text x = "-90" y = "0"   class = "label"> ╲ </text> 
-            <text x = "70"   y = "-20" class = "mem-label"> 64 </text> 
-            <text x = "80"   y = "0"   class = "label"> ╲ </text>
-            
-            <text id="sign-extend-text" x = "0" y = "30"  class = "instruction"></text>
-            
-          </g>
-
-          <!-- ALU-control -->
-          <g id="ALU-control" transform = "translate(1130, 880)">
-            <ellipse cx = "0" cy = "0" rx = "50" ry = "70" class = "control-component" />
-
-            <text x = "0" y = "-10" class = "control-label"> ALU </text>
-            <text x = "0" y = "10"  class = "control-label"> Control </text>
-
-            <text id = "alu-control-aluop-value" x = "-75" y = "-5" class = "mem-control-label"></text>
-          </g>
-
-          <!-- mux-0 -->
-          <g id="mux-0" transform = "translate(1740, 70)">
-            <rect x = "0"  y = "0" width = "40" height = "120" rx = "20" ry = "20" class = "component"/>
-            
-            <path id = "mux-0-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,60 L0,60 Z" class = "mux-select-0"/>
-            <path id = "mux-0-1-selected" d = "M0,60 L40,60 L40,100 A20,20 0 0 1 20,120 A20,20 0 0 1 0,100 Z" class = "mux-select-1"/>
-            
-            <rect x = "0"  y = "0" width = "40" height = "120" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
-            
-            <text x = "14" y = "20"  class = "mem-label"> 0 </text>
-            <text x = "20" y = "40"  class = "label">     M </text>
-            <text x = "20" y = "60"  class = "label">     u </text>
-            <text x = "20" y = "80"  class = "label">     x </text>
-            <text x = "14" y = "110" class = "mem-label"> 1 </text>
-
-            <text id = "mux-0-value" x = "5" y = "140" class = "mem-control-label"></text>
-          </g>
-
-          <!-- mux-1 -->
-          <g id="mux-1" transform = "translate(670, 555)">
-            <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
-            
-            <path id = "mux-1-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,45 L0,45 Z" class = "mux-select-0"/>
-            <path id = "mux-1-1-selected" d = "M0,45 L40,45 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-1"/>
-            
-            <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
-            
-            <text x = "14" y = "20" class = "mem-label"> 0 </text>
-            <text x = "20" y = "35" class = "label">     M </text>
-            <text x = "20" y = "50" class = "label">     u </text>
-            <text x = "20" y = "65" class = "label">     x </text>
-            <text x = "14" y = "90" class = "mem-label"> 1 </text>
-            
-            <text id = "mux-1-value" x = "5" y = "190" class = "mem-control-label"></text>
-
-            <!-- HQH add -->
-            <rect id = "mux-1-0-background" x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style="display: none; fill:aqua"/>
-            <!-- <rect id = "mux-1-1-background" x = "0" y = "0"> </rect> -->
-            <text id="mux-1-0" x = "10"  y = "35" class="instruction"></text>
-            <text id="mux-1-1" x = "10"  y = "65" class="instruction"></text>
-
-          </g>
-          
-          <!-- mux-2 -->
-          <g id="mux-2" transform = "translate(1100, 618)">
-            <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
-            
-            <path id = "mux-2-0-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,50 L0,50 Z" class = "mux-select-0"/>
-            <path id = "mux-2-1-selected" d = "M0,50 L40,50 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-1"/>
-            
-            <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
-
-            <text x = "14" y = "20" class = "mem-label"> 0 </text>
-            <text x = "20" y = "35" class = "label">     M </text>
-            <text x = "20" y = "50" class = "label">     u </text>
-            <text x = "20" y = "67" class = "label">     x </text>
-            <text x = "14" y = "90" class = "mem-label"> 1 </text>
-
-            <text id="mux-2-0" x = "14"  y = "20" class="instruction"></text>
-            <text id="mux-2-1" x = "14"  y = "90" class="instruction"></text>
-
-            <text id = "mux-2-value" x = "5" y = "-5" class = "mem-control-label"></text>
-          </g>
-          
-          <!-- mux-3 -->
-          <g id="mux-3" transform="translate(1690, 665)">
-            <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component"/>
-            
-            <path id = "mux-3-0-selected" d = "M0,50 L40,50 L40,80 A20,20 0 0 1 20,100 A20,20 0 0 1 0,80 Z" class = "mux-select-0"/>
-            <path id = "mux-3-1-selected" d = "M0,20 A20,20 0 0 1 20,0 A20,20 0 0 1 40,20 L40,50 L0,50 Z" class = "mux-select-1"/>
-            
-            <rect x = "0"  y = "0" width = "40" height = "100" rx = "20" ry = "20" class = "component" style = "fill:transparent"/>
-
-            <text x = "14" y = "20" class = "mem-label"> 1 </text>
-            <text x = "20" y = "35" class = "label">     M </text>
-            <text x = "20" y = "50" class = "label">     u </text>
-            <text x = "20" y = "65" class = "label">     x </text>
-            <text x = "14" y = "90" class = "mem-label"> 0 </text>
-
-            <text id = "mux-3-value" x = "5" y = "-5" class = "mem-control-label"></text>
-          </g>
-
-          <!-- AND gate -->
-          <g id="and-gate" transform="translate(1415, 450)">
-            <path d="M0,0 L40,0 A40,50 0 0,1 40,100 L0,100 Z" stroke="deepskyblue" class="control-component" />
-            
-            <text id = "and-gate-input1-value" x = "-15" y = "25" class = "mem-control-label"></text>
-            <text id = "and-gate-input2-value" x = "-15" y = "90" class = "mem-control-label"></text>
-          </g>
-
-          <!-- OR gate -->
-          <g id="or-gate" transform="translate(1650, 262.5)">
-            <path d="M0,0 Q50,50 0,100 Q50,100 80,50 Q50,0 0,0" stroke="deepskyblue" class="control-component" />
-
-            <text id = "or-gate-input1-value" x = "-5" y = "25" class = "mem-control-label"></text>
-            <text id = "or-gate-input2-value" x = "-5" y = "80" class = "mem-control-label"></text>
-          </g>  
-        </g> <!-- End Components Layer -->
-        <g id="container-data-signal-nodes">
-          <g id="data-signal-nodes"></g>
         </g>
-      </g>
-
-      <g id = "selected-component">
-        <defs>
-          <marker id = "arrow" markerWidth = "4" markerHeight = "4" refX = "2" refY = "2" orient = "auto">
-            <path d = "M0,0 L4,2 L0,4 z" fill = "context-stroke" />
-          </marker>
-        </defs>
-
-        <g id="instruction-memory-selected" transform = "translate(-500, -500)">
-          <rect x = "-10" y = "-10" width = "147" height = "217" class = "selected-component" />
-          <rect width = "130" height = "200" class = "component" />
-
-          <text x = "65" y = "165" class = "label"> Instruction </text>
-          <text x = "65" y = "185" class = "label"> memory</text>
-      
-          <text x = "5"  y = "20"  class = "mem-label"> Read </text>
-          <text x = "5"  y = "40"  class = "mem-label"> address </text>
-          <text id = "instruction-memory-read-address-value" x = "5"  y = "55" class = "component-value"></text>
-          
-          <text x = "35" y = "95"  class = "mem-label"> Instruction </text> 
-          <text x = "75" y = "115" class = "mem-label"> [31-0] </text>
-          <text id = "instruction-memory-instruction-[31-0]-value" x = "42"  y = "135" class = "component-value"></text>
-        </g>
-
-        <g id="register-selected" transform = "translate(-500, -500)">
-          <rect x = "-10" y = "-10" width = "187" height = "237" class = "selected-component" />
-          <rect width = "170" height = "220" class = "component" />
-
-          <text x = "115" y = "205" class = "label"> Registers </text>
-
-          <text x = "5"   y = "20"  class = "mem-label"> Read </text>
-          <text x = "5"   y = "36"  class = "mem-label"> register 1 </text>
-          <text id = "register-Read1-value" x = "5"  y = "53" class = "component-value"> </text>
-
-          <text x = "5"   y = "75"  class = "mem-label"> Read </text>
-          <text x = "5"   y = "91"  class = "mem-label"> register 2 </text>
-          <text id = "register-Read2-value" x = "5"  y = "109" class = "component-value"> </text>
-    
-          <text x = "5"   y = "130" class = "mem-label"> Write </text>
-          <text x = "5"   y = "146" class = "mem-label"> register </text>
-          <text id = "register-WriteReg-value" x = "5"  y = "164" class = "component-value"> </text>
-            
-          <text x = "5"   y = "182" class = "mem-label"> Write </text>
-          <text x = "5"   y = "197" class = "mem-label"> data </text>
-          <text id = "register-WriteData-value" x = "5"  y = "214" class = "component-value"> </text>
-
-          <text x = "115" y = "40"  class = "mem-label"> Read </text>
-          <text x = "110" y = "60"  class = "mem-label"> data 1 </text>
-          <text id = "register-ReadData1-value" x = "130"  y = "74" class = "component-value"> </text>
-          
-          <text x = "115" y = "130" class = "mem-label"> Read </text>
-          <text x = "110" y = "150" class = "mem-label"> data 2 </text>
-          <text id = "register-ReadData2-value" x = "130"  y = "164" class = "component-value"> </text>
-        </g>
-
-        <g id="data-memory-selected" transform = "translate(-500, -500)">
-          <rect x = "-10" y = "-10" width = "157" height = "217" class = "selected-component" />
-          <rect width = "140" height = "200" class = "component" />
-
-          <text x = "110" y = "165" class = "label"> Data </text>
-          <text x = "90"  y = "185" class = "label"> memory </text>
-
-          <text x = "5"   y = "45"  class = "mem-label"> Address </text>
-          <text id = "data-memory-address-value" x = "5"  y = "63" class = "component-value"></text>
-
-          <text x = "5"   y = "155" class = "mem-label"> Write </text>
-          <text x = "5"   y = "175" class = "mem-label"> data </text>
-          <text id = "data-memory-write-data-value" x = "5"  y = "135" class = "component-value"></text>
-
-          <text x = "85"  y = "65"  class = "mem-label"> Read </text>
-          <text x = "95"  y = "85"  class = "mem-label"> data </text>
-          <text id = "data-read-data-value" x = "100"  y = "100" class = "component-value"></text>
-        </g>
-
-        <g id="add-2-selected" transform = "translate(-500, -500)">
-          <rect x = "-10" y = "-60" width = "117" height = "243" class = "selected-component" />
-          <path d = "M50,25 L50,-20" class = "signal-line" marker-end = "url(#arrow)"/> 
-
-          <polygon points = "0,25 0,0 40,19 40,51 0,70 0,45 13,35" transform = "scale(2.5)" class = "component"/>
-
-          <text x = "60" y = "90" class = "label"> ALU </text>
-          
-          <text id = "add-2-input-1-value" x = "5"  y = "40" class = "component-value"></text>
-          <text id = "add-2-input-2-value" x = "5"  y = "145" class = "component-value"> </text>
-
-          <text id = "add-2-output-value" x = "65"  y = "115" class = "component-value"></text>
-          
-          <rect x = "0"  y = "-50" width = "25" height = "25" class = "component"/>
-          <text x = "12"  y = "-35" class = "label">N</text>
-          <text id = "add-2-N-value" x = "8"  y = "-10" class = "component-value"> 0 </text>
-
-          <rect x = "25" y = "-50" width = "25" height = "25" class = "component"/>
-          <text x = "37"  y = "-35" class = "label">Z</text>
-          <text id = "add-2-Z-value" x = "33"  y = "-10" class = "component-value"> 0 </text>
-          
-          <rect x = "50" y = "-50" width = "25" height = "25" class = "component"/>
-          <text x = "62"  y = "-35" class = "label">C</text>
-          <text id = "add-2-C-value" x = "58"  y = "-10" class = "component-value"> 0 </text>
-          
-          <rect x = "75" y = "-50" width = "25" height = "25" class = "component"/>
-          <text x = "87"  y = "-35" class = "label">V</text>
-          <text id = "add-2-V-value" x = "83"  y = "-10" class = "component-value"> 0 </text>
-        </g>
-
-      </g>
-      </svg>
-
+        </svg>
+      </div>
       <g class = "help-group" style = "display: none;">
       <!-- <g class = "help-group"> -->
         <div class = "help-overlay"></div>
