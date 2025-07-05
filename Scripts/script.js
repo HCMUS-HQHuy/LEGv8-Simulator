@@ -90,13 +90,10 @@ updateButtonState();
 /* Xử lý nhấn vào component để xem thông tin */
 const instructionMemoryGroup = document.getElementById('instruction-memory');
 const registerGroup = document.getElementById('register');
-const signExtendGroup = document.getElementById('sign-extend');
 const ALUGroup = document.getElementById('add-2');
-const shiftLeft2Group = document.getElementById('shift-left-2');
 const dataMemoryGroup = document.getElementById('data-memory');
 
 let clonedGroupPrevious = null;
-
 function component_selected(group, groupId, posX, posY, scale) {
     group.addEventListener('click', (event) => {
         // Nếu có bản sao trước đó, xóa nó
@@ -109,16 +106,11 @@ function component_selected(group, groupId, posX, posY, scale) {
         clonedGroupPrevious = document.getElementById(groupId);
         document.getElementById(groupId).setAttribute('transform', `translate(${posX}, ${posY}) scale(${scale})`);  // Di chuyển và phóng to gấp 2 lần
 
-        // Lắng nghe sự kiện click trên toàn bộ document
-        event.stopPropagation();
-        // Lắng nghe sự kiện click trên toàn bộ document để xóa bản sao nếu click ra ngoài
-        document.addEventListener('click', function handleClickOutside(event) {
-            // Kiểm tra nếu click ra ngoài clonedGroup
-            if (!document.getElementById(groupId).contains(event.target)) {
-                document.getElementById(groupId).setAttribute('transform', 'translate(-500, -500)');
-                document.removeEventListener('click', handleClickOutside);  // Loại bỏ sự kiện để không bị gọi lại
-            }
-        });
+    });
+
+    document.getElementById(groupId).addEventListener('click', function handleClickOutside() {
+        const groupElement = document.getElementById(groupId);
+        groupElement.setAttribute('transform', 'translate(-500, -500)');
     });
 }
 

@@ -333,7 +333,7 @@ body {
   position: absolute;
   background-color: var(--frame-bg-color);
 
-  z-index: 2;
+  z-index: 10;
 }
 .frame-button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
@@ -541,7 +541,7 @@ body {
   position: absolute;
   background-color: var(--frame-bg-color);
 
-  z-index: 2;
+  z-index: 10;
 }
 
 .help-text {
@@ -960,7 +960,7 @@ body {
   position: absolute;
   width: 70%;
   
-  z-index: 2;
+  z-index: 10;
 }
 .range-slider {
   -webkit-appearance: none; /* Xóa kiểu mặc định (Chrome, Safari) */
@@ -1032,7 +1032,7 @@ body {
   
   background-color: var(--frame-bg-color-blur);
   color: var(--control-color);
-  z-index: 2;
+  z-index: 10;
 }
 .command-box p {
   margin: 0; /* Loại bỏ khoảng cách ngoài của thẻ p */
