@@ -2,7 +2,18 @@ const MAXIMUM_DURATION = 5000
 const MININUM_DURATION = 500
 
 export let DURATION_ANIMATION = 2000;
-// DURATION_ANIMATION = 20;
+
+export function setDURATION_ANIMATION(val) {
+	DURATION_ANIMATION = val;
+}
+
+export function resetDURATION_ANIMATION() {
+	const rangeSlider = document.getElementById('range-slider');
+	const currentPercentage = rangeSlider.value;
+	rangeValue.textContent = `Speed: ${currentPercentage}%`;
+	DURATION_ANIMATION = MAXIMUM_DURATION - currentPercentage * (MAXIMUM_DURATION - MININUM_DURATION) / 100;
+}
+
 export const state = {
 	executing: false,
 	stepByStepMode: false,

@@ -66,6 +66,32 @@ function clearAll() {
 		state.currentStep = 6;
 		removeAllContent();
 	}, 2);
+
+	for (let i = 0; i <= 30; i++) {
+		const id = 'X' + i.toString().padStart(2, '0');
+		const el = document.getElementById(id);
+		if (el) el.textContent = '0x00000000';
+	}
+	const xzr = document.getElementById('XZR');
+	if (xzr) xzr.textContent = '0x00000000';
+
+	// 3. Clear all data memory cells
+	const memoryCells = document.querySelectorAll('#data-memory-table-values td');
+	memoryCells.forEach(cell => {
+		cell.textContent = '0x0000';
+	});
+
+}
+
+async function nextStep(results) {
+	if (instructionPos === -1) {
+		console.warn('warn instructionPos:', instructionPos);
+		return -1;
+	}
+	removeAllContent();
+	ComponentsBackup = cloneComponents(Components)
+	currentInstruction.update(results[instructionPos]);
+	return await generateSignal.start(Components);
 }
 
 async function execute(results) {
@@ -81,16 +107,12 @@ async function execute(results) {
 
 	isFinish = false;
 	while (isFinish === false) {
-		removeAllContent();
-		ComponentsBackup = cloneComponents(Components)
-		currentInstruction.update(results[instructionPos]);
-		instructionPos = await generateSignal.start(Components);
+		instructionPos = await nextStep(results);
 		if (instructionPos >= Components.InstructionMemory.instruction.length) {
 			currentInstruction.update(Number(instructionPos));
 			isFinish = true;
 			state.executing = false;
 		}
-		
 	}
 }
 
