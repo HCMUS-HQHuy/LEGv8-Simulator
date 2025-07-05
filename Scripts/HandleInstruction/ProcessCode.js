@@ -157,7 +157,7 @@ export function trigger() {
 		console.log("Stop/Replay one button clicked.");
 		state.executing = false;
 		isFinish = true;
-		generateSignal.initialize(null, true);
+		generateSignal.initialize(null, instructionPos, Components);
 		document.getElementById('start-stop-animation').click();
 	});
 
@@ -165,7 +165,7 @@ export function trigger() {
 		event.preventDefault();
 		state.executing = false;
 		isFinish = true;
-		generateSignal.initialize(null, true);
+		generateSignal.initialize(null, instructionPos, Components);
 		setDURATION_ANIMATION(1);
 		state.executing = true;
 		console.log('instructionPos1', instructionPos);

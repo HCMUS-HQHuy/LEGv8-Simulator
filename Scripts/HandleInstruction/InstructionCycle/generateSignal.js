@@ -352,16 +352,19 @@ function resetComponents(Components) {
 	);
 }
 
-export function initialize(code, onlysettime = false) {
-	setTimestamp(new Date());
-	if (onlysettime) return;
+export function initialize(code, currentInstruction = 0, components = null) {
+	if (components != null) {
+		setTimestamp(new Date());
+		components.PC.value = (BigInt(currentInstruction) << 2n) + components.PC.offset;
+		return;
+	}
 	const Components = getComponents();
 	resetComponents(Components)
 	watchDataMemory(Components.DataMemory);
 	watchRegisters(Components.Register);
 	watchFlags(Components.ALU);
 	Components.PC.value = Components.PC.offset;
-	
+
 	code.forEach(key => {
 		const encodedInstruction = encodeLegv8Instruction(key.parsed, (key.lineNumber - 1) << 2);
 		if (encodedInstruction.error) console.error(encodedInstruction.error);
