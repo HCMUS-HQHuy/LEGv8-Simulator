@@ -1,7 +1,7 @@
 import { R_TYPE_OPCODES, D_TYPE_OPCODES } from "../Compile/Define/Opcode.js";
 import { B_TYPE_OPCODES, CB_TYPE_OPCODES }  from "../Compile/Define/Opcode.js"
 import { B_COND_OPCODE_PREFIX, B_COND_CODES }  from "../Compile/Define/Opcode.js"
-import { I_TYPE_OPCODES }  from "../Compile/Define/Opcode.js"
+import { I_TYPE_OPCODES, ALU_CONTROL_CODE }  from "../Compile/Define/Opcode.js"
 
 export function computeOutputs(componentName, components) {
 	switch (componentName) {
@@ -154,7 +154,7 @@ function doALUOperation(currentState) {
         return a >= b;
     };
     switch (aluControlCode) {
-        case '0010': { // ADD
+        case ALU_CONTROL_CODE['ADD']: {
             resultBigInt = operand1 + operand2;
 
             vFlag = isSignedOverflow(operand1, operand2, resultBigInt) ? 1 : 0;
@@ -162,44 +162,43 @@ function doALUOperation(currentState) {
             break;
         }
 
-        case '0110': { // SUB
+        case ALU_CONTROL_CODE['SUB']: {
             resultBigInt = operand1 - operand2;
             vFlag = isSignedOverflow(operand1, ~operand2 + 1n, resultBigInt) ? 1 : 0;
             cFlag = isUnsignedBorrow(operand1 & MASK_64BIT, operand2 & MASK_64BIT) ? 1 : 0;
             break;
         }
 
-        case '0000': // AND
+        case ALU_CONTROL_CODE['AND']:
             resultBigInt = operand1 & operand2;
             break;
-        case '0001': // ORR
+        case ALU_CONTROL_CODE['ORR']:
             resultBigInt = operand1 | operand2;
             break;
-        case '1000': // EOR (XOR)
+        case ALU_CONTROL_CODE['EOR']: // (XOR)
             resultBigInt = operand1 ^ operand2;
             break;
 
-        case '1001': { // LSR (Logical Shift Right)
+        case ALU_CONTROL_CODE['LSR']: { // LSR (Logical Shift Right)
             const shamt = BigInt(parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2));
             resultBigInt = (operand1 & MASK_64BIT) >> shamt;
             break;
         }
 
-        case '1010': { // LSL (Logical Shift Left)
+        case ALU_CONTROL_CODE['LSL']: { // LSL (Logical Shift Left)
             const shamt = BigInt(parseInt(currentState.InstructionMemory?.Shamt_15_10 || 0, 2));
             resultBigInt = (operand1 << shamt) & MASK_64BIT;
             break;
         }
 
-        case '0111': // Pass B
+        case ALU_CONTROL_CODE['PassB']: // Pass B
             resultBigInt = operand2;
             break;
 
-        case '1101': // Pass A
+        case ALU_CONTROL_CODE['PassA']: // Pass A
             resultBigInt = operand1;
             break;
-
-        case '1111': // Invalid/Unknown
+            
         default:
             console.warn(`ALU Warning: Unknown ALU control code '${aluControlCode}'`);
             resultBigInt = 0n;
@@ -318,48 +317,42 @@ function updateALUControl(currentState) {
 
     switch (aluOpSignal) {
         case '00': // D-Type (LDUR/STUR) -> Address calculation
-            aluControlCode = '0010'; // ALU performs ADD
+            aluControlCode = ALU_CONTROL_CODE['ADD'];
             break;
 
         case '01': // B-Type & CB-Type -> Branching
-            aluControlCode = '0111'; // ALU performs SUB to check flags (for B.cond and CBZ/CBNZ)
+            aluControlCode = ALU_CONTROL_CODE['PassB'];
             break;
 
         case '10': // Handles ALL R-Type and I-Type instructions
-            // The ALU Control must now look at the opcode to determine the specific operation.
             
             // R-Type Instructions (check full 11-bit opcode)
-            if (fullOpcode === R_TYPE_OPCODES['ADD'])     { aluControlCode = '0010'; break; } 
-            if (fullOpcode === R_TYPE_OPCODES['SUB'])     { aluControlCode = '0110'; break; } 
-            if (fullOpcode === R_TYPE_OPCODES['AND'])     { aluControlCode = '0000'; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['ADD'])     { aluControlCode = ALU_CONTROL_CODE['ADD']; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['SUB'])     { aluControlCode = ALU_CONTROL_CODE['SUB']; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['AND'])     { aluControlCode = ALU_CONTROL_CODE['AND']; break; } 
             
-            if (fullOpcode === R_TYPE_OPCODES['ADDS'])     { aluControlCode = '0010'; break; } 
-            if (fullOpcode === R_TYPE_OPCODES['SUBS'])     { aluControlCode = '0110'; break; } 
-            if (fullOpcode === R_TYPE_OPCODES['ANDS'])     { aluControlCode = '0000'; break; }
+            if (fullOpcode === R_TYPE_OPCODES['ADDS'])     { aluControlCode = ALU_CONTROL_CODE['ADD']; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['SUBS'])     { aluControlCode = ALU_CONTROL_CODE['SUB']; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['ANDS'])     { aluControlCode = ALU_CONTROL_CODE['AND']; break; }
 
-            if (fullOpcode === R_TYPE_OPCODES['ORR'])     { aluControlCode = '0001'; break; } 
-            if (fullOpcode === R_TYPE_OPCODES['EOR'])     { aluControlCode = '1000'; break; } 
-            if (fullOpcode === R_TYPE_OPCODES['LSL'])     { aluControlCode = '1010'; break; } 
-            if (fullOpcode === R_TYPE_OPCODES['LSR'])     { aluControlCode = '1001'; break; } 
-            if (fullOpcode === R_TYPE_OPCODES['BR'])      { aluControlCode = '1101'; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['ORR'])     { aluControlCode = ALU_CONTROL_CODE['ORR']; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['EOR'])     { aluControlCode = ALU_CONTROL_CODE['EOR']; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['LSL'])     { aluControlCode = ALU_CONTROL_CODE['LSL']; break; } 
+            if (fullOpcode === R_TYPE_OPCODES['LSR'])     { aluControlCode = ALU_CONTROL_CODE['LSR']; break; }
 
             // I-Type Instructions (check 10-bit opcode prefix)
-            if (opcode10bit === I_TYPE_OPCODES['ADDI'])   { aluControlCode = '0010'; break; }
-            if (opcode10bit === I_TYPE_OPCODES['SUBI'])   { aluControlCode = '0110'; break; }
-            if (opcode10bit === I_TYPE_OPCODES['ADDIS'])  { aluControlCode = '0010'; break; }
-            if (opcode10bit === I_TYPE_OPCODES['SUBIS'])  { aluControlCode = '0110'; break; }
-            if (opcode10bit === I_TYPE_OPCODES['ANDI'])   { aluControlCode = '0000'; break; }
-            if (opcode10bit === I_TYPE_OPCODES['ORRI'])   { aluControlCode = '0001'; break; }
-            if (opcode10bit === I_TYPE_OPCODES['EORI'])   { aluControlCode = '1000'; break; }
-            if (opcode10bit === I_TYPE_OPCODES['ANDIS'])  { aluControlCode = '0000'; break; }
+            if (opcode10bit === I_TYPE_OPCODES['ADDI'])   { aluControlCode = ALU_CONTROL_CODE['ADD']; break; }
+            if (opcode10bit === I_TYPE_OPCODES['SUBI'])   { aluControlCode = ALU_CONTROL_CODE['SUB']; break; }
+            if (opcode10bit === I_TYPE_OPCODES['ADDIS'])  { aluControlCode = ALU_CONTROL_CODE['ADD']; break; }
+            if (opcode10bit === I_TYPE_OPCODES['SUBIS'])  { aluControlCode = ALU_CONTROL_CODE['SUB']; break; }
+            if (opcode10bit === I_TYPE_OPCODES['ANDI'])   { aluControlCode = ALU_CONTROL_CODE['AND']; break; }
+            if (opcode10bit === I_TYPE_OPCODES['ORRI'])   { aluControlCode = ALU_CONTROL_CODE['ORR']; break; }
+            if (opcode10bit === I_TYPE_OPCODES['EORI'])   { aluControlCode = ALU_CONTROL_CODE['EOR']; break; }
+            if (opcode10bit === I_TYPE_OPCODES['ANDIS'])  { aluControlCode = ALU_CONTROL_CODE['AND']; break; }
 
             // If we reach here, no specific R-type or I-type opcode was matched.
             console.warn(`ALU Control: Unknown R/I-type opcode ${fullOpcode} for ALUOp='10'`);
             break;
-
-        // NOTE: Case '11' is now removed as per your instruction.
-        // It could be used for other instruction types in the future if needed.
-
         case 'XX': // Error case from the main Control Unit
         default:
             aluControlCode = '1111'; // ERROR code

@@ -54,3 +54,15 @@ export const B_COND_CODES = {
     'GE': '1010', // Greater or Equal (signed): N=V
     'HS': '0010', // Higher or Same (unsigned) / Carry Set: C=1
 };
+
+export const ALU_CONTROL_CODE = {
+    'ADD': '0010',
+    'SUB': '0110',
+    'AND': '0000',
+    'ORR': '0001',
+    'EOR': '1000',
+    'LSR': '1001',
+    'LSL': '1010',
+    'PassB': '0111',
+    'PassA': '1101'
+}
