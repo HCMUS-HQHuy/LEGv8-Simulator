@@ -34,35 +34,29 @@ export function buildLabelTable(codeLines, startAddress = 0, instructionSize = 4
     return labelTable;
 }
 
-export function parseLegv8Instruction(line, labelTable = {}) {
-    if (!line) {
-        return null;
-    }
-
-    let cleanedLine = line.replace(/(\/\/|;).*/, '').trim();
-
-    const labelDefinitionMatch = cleanedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):$/);
-    if (labelDefinitionMatch && cleanedLine.endsWith(':') && cleanedLine.indexOf(' ') === -1) {
-        return { type: 'LABEL_DEF', label: labelDefinitionMatch[1], error: null };
-    }
+export function parseLegv8Instruction(cleanedLine, labelTable = {}) {
     if (!cleanedLine) {
         return null;
     }
+
+    const labelDefinitionMatch = cleanedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):$/);
+
+    if (labelDefinitionMatch && cleanedLine.endsWith(':') && cleanedLine.indexOf(' ') === -1) {
+        console.error("parseLegv8Instruction: cleanedLine includes LABEL");
+        return { type: 'LABEL_DEF', label: labelDefinitionMatch[1], error: null };
+    }
+
     const parts = cleanedLine.split(/\s+/);
     let mnemonic = parts[0].toUpperCase();
     const operandString = parts.slice(1).join(' ');
   
     if (mnemonic.includes(':')) {
-        const splitByColon = mnemonic.split(':');
-        mnemonic = splitByColon[1]?.toUpperCase(); // Lấy mnemonic sau dấu :
-        if (!mnemonic) { // Nếu chỉ có "Label:" và không có lệnh theo sau trên dòng
-            return { type: 'LABEL_DEF', label: splitByColon[0], error: null };
-        }
+        console.error("parseLegv8Instruction: cleanedLine includes LABEL");
+        return;
     }
   
-  
     const result = {
-        instruction: cleanedLine, // Lưu lại dòng lệnh gốc đã clean
+        instruction: cleanedLine,
         mnemonic: mnemonic,
         operands: [],
         type: 'UNKNOWN',
