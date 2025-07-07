@@ -22,7 +22,6 @@ export function getResult() {
         if (!cleanedLine) {
             continue;
         }
-        // console.log('line: ', effectiveLineCounter, cleanedLine);
 
         // Tách nhãn và lệnh
         const labelMatch = cleanedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
@@ -42,12 +41,9 @@ export function getResult() {
             const parsedInstruction = parseLegv8Instruction(instructionPart, labelTable);
 
             if (!parsedInstruction || parsedInstruction.error) {
-                // Xử lý lỗi: Hiển thị dòng lỗi
-                // console.error(`Error parsing line ${i + 1}: ${parsedInstruction?.error || 'Unknown error'}`);
                 lineHTML += `${instructionPart}`;
                 return `Error parsing line ${i + 1}: ${parsedInstruction?.error || 'Unknown error'}`;
             } else {
-                // Format lại lệnh cho đẹp
                 const mnemonic = parsedInstruction.mnemonic.toUpperCase();
                 const ops = parsedInstruction.operands.join(', ');
                 const formattedInstruction = `${mnemonic} ${ops}`;
@@ -55,15 +51,15 @@ export function getResult() {
                 lineHTML += formattedInstruction;
 
                 parsedResults.push({
-                    lineNumber: effectiveLineCounter, // Lưu số dòng hiệu lực
-                    assemblyInstruction: `${mnemonic} ${ops}`, // Lưu lệnh đã format
+                    lineNumber: effectiveLineCounter,
+                    assemblyInstruction: `${mnemonic} ${ops}`,
                     parsed: parsedInstruction
                 });
             }
             if (!labelName) {
                 lineHTML = `${lineHTML}`;
             }
-            effectiveLineCounter++; 
+            effectiveLineCounter++;
             formattedCodeHTML += lineHTML + '\n';
             lineHTML = '';
         }

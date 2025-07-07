@@ -16,13 +16,11 @@ export function buildLabelTable(codeLines, startAddress = 0, instructionSize = 4
             continue;
         }
 
-        // 3. Tìm kiếm định nghĩa nhãn (ví dụ: "Loop:")
         const labelMatch = cleanedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
 
         if (labelMatch) {
             const labelName = labelMatch[1];
             const instructionPart = labelMatch[2].trim();
-            // console.log(labelName, ' ', instructionIndex, instructionPart);
             if (labelTable.hasOwnProperty(labelName)) {
                 console.warn(`Warning: Label "${labelName}" is redefined.`);
             }
@@ -36,7 +34,7 @@ export function buildLabelTable(codeLines, startAddress = 0, instructionSize = 4
     return labelTable;
 }
 
-export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTable làm tham số tùy chọn
+export function parseLegv8Instruction(line, labelTable = {}) {
     if (!line) {
         return null;
     }
@@ -45,7 +43,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
 
     const labelDefinitionMatch = cleanedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):$/);
     if (labelDefinitionMatch && cleanedLine.endsWith(':') && cleanedLine.indexOf(' ') === -1) {
-        return { type: 'LABEL_DEF', label: labelDefinitionMatch[1], error: null }; // Trả về thông tin nhãn nếu muốn
+        return { type: 'LABEL_DEF', label: labelDefinitionMatch[1], error: null };
     }
     if (!cleanedLine) {
         return null;
@@ -56,7 +54,6 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
   
     if (mnemonic.includes(':')) {
         const splitByColon = mnemonic.split(':');
-        // labelName = splitByColon[0]; // Nhãn này đã được xử lý ở buildLabelTable
         mnemonic = splitByColon[1]?.toUpperCase(); // Lấy mnemonic sau dấu :
         if (!mnemonic) { // Nếu chỉ có "Label:" và không có lệnh theo sau trên dòng
             return { type: 'LABEL_DEF', label: splitByColon[0], error: null };
@@ -200,7 +197,7 @@ export function parseLegv8Instruction(line, labelTable = {}) { // Thêm labelTab
     if (result.error || (result.mnemonic && result.type !== 'UNKNOWN' && result.type !== 'LABEL_DEF') || result.type === 'LABEL_DEF') {
         return result;
     }
-    return null; // Bỏ qua các dòng không parse được hoàn toàn hoặc không phải lệnh/nhãn
+    return null;
 }
 
 function parseRegisterNumber(regString) {
