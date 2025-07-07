@@ -39,13 +39,6 @@ export function parseLegv8Instruction(cleanedLine, labelTable = {}) {
         return null;
     }
 
-    const labelDefinitionMatch = cleanedLine.match(/^([a-zA-Z_][a-zA-Z0-9_]*):$/);
-
-    if (labelDefinitionMatch && cleanedLine.endsWith(':') && cleanedLine.indexOf(' ') === -1) {
-        console.error("parseLegv8Instruction: cleanedLine includes LABEL");
-        return { type: 'LABEL_DEF', label: labelDefinitionMatch[1], error: null };
-    }
-
     const parts = cleanedLine.split(/\s+/);
     let mnemonic = parts[0].toUpperCase();
     const operandString = parts.slice(1).join(' ');
@@ -75,7 +68,7 @@ export function parseLegv8Instruction(cleanedLine, labelTable = {}) {
         const bCondMatch = mnemonic.match(/^B\.(EQ|NE|HS|LO|HI|LS|GE|LT|GT|LE)$/i);
         const registerRegex = /^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i;
 
-        if (['B', 'BL'].includes(mnemonic)) {
+        if (Object.keys(B_TYPE_OPCODES).includes(mnemonic)) {
             if (opCount === 1) {
                 result.type = 'B';
                 const labelName = ops[0];
@@ -112,7 +105,7 @@ export function parseLegv8Instruction(cleanedLine, labelTable = {}) {
             } else {
                 throw new Error(`Invalid operands for B.cond instruction ${mnemonic}. Expected a single label.`);
             }
-        } else if (['CBZ', 'CBNZ'].includes(mnemonic)) {
+        } else if (Object.keys(CB_TYPE_OPCODES).includes(mnemonic)) {
             if (opCount === 2 && ops[0].match(registerRegex)) {
                 result.type = 'CB';
                 const labelName = ops[1];
@@ -126,29 +119,21 @@ export function parseLegv8Instruction(cleanedLine, labelTable = {}) {
                 throw new Error(`Invalid operands for CB-type instruction ${mnemonic}`);
             }
         }
-        // --- GIỮ NGUYÊN CÁC PHẦN PARSE KHÁC (R, D, I, IW, SYS, NOP) ---
-        else if (['ADD', 'SUB', 'AND', 'ORR', 'EOR', 'ADDS', 'SUBS', 'ANDS'].includes(mnemonic)) {
+        else if (Object.keys(R_TYPE_OPCODES).includes(mnemonic)) {
              if (opCount === 3 && ops[0].match(registerRegex) && ops[1].match(registerRegex) && ops[2].match(registerRegex)) {
                 result.type = 'R';
                 result.structuredOperands = { Rd: ops[0], Rn: ops[1], Rm: ops[2] };
             } else {
                  throw new Error(`Invalid operands for R-type instruction ${mnemonic}`);
             }
-        } else if (['ADDI', 'SUBI', 'SUBIS', 'ADDIS', 'ANDIS'].includes(mnemonic)) { // ARITHMETIC I-types
+        } else if (Object.keys(I_TYPE_OPCODES).includes(mnemonic)) { // ARITHMETIC I-types
              if (opCount === 3 && ops[0].match(registerRegex) && ops[1].match(registerRegex) && ops[2].match(/^#-?\d+$/)) {
                 result.type = 'I';
                 result.structuredOperands = { Rd: ops[0], Rn: ops[1], immediate: ops[2] };
             } else {
                 throw new Error(`Invalid operands for Arithmetic I-type instruction ${mnemonic}. Expected Rd, Rn, #decimal_immediate`);
             }
-        } else if (['ANDI', 'ORRI', 'EORI'].includes(mnemonic)) { // LOGICAL I-types
-            if (opCount === 3 && ops[0].match(registerRegex) && ops[1].match(registerRegex) && ops[2].match(/^#-?\d+$/)) {
-                result.type = 'I';
-                result.structuredOperands = { Rd: ops[0], Rn: ops[1], immediate: ops[2] };
-            } else {
-                throw new Error(`Invalid operands for Logical I-type instruction ${mnemonic}. Expected Rd, Rn, #decimal_immediate`);
-            }
-        } else if (['LDUR', 'STUR'].includes(mnemonic)) {
+        } else if (Object.keys(D_TYPE_OPCODES).includes(mnemonic)) {
             if (opCount === 2 && ops[0].match(registerRegex) && ops[1].match(/^\[X([0-9]|1[0-9]|2[0-9]|30|ZR)\s*(,\s*#-?\d+)?\s*\]$/i)) {
                 result.type = 'D';
                 const memMatch = ops[1].match(/^\[ *(X(?:[0-9]|1[0-9]|2[0-9]|30|ZR)) *(?:, *#(-?\d+))? *\]$/i);
@@ -164,16 +149,6 @@ export function parseLegv8Instruction(cleanedLine, labelTable = {}) {
             } else {
                 throw new Error(`Invalid operands for D-type instruction ${mnemonic}`);
             }
-        } else {
-             // Kiểm tra xem có phải là định nghĩa nhãn không (trường hợp "LABEL:" rồi hết)
-             // Phần này có thể không cần nếu việc lọc dòng chỉ chứa nhãn đã tốt
-             if (opCount === 0 && mnemonic.endsWith(':')) {
-                  result.type = 'LABEL_DEF';
-                  result.label = mnemonic.slice(0, -1);
-                  result.mnemonic = null; // Không phải lệnh
-             } else if (result.type === 'UNKNOWN') {
-                 result.error = `Unknown mnemonic or invalid operands: ${mnemonic}`;
-             }
         }
     } catch (e) {
         result.error = e.message;
