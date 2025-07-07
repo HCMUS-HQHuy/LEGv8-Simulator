@@ -183,8 +183,11 @@ export function trigger() {
 
 		setDURATION_ANIMATION();
 		state.executing = true;
+		const prevstate = state.stepByStepMode;
+		state.stepByStepMode = false;
 		instructionPos = await nextStep(results);
 		ComponentsBackup = cloneComponents(Components);
+		state.stepByStepMode = prevstate;
 		state.executing = false;
 		resetDURATION_ANIMATION();
 		uncoverScreen();
