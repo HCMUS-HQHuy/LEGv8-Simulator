@@ -56,7 +56,7 @@ export function parseLegv8Instruction(cleanedLine, labelTable = {}) {
     }
   
     const result = {
-        instruction: cleanedLine,
+        instruction: `${mnemonic}\t${operandString}`,
         mnemonic: mnemonic,
         operands: [],
         type: 'UNKNOWN',
