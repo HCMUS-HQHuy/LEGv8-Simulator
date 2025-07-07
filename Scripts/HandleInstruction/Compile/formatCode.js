@@ -42,16 +42,11 @@ export function getResult() {
             if (!parsedInstruction || parsedInstruction.error) {
                 lineHTML += `${instructionPart}`;
                 return `Error parsing line ${i + 1}: ${parsedInstruction?.error || 'Unknown error'}`;
-            } else {
-                const mnemonic = parsedInstruction.mnemonic.toUpperCase();
-                const ops = parsedInstruction.operands.join(', ');
-                const formattedInstruction = `${mnemonic} ${ops}`;
-                
-                lineHTML += formattedInstruction;
+            } else {                
+                lineHTML += parsedInstruction.instruction;
 
                 parsedResults.push({
                     lineNumber: effectiveLineCounter,
-                    assemblyInstruction: `${mnemonic} ${ops}`,
                     parsed: parsedInstruction
                 });
             }
