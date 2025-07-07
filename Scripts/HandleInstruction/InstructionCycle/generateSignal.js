@@ -360,7 +360,7 @@ export function initialize(code, Components) {
 	if (code != null) {
 		Components.PC.value = Components.PC.offset;
 		code.forEach(key => {
-			const encodedInstruction = encodeLegv8Instruction(key.parsed, (key.lineNumber - 1) << 2);
+			const encodedInstruction = encodeLegv8Instruction(key.parsed, (key.instructionIndex - 1) << 2);
 			if (encodedInstruction.error) console.error(encodedInstruction.error);
 	
 			Components.InstructionMemory.instruction.push(encodedInstruction);

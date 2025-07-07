@@ -10,10 +10,12 @@ export function getResult() {
     
     const codeLines = instructionTextarea.value.split(/\r?\n/);
     const labelTable = buildLabelTable(codeLines);
-    
+    const offset = (Object.keys(labelTable).length > 0 ? '\t' : '');
+
     const parsedResults = []; // Lưu trữ các lệnh đã parse thành công
     let formattedCodeHTML = ''; // Chuỗi HTML để hiển thị code đã format
     let effectiveLineCounter = 1; // Bắt đầu đếm từ dòng 1
+    let currentLineIndex = 1;
     let lineHTML = '';
 
     for (const rawLineContent of codeLines) {
@@ -34,7 +36,8 @@ export function getResult() {
 
         // Thêm nhãn nếu có
         if (labelName) {
-            lineHTML += `${labelName}: `;
+            formattedCodeHTML += `${labelName}:\n`;
+            currentLineIndex++;
         }
         if (instructionPart) {
             const parsedInstruction = parseLegv8Instruction(instructionPart, labelTable);
@@ -46,14 +49,14 @@ export function getResult() {
                 lineHTML += parsedInstruction.instruction;
 
                 parsedResults.push({
-                    lineNumber: effectiveLineCounter,
+                    lineNumber: currentLineIndex,
+                    instructionIndex: effectiveLineCounter,
                     parsed: parsedInstruction
                 });
             }
-            if (!labelName) {
-                lineHTML = `${lineHTML}`;
-            }
+            lineHTML = `${offset}${lineHTML}`;
             effectiveLineCounter++;
+            currentLineIndex++;
             formattedCodeHTML += lineHTML + '\n';
             lineHTML = '';
         }

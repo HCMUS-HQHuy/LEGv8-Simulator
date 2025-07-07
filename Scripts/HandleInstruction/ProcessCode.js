@@ -89,7 +89,7 @@ async function nextStep(results) {
 	}
 
 	if (instructionPos >= Components.InstructionMemory.instruction.length) {
-		currentInstruction.update(Number(instructionPos));
+		currentInstruction.update(-1);
 		return instructionPos;
 	}
 	removeAllContent();
@@ -113,7 +113,7 @@ async function execute(results) {
 	while (isFinish === false) {
 		instructionPos = await nextStep(results);
 		if (instructionPos >= Components.InstructionMemory.instruction.length) {
-			currentInstruction.update(Number(instructionPos));
+			currentInstruction.update(-1);
 			isFinish = true;
 			state.executing = false;
 		}
