@@ -9,8 +9,8 @@ export const R_TYPE_OPCODES = {
     'SUBS': '11101011000', // S-bit (at index 2) is 1
     'ANDS': '11101010000', // S-bit (at index 2) is 1
 
-    'LSL':  '11010011011',
-    'LSR':  '11010011010',
+    // 'LSL':  '11010011011',
+    // 'LSR':  '11010011010',
 };
 
 export const D_TYPE_OPCODES = {

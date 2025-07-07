@@ -44,7 +44,7 @@ export function getResult() {
             console.log(parsedInstruction);
             if (!parsedInstruction || parsedInstruction.error) {
                 lineHTML += `${instructionPart}`;
-                return `Error parsing line ${i + 1}: ${parsedInstruction?.error || 'Unknown error'}`;
+                return `Error parsing line ${currentLineIndex}: ${parsedInstruction?.error || 'Unknown error'}`;
             } else {                
                 lineHTML += parsedInstruction.instruction;
 

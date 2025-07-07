@@ -65,7 +65,7 @@ export function parseLegv8Instruction(cleanedLine, labelTable = {}) {
         const opCount = result.operands.length;
         const ops = result.operands;
 
-        const bCondMatch = mnemonic.match(/^B\.(EQ|NE|HS|LO|HI|LS|GE|LT|GT|LE)$/i);
+        const bCondMatch = mnemonic.match(/^B\.([A-Z]{2})$/i);
         const registerRegex = /^X([0-9]|1[0-9]|2[0-9]|30|ZR)$/i;
 
         if (Object.keys(B_TYPE_OPCODES).includes(mnemonic)) {
@@ -231,188 +231,182 @@ function toBinarySign(number, bits) {
     return binaryString.padStart(bits, '0');
 }
 
-export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddress = 0) {
+export function encodeLegv8Instruction(parsedInstruction, currentInstructionAddress = 0, space="") {
     if (!parsedInstruction || parsedInstruction.error) {
         const errorMsg = parsedInstruction ? parsedInstruction.error : "Parsed instruction is null.";
         return { error: `Invalid or errored parsed instruction: ${errorMsg}` };
     }
 
     const { mnemonic, type, structuredOperands, targetAddress } = parsedInstruction;
-
-    try {
-        if (type === 'R') {
-            const opcode = R_TYPE_OPCODES[mnemonic];
-            if (!opcode) return { error: `Unsupported R-type mnemonic: ${mnemonic}` };
-            const rdNum = parseRegisterNumber(structuredOperands.Rd);
-            const rnNum = parseRegisterNumber(structuredOperands.Rn);
-            const rmNum = parseRegisterNumber(structuredOperands.Rm);
-            const shamt = 0;
-            const rdBin = toBinary(rdNum, 5);
-            const rnBin = toBinary(rnNum, 5);
-            const rmBin = toBinary(rmNum, 5);
-            const shamtBin = toBinary(shamt, 6);
-            const machineCode = `${opcode}${rmBin}${shamtBin}${rnBin}${rdBin}`;
-            if (machineCode.length !== 32) return { error: `R-type: Generated code length is not 32 bits (${machineCode.length})` };
-            return machineCode;
-        } else if (type === 'R_Shift') {
-             // Xử lý R-type với shift immediate (LSL, LSR, ASR)
-            const opcode = R_TYPE_OPCODES[mnemonic]; // Cần opcode cụ thể cho LSL/LSR R-type
-            if (!opcode) return { error: `Unsupported R-shift mnemonic: ${mnemonic}` };
-            const rdNum = parseRegisterNumber(structuredOperands.Rd);
-            const rnNum = parseRegisterNumber(structuredOperands.Rn);
-            const rmNum = 0; // Hoặc giá trị khác tùy theo spec
-            const shamtMatch = structuredOperands.shift_imm.match(/^#(\d+)$/);
-            if (!shamtMatch) return { error: `Invalid shift amount format: ${structuredOperands.shift_imm}`};
-            const shamt = parseInt(shamtMatch[1], 10);
-            if (shamt < 0 || shamt > 63) return { error: `Shift amount ${shamt} out of range (0-63)`};
-            const rdBin = toBinary(rdNum, 5);
-            const rnBin = toBinary(rnNum, 5);
-            const rmBin = toBinary(rmNum, 5);
-            const shamtBin = toBinary(shamt, 6);
-            const machineCode = `${opcode}${rmBin}${shamtBin}${rnBin}${rdBin}`;
-            if (machineCode.length !== 32) return { error: `R-shift: Generated code length is not 32 bits (${machineCode.length})` };
-            return machineCode;
-
-
-        } else if (type === 'I') {
-            // Format: Opcode(10), Immediate(12), Rn(5), Rd(5)
-            const opcodeDetails = I_TYPE_OPCODES[mnemonic]; // Ví dụ: I_TYPE_OPCODES = { 'ADDI': '1001000100', ... }
-            if (!opcodeDetails) return { error: `Unsupported I-type mnemonic: ${mnemonic}` };
-            const rdNum = parseRegisterNumber(structuredOperands.Rd);
-            const rnNum = parseRegisterNumber(structuredOperands.Rn);
-            const immStr = structuredOperands.immediate.replace('#', '');
-            const immediate = parseInt(immStr, 10);
-
-            // Kiểm tra phạm vi immediate cho I-type (12-bit signed: -2048 to 2047)
-            if (immediate < -2048 || immediate > 2047) {
-                return { error: `I-type immediate ${immediate} out of 12-bit signed range for ${mnemonic}` };
-            }
-
-            const rdBin = toBinary(rdNum, 5);
-            const rnBin = toBinary(rnNum, 5);
-            const immediateBin = toBinary(immediate, 12); // 12-bit immediate
-
-            const machineCode = `${opcodeDetails}${immediateBin}${rnBin}${rdBin}`;
-            if (machineCode.length !== 32) return { error: `I-type: Generated code length is not 32 bits (${machineCode.length})` };
-            return machineCode;
-        } else if (type === 'D') {
-            // Xử lý D-type
-            const opcode = D_TYPE_OPCODES[mnemonic];
-            if (!opcode) return { error: `Unsupported D-type mnemonic: ${mnemonic}` };
-            const rtNum = parseRegisterNumber(structuredOperands.Rt);
-            const rnNum = parseRegisterNumber(structuredOperands.Rn);
-            let immediateStr = structuredOperands.address_imm.replace('#', '');
-            const immediate = parseInt(immediateStr, 10);
-
-            // Kiểm tra phạm vi immediate cho D-type (9-bit signed: -256 to 255)
-            if (immediate < -256 || immediate > 255) {
-                return { error: `D-type offset ${immediate} out of 9-bit signed range for ${mnemonic}` };
-            }
-            const op2 = "00"; // op2 field for LDUR/STUR
-
-            const rtBin = toBinary(rtNum, 5);
-            const rnBin = toBinary(rnNum, 5);
-            const immediateBin = toBinary(immediate, 9); // 9-bit offset
-            // Format: Opcode(11) DT_address(9) op2(2) Rn(5) Rt(5)
-            const machineCode = `${opcode}${immediateBin}${op2}${rnBin}${rtBin}`;
-            if (machineCode.length !== 32) return { error: `D-type: Generated code length is not 32 bits (${machineCode.length})` };
-            return machineCode;
-            
-        } else if (type === 'B') {
-            const opcode = B_TYPE_OPCODES[mnemonic];
-            if (!opcode) {
-                return { error: `Unsupported B-type mnemonic: ${mnemonic}` };
-            }
-            if (targetAddress === null || targetAddress === undefined) {
-                return { error: `B-type instruction ${mnemonic} to label "${structuredOperands.label}" requires target address (label not found or not resolved).`};
-            }
-
-            const byteOffset = targetAddress - currentInstructionAddress;
-            if (byteOffset % 4 !== 0) {
-                return { error: `B-type target address ${targetAddress} for ${mnemonic} is not word aligned relative to ${currentInstructionAddress}.`};
-            }
-            const wordOffset = byteOffset / 4;
-
-            const maxOffsetB = (1 << 25) - 1;
-            const minOffsetB = -(1 << 25);
-            if (wordOffset < minOffsetB || wordOffset > maxOffsetB) {
-                return { error: `B-type offset ${wordOffset} (for label ${structuredOperands.label}) out of 26-bit signed range for ${mnemonic}.` };
-            }
-
-            const immediateBin = toBinarySign(wordOffset, 26); // 26-bit immediate (word offset)
-
-            const machineCode = `${opcode}${immediateBin}`;
-            if (machineCode.length !== 32) return { error: `B-type: Generated code length is not 32 bits (${machineCode.length})` };
-            return machineCode;
-
-        } else if (type === 'CB') {
-            const opcode = CB_TYPE_OPCODES[mnemonic];
-            if (!opcode) {
-                return { error: `Unsupported CB-type mnemonic: ${mnemonic}` };
-            }
-            if (targetAddress === null || targetAddress === undefined) {
-                return { error: `CB-type instruction ${mnemonic} to label "${structuredOperands.label}" requires target address.`};
-            }
-
-            const rtNum = parseRegisterNumber(structuredOperands.Rt);
-            const rtBin = toBinary(rtNum, 5);
-
-            const byteOffset = targetAddress - currentInstructionAddress;
-            if (byteOffset % 4 !== 0) {
-                return { error: `CB-type target address ${targetAddress} for ${mnemonic} is not word aligned relative to ${currentInstructionAddress}.`};
-            }
-            const wordOffset = byteOffset / 4;
-
-            const maxOffsetCB = (1 << 18) - 1;
-            const minOffsetCB = -(1 << 18);
-            if (wordOffset < minOffsetCB || wordOffset > maxOffsetCB) {
-                return { error: `CB-type offset ${wordOffset} (for label ${structuredOperands.label}) out of 19-bit signed range for ${mnemonic}.` };
-            }
-
-            const immediateBin = toBinarySign(wordOffset, 19); // 19-bit immediate (word offset)
-
-            const machineCode = `${opcode}${immediateBin}${rtBin}`;
-            if (machineCode.length !== 32) return { error: `CB-type: Generated code length is not 32 bits (${machineCode.length})` };
-            return machineCode;
-        } else if (type === 'B_COND') {
-
-            const opcodeBase = B_COND_OPCODE_PREFIX;
-            const condition = structuredOperands.condition;
-            const conditionCode = B_COND_CODES[condition];
-
-            if (!conditionCode) {
-                return { error: `Invalid condition for B.cond: ${condition}` };
-            }
-
-            if (targetAddress === null || targetAddress === undefined) {
-                return { error: `B.cond instruction to label "${structuredOperands.label}" requires target address.`};
-            }
-
-            const byteOffset = targetAddress - currentInstructionAddress;
-            if (byteOffset % 4 !== 0) {
-                return { error: `B.cond target address ${targetAddress} is not word aligned.`};
-            }
-            const wordOffset = byteOffset / 4;
-
-            // Kiểm tra phạm vi cho offset 19-bit
-            const maxOffsetBCond = (1 << 18) - 1; // 2^(19-1) - 1
-            const minOffsetBCond = -(1 << 18);   // -2^(19-1)
-            if (wordOffset < minOffsetBCond || wordOffset > maxOffsetBCond) {
-                return { error: `B.cond offset ${wordOffset} out of 19-bit signed range.` };
-            }
-
-            const immediateBin = toBinarySign(wordOffset, 19); // 19-bit immediate (word offset)
-            
-            const condField = '0' + conditionCode; // Thêm bit 0 để đủ 5 bit
-            const finalMachineCode = `${opcodeBase}${immediateBin}${condField}`;
-            if (finalMachineCode.length !== 32) return { error: `B.cond: Generated code length is not 32 bits (${finalMachineCode.length})` };
-            
-            return finalMachineCode;
-        } else {
-            return { error: `Unsupported instruction type for encoding: ${type}` };
-        }
-    } catch (e) {
-        // Bắt lỗi từ các hàm helper (parseRegister, toBinary)
-        return { error: e.message };
+    if (type === 'R') {
+        const opcode = R_TYPE_OPCODES[mnemonic];
+        if (!opcode) return { error: `Unsupported R-type mnemonic: ${mnemonic}` };
+        const rdNum = parseRegisterNumber(structuredOperands.Rd);
+        const rnNum = parseRegisterNumber(structuredOperands.Rn);
+        const rmNum = parseRegisterNumber(structuredOperands.Rm);
+        const shamt = 0;
+        const rdBin = toBinary(rdNum, 5);
+        const rnBin = toBinary(rnNum, 5);
+        const rmBin = toBinary(rmNum, 5);
+        const shamtBin = toBinary(shamt, 6);
+        const machineCode = `${opcode}${space}${rmBin}${space}${shamtBin}${space}${rnBin}${space}${rdBin}`;
+        return machineCode;
     }
+
+    if (type === 'R_Shift') {
+            // Xử lý R-type với shift immediate (LSL, LSR, ASR)
+        const opcode = R_TYPE_OPCODES[mnemonic]; // Cần opcode cụ thể cho LSL/LSR R-type
+        if (!opcode) return { error: `Unsupported R-shift mnemonic: ${mnemonic}` };
+        const rdNum = parseRegisterNumber(structuredOperands.Rd);
+        const rnNum = parseRegisterNumber(structuredOperands.Rn);
+        const rmNum = 0; // Hoặc giá trị khác tùy theo spec
+        const shamtMatch = structuredOperands.shift_imm.match(/^#(\d+)$/);
+        if (!shamtMatch) return { error: `Invalid shift amount format: ${structuredOperands.shift_imm}`};
+        const shamt = parseInt(shamtMatch[1], 10);
+        if (shamt < 0 || shamt > 63) return { error: `Shift amount ${shamt} out of range (0-63)`};
+        const rdBin = toBinary(rdNum, 5);
+        const rnBin = toBinary(rnNum, 5);
+        const rmBin = toBinary(rmNum, 5);
+        const shamtBin = toBinary(shamt, 6);
+        const machineCode = `${opcode}${space}${rmBin}${space}${shamtBin}${space}${rnBin}${space}${rdBin}`;
+        return machineCode;
+    }
+    
+    if (type === 'I') {
+        // Format: Opcode(10), Immediate(12), Rn(5), Rd(5)
+        const opcodeDetails = I_TYPE_OPCODES[mnemonic]; // Ví dụ: I_TYPE_OPCODES = { 'ADDI': '1001000100', ... }
+        if (!opcodeDetails) return { error: `Unsupported I-type mnemonic: ${mnemonic}` };
+        const rdNum = parseRegisterNumber(structuredOperands.Rd);
+        const rnNum = parseRegisterNumber(structuredOperands.Rn);
+        const immStr = structuredOperands.immediate.replace('#', '');
+        const immediate = parseInt(immStr, 10);
+
+        // Kiểm tra phạm vi immediate cho I-type (12-bit signed: -2048 to 2047)
+        if (immediate < -2048 || immediate > 2047) {
+            return { error: `I-type immediate ${immediate} out of 12-bit signed range for ${mnemonic}` };
+        }
+
+        const rdBin = toBinary(rdNum, 5);
+        const rnBin = toBinary(rnNum, 5);
+        const immediateBin = toBinary(immediate, 12); // 12-bit immediate
+
+        const machineCode = `${opcodeDetails}${space}${immediateBin}${space}${rnBin}${space}${rdBin}`;
+        return machineCode;
+    } 
+    
+    if (type === 'D') {
+        // Xử lý D-type
+        const opcode = D_TYPE_OPCODES[mnemonic];
+        if (!opcode) return { error: `Unsupported D-type mnemonic: ${mnemonic}` };
+        const rtNum = parseRegisterNumber(structuredOperands.Rt);
+        const rnNum = parseRegisterNumber(structuredOperands.Rn);
+        let immediateStr = structuredOperands.address_imm.replace('#', '');
+        const immediate = parseInt(immediateStr, 10);
+
+        // Kiểm tra phạm vi immediate cho D-type (9-bit signed: -256 to 255)
+        if (immediate < -256 || immediate > 255) {
+            return { error: `D-type offset ${immediate} out of 9-bit signed range for ${mnemonic}` };
+        }
+        const op2 = "00"; // op2 field for LDUR/STUR
+
+        const rtBin = toBinary(rtNum, 5);
+        const rnBin = toBinary(rnNum, 5);
+        const immediateBin = toBinary(immediate, 9); // 9-bit offset
+        // Format: Opcode(11) DT_address(9) op2(2) Rn(5) Rt(5)
+        const machineCode = `${opcode}${space}${immediateBin}${space}${op2}${space}${rnBin}${space}${rtBin}`;
+        return machineCode;
+        
+    }
+    
+    if (type === 'B') {
+        const opcode = B_TYPE_OPCODES[mnemonic];
+        if (!opcode) {
+            return { error: `Unsupported B-type mnemonic: ${mnemonic}` };
+        }
+        if (targetAddress === null || targetAddress === undefined) {
+            return { error: `B-type instruction ${mnemonic} to label "${structuredOperands.label}" requires target address (label not found or not resolved).`};
+        }
+
+        const byteOffset = targetAddress - currentInstructionAddress;
+        if (byteOffset % 4 !== 0) {
+            return { error: `B-type target address ${targetAddress} for ${mnemonic} is not word aligned relative to ${currentInstructionAddress}.`};
+        }
+        const wordOffset = byteOffset / 4;
+
+        const maxOffsetB = (1 << 25) - 1;
+        const minOffsetB = -(1 << 25);
+        if (wordOffset < minOffsetB || wordOffset > maxOffsetB) {
+            return { error: `B-type offset ${wordOffset} (for label ${structuredOperands.label}) out of 26-bit signed range for ${mnemonic}.` };
+        }
+
+        const immediateBin = toBinarySign(wordOffset, 26); // 26-bit immediate (word offset)
+
+        const machineCode = `${opcode}${space}${immediateBin}`;
+        return machineCode;
+    }
+    
+    if (type === 'CB') {
+        const opcode = CB_TYPE_OPCODES[mnemonic];
+        if (!opcode) {
+            return { error: `Unsupported CB-type mnemonic: ${mnemonic}` };
+        }
+        if (targetAddress === null || targetAddress === undefined) {
+            return { error: `CB-type instruction ${mnemonic} to label "${structuredOperands.label}" requires target address.`};
+        }
+
+        const rtNum = parseRegisterNumber(structuredOperands.Rt);
+        const rtBin = toBinary(rtNum, 5);
+
+        const byteOffset = targetAddress - currentInstructionAddress;
+        if (byteOffset % 4 !== 0) {
+            return { error: `CB-type target address ${targetAddress} for ${mnemonic} is not word aligned relative to ${currentInstructionAddress}.`};
+        }
+        const wordOffset = byteOffset / 4;
+
+        const maxOffsetCB = (1 << 18) - 1;
+        const minOffsetCB = -(1 << 18);
+        if (wordOffset < minOffsetCB || wordOffset > maxOffsetCB) {
+            return { error: `CB-type offset ${wordOffset} (for label ${structuredOperands.label}) out of 19-bit signed range for ${mnemonic}.` };
+        }
+
+        const immediateBin = toBinarySign(wordOffset, 19); // 19-bit immediate (word offset)
+
+        const machineCode = `${opcode}${space}${immediateBin}${space}${rtBin}`;
+        return machineCode;
+    }
+    
+    if (type === 'B_COND') {
+
+        const opcodeBase = B_COND_OPCODE_PREFIX;
+        const condition = structuredOperands.condition;
+        const conditionCode = B_COND_CODES[condition];
+
+        if (!conditionCode) {
+            return { error: `Invalid condition for B.cond: ${condition}` };
+        }
+
+        if (targetAddress === null || targetAddress === undefined) {
+            return { error: `B.cond instruction to label "${structuredOperands.label}" requires target address.`};
+        }
+
+        const byteOffset = targetAddress - currentInstructionAddress;
+        if (byteOffset % 4 !== 0) {
+            return { error: `B.cond target address ${targetAddress} is not word aligned.`};
+        }
+        const wordOffset = byteOffset / 4;
+
+        // Kiểm tra phạm vi cho offset 19-bit
+        const maxOffsetBCond = (1 << 18) - 1; // 2^(19-1) - 1
+        const minOffsetBCond = -(1 << 18);   // -2^(19-1)
+        if (wordOffset < minOffsetBCond || wordOffset > maxOffsetBCond) {
+            return { error: `B.cond offset ${wordOffset} out of 19-bit signed range.` };
+        }
+
+        const immediateBin = toBinarySign(wordOffset, 19); // 19-bit immediate (word offset)
+        
+        const condField = '0' + conditionCode; // Thêm bit 0 để đủ 5 bit
+        const finalMachineCode = `${opcodeBase}${space}${immediateBin}${space}${condField}`;        
+        return finalMachineCode;
+    }
+    return { error: `Unsupported instruction type for encoding: ${type}` };
 }
