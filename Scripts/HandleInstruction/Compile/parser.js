@@ -3,15 +3,15 @@ import { B_TYPE_OPCODES, CB_TYPE_OPCODES }  from "./Define/Opcode.js"
 import { I_TYPE_OPCODES }  from "./Define/Opcode.js"
 import { B_COND_OPCODE_PREFIX, B_COND_CODES }  from "./Define/Opcode.js"
 
+// Create a labelTable for Branch instructions.
+// The index is based on the code after formatting.
 export function buildLabelTable(codeLines, startAddress = 0, instructionSize = 4) {
     const labelTable = {};
     let instructionIndex = 0; // Chỉ đếm các dòng có chứa lệnh thực sự
 
     for (const line of codeLines) {
-        // 1. Dọn dẹp dòng code: xóa comment và khoảng trắng thừa
         const cleanedLine = line.replace(/(\/\/|;).*/, '').trim();
-
-        // 2. Bỏ qua các dòng trống sau khi đã dọn dẹp
+        
         if (!cleanedLine) {
             continue;
         }

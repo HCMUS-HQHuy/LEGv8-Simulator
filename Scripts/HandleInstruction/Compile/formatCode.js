@@ -16,8 +16,7 @@ export function getResult() {
     let effectiveLineCounter = 1; // Bắt đầu đếm từ dòng 1
     let lineHTML = '';
 
-    for (let i = 0; i < codeLines.length; i++) {
-        const rawLineContent = codeLines[i];
+    for (const rawLineContent of codeLines) {
         let cleanedLine = rawLineContent.replace(/(\/\/|;).*/, '').trim();
         if (!cleanedLine) {
             continue;
