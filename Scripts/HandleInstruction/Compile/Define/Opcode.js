@@ -54,17 +54,3 @@ export const B_COND_CODES = {
     'GE': '1010', // Greater or Equal (signed): N=V
     'HS': '0010', // Higher or Same (unsigned) / Carry Set: C=1
 };
-
-// Tạo một đối tượng đảo ngược để dễ dàng tìm tên lệnh từ mã cond
-export const B_COND_MNEMONICS = {
-    '0000': 'B.EQ',
-    '0001': 'B.NE',
-    '0010': 'B.HS',
-    '0011': 'B.LO',
-    '1000': 'B.HI',
-    '1001': 'B.LS',
-    '1010': 'B.GE',
-    '1011': 'B.LT',
-    '1100': 'B.GT',
-    '1101': 'B.LE',
-};

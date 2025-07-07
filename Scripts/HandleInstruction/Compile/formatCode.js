@@ -41,7 +41,7 @@ export function getResult() {
         }
         if (instructionPart) {
             const parsedInstruction = parseLegv8Instruction(instructionPart, labelTable);
-
+            console.log(parsedInstruction);
             if (!parsedInstruction || parsedInstruction.error) {
                 lineHTML += `${instructionPart}`;
                 return `Error parsing line ${i + 1}: ${parsedInstruction?.error || 'Unknown error'}`;
