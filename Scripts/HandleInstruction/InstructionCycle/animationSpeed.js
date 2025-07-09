@@ -90,6 +90,7 @@ export function trigger() {
 	});
 
 	let currentPercentage = 75;
+	rangeSlider.value = currentPercentage;
 	rangeSlider.addEventListener('input', () => {
 		if (state.executing) {
 			rangeSlider.value = currentPercentage;

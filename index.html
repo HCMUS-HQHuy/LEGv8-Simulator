@@ -34,163 +34,164 @@
                 <circle cx = "5" cy = "5" r = "2" fill = "context-stroke" />
               </marker>
               <marker id = "arrow" markerWidth = "4" markerHeight = "4" refX = "2" refY = "2" orient = "auto">
-                <path d = "M0,0 L4,2 L0,4 z" fill = "context-stroke" />
+                <path d = "M0,0 4,2 0,4 z" fill = "context-stroke" />
               </marker>
             </defs>
 
             <!-- Đường đi thật để dùng cho animation -->
             <!-- pc -->
             <path id         = "pc-to-instruction-memory-path" 
-                  d          = "M153,550 L235,550" 
+                  d          = "M153,550 235,550" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "pc-to-instruction-memory-path-clone" 
-                  d          = "M153,550 L282,550" 
+                  d          = "M153,550 282,550" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
 
             <path id         = "pc-to-ALU-add-0-path" 
-                  d          = "M153,550 L215,550 L215,75 L295,75" 
+                  d          = "M153,550 215,550 215,75 295,75" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "pc-to-ALU-add-0-path-clone" 
-                  d          = "M153,550 L215,550 L215,75 L342,75" 
+                  d          = "M153,550 215,550 215,75 342,75" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
             <path id         = pc-to-ALU-add-0-path-circle
-                  d          = "M215,550"
+                  d          = "M215,550 215,550"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
             
             <path id         = "pc-to-ALU-add-1-path" 
-                  d          = "M153,550 L215,550 L215,200 L450,200 L450,155 L1465,155" 
+                  d          = "M153,550 215,550 215,200 450,200 450,155 1465,155" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "pc-to-ALU-add-1-path-clone" 
-                  d          = "M153,550 L215,550 L215,200 L450,200 L450,155 L1510,155" 
+                  d          = "M153,550 215,550 215,200 450,200 450,155 1510,155" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
             <path id         = pc-to-ALU-add-1-path-circle
-                  d          = "M215,200"
+                  d          = "M215,200 215,200"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
 
             <!-- const 4 -->
             <path id         = "const-4-to-ALU-add-0-path" 
-                  d          = "M250,150 L295,150" 
+                  d          = "M250,150 295,150" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "const-4-to-ALU-add-0-path-clone" 
-                  d          = "M250,150 L342,150" 
+                  d          = "M250,150 342,150" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
 
             <!-- ALU-add-id -->
             <path id         = "ALU-add-0-to-mux-0-0-path" 
-                  d          = "M370,110 L1625,110" 
+                  d          = "M370,110 1625,110" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "ALU-add-0-to-mux-0-0-path-clone" 
-                  d          = "M370,110 L1730,110"   
+                  d          = "M370,110 1730,110"   
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
 
             <path id         = "ALU-add-1-to-mux-0-1-path" 
-                  d          = "M1605,200 L1625,200, L1625,150" 
+                  d          = "M1605,200 1625,200, 1625,150" 
                   class      = "signal-line" 
                   style      = "display: none" />
+                  
             <path id         = "ALU-add-1-to-mux-0-1-path-clone" 
-                  d          = "M1605,200 L1625,200, L1625,150, L1730,150" 
+                  d          = "M1605,200 1625,200, 1625,150, 1730,150" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
                 
             <path id         = "ALU-add-2-to-data-memory-path"
-                  d          = "M1290,625 L1420,625"
+                  d          = "M1290,625 1420,625"
                   class      = "signal-line"
                   style      = "display: none" />    
             <path id         = "ALU-add-2-to-data-memory-path-clone"
-                  d          = "M1290,625 L1440,625"
+                  d          = "M1290,625 1440,625"
                   class      = "signal-line"
                   marker-end = "url(#arrow)" />
             
             <path id         = "ALU-add-2-to-mux-3-0-path"
-                  d          = "M1290,625 L1370,625 L1370,850 L1615,850 L1615,750, L1660,750"
+                  d          = "M1290,625 1370,625 1370,850 1615,850 1615,750, 1660,750"
                   class      = "signal-line"
                   style      = "display: none" />
             <path id         = "ALU-add-2-to-mux-3-0-path-clone"
-                  d          = "M1290,625 L1370,625 L1370,850 L1615,850 L1615,750, L1680,750"
+                  d          = "M1290,625 1370,625 1370,850 1615,850 1615,750, 1680,750"
                   class      = "signal-line"
                   marker-end = "url(#arrow)" />
             <path id         = ALU-add-2-to-mux-3-0-path-circle
-                  d          = "M1370,625"
+                  d          = "M1370,625 1370,625"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
             
             <path id         = "ALU-add-2-zero-path"
-                  d          = "M1290,580 L1370,580 L1370,520 L1400,520"
+                  d          = "M1290,580 1370,580 1370,520 1400,520"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "ALU-add-2-zero-path-clone"
-                  d          = "M1290,580 L1370,580 L1370,520 L1415,520"
+                  d          = "M1290,580 1370,580 1370,520 1415,520"
                   class      = "control-signal-line" />
 
             <!-- mux-id-status -->
             <path id         = "mux-0-to-pc-path" 
-                  d          = "M1780,130, L1810,130 L1810,30 L60,30 L60,550 L60,550" 
+                  d          = "M1780,130, 1810,130 1810,30 60,30 60,550 60,550" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "mux-0-to-pc-path-clone" 
-                  d          = "M1780,130, L1810,130 L1810,30 L60,30 L60,550 L105,550" 
+                  d          = "M1780,130, 1810,130 1810,30 60,30 60,550 105,550" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
 
             <path id         = "mux-1-to-register-path" 
-                  d          = "M710,600 L750,600" 
+                  d          = "M710,600 750,600" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "mux-1-to-register-path-clone" 
-                  d          = "M710,600 L790,600" 
+                  d          = "M710,600 790,600" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
             
             <path id         = "mux-2-to-ALU-add-2-path" 
-                  d          = "M1110,668 L1180,668" 
+                  d          = "M1110,668 1180,668" 
                   class      = "signal-line" 
                   style      = "display: none" />      
             <path id         = "mux-2-to-ALU-add-2-path-clone" 
-                  d          = "M1110,668 L1200,668" 
+                  d          = "M1110,668 1200,668" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />      
             
             <path id         = "mux-3-to-register-path" 
-                  d          = "M1730,715 L1760,715 L1760,1015 L725,1015 L725,710 L775,710" 
+                  d          = "M1730,715 1760,715 1760,1015 725,1015 725,710 775,710" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "mux-3-to-register-path-clone" 
-                  d          = "M1730,715 L1760,715 L1760,1015 L725,1015 L725,710 L795,710" 
+                  d          = "M1730,715 1760,715 1760,1015 725,1015 725,710 795,710" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
 
             <!-- sign-extend -->
             <path id         = "sign-extend-to-shift-left-2-path" 
-                  d          = "M930,840 L990,840 L990,250 L1105,250" 
+                  d          = "M930,840 990,840 990,250 1105,250" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "sign-extend-to-shift-left-2-path-clone" 
-                  d          = "M930,840 L990,840 L990,250 L1210,250" 
+                  d          = "M930,840 990,840 990,250 1210,250" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
 
             <path id         = "sign-extend-to-mux-2-1-path" 
-                  d          = "M930,840 L990,840 L990,685, L986,685" 
+                  d          = "M930,840 990,840 990,685, 986,685" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "sign-extend-to-mux-2-1-path-clone" 
-                  d          = "M930,840 L990,840 L990,685 L1090,685" 
+                  d          = "M930,840 990,840 990,685 1090,685" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
             <path id         = sign-extend-to-mux-2-1-path-circle
-                  d          = "M990,685"
+                  d          = "M990,685 990,685"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
 
@@ -200,238 +201,238 @@
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "shift-left-2-to-add-1-path-clone" 
-                  d          = "M1270,250 L1510,250" 
+                  d          = "M1270,250 1510,250" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
 
             <!-- instruction-memory -->
             <path id         = "instruction-memory-to-control-path" 
-                  d          = "M420,630 L480,630 L480,380 L585,380" 
+                  d          = "M420,630 480,630 480,380 585,380" 
                   class      = "signal-line"
                   style      = "display: none" />
             <path id         = "instruction-memory-to-control-path-clone" 
-                  d          = "M420,630 L480,630 L480,380 L655,380" 
+                  d          = "M420,630 480,630 480,380 655,380" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)"/>
             <path id         = "instruction-memory-to-control-path-circle"
-                  d          = "M480,630"
+                  d          = "M480,630 480,630"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
 
             <path id         = "instruction-memory-to-read-register-1-path" 
-                  d          = "M420,630 L480,630 L480,540 L750,540" 
+                  d          = "M420,630 480,630 480,540 750,540" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "instruction-memory-to-read-register-1-path-clone" 
-                  d          = "M420,630 L480,630 L480,540 L790,540" 
+                  d          = "M420,630 480,630 480,540 790,540" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
             <path id         = "instruction-memory-to-read-register-1-path-circle"
-                  d          = "M480,540"
+                  d          = "M480,540 480,540"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
 
             <path id         = "instruction-memory-to-mux-1-0-path" 
-                  d          = "M420,630 L480,630 L480,570 L625,570" 
+                  d          = "M420,630 480,630 480,570 625,570" 
                   class      = "signal-line" 
                   style      = "display: none" />
             <path id         = "instruction-memory-to-mux-1-0-path-clone" 
-                  d          = "M420,630 L480,630 L480,570 L665,570" 
+                  d          = "M420,630 480,630 480,570 665,570" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
             <path id         = instruction-memory-to-mux-1-0-path-circle
-                  d          = "M480,570"
+                  d          = "M480,570 480,570"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
             
             <path id         = "instruction-memory-to-mux-1-1-path" 
-                  d          = "M420,630 L480,630 L480,670 L580,670 L580,640 L625,640" 
+                  d          = "M420,630 480,630 480,670 580,670 580,640 625,640" 
                   class      = "signal-line" 
                   style      = "display: none" />          
             <path id         = "instruction-memory-to-mux-1-1-path-clone" 
-                  d          = "M420,630 L480,630 L480,670 L580,670 L580,640 L665,640" 
+                  d          = "M420,630 480,630 480,670 580,670 580,640 665,640" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
             <path id         = instruction-memory-to-mux-1-1-path-circle
-                  d          = "M480,670"
+                  d          = "M480,670 480,670"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
                   
             <path id         = "instruction-memory-to-write-register-path" 
-                  d          = "M420,630 L480,630 L480,670 L750,670" 
+                  d          = "M420,630 480,630 480,670 750,670" 
                   class      = "signal-line" 
                   style      = "display: none" />                
             <path id         = "instruction-memory-to-write-register-path-clone" 
-                  d          = "M420,630 L480,630 L480,670 L790,670" 
+                  d          = "M420,630 480,630 480,670 790,670" 
                   class      = "signal-line" 
                   marker-end = "url(#arrow)" />
             <path id         = instruction-memory-to-write-register-path-circle
-                  d          = "M580,670"
+                  d          = "M580,670 580,670"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
             
             <path id         = "instruction-memory-to-sign-extend-path"
-                  d          = "M420,630 L490,630 L490,840 L650,840"
+                  d          = "M420,630 490,630 490,840 650,840"
                   class      = "signal-line"
                   style      = "display: none" />          
             <path id         = "instruction-memory-to-sign-extend-path-clone"
-                  d          = "M420,630 L480,630 L480,840 L825,840"
+                  d          = "M420,630 480,630 480,840 825,840"
                   class      = "signal-line"
                   marker-end = "url(#arrow)" />
 
             <path id         = "instruction-memory-to-alu-control-path"
-                  d          = "M420,630 L480,630 L480,840 L750,840 L750,990 L1130,990 L1130,985"
+                  d          = "M420,630 480,630 480,840 750,840 750,990 1130,990 1130,985"
                   class      = "signal-line"
                   style      = "display: none" />
             <path id         = "instruction-memory-to-alu-control-path-clone"
-                  d          = "M420,630 L480,630 L480,840 L750,840 L750,990 L1130,990 L1130,960"
+                  d          = "M420,630 480,630 480,840 750,840 750,990 1130,990 1130,960"
                   class      = "signal-line"
                   marker-end = "url(#arrow)" />
             <path id         = instruction-memory-to-alu-control-path-circle
-                  d          = "M750,840"
+                  d          = "M750,840 750,840"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
 
             <!-- register -->
             <path id         = "register-to-mux-2-0-path"
-                  d          = "M950,650 L1070,650"
+                  d          = "M950,650 1070,650"
                   class      = "signal-line"
                   style      = "display: none" />
             <path id         = "register-to-mux-2-0-path-clone"
-                  d          = "M950,650 L1090,650"
+                  d          = "M950,650 1090,650"
                   class      = "signal-line"
                   marker-end = "url(#arrow)" />
             
             <path id         = "register-to-ALU-add-2-path"
-                  d          = "M950,560 L1180,560"
+                  d          = "M950,560 1180,560"
                   class      = "signal-line"
                   style      = "display: none" />
             <path id         = "register-to-ALU-add-2-path-clone"
-                  d          = "M950,560 L1200,560"
+                  d          = "M950,560 1200,560"
                   class      = "signal-line"
                   marker-end = "url(#arrow)" />
             
             <path id         = "register-to-data-memory-path"
-                  d          = "M950,650 L1020,650 L1020,770 L1420,770"
+                  d          = "M950,650 1020,650 1020,770 1420,770"
                   class      = "signal-line"
                   style      = "display: none" /> 
             <path id         = "register-to-data-memory-path-clone"
-                  d          = "M950,650 L1020,650 L1020,770 L1440,770"
+                  d          = "M950,650 1020,650 1020,770 1440,770"
                   class      = "signal-line"
                   marker-end = "url(#arrow)" />
             <path id         = register-to-data-memory-path-circle
-                  d          = "M1020,650"
+                  d          = "M1020,650 1020,650"
                   class      = "signal-line"
                   marker-end = "url(#circle)" />
 
             <!-- data-memory -->
             <path id         = "data-memory-to-mux-3-1-path"
-                  d          = "M1590,680 L1660,680"
+                  d          = "M1590,680 1660,680"
                   class      = "signal-line"
                   style      = "display: none" />
             <path id         = "data-memory-to-mux-3-1-path-clone"
-                  d          = "M1590,680 L1680,680"
+                  d          = "M1590,680 1680,680"
                   class      = "signal-line"
                   marker-end = "url(#arrow)" />
 
             <!-- control -->
             <path id         = "control-reg2loc-path"
-                  d          = "M730,275 L770,275 L770,230 L450,230 L450,750 L690,750 L690,670"
+                  d          = "M730,275 770,275 770,230 450,230 450,750 690,750 690,670"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "control-reg2loc-path-clone"
-                  d          = "M730,275 L770,275 L770,230 L450,230 L450,750 L690,750 L690,655"
+                  d          = "M730,275 770,275 770,230 450,230 450,750 690,750 690,655"
                   class      = "control-signal-line" />
 
             <path id         = "control-uncondbranch-path"
-                  d          = "M730,300 L1655,300"
+                  d          = "M730,300 1655,300"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "control-uncondbranch-path-clone"
-                  d          = "M730,300 L1675,300"
+                  d          = "M730,300 1675,300"
                   class      = "control-signal-line" />
 
             <path id         = "control-branch-path"
-                  d          = "M730,325 L1370,325 L1370,480 L1400,480"
+                  d          = "M730,325 1370,325 1370,480 1400,480"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "control-branch-path-clone"
-                  d          = "M730,325 L1370,325 L1370,480 L1415,480"
+                  d          = "M730,325 1370,325 1370,480 1415,480"
                   class      = "control-signal-line" />
 
             <path id         = "control-memread-path"
-                  d          = "M730,350 L1640,350 L1640,870 L1520,870 L1520,827"
+                  d          = "M730,350 1640,350 1640,870 1520,870 1520,827"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "control-memread-path-clone"
-                  d          = "M730,350 L1640,350 L1640,870 L1520,870 L1520,810"
+                  d          = "M730,350 1640,350 1640,870 1520,870 1520,810"
                   class      = "control-signal-line" />
 
             <path id         = "control-memtoreg-path"
-                  d          = "M730,375 L1710,375 L1710,650"
+                  d          = "M730,375 1710,375 1710,650"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "control-memtoreg-path-clone"
-                  d          = "M730,375 L1710,375 L1710,665"
+                  d          = "M730,375 1710,375 1710,665"
                   class      = "control-signal-line" />
 
             <path id         = "control-aluop-path"
-                  d          = "M730,400 L1005,400 L1005,880 L1065,880"
+                  d          = "M730,400 1005,400 1005,880 1065,880"
                   class      = "ALU-control-signal-line" 
                   style      = "display: none" />
             <path id         = "control-aluop-path-clone"
-                  d          = "M730,400 L1005,400 L1005,880 L1080,880"
+                  d          = "M730,400 1005,400 1005,880 1080,880"
                   class      = "ALU-control-signal-line" />
 
             <path id         = "control-memwrite-path"
-                  d          = "M730,425 L1520,425 L1520,595"
+                  d          = "M730,425 1520,425 1520,595"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "control-memwrite-path-clone"
-                  d          = "M730,425 L1520,425 L1520,610"
+                  d          = "M730,425 1520,425 1520,610"
                   class      = "control-signal-line" />
 
             <path id         = "control-alusrc-path"
-                  d          = "M730,450 L1120,450 L1120,605"
+                  d          = "M730,450 1120,450 1120,605"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "control-alusrc-path-clone"
-                  d          = "M730,450 L1120,450 L1120,620"
+                  d          = "M730,450 1120,450 1120,620"
                   class      = "control-signal-line" />
 
             <path id         = "control-regwrite-path"
-                  d          = "M730,475 L885,475 L885,505"
+                  d          = "M730,475 885,475 885,505"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "control-regwrite-path-clone"
-                  d          = "M730,475 L885,475 L885,520"
+                  d          = "M730,475 885,475 885,520"
                   class      = "control-signal-line" />
 
             <!-- ALU-control -->
             <path id         = "ALU-control-to-ALU-2-path"
-                  d          = "M1180,880 L1265,880 L1265,695"
+                  d          = "M1180,880 1265,880 1265,695"
                   class      = "ALU-control-signal-line" 
                   style      = "display: none" />
             <path id         = "ALU-control-to-ALU-2-path-clone"
-                  d          = "M1180,880 L1265,880 L1265,665"
+                  d          = "M1180,880 1265,880 1265,665"
                   class      = "ALU-control-signal-line" />
 
             <!-- AND gate -->
             <path id         = "AND-gate-to-OR-gate-path"
-                  d          = "M1430,500 L1590,500 L1590,325 L1655,325"
+                  d          = "M1430,500 1590,500 1590,325 1655,325"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "AND-gate-to-OR-gate-path-clone"
-                  d          = "M1430,500 L1590,500 L1590,325 L1675,325"
+                  d          = "M1430,500 1590,500 1590,325 1675,325"
                   class      = "control-signal-line" />
 
             <!-- OR gate -->
             <path id         = "OR-gate-to-mux-0-1-path"
-                  d          = "M1730,312.5 L1760,312.5 L1760,185"
+                  d          = "M1730,312.5 1760,312.5 1760,185"
                   class      = "control-signal-line" 
                   style      = "display: none" />
             <path id         = "OR-gate-to-mux-0-1-path-clone"
-                  d          = "M1730,312.5 L1760,312.5 L1760,170"
+                  d          = "M1730,312.5 1760,312.5 1760,170"
                   class      = "control-signal-line" />
             <g id="container-root-path">
               <g id="root-path"></g>

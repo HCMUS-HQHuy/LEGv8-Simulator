@@ -387,7 +387,7 @@ export async function start(Components) {
 	startSignalAnimation("Add0.input1")
 	startSignalAnimation("Add1.input1")
 	startSignalAnimation("Add0.input2")
-	
+
 	await new Promise((promise) => {
 		pcSignalPromiseResolve = promise;
 	});
