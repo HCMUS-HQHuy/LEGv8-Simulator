@@ -10,12 +10,12 @@ A web-based, visual LEGv8 instruction set simulator designed for educational pur
 
 ## ✨ Features
 
-*   **Visual Datapath:** An interactive SVG-based diagram that visualizes the LEGv8 single-cycle datapath.
-*   **Real-time Animation:** See data and control signals move through the datapath as each instruction is executed.
-*   **Step-by-Step Execution:** Execute your code one instruction at a time to carefully observe the state of each component.
-*   **Code Editor:** A simple built-in editor with line numbers to write or import LEGv8 assembly code.
-*   **Parser & Validator:** Compiles assembly code, resolves labels, and validates syntax before execution, providing clear error messages in a log panel.
-*   **State Inspection:** (Optional, if you add this feature) View the current values of all 32 general-purpose registers and the contents of data memory.
+- 🧠 **Visual Datapath**: Interactive SVG diagram shows how each LEGv8 instruction flows through the datapath.
+- 🎞 **Real-Time Animation**: Control and data signals animate as instructions execute.
+- 🔁 **Step-by-Step Execution**: Observe internal states per instruction.
+- ✍️ **Code Editor**: Simple in-browser editor with line numbers and import support.
+- 🧪 **Parser & Validator**: Validates syntax, resolves labels, and logs errors before execution.
+- 🔍 **Optional State Inspection**: (if implemented) View contents of all registers and memory locations.
 
 ## 🚀 Getting Started
 
@@ -35,54 +35,48 @@ A web-based, visual LEGv8 instruction set simulator designed for educational pur
 
 ## 🛠️ Supported Instruction Set
 
-This simulator supports a subset of the LEGv8 instruction set, focusing on core integer operations.
+| Type      | Supported Mnemonics                                                    |
+|-----------|-------------------------------------------------------------------------|
+| R-Type    | `ADD`, `SUB`, `AND`, `ORR`, `EOR`, `ADDS`, `SUBS`, `ANDS`              |
+| D-Type    | `LDUR`, `STUR`                                                         |
+| I-Type    | `ADDI`, `SUBI`, `ANDI`, `ORRI`, `EORI`, `SUBIS`                        |
+| B-Type    | `B`, `BL`                                                              |
+| CB-Type   | `CBZ`, `CBNZ`                                                          |
+| B.cond    | `B.EQ`, `B.NE`, `B.GT`, `B.LT`, `B.GE`, `B.LE`, etc.                   |
 
-| Instruction Type | Supported Mnemonics                                    |
-| ---------------- | ------------------------------------------------------ |
-| **R-Type**       | `ADD`, `SUB`, `AND`, `ORR`, `EOR`, `ADDS`, `SUBS`, `ANDS` |
-| **D-Type**       | `LDUR`, `STUR`                                         |
-| **I-Type**       | `ADDI`, `SUBI`, `ANDI`, `ORRI`, `EORI`, `SUBIS`          |
-| **B-Type**       | `B`, `BL`                                              |
-| **CB-Type**      | `CBZ`, `CBNZ`                                          |
-| **B.cond-Type**  | `B.EQ`, `B.NE`, `B.GT`, `B.LT`, `B.GE`, `B.LE`, etc.    |
+> 💡 **Syntax Notes**:
+> - Use `//` for comments.
+> - Define labels with `LabelName:`.
+> - Registers: `X0–X30`, `XZR`.
+> - Immediates: decimal (`#10`).
 
-### Assembly Syntax Notes:
-
-*   **Comments:** Use `//` for single-line comments.
-*   **Labels:** Define a label by placing it on its own line or before an instruction, followed by a colon (e.g., `MyLabel:`).
-*   **Registers:** Registers can be specified as `X0`-`X30`, `XZR`.
-*   **Immediates:**
-    *   Arithmetic immediates (`ADDI`, `SUBI`) should be decimal (e.g., `#10`, `#-5`).
-    *   Logical immediates (`ANDI`, `ORRI`) should be hexadecimal (e.g., `#0xFF`).
-    *   Memory offsets (`LDUR`, `STUR`) are decimal.
-
-## 🔧 Development & Project Structure
-
-This project is built with vanilla HTML, CSS, and JavaScript, with no external frameworks required.
-
-*   `index.html`: The main entry point and UI structure.
-*   `style.css`: Contains all the styling for the UI components and the SVG datapath.
-*   `main.js`: The main script that ties together UI events, parsing, and execution flow.
-*   `/Scripts`: Directory containing the core logic modules.
-
-## 💡 How It Works
-
-The simulation process follows these main steps:
-
-1.  **Parsing (Compilation):**
-    *   **Pass 1 (Label Resolution):** The `buildLabelTable` function scans the entire code to find all labels and map them to their memory addresses.
-    *   **Pass 2 (Instruction Parsing):** The `parseLegv8Instruction` function processes each line, validates its syntax against the supported instruction formats, and resolves branch labels to target addresses using the label table. Any errors are collected.
-2.  **Validation:** The `validateParsedResults` function checks the entire set of parsed instructions. If any errors were found, execution is blocked.
-3.  **Encoding:** For simulation, each parsed instruction is converted into its 32-bit binary machine code representation by the `encodeLegv8Instruction` function.
-4.  **Execution Loop:**
-    *   An `async` function `execute()` loops through the instructions.
-    *   For each instruction, a simulation step is triggered.
-    *   **Signal Generation:** The state of each datapath component is calculated based on the current instruction and the state of connected components.
-    *   **Animation:** As signals "arrive" at a component, new animations are primed. The `startSignalAnimation()` function begins all animations for the current stage simultaneously, creating the visual flow.
-    *   **State Update:** At the end of the animated cycle, the architectural state (PC, registers, memory) is updated for the next instruction.
-    *   The `execute` loop `await`s a promise that resolves when the current instruction's primary animation path (e.g., the PC update) completes, ensuring a sequential flow.
-
-## 🤝 Contributors
-* [@HCMUS-HQHuy](https://github.com/HCMUS-HQHuy) - Huỳnh Quốc Huy
-* [@77x17](https://github.com/77x17) - Phan Ngưng
 ---
+
+## 🔗 Try It Online
+
+👉 **Live Version:** [https://hcmus-hqhuy.github.io/LEGv8-Simulator/](https://hcmus-hqhuy.github.io/LEGv8-Simulator/)
+
+Just open in any modern browser — no setup required!
+
+---
+
+## 👨‍💻 Contributors
+
+- [@HCMUS-HQHuy](https://github.com/HCMUS-HQHuy) – Huỳnh Quốc Huy  
+- [@77x17](https://github.com/77x17) – Phan Ngưng
+
+---
+
+## 🙌 Feedback & Contributions
+
+💬 Found a bug?  
+🧠 Want to add a feature?  
+🛠 Submit a PR or open an issue!
+
+👉 [Issues](https://github.com/HCMUS-HQHuy/LEGv8-Simulator/issues)  
+👉 [Pull Requests](https://github.com/HCMUS-HQHuy/LEGv8-Simulator/pulls)
+
+---
+
+> LEGv8 is a simplified ARMv8 architecture model used in education. This simulator is not intended for production ARM development.
+
