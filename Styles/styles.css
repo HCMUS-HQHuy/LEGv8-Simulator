@@ -417,7 +417,7 @@ body {
   background-color: var(--button-bg-color); /* Sử dụng biến mới */
   border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
   color: var(--button-text-color); /* Sử dụng biến mới */
-  padding: 8px 16px;
+  padding: 5px 16px;
   font-size: 100%;
   cursor: pointer;
   font-weight: bold;
