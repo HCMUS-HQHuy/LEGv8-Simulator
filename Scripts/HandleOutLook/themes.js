@@ -9,11 +9,11 @@ export function trigger() {
 	if (document.body.classList.contains("dark")) {
 		document.body.classList.remove("dark");
 		document.body.classList.add("light");
-		themeToggle.textContent = "🌙 Dark Mode";
+		themeToggle.textContent = "🌙";
 	} else {
 		document.body.classList.remove("light");
 		document.body.classList.add("dark");
-		themeToggle.textContent = "🔆 Light Mode";
+		themeToggle.textContent = "🔆";
 	}
 	});
 }

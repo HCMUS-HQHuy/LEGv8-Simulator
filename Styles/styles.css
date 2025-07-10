@@ -133,21 +133,67 @@ body {
   border-bottom: 6px solid var(--header-border-color); 
 }
 
-#themeToggle {
-  background-color: var(--button-bg-color); /* Sử dụng biến mới */
-  border: 2px solid var(--button-border-color); /* Sử dụng biến mới */
-  color: var(--button-text-color); /* Sử dụng biến mới */
-  padding: 0.7% 0.7%;
-  margin-left: 20px;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s, color 0.3s;
-  font-size: 60%;
+/* Styling for the GitHub link */
+.header .github-link {
+    /* No need for margin-left: auto; anymore */
+    margin-left: auto; /* Add some space between the GitHub icon and the Theme button */
+    margin-right: 10px;
+    color: var(--text-color);
+    text-decoration: none;
+    display: inline-flex; /* Good practice for aligning the icon within the link */
+    align-items: center;
 }
 
+/* Your existing CSS for the Font Awesome icon inside the link */
+.header .github-link .fab {
+    font-size: 32px;
+    transition: opacity 0.2s, transform 0.2s;
+    vertical-align: middle;
+}
+
+.header .github-link:hover .fab {
+    opacity: 0.7;
+    transform: scale(1.1);
+}
+
+/* Your existing improved CSS for the Theme Toggle button */
+#themeToggle {
+  /* Positioning & Sizing */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  /* margin-left is no longer needed to separate it, as the header layout and the link's margin-right handle it */
+  width: 35px;
+  height: 35px;
+
+  /* Appearance */
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  font-size: 19px;
+  
+  /* Interaction */
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Keep your existing :hover, :active, and :focus-visible states for #themeToggle */
 #themeToggle:hover {
-  background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
-  color: var(--button-hover-text-color); /* Sử dụng biến mới */
+  background-color: var(--button-hover-bg, #f0f0f0);
+  border-color: var(--button-hover-border, #aaa);
+  transform: scale(1.1) rotate(15deg);
+}
+
+#themeToggle:active {
+  transform: scale(0.95);
+  background-color: var(--button-active-bg, #e0e0e0);
+}
+
+#themeToggle:focus-visible {
+  box-shadow: 0 0 0 3px var(--focus-ring-color, rgba(0, 123, 255, 0.5));
 }
 
 /* footer */
