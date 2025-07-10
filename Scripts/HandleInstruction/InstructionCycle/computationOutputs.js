@@ -98,11 +98,12 @@ function checkBranchCondition(components) {
 
     if (type === 'CB') {
         const tmp = components.InstructionMemory.Opcode_31_21.substring(0, 8);
+        const val = components.ALU.output;
         if (tmp === CB_TYPE_OPCODES['CBZ']) {
-            return aluFlags.Z; // Branch if Z=1
+            return val === 0n ? 1 : 0;
         }
         if (tmp === CB_TYPE_OPCODES['CBNZ']) {
-            return aluFlags.Z === 0 ? 1 : 0; // Branch if Z=0
+            return val === 0n ? 0 : 1;
         }
     } else if (type === 'B_COND') {
         const encodedInstruction = components.InstructionMemory.instruction[index];
