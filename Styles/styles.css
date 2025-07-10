@@ -98,14 +98,14 @@ body.dark {
 }
 
 h1 {
-  font-size: 40px; /* Đặt kích thước chữ của h2 là 24px */
+  font-size: 35px; /* Đặt kích thước chữ của h2 là 24px */
   margin-top: 0px; /* Khoảng cách từ thẻ h2 đến phần tử phía trên */
   margin-bottom: 10px; /* Khoảng cách từ thẻ h2 đến phần tử phía dưới */
   margin-left: 0.1%;
 }
 
 h2 {
-  font-size: 30px; /* Đặt kích thước chữ của h2 là 24px */
+  font-size: 25px; /* Đặt kích thước chữ của h2 là 24px */
   margin-top: 10px; /* Khoảng cách từ thẻ h2 đến phần tử phía trên */
   margin-bottom: 10px; /* Khoảng cách từ thẻ h2 đến phần tử phía dưới */
   margin-left: 0.1%;
@@ -127,10 +127,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between; /* hoặc dùng margin-left: auto cho button */
-  padding: 1%;
+  padding-left: 1%;
+  padding-right: 1%;
   letter-spacing: 1.5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow might need theme adjustment too */
   border-bottom: 6px solid var(--header-border-color); 
+  height: 9vh; /* Fixed height: 10% of viewport */
+  box-sizing: border-box; /* Include padding and border in height */
 }
 
 /* Styling for the GitHub link */
@@ -329,7 +332,7 @@ body {
   display: flex;
   align-items: stretch; 
   width: 100%; /* Toàn bộ chiều rộng của container */
-  height: 94vh;
+  height: 90vh;
 }
 /* frameBox */
 .frameBox {
@@ -482,7 +485,8 @@ body {
   background-color: var(--frame-bg-color);
 
   font-size: 14px;
-
+  height: 4vh; /* Fixed height: 10% of viewport */
+  box-sizing: border-box; /* Include padding and border in height */
   z-index: 2;
 }
 .replay-all-button {
@@ -730,9 +734,10 @@ body {
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
-  height: 28px;
   line-height: 28px; 
   font-family: sans-serif;
+  height: 4vh; /* Fixed height: 10% of viewport */
+  box-sizing: border-box; /* Include padding and border in height */
 }
 .import-code-button:hover {
   background-color: var(--button-hover-bg-color); /* Sử dụng biến mới */
